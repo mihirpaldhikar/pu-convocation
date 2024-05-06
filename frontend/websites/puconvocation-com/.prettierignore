@@ -1,0 +1,12 @@
+### IDEs Artifacts ###
+.idea
+.vscode
+
+### Build Artifacts ###
+.next
+
+### NodeJS Artifacts ###
+node_modules
+
+### Type Files ###
+*.d.ts

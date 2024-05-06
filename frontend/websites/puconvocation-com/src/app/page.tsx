@@ -15,25 +15,25 @@ import Image from "next/image";
 import UniversityLogo from "@public/assets/logo.png";
 
 export default function Home() {
-    return (
-        <section className={"flex min-h-dvh"}>
-            <div className="m-auto">
-                <div className={"flex flex-col space-y-6 items-center"}>
-                    <Image
-                        src={UniversityLogo}
-                        alt={"Parul University"}
-                        priority={true}
-                        fetchPriority={"high"}
-                        className={"w-44"}
-                    />
-                    <div className={"flex flex-col items-center space-y-2"}>
-                        <h1 className={"font-extrabold text-3xl"}>
-                            <span className={"text-red-600"}>Parul</span> University
-                        </h1>
-                        <h3 className={"font-bold"}>Convocation Management System</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+  return (
+    <section className={"flex min-h-dvh"}>
+      <div className="m-auto">
+        <div className={"flex flex-col space-y-6 items-center"}>
+          <Image
+            src={UniversityLogo}
+            alt={"Parul University"}
+            priority={true}
+            fetchPriority={"high"}
+            className={"w-44"}
+          />
+          <div className={"flex flex-col items-center space-y-2"}>
+            <h1 className={"font-extrabold text-3xl"}>
+              <span className={"text-red-600"}>Parul</span> University
+            </h1>
+            <h3 className={"font-bold"}>Convocation Management System</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

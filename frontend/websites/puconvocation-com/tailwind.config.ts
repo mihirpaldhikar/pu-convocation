@@ -11,22 +11,22 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import type {Config} from "tailwindcss";
-import {fontFamily} from "tailwindcss/defaultTheme";
+import type { Config } from "tailwindcss";
+import { fontFamily } from "tailwindcss/defaultTheme";
 
 const config: Config = {
-    content: [
-        "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-        "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    ],
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ["var(--font-sans)", ...fontFamily.sans],
-            },
-        },
+  content: [
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", ...fontFamily.sans],
+      },
     },
-    plugins: [],
+  },
+  plugins: [],
 };
 export default config;

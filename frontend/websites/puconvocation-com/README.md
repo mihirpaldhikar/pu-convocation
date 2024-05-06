@@ -5,7 +5,7 @@
 Step 1: Install Node Packages
 
 ```bash
-npm install 
+npm install
 ```
 
 Step 2: Run Development Server
