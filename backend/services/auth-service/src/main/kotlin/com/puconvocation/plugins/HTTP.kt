@@ -44,11 +44,23 @@ fun Application.configureHTTP() {
         }
     }
     install(CORS) {
+        allowCredentials = true
+
         allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+
+        allowHeader(HttpHeaders.Origin)
+        allowHeader(HttpHeaders.Accept)
+        allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.AuthenticationInfo)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.AccessControlAllowHeaders)
+        allowHeader(HttpHeaders.AccessControlAllowCredentials)
+
 
         if (environment.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
@@ -60,6 +72,7 @@ fun Application.configureHTTP() {
             subDomains = listOf("accounts", "dashboard")
         )
     }
+
     install(DefaultHeaders) {
         header("X-Service", "Auth Service")
     }
