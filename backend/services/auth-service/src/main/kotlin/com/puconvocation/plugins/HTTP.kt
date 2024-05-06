@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -20,9 +21,11 @@ import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.response.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureHTTP() {
+    val environment: Environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
+
     install(CachingHeaders) {
         options { _, outgoingContent ->
             when (outgoingContent.contentType?.withoutParameters()) {
@@ -46,7 +49,16 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Delete)
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+
+        if (environment.developmentMode) {
+            allowHost("localhost:3000", listOf("http", "https"))
+        }
+
+        allowHost(
+            host = "puconvocation.com",
+            schemes = listOf("http", "https"),
+            subDomains = listOf("accounts", "dashboard")
+        )
     }
     install(DefaultHeaders) {
         header("X-Service", "Auth Service")
