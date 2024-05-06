@@ -8,6 +8,10 @@ at [puconvocation.com](https://puconvocation.com)
 ```
 # (root)
 |
+|-- backend/
+|   |-- services/
+|   |   |-- auth-service/
+|
 |-- frontend/
 |   |-- websites/
 |   |   |-- puconvocation-com/
