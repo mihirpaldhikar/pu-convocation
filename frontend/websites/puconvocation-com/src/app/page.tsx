@@ -12,7 +12,7 @@
  */
 
 import Image from "next/image";
-import UniversityLogo from "../../public/assets/logo.png";
+import UniversityLogo from "@public/assets/logo.png";
 
 export default function Home() {
     return (
