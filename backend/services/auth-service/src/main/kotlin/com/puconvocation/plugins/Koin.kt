@@ -14,11 +14,12 @@
 package com.puconvocation.plugins
 
 import com.puconvocation.di.CoreModules
+import com.puconvocation.di.DatabaseModule
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin
 
 fun Application.configureDependencyInjection() {
     install(Koin) {
-        modules(CoreModules.init)
+        modules(CoreModules.init, DatabaseModule.init)
     }
 }

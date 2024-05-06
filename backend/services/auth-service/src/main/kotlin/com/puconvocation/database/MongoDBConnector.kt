@@ -11,10 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation
+package com.puconvocation.database
 
-class Environment {
-    val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
-    val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
-    val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
+import com.mongodb.kotlin.client.coroutine.MongoClient
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
+
+class MongoDBConnector(
+    private val connectionURL: String,
+    private val database: String,
+) {
+    fun connectToDatabase(): MongoDatabase {
+        val mongoClient: MongoClient = MongoClient.create(connectionURL)
+        return mongoClient.getDatabase(database)
+    }
 }

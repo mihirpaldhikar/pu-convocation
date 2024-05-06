@@ -11,10 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation
+package com.puconvocation.di
 
-class Environment {
-    val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
-    val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
-    val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.Environment
+import com.puconvocation.database.MongoDBConnector
+import org.koin.dsl.module
+
+object DatabaseModule {
+    val init = module {
+        single<MongoDatabase> {
+            MongoDBConnector(
+                connectionURL = get<Environment>().mongoDBConnectionURL,
+                database = get<Environment>().mongoDBName
+            ).connectToDatabase()
+        }
+    }
 }
