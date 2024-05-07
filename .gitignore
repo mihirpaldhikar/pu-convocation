@@ -80,3 +80,5 @@ out/
 ### Secrets ###
 */secret/
 */secrets/
+
+*/.well-known/
