@@ -59,6 +59,9 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongoDBVersion")
     implementation("org.mongodb:bson-kotlinx:$mongoDBVersion")
 
+    // Apache Common Codec
+    implementation("commons-codec:commons-codec:1.16.1")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
