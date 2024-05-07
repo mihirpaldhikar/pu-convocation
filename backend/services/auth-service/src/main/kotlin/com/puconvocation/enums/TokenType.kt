@@ -11,20 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.di
+package com.puconvocation.enums
 
-import com.puconvocation.Environment
-import com.puconvocation.security.JsonWebToken
-import org.koin.dsl.module
-
-object CoreModule {
-    val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
-        }
-    }
+enum class TokenType {
+    AUTHORIZATION_TOKEN,
+    REFRESH_TOKEN,
+    NULL_TOKEN
 }

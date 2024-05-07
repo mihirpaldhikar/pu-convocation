@@ -11,20 +11,23 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.di
+package com.puconvocation.enums
 
-import com.puconvocation.Environment
-import com.puconvocation.security.JsonWebToken
-import org.koin.dsl.module
-
-object CoreModule {
-    val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
-        }
-    }
+enum class ResponseCode {
+    OK,
+    ACCOUNT_EXISTS,
+    ACCOUNT_NOT_FOUND,
+    INVALID_PASSWORD,
+    PASSWORD_NOT_SECURE,
+    ACCOUNT_CREATION_ERROR,
+    INVALID_IDENTIFIER,
+    ACCOUNT_SUSPENDED,
+    ACCOUNT_NOT_VERIFIED,
+    INVALID_OR_NULL_AUTHORIZATION_TOKEN,
+    INVALID_OR_NULL_AUTHENTICATION,
+    REQUEST_NOT_COMPLETED,
+    INVALID_REQUEST,
+    TOKEN_EXPIRED,
+    INVALID_TOKEN,
+    SESSION_EXPIRED
 }

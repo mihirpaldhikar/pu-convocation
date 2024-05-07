@@ -11,20 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.di
+package com.puconvocation.security.dao
 
-import com.puconvocation.Environment
-import com.puconvocation.security.JsonWebToken
-import org.koin.dsl.module
+import com.auth0.jwk.JwkProvider
 
-object CoreModule {
-    val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
-        }
-    }
-}
+data class JWTMetadata(
+    val provider: JwkProvider,
+    val authorizationTokenPrivateKey: String,
+    val refreshTokenPrivateKey: String,
+    val audience: String,
+    val issuer: String,
+    val authorizationTokenKeyId: String,
+    val refreshTokenKeyId: String,
+    val realm: String,
+)

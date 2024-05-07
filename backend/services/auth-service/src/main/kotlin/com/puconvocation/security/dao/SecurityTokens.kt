@@ -11,20 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.di
+package com.puconvocation.security.dao
 
-import com.puconvocation.Environment
-import com.puconvocation.security.JsonWebToken
-import org.koin.dsl.module
+import com.google.gson.annotations.Expose
 
-object CoreModule {
-    val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
-        }
-    }
-}
+data class SecurityToken(
+    @Expose val authorizationToken: String,
+    @Expose val refreshToken: String,
+)
