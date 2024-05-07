@@ -15,7 +15,7 @@ package com.puconvocation.di
 
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.Environment
-import com.puconvocation.database.MongoDBConnector
+import com.puconvocation.database.mongodb.MongoDBConnector
 import org.koin.dsl.module
 
 object DatabaseModule {

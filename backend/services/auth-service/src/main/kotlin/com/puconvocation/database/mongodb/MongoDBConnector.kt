@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database
+package com.puconvocation.database.mongodb
 
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
