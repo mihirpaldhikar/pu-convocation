@@ -23,6 +23,6 @@ data class Account(
     @Expose val username: String,
     @Expose val displayName: String,
     @Expose val email: String,
-    @Expose val avatarUrl: String,
+    @Expose val avatarURL: String,
     val password: SaltedHash,
 )

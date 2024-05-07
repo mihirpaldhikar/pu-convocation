@@ -11,16 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.database.mongodb.datasources
 
-import com.puconvocation.di.CoreModules
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoriesModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import com.puconvocation.database.mongodb.entities.Account
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(CoreModules.init, DatabaseModule.init, RepositoriesModule.init)
-    }
+interface AccountDatasource {
+    suspend fun accountExists(identifier: String): Boolean
+
+    suspend fun createAccount(account: Account): Boolean
+
+    suspend fun getAccount(identifier: String): Account?
+
+    suspend fun updateAccount(account: Account): Boolean
+
+    suspend fun deleteAccount(uuid: String): Boolean
 }
