@@ -13,7 +13,7 @@
 
 package com.puconvocation.plugins
 
-import com.puconvocation.di.CoreModules
+import com.puconvocation.di.CoreModule
 import com.puconvocation.di.DatabaseModule
 import com.puconvocation.di.RepositoriesModule
 import io.ktor.server.application.*
@@ -21,6 +21,6 @@ import org.koin.ktor.plugin.Koin
 
 fun Application.configureDependencyInjection() {
     install(Koin) {
-        modules(CoreModules.init, DatabaseModule.init, RepositoriesModule.init)
+        modules(CoreModule.init, DatabaseModule.init, RepositoriesModule.init)
     }
 }

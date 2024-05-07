@@ -16,7 +16,7 @@ package com.puconvocation.di
 import com.puconvocation.Environment
 import org.koin.dsl.module
 
-object CoreModules {
+object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
