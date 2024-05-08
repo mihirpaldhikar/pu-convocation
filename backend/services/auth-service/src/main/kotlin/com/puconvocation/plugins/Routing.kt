@@ -13,14 +13,15 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.controllers.AccountController
+import com.puconvocation.routes.accountsRoute
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureRouting() {
+    val accountController by KoinJavaComponent.inject<AccountController>(AccountController::class.java)
     routing {
-        get("/") {
-            call.respondText("Hello From Auth Service!")
-        }
+        accountsRoute(accountController = accountController)
     }
 }

@@ -11,24 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.enums
+package com.puconvocation.commons.dto
 
-enum class ResponseCode {
-    OK,
-    ACCOUNT_CREATED,
-    ACCOUNT_EXISTS,
-    ACCOUNT_NOT_FOUND,
-    INVALID_PASSWORD,
-    PASSWORD_NOT_SECURE,
-    ACCOUNT_CREATION_ERROR,
-    INVALID_IDENTIFIER,
-    ACCOUNT_SUSPENDED,
-    ACCOUNT_NOT_VERIFIED,
-    INVALID_OR_NULL_AUTHORIZATION_TOKEN,
-    INVALID_OR_NULL_AUTHENTICATION,
-    REQUEST_NOT_COMPLETED,
-    INVALID_REQUEST,
-    TOKEN_EXPIRED,
-    INVALID_TOKEN,
-    SESSION_EXPIRED
-}
+import com.google.gson.annotations.Expose
+
+data class CredentialsDTO(
+    @Expose val identifier: String,
+    @Expose val password: String,
+)
