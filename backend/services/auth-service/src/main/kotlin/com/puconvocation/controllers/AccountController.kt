@@ -18,6 +18,7 @@ import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.enums.TokenType
 import com.puconvocation.security.Hash
 import com.puconvocation.security.JsonWebToken
 import com.puconvocation.security.dao.SecurityToken
@@ -96,6 +97,24 @@ class AccountController(
             statusCode = HttpStatusCode.Created,
             code = ResponseCode.ACCOUNT_CREATED,
             data = securityTokens
+        )
+    }
+
+    suspend fun accountDetails(securityToken: SecurityToken): Result {
+        val jwtResult = jsonWebToken.verifySecurityToken(securityToken.refreshToken, TokenType.AUTHORIZATION_TOKEN)
+        if (jwtResult is Result.Error) {
+            return jwtResult
+        }
+        val account =
+            accountRepository.getAccount(jwtResult.responseData.toString().replace("\"", "")) ?: return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found."
+            )
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = account
         )
     }
 }

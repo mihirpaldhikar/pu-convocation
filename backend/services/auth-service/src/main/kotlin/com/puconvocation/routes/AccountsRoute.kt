@@ -16,9 +16,12 @@ package com.puconvocation.routes
 import com.puconvocation.commons.dto.CredentialsDTO
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.controllers.AccountController
+import com.puconvocation.utils.getSecurityTokens
+import com.puconvocation.utils.sendResponse
 import com.puconvocation.utils.setAccountCookies
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.accountsRoute(
@@ -35,6 +38,12 @@ fun Routing.accountsRoute(
             val newAccount: NewAccountDTO = call.receive<NewAccountDTO>()
             val result = accountController.signUp(newAccount)
             setAccountCookies(result)
+        }
+
+        get("/") {
+            val securityToken = getSecurityTokens() ?: return@get call.respondText("")
+            val result = accountController.accountDetails(securityToken)
+            sendResponse(result)
         }
     }
 }
