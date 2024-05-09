@@ -11,21 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.serializers
 
-import com.puconvocation.serializers.ObjectIdSerializer
-import io.ktor.serialization.gson.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import org.bson.types.ObjectId
+import java.lang.reflect.Type
 
-fun Application.configureSerialization() {
-    install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
-            disableHtmlEscaping()
-            excludeFieldsWithoutExposeAnnotation()
-            registerTypeAdapter(ObjectId::class.java, ObjectIdSerializer()).create()
-        }
+class ObjectIdSerializer : JsonSerializer<ObjectId> {
+    override fun serialize(src: ObjectId, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+        return JsonPrimitive(src.toHexString())
     }
 }
