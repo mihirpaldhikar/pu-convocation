@@ -14,12 +14,17 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
+import com.puconvocation.serializers.AttendeeSerializer
 import org.koin.dsl.module
 
 object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<AttendeeSerializer> {
+            AttendeeSerializer()
         }
     }
 }
