@@ -13,14 +13,17 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.response.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureHTTP() {
+    val environment: Environment by KoinJavaComponent.inject(Environment::class.java)
+
     install(Compression) {
         gzip {
             priority = 1.0
@@ -30,14 +33,38 @@ fun Application.configureHTTP() {
             minimumSize(1024) // condition
         }
     }
+
     install(CORS) {
+        allowCredentials = true
+
         allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+
+        allowHeader(HttpHeaders.Origin)
+        allowHeader(HttpHeaders.Accept)
+        allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+        allowHeader(HttpHeaders.AuthenticationInfo)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.AccessControlAllowHeaders)
+        allowHeader(HttpHeaders.AccessControlAllowCredentials)
+
+
+        if (environment.developmentMode) {
+            allowHost("localhost:3000", listOf("http", "https"))
+            allowHost("localhost:8080", listOf("http", "https"))
+        }
+
+        allowHost(
+            host = "puconvocation.com",
+            schemes = listOf("http", "https"),
+            subDomains = listOf("api", "accounts", "dashboard")
+        )
     }
+
     install(DefaultHeaders) {
         header("X-Service", "Attendee Service")
     }
