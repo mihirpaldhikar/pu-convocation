@@ -11,20 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.enums
 
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoriesModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
-
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoriesModule.init
-        )
-    }
+enum class Direction {
+    LEFT,
+    RIGHT
 }

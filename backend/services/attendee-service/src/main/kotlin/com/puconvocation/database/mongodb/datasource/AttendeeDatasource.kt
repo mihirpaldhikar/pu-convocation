@@ -11,20 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.database.mongodb.datasource
 
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoriesModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import com.puconvocation.database.mongodb.entities.Attendee
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoriesModule.init
-        )
-    }
+interface AttendeeDatasource {
+    suspend fun getAttendee(identifier: String): Attendee?
+
+    suspend fun uploadAttendees(attendee: List<Attendee>): Boolean
 }
