@@ -16,6 +16,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
 val mongoDBVersion: String by project
+val apacheCSV: String by project
 
 plugins {
     kotlin("jvm") version "1.9.24"
@@ -54,6 +55,9 @@ dependencies {
     // MongoDB Dependencies
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongoDBVersion")
     implementation("org.mongodb:bson-kotlinx:$mongoDBVersion")
+
+    // Apace CSV
+    implementation("org.apache.commons:commons-csv:$apacheCSV")
 
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
