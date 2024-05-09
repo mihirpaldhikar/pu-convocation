@@ -16,12 +16,14 @@ package com.puconvocation.security
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.JWTMetadata
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.utils.Result
+import io.ktor.http.*
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -143,7 +145,13 @@ class JsonWebToken(
             )
         } catch (e: TokenExpiredException) {
             Result.Error(
-                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Token is expired."
+                statusCode = HttpStatusCode.BadRequest,
+                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Refresh Token is expired."
+            )
+        } catch (e: JWTDecodeException) {
+            Result.Error(
+                statusCode = HttpStatusCode.BadRequest,
+                errorCode = ResponseCode.INVALID_OR_NULL_TOKEN, message = "Refresh Token is invalid or null."
             )
         }
     }

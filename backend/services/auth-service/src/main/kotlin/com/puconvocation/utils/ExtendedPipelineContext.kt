@@ -14,7 +14,6 @@
 package com.puconvocation.utils
 
 import com.puconvocation.Environment
-import com.puconvocation.enums.ResponseCode
 import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -64,7 +63,11 @@ fun PipelineContext<Unit, ApplicationCall>.setCookie(
 }
 
 suspend fun PipelineContext<Unit, ApplicationCall>.setAccountCookies(result: Result) {
-    if (result is Result.Success && result.responseData is SecurityToken) {
+    if (result is Result.Success &&
+        result.responseData is SecurityToken &&
+        result.responseData.refreshToken != null &&
+        result.responseData.authorizationToken != null
+    ) {
         setCookie(
             name = CookieName.AUTHORIZATION_TOKEN_COOKIE,
             value = result.responseData.authorizationToken,
@@ -86,18 +89,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.setAccountCookies(result: Res
     return sendResponse(result)
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken? {
+fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {
     val authorizationToken = call.request.cookies[CookieName.AUTHORIZATION_TOKEN_COOKIE]
     val refreshToken = call.request.cookies[CookieName.REFRESH_TOKEN_COOKIE]
-    if (authorizationToken == null || refreshToken == null) {
-        sendResponse(
-            Result.Error(
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Tokens are invalid or null."
-            )
-        )
-        return null
-    }
+
     return SecurityToken(
         authorizationToken = authorizationToken,
         refreshToken = refreshToken

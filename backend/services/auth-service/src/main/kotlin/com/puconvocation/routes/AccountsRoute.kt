@@ -21,7 +21,6 @@ import com.puconvocation.utils.sendResponse
 import com.puconvocation.utils.setAccountCookies
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.accountsRoute(
@@ -40,10 +39,17 @@ fun Routing.accountsRoute(
             setAccountCookies(result)
         }
 
+        post("/refresh") {
+            val securityToken = getSecurityTokens()
+            val result = accountController.generateNewSecurityTokens(securityToken)
+            setAccountCookies(result)
+        }
+
         get("/") {
-            val securityToken = getSecurityTokens() ?: return@get call.respondText("")
+            val securityToken = getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
             sendResponse(result)
         }
+
     }
 }

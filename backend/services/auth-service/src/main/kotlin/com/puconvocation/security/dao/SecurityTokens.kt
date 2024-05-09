@@ -17,6 +17,6 @@ import com.google.gson.annotations.Expose
 
 data class SecurityToken(
     @Expose val message: String? = null,
-    @Expose val authorizationToken: String,
-    @Expose val refreshToken: String,
+    @Expose val authorizationToken: String?,
+    @Expose val refreshToken: String?,
 )
