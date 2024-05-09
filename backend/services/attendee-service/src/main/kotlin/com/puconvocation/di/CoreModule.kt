@@ -11,27 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation
+package com.puconvocation.di
 
-import com.puconvocation.plugins.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import org.koin.dsl.module
 
-fun main() {
-    embeddedServer(
-        Netty,
-        port = 8082,
-        host = "localhost",
-        module = Application::module
-    )
-        .start(wait = true)
-}
-
-fun Application.module() {
-    configureDependencyInjection()
-    configureHTTP()
-    configureMonitoring()
-    configureSerialization()
-    configureRouting()
+object CoreModule {
+    val init = module { }
 }
