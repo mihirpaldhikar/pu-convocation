@@ -19,8 +19,8 @@ import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.InputStreamReader
 
-class AttendeeSerializer {
-    fun serializeCSV(reader: InputStreamReader): List<Attendee> {
+class CSVSerializer {
+    fun serializeAttendeesCSV(reader: InputStreamReader): List<Attendee> {
         val attendees: MutableList<Attendee> = emptyList<Attendee>().toMutableList()
         val csvFormat = CSVFormat.DEFAULT
             .builder()

@@ -14,7 +14,7 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
-import com.puconvocation.serializers.AttendeeSerializer
+import com.puconvocation.serializers.CSVSerializer
 import org.koin.dsl.module
 
 object CoreModule {
@@ -23,8 +23,8 @@ object CoreModule {
             Environment()
         }
 
-        single<AttendeeSerializer> {
-            AttendeeSerializer()
+        single<CSVSerializer> {
+            CSVSerializer()
         }
     }
 }
