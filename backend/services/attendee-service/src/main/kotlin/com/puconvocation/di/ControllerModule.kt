@@ -11,22 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.di
 
-import com.puconvocation.di.ControllerModule
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoriesModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import com.puconvocation.controllers.AttendeeController
+import com.puconvocation.database.mongodb.repositories.AttendeeRepository
+import com.puconvocation.serializers.CSVSerializer
+import org.koin.dsl.module
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoriesModule.init,
-            ControllerModule.init,
-        )
+object ControllerModule {
+    val init = module {
+        single<AttendeeController> {
+            AttendeeController(
+                attendeeRepository = get<AttendeeRepository>(),
+                csvSerializer = get<CSVSerializer>()
+            )
+        }
     }
 }

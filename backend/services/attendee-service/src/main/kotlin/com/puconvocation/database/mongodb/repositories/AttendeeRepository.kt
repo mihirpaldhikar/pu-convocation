@@ -36,6 +36,7 @@ class AttendeeRepository(
     }
 
     override suspend fun uploadAttendees(attendee: List<Attendee>): Boolean {
+        attendeesCollection.withDocumentClass<Attendee>().drop()
         return attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
     }
 }
