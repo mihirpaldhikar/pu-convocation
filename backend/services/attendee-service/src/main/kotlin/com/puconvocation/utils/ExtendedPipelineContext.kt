@@ -11,17 +11,22 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.utils
 
-import com.puconvocation.controllers.AttendeeController
-import com.puconvocation.routes.attendeesRoute
+import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.routing.*
-import org.koin.java.KoinJavaComponent
+import io.ktor.server.response.*
+import io.ktor.util.pipeline.*
 
-fun Application.configureRouting() {
-    val attendeeController by KoinJavaComponent.inject<AttendeeController>(AttendeeController::class.java)
-    routing {
-        attendeesRoute(attendeeController = attendeeController)
-    }
+suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
+    repositoryResult: Result
+) {
+    call.respond(
+        status = repositoryResult.httpStatusCode ?: HttpStatusCode.OK,
+        message = if (repositoryResult is Result.Success) {
+            repositoryResult.responseData
+        } else {
+            repositoryResult
+        }
+    )
 }

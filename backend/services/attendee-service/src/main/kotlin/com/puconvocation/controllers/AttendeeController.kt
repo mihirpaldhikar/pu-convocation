@@ -63,7 +63,10 @@ class AttendeeController(
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.FILE_UPLOADED,
-            data = "File uploaded successfully"
+            data = mapOf(
+                "code" to ResponseCode.FILE_UPLOADED,
+                "message" to "File uploaded successfully"
+            )
         )
     }
 }
