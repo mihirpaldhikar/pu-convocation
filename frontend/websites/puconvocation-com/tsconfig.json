@@ -45,6 +45,12 @@
       ],
       "@utils/*": [
         "./src/utils/*"
+      ],
+      "@dto/*": [
+        "./src/dto/*"
+      ],
+      "@enums/*": [
+        "./src/enums/*"
       ]
     }
   },
