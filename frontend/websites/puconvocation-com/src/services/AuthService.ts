@@ -12,7 +12,7 @@
  */
 
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { Credentials, Response } from "@dto/index";
+import { Account, Credentials, Response } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 
 export default class AuthService {
@@ -54,7 +54,7 @@ export default class AuthService {
     }
   }
 
-  public async getAccount(): Promise<Response<any>> {
+  public async getAccount(): Promise<Response<Account | string>> {
     try {
       const response = await this.httpClient.get(
         `${this.ACCOUNT_SERVICE_URL}/`,
@@ -63,7 +63,7 @@ export default class AuthService {
       return {
         statusCode: StatusCode.SUCCESS,
         payload: response.data,
-      } as Response<string>;
+      } as Response<Account>;
     } catch (error) {
       let axiosError = (await error) as AxiosError;
       let errorResponseString = JSON.stringify(
@@ -75,5 +75,10 @@ export default class AuthService {
         message: errorResponse["message"],
       } as Response<string>;
     }
+  }
+
+  public async isAuthenticated(): Promise<boolean> {
+    const response = await this.getAccount();
+    return response.statusCode === StatusCode.AUTHENTICATION_FAILED;
   }
 }

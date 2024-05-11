@@ -11,6 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export type { default as Credentials } from "./Credentials";
-export type { Response } from "./Response";
-export type { default as Account } from "./Account";
+export default interface Account {
+  uuid: string;
+  username: string;
+  displayName: string;
+  email: string;
+  avatarURL: string;
+}
