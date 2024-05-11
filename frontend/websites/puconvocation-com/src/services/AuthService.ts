@@ -76,9 +76,4 @@ export default class AuthService {
       } as Response<string>;
     }
   }
-
-  public async isAuthenticated(): Promise<boolean> {
-    const response = await this.getAccount();
-    return response.statusCode === StatusCode.AUTHENTICATION_FAILED;
-  }
 }
