@@ -56,23 +56,31 @@ export default function SignInPage(): JSX.Element {
             className={"flex flex-col space-y-3"}
             onSubmit={async (event) => {
               event.preventDefault();
-              setLoading(true);
-              const credentials: Credentials = {
-                identifier: email,
-                password: password,
-              };
-              const response = await authService.sigIn(credentials);
-              if (
-                response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
-              ) {
-                router.replace("/console");
-              } else if ("message" in response) {
+              if (email.endsWith("@paruluniversity.ac.in")) {
+                setLoading(true);
+                const credentials: Credentials = {
+                  identifier: email,
+                  password: password,
+                };
+                const response = await authService.sigIn(credentials);
+                if (
+                  response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
+                ) {
+                  router.replace("/console");
+                } else if ("message" in response) {
+                  toast({
+                    title: "Authentication Failed",
+                    description: response.message,
+                    duration: 5000,
+                  });
+                  setLoading(false);
+                }
+              } else {
                 toast({
-                  title: "Authentication Failed",
-                  description: response.message,
+                  title: "Invalid Email",
+                  description: "Please use University Email Address.",
                   duration: 5000,
                 });
-                setLoading(false);
               }
             }}
           >
