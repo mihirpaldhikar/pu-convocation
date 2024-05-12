@@ -18,16 +18,20 @@ import { AuthService } from "@services/index";
 import { Credentials } from "@dto/index";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
+import { Button, Input } from "@components/ui";
+import { useToast } from "@hooks/use-toast";
 
 const authService: AuthService = new AuthService();
 
 export default function SignInPage(): JSX.Element {
   const router = useRouter();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   return (
-    <div className={"min-h-screen flex"}>
+    <div className={"min-h-screen flex flex-col"}>
       <div className={"m-auto w-full flex items-center justify-center"}>
         <div
           className={
@@ -52,6 +56,7 @@ export default function SignInPage(): JSX.Element {
             className={"flex flex-col space-y-3"}
             onSubmit={async (event) => {
               event.preventDefault();
+              setLoading(true);
               const credentials: Credentials = {
                 identifier: email,
                 password: password,
@@ -61,42 +66,47 @@ export default function SignInPage(): JSX.Element {
                 response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
               ) {
                 router.replace("/console");
+              } else if ("message" in response) {
+                toast({
+                  title: "Authentication Failed",
+                  description: response.message,
+                  duration: 5000,
+                });
+                setLoading(false);
               }
             }}
           >
-            <input
-              className={"border border-gray-300 rounded-md px-3 py-2"}
-              type={"email"}
-              placeholder={"Email..."}
-              required={true}
-              name={"email"}
+            <Input
+              name="email"
+              placeholder={"Email.."}
               value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
+              type={"email"}
+              disabled={loading}
+              onChange={(e) => {
+                setEmail(e.target.value);
               }}
             />
-            <input
-              className={"border border-gray-300 rounded-md px-3 py-2"}
+            <Input
+              name="password"
+              placeholder={"Password.."}
               type={"password"}
-              placeholder={"Password..."}
-              required={true}
-              name={"password"}
+              disabled={loading}
               value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
+              onChange={(e) => {
+                setPassword(e.target.value);
               }}
             />
-            <button
-              type="submit"
-              disabled={email.length === 0 || password.length === 0}
-              className={
-                "bg-red-600 text-white font-bold px-2 py-2 rounded-md disabled:bg-gray-300 disabled:text-gray-400"
-              }
+            <Button
+              type={"submit"}
+              disabled={email.length === 0 || password.length === 0 || loading}
             >
               Continue
-            </button>
+            </Button>
           </form>
         </div>
+      </div>
+      <div className={"flex justify-center pb-10"}>
+        <p>Parul University &copy; {new Date().getFullYear()}</p>
       </div>
     </div>
   );

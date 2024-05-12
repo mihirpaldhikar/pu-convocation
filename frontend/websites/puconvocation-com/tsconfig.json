@@ -51,6 +51,12 @@
       ],
       "@enums/*": [
         "./src/enums/*"
+      ],
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
       ]
     }
   },
