@@ -101,14 +101,15 @@ class AccountController(
     }
 
     suspend fun accountDetails(securityToken: SecurityToken): Result {
-        if (securityToken.refreshToken == null) {
+        if (securityToken.authorizationToken == null) {
             return Result.Error(
                 statusCode = HttpStatusCode.Unauthorized,
                 errorCode = ResponseCode.INVALID_TOKEN,
                 message = "Authorization token is invalid or expired."
             )
         }
-        val jwtResult = jsonWebToken.verifySecurityToken(securityToken.refreshToken, TokenType.AUTHORIZATION_TOKEN)
+        val jwtResult =
+            jsonWebToken.verifySecurityToken(securityToken.authorizationToken, TokenType.AUTHORIZATION_TOKEN)
         if (jwtResult is Result.Error) {
             return jwtResult
         }
