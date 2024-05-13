@@ -14,6 +14,7 @@
 package com.puconvocation.utils
 
 import com.puconvocation.Environment
+import com.puconvocation.enums.ResponseCode
 import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -96,5 +97,25 @@ fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {
     return SecurityToken(
         authorizationToken = authorizationToken,
         refreshToken = refreshToken
+    )
+}
+
+suspend fun PipelineContext<Unit, ApplicationCall>.removeSecurityTokens() {
+    setCookie(
+        name = CookieName.AUTHORIZATION_TOKEN_COOKIE,
+        value = "null",
+        expiresAt = 1
+    )
+    setCookie(
+        name = CookieName.REFRESH_TOKEN_COOKIE,
+        value = "null",
+        expiresAt = 1
+    )
+    sendResponse(
+        Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = hashMapOf("message" to "Logged out.")
+        )
     )
 }

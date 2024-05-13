@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.CredentialsDTO
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.utils.getSecurityTokens
+import com.puconvocation.utils.removeSecurityTokens
 import com.puconvocation.utils.sendResponse
 import com.puconvocation.utils.setAccountCookies
 import io.ktor.server.application.*
@@ -51,5 +52,8 @@ fun Routing.accountsRoute(
             sendResponse(result)
         }
 
+        post("/logout") {
+            removeSecurityTokens()
+        }
     }
 }
