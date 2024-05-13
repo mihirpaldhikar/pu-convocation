@@ -13,6 +13,7 @@
 
 import type { Metadata } from "next";
 import { ReactNode } from "react";
+import { ConsoleNavbar } from "@components/index";
 
 export const metadata: Metadata = {
   title: "PU Convocation Console",
@@ -26,6 +27,7 @@ interface RootLayout {
 export default function RootLayout({ children }: Readonly<RootLayout>) {
   return (
     <div className={"min-h-dvh flex-col flex"}>
+      <ConsoleNavbar />
       <main className={"flex-1"}>{children}</main>
     </div>
   );

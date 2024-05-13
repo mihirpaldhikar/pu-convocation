@@ -12,3 +12,4 @@
  */
 
 export { Input } from "./ui";
+export { default as ConsoleNavbar } from "./console_navbar";

@@ -22,3 +22,9 @@ export {
   ToastTitle,
 } from "./toast";
 export { Toaster } from "./toaster";
+export {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./popover";
