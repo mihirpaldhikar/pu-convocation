@@ -76,4 +76,8 @@ export default class AuthService {
       } as Response<string>;
     }
   }
+
+  public async login(
+    credentials: Credentials,
+  ): Promise<Response<Response<string>>> {}
 }

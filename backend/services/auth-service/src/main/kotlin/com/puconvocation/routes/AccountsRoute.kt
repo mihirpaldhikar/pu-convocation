@@ -52,7 +52,7 @@ fun Routing.accountsRoute(
             sendResponse(result)
         }
 
-        post("/logout") {
+        post("/signout") {
             removeSecurityTokens()
         }
     }
