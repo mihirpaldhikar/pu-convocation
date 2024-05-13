@@ -23,10 +23,14 @@ import {
 import { Account } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useToast } from "@hooks/use-toast";
 
 const authService: AuthService = new AuthService();
 
 export default function ConsoleNavbarMenu(): JSX.Element {
+  const router = useRouter();
+  const { toast } = useToast();
   const [account, setAccount] = useState<Account | null>(null);
 
   useEffect(() => {
@@ -78,7 +82,23 @@ export default function ConsoleNavbarMenu(): JSX.Element {
           </div>
           <div className={"flex items-center space-x-3"}>
             <Button variant={"outline"}>Manage Account</Button>
-            <Button variant={"outline"}>Sign Out</Button>
+            <Button
+              variant={"outline"}
+              onClick={async () => {
+                const response = await authService.signOut();
+                if (response.statusCode === StatusCode.SUCCESS) {
+                  router.refresh();
+                } else {
+                  toast({
+                    title: "Error",
+                    description: "An error occurred.",
+                    duration: 5000,
+                  });
+                }
+              }}
+            >
+              Sign Out
+            </Button>
           </div>
         </PopoverContent>
       </Popover>

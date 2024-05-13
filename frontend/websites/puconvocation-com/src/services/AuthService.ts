@@ -77,7 +77,26 @@ export default class AuthService {
     }
   }
 
-  public async login(
-    credentials: Credentials,
-  ): Promise<Response<Response<string>>> {}
+  public async signOut(): Promise<Response<string>> {
+    try {
+      const response = await this.httpClient.post(
+        `${this.ACCOUNT_SERVICE_URL}/signout`,
+      );
+      return {
+        statusCode:
+          response.status === 200 ? StatusCode.SUCCESS : StatusCode.FAILURE,
+        message: response.data["message"],
+      };
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
 }
