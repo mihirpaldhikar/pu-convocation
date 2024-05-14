@@ -69,4 +69,13 @@ class AttendeeController(
             )
         )
     }
+
+    suspend fun getTotalAttendees(): Result {
+        val totalCount = attendeeRepository.getTotalAttendees()
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = hashMapOf("count" to totalCount)
+        )
+    }
 }

@@ -19,4 +19,6 @@ interface AttendeeDatasource {
     suspend fun getAttendee(identifier: String): Attendee?
 
     suspend fun uploadAttendees(attendee: List<Attendee>): Boolean
+
+    suspend fun getTotalAttendees(): Int
 }

@@ -19,6 +19,7 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasource.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 
 class AttendeeRepository(
     database: MongoDatabase
@@ -38,5 +39,9 @@ class AttendeeRepository(
     override suspend fun uploadAttendees(attendee: List<Attendee>): Boolean {
         attendeesCollection.withDocumentClass<Attendee>().drop()
         return attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
+    }
+
+    override suspend fun getTotalAttendees(): Int {
+        return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
     }
 }

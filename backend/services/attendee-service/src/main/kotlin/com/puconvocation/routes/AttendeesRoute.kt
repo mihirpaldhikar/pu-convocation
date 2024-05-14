@@ -44,5 +44,10 @@ fun Routing.attendeesRoute(
             val result = attendeeController.uploadAttendees(multipartData)
             sendResponse(result)
         }
+
+        get("/totalCount") {
+            val result = attendeeController.getTotalAttendees()
+            sendResponse(result)
+        }
     }
 }
