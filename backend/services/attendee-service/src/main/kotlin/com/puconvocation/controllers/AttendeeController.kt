@@ -17,22 +17,26 @@ import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
+import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
 
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
-    private val csvSerializer: CSVSerializer
+    private val csvSerializer: CSVSerializer,
+    private val cacheService: CacheService<Attendee>
 ) {
     suspend fun getAttendee(identifier: String): Result {
-        val attendee = attendeeRepository.getAttendee(identifier)
-            ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
-                message = "Could not find attendee for identifier $identifier"
-            )
-
+        val attendee = cacheService.get(identifier) ?: attendeeRepository.getAttendee(identifier)
+        ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
+            message = "Could not find attendee for identifier $identifier"
+        )
+        if (cacheService.get(identifier) == null) {
+            cacheService.put(identifier, attendee)
+        }
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,

@@ -14,8 +14,10 @@
 package com.puconvocation.di
 
 import com.puconvocation.controllers.AttendeeController
+import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.serializers.CSVSerializer
+import com.puconvocation.services.CacheService
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -23,7 +25,8 @@ object ControllerModule {
         single<AttendeeController> {
             AttendeeController(
                 attendeeRepository = get<AttendeeRepository>(),
-                csvSerializer = get<CSVSerializer>()
+                csvSerializer = get<CSVSerializer>(),
+                cacheService = get<CacheService<Attendee>>()
             )
         }
     }

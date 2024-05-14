@@ -14,8 +14,11 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
+import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.serializers.CSVSerializer
+import com.puconvocation.services.CacheService
 import org.koin.dsl.module
+import java.util.concurrent.TimeUnit
 
 object CoreModule {
     val init = module {
@@ -25,6 +28,13 @@ object CoreModule {
 
         single<CSVSerializer> {
             CSVSerializer()
+        }
+
+        single<CacheService<Attendee>> {
+            CacheService(
+                expiryDuration = 5,
+                timeUnit = TimeUnit.MINUTES
+            )
         }
     }
 }

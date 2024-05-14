@@ -59,6 +59,9 @@ dependencies {
     // Apace CSV
     implementation("org.apache.commons:commons-csv:$apacheCSV")
 
+    // Google Guava Cache
+    implementation("com.google.guava:guava:33.2.0-jre")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
