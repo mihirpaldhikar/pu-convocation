@@ -31,15 +31,15 @@ export default function SignInPage(): JSX.Element {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className={"min-h-screen flex flex-col"}>
-      <div className={"m-auto w-full flex items-center justify-center"}>
+    <div className={"flex min-h-screen flex-col"}>
+      <div className={"m-auto flex w-full items-center justify-center"}>
         <div
           className={
-            "flex flex-col rounded-lg md:border md:border-gray-300 w-full md:w-1/2 lg:w-1/3 px-7 py-5 space-y-5"
+            "flex w-full flex-col space-y-5 rounded-lg px-7 py-5 md:w-1/2 md:border md:border-gray-300 lg:w-1/3"
           }
         >
           <div
-            className={"flex justify-center flex-col items-center space-y-3"}
+            className={"flex flex-col items-center justify-center space-y-3"}
           >
             <Image
               src={universityLogo}

@@ -21,7 +21,7 @@ export default function ConsoleNavbar(): JSX.Element {
   return (
     <header
       className={
-        "w-full flex border-b bg-primary-foreground backdrop-blur-md items-center justify-between px-5 border-b-border fixed h-16"
+        "fixed flex h-16 w-full items-center justify-between border-b border-b-border bg-primary-foreground px-5 backdrop-blur-md"
       }
     >
       <Link href={"/console"} className="flex items-center space-x-3">
@@ -32,7 +32,7 @@ export default function ConsoleNavbar(): JSX.Element {
           fetchPriority={"high"}
           className={"w-20"}
         />
-        <h1 className={"font-bold text-xl"}>
+        <h1 className={"text-xl font-bold"}>
           <span className={"text-red-600"}>Parul</span> University
         </h1>
       </Link>

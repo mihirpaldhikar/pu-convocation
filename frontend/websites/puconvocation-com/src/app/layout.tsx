@@ -35,7 +35,7 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
-        <div className={"min-h-dvh flex-col flex"}>
+        <div className={"flex min-h-dvh flex-col"}>
           <main className={"flex-1"}>{children}</main>
           <Toaster />
         </div>

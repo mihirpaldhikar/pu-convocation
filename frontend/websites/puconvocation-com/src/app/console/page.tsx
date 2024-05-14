@@ -15,10 +15,10 @@ import { JSX } from "react";
 
 export default function ConsolePage(): JSX.Element {
   return (
-    <div className={"min-h-screen flex"}>
+    <div className={"flex min-h-screen"}>
       <div className={"m-auto"}>
         <div>
-          <h1 className={"font-bold text-2xl"}>PU Convocation Console</h1>
+          <h1 className={"text-2xl font-bold"}>PU Convocation Console</h1>
         </div>
       </div>
     </div>

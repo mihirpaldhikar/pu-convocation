@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <section className={"flex min-h-dvh"}>
       <div className="m-auto">
-        <div className={"flex flex-col space-y-6 items-center"}>
+        <div className={"flex flex-col items-center space-y-6"}>
           <Image
             src={UniversityLogo}
             alt={"Parul University"}
@@ -27,7 +27,7 @@ export default function Home() {
             className={"w-44"}
           />
           <div className={"flex flex-col items-center space-y-2"}>
-            <h1 className={"font-extrabold text-3xl"}>
+            <h1 className={"text-3xl font-extrabold"}>
               <span className={"text-red-600"}>Parul</span> University
             </h1>
             <h3 className={"font-bold"}>Convocation Management System</h3>

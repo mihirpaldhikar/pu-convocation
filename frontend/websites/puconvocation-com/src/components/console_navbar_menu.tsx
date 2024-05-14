@@ -52,10 +52,10 @@ export default function ConsoleNavbarMenu(): JSX.Element {
   return (
     <nav className="flex items-center space-x-5">
       <Button>Upload</Button>
-      <div className={"h-10 bg-foreground/20 w-0.5"}></div>
+      <div className={"h-10 w-0.5 bg-foreground/20"}></div>
       <Popover>
         <PopoverTrigger className={"flex items-center space-x-3"}>
-          <h4 className={"hidden md:block font-medium"}>{account.username}</h4>
+          <h4 className={"hidden font-medium md:block"}>{account.username}</h4>
           <Image
             src={account.avatarURL}
             alt={account.displayName}
@@ -65,7 +65,7 @@ export default function ConsoleNavbarMenu(): JSX.Element {
           />
         </PopoverTrigger>
         <PopoverContent
-          className={"rounded-md flex flex-col space-y-3 items-center"}
+          className={"flex flex-col items-center space-y-3 rounded-md"}
         >
           <h5 className={"text-xs text-primary"}>{account.email}</h5>
           <div className={"flex flex-col items-center space-y-2"}>
@@ -76,7 +76,7 @@ export default function ConsoleNavbarMenu(): JSX.Element {
               height={80}
               className={"rounded-full border border-border"}
             />
-            <h5 className={"font-semibold text-lg"}>
+            <h5 className={"text-lg font-semibold"}>
               Hi, {account.displayName.split(" ")[0]}
             </h5>
           </div>

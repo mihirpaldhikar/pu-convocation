@@ -25,7 +25,7 @@ interface RootLayout {
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
   return (
-    <div className={"min-h-dvh flex-col flex"}>
+    <div className={"flex min-h-dvh flex-col"}>
       <main className={"flex-1"}>{children}</main>
     </div>
   );
