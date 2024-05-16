@@ -45,6 +45,7 @@ at [puconvocation.com](https://puconvocation.com)
 ## Authors
 
 - [Mihir Paldhikar](https://mihirpaldhikar.com) (System Architect, Project Lead)
+- [Suhani Shah](https://github.com/Suhani-013) (Frontend Lead)
 
 ## License
 
