@@ -18,6 +18,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "assets.puconvocation.com"
+      },
+      {
+        protocol: "https",
         hostname: "avatars.githubusercontent.com"
       }
     ]
