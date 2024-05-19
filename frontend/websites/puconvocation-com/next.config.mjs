@@ -19,10 +19,6 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "assets.puconvocation.com"
-      },
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com"
       }
     ]
   }
