@@ -44,14 +44,14 @@ class CSVSerializer {
         for (attendee in csvParser.records) {
             attendees.add(
                 Attendee(
-                    enrollmentNumber = attendee.get("enrollmentNumber").toLong(),
-                    convocationId = attendee.get("convocationId"),
-                    studentName = attendee.get("studentName"),
-                    department = attendee.get("department"),
-                    institute = attendee.get("institute"),
-                    enclosure = attendee.get("enclosure"),
-                    row = attendee.get("row").toInt(),
-                    seat = attendee.get("seat").toInt(),
+                    enrollmentNumber = attendee.get("enrollmentNumber").toString(),
+                    convocationId = attendee.get("convocationId").toString(),
+                    studentName = attendee.get("studentName").toString(),
+                    department = attendee.get("department").toString(),
+                    institute = attendee.get("institute").toString(),
+                    enclosure = attendee.get("enclosure").toString(),
+                    row = attendee.get("row").toString(),
+                    seat = attendee.get("seat").toString(),
                     enterFrom = Direction.valueOf(attendee.get("enterFrom").uppercase())
                 )
             )

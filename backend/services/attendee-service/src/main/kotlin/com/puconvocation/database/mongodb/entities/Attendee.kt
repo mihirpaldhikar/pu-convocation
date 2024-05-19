@@ -18,13 +18,13 @@ import com.puconvocation.enums.Direction
 import org.bson.codecs.pojo.annotations.BsonId
 
 data class Attendee(
-    @BsonId @Expose val enrollmentNumber: Long,
+    @BsonId @Expose val enrollmentNumber: String,
     @Expose val convocationId: String,
     @Expose val studentName: String,
     @Expose val department: String,
     @Expose val institute: String,
     @Expose val enclosure: String,
-    @Expose val row: Int,
-    @Expose val seat: Int,
+    @Expose val row: String,
+    @Expose val seat: String,
     @Expose val enterFrom: Direction
 )
