@@ -37,9 +37,9 @@ export default async function middleware(req: NextRequest) {
       credentials: "same-origin",
       method: "GET",
       headers: {
-        Cookie: req.cookies.toString(),
-      },
-    },
+        Cookie: req.cookies.toString()
+      }
+    }
   );
 
   if (
@@ -61,9 +61,9 @@ export default async function middleware(req: NextRequest) {
           credentials: "same-origin",
           method: "POST",
           headers: {
-            Cookie: req.cookies.toString(),
-          },
-        },
+            Cookie: req.cookies.toString()
+          }
+        }
       );
 
       if (refreshSecurityTokenResponse.status !== 200) {
@@ -83,18 +83,18 @@ export default async function middleware(req: NextRequest) {
 
       nextResponse.cookies
         .set("__puc_at__", authorizationTokenCookie["__puc_at__"], {
-          expires: new Date(authorizationTokenCookie["Expires"]),
+          expires: Date.now() + 3600000,
           domain: authorizationTokenCookie["Domain"],
           path: authorizationTokenCookie["Path"],
           sameSite: "lax",
-          httpOnly: true,
+          httpOnly: true
         })
         .set("__puc_rt__", refreshTokenCookie["puc_rt__"], {
-          expires: new Date(refreshTokenCookie["Expires"]),
+          expires: Date.now() + 2629800000,
           domain: refreshTokenCookie["Domain"],
           path: refreshTokenCookie["Path"],
           sameSite: "lax",
-          httpOnly: true,
+          httpOnly: true
         });
 
       return nextResponse;
