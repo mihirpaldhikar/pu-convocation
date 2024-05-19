@@ -14,12 +14,7 @@
 "use client";
 import { Fragment, JSX, useEffect, useState } from "react";
 import { AuthService } from "@services/index";
-import {
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/ui";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@components/ui";
 import { Account } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import Image from "next/image";
@@ -61,6 +56,9 @@ export default function ConsoleNavbarMenu(): JSX.Element {
             alt={account.displayName}
             width={40}
             height={40}
+            draggable={false}
+            priority={true}
+            fetchPriority={"high"}
             className={"rounded-full border border-border"}
           />
         </PopoverTrigger>
@@ -74,6 +72,9 @@ export default function ConsoleNavbarMenu(): JSX.Element {
               alt={account.displayName}
               width={80}
               height={80}
+              draggable={false}
+              priority={true}
+              fetchPriority={"high"}
               className={"rounded-full border border-border"}
             />
             <h5 className={"text-lg font-semibold"}>
