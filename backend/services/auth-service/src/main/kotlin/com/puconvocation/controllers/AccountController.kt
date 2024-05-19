@@ -74,7 +74,7 @@ class AccountController(
             uuid = uuid,
             email = newAccount.email,
             username = newAccount.username,
-            avatarURL = "",
+            avatarURL = "https://assets.puconvocation.com/avatars/default.png",
             displayName = newAccount.displayName,
             password = Hash().generateSaltedHash(newAccount.password)
         )
