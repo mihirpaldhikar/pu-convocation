@@ -14,3 +14,4 @@
 export { Input } from "./ui";
 export { default as ConsoleNavbar } from "./console_navbar";
 export { default as VenueMap } from "./venue_map";
+export { default as Seat } from "./seat";
