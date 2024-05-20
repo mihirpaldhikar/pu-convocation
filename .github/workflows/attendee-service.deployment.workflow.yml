@@ -1,4 +1,4 @@
-name: Build and Deploy auth-service to Cloud Run
+name: Build and Deploy attendee-service to Cloud Run
 
 on:
   push:
