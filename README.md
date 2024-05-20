@@ -8,6 +8,12 @@ at [puconvocation.com](https://puconvocation.com)
 ```
 # (root)
 |
+|-- .github/
+|   |-- workflows/
+|   |   |-- attendee-service.deployment.workflow.yml
+|   |   |-- auth-service.deployment.workflow.yml
+|   |   |-- puconvoation-com.deployment.workflow.yml
+|
 |-- backend/
 |   |-- services/
 |   |   |-- attendee-service/
