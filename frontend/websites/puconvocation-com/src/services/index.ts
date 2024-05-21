@@ -12,3 +12,4 @@
  */
 
 export { default as AuthService } from "./AuthService";
+export { default as AttendeeService } from "./AttendeeService";

@@ -50,7 +50,7 @@ export default function Seat({
         />
       </svg>
       <span
-        className={`absolute inset-0 z-10 flex items-center justify-center pl-1 pt-3 font-medium 
+        className={`absolute inset-0 z-10 flex items-center justify-center pl-1 pt-3 text-xs font-medium 
         ${active ? "text-white" : "text-gray-500"}`}
       >
         {number}

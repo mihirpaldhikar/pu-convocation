@@ -11,8 +11,16 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export type { default as Credentials } from "./Credentials";
-export type { Response } from "./Response";
-export type { default as Account } from "./Account";
-export type { default as Attendee } from "./Attendee";
-export type { default as AttendeeWithEnclosureMetadata } from "./AttendeeWithEnclosureMetadata";
+import { Attendee } from "@dto/index";
+
+export default interface AttendeeWithEnclosureMetadata {
+  attendee: Attendee;
+  enclosureMetadata: {
+    enclosure: string;
+    rows: Array<{
+      letter: string;
+      start: number;
+      end: number;
+    }>;
+  };
+}
