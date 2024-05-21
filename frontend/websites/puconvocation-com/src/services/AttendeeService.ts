@@ -552,11 +552,24 @@ export default class AuthService {
       );
       if (response.status === 200) {
         const attendee = response.data as Attendee;
+        const enclosure = enclosures.filter(
+          (e) => e.letter === attendee.enclosure,
+        )[0];
+
+        const rowIndex = enclosure.rows.indexOf(
+          enclosure.rows.filter((r) => r.letter === attendee.row)[0],
+        );
+
+        enclosure.rows = enclosure.rows.slice(
+          rowIndex - 2 <= 0 ? 0 : rowIndex - 2,
+          rowIndex + 4 >= enclosure.rows.length
+            ? enclosure.rows.length
+            : rowIndex + 4,
+        );
+
         const attendeeWithEnclosureMetadata: AttendeeWithEnclosureMetadata = {
           attendee: attendee,
-          enclosureMetadata: enclosures.filter(
-            (e) => e.letter === attendee.enclosure,
-          )[0],
+          enclosureMetadata: enclosure,
         };
 
         return {
