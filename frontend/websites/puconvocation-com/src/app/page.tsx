@@ -14,8 +14,13 @@
 import Image from "next/image";
 import { Button, Input } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const [identifier, setIdentifier] = useState<string>("");
+  const router = useRouter();
+
   return (
     <section className={"min-h-screen w-full"}>
       <div className="relative z-0 min-h-dvh w-full">
@@ -79,12 +84,17 @@ export default function Home() {
                 }
                 onSubmit={(event) => {
                   event.preventDefault();
+                  router.push(`/attendee/${identifier}`);
                 }}
               >
                 <Input
                   placeholder={"Enter Enrollment or CRR number"}
                   type={"text"}
                   className={"w-1/3 bg-white font-medium text-black"}
+                  value={identifier}
+                  onChange={(e) => {
+                    setIdentifier(e.target.value);
+                  }}
                 />
                 <Button className={"space-x-3 rounded-full"} type={"submit"}>
                   Find your Seat <ChevronRightIcon width={20} height={20} />
