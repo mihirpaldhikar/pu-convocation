@@ -12,12 +12,17 @@
  */
 
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { Attendee, AttendeeWithEnclosureMetadata, Response } from "@dto/index";
+import {
+  Attendee,
+  AttendeeWithEnclosureMetadata,
+  Enclosure,
+  Response,
+} from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 
-const enclosures = [
+const enclosures: Array<Enclosure> = [
   {
-    enclosure: "1",
+    letter: "1",
     rows: [
       {
         letter: "A",
@@ -77,7 +82,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "2",
+    letter: "2",
     rows: [
       {
         letter: "A",
@@ -137,7 +142,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "3",
+    letter: "3",
     rows: [
       {
         letter: "A",
@@ -197,7 +202,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "4",
+    letter: "4",
     rows: [
       {
         letter: "L",
@@ -207,7 +212,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "5",
+    letter: "5",
     rows: [
       {
         letter: "L",
@@ -217,7 +222,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "6",
+    letter: "6",
     rows: [
       {
         letter: "M",
@@ -277,7 +282,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "7",
+    letter: "7",
     rows: [
       {
         letter: "M",
@@ -337,7 +342,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "8",
+    letter: "8",
     rows: [
       {
         letter: "M",
@@ -397,7 +402,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "9",
+    letter: "9",
     rows: [
       {
         letter: "M",
@@ -457,7 +462,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "10",
+    letter: "10",
     rows: [
       {
         letter: "X",
@@ -467,7 +472,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "11",
+    letter: "11",
     rows: [
       {
         letter: "X",
@@ -482,7 +487,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "12",
+    letter: "12",
     rows: [
       {
         letter: "X",
@@ -497,7 +502,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "13",
+    letter: "13",
     rows: [
       {
         letter: "X",
@@ -512,7 +517,7 @@ const enclosures = [
     ],
   },
   {
-    enclosure: "14",
+    letter: "14",
     rows: [
       {
         letter: "Z",
@@ -550,7 +555,7 @@ export default class AuthService {
         const attendeeWithEnclosureMetadata: AttendeeWithEnclosureMetadata = {
           attendee: attendee,
           enclosureMetadata: enclosures.filter(
-            (e) => e.enclosure === attendee.enclosure,
+            (e) => e.letter === attendee.enclosure,
           )[0],
         };
 

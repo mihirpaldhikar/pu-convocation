@@ -11,16 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Attendee } from "@dto/index";
+import { Attendee, Enclosure } from "@dto/index";
 
 export default interface AttendeeWithEnclosureMetadata {
   attendee: Attendee;
-  enclosureMetadata: {
-    enclosure: string;
-    rows: Array<{
-      letter: string;
-      start: number;
-      end: number;
-    }>;
-  };
+  enclosureMetadata: Enclosure;
 }
