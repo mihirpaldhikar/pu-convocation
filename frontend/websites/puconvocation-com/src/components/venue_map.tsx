@@ -25,7 +25,7 @@ export default function VenueMap({
       viewBox="0 0 430 603"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={"h-[500px] w-[300px] lg:h-[500px] lg:w-[400px]"}
+      className={"h-[500px] w-[350px] lg:h-[500px] lg:w-[400px]"}
     >
       <g id="Venu Map">
         <rect

@@ -14,9 +14,9 @@
 import { Fragment, JSX } from "react";
 import { AttendeeService } from "@services/index";
 import { StatusCode } from "@enums/StatusCode";
-import { Seat, SpaceShip, Ticket, VenueMap } from "@components/index";
+import { SeatMap, SpaceShip, Ticket, VenueMap } from "@components/index";
 import Link from "next/link";
-import { MapIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { MapIcon, MapPinIcon, TicketIcon } from "@heroicons/react/24/outline";
 
 const attendeeService: AttendeeService = new AttendeeService();
 
@@ -27,7 +27,10 @@ export default async function AttendeePage({
 }): Promise<JSX.Element> {
   const response = await attendeeService.getAttendee(params.identifier);
 
-  if (response.statusCode === StatusCode.ATTENDEE_NOT_FOUND) {
+  if (
+    response.statusCode === StatusCode.ATTENDEE_NOT_FOUND &&
+    "message" in response
+  ) {
     return (
       <div className="flex h-fit items-center">
         <div className="m-auto space-y-3 text-center">
@@ -53,89 +56,61 @@ export default async function AttendeePage({
     );
   }
 
-  if ("payload" in response && typeof response.payload === "object") {
+  if (
+    response.statusCode === StatusCode.SUCCESS &&
+    "payload" in response &&
+    typeof response.payload === "object"
+  ) {
     const payload = response.payload;
 
     return (
-      <div
+      <section
         className={
-          "grid min-h-dvh grid-cols-1 place-content-center md:grid-cols-2"
+          "grid grid-cols-1 gap-10 pb-10 pt-14 md:grid-cols-2 md:pt-24"
         }
       >
-        <div className={"flex justify-center"}>
-          <div className={"flex flex-col justify-center"}>
-            <h3
-              className={"flex items-center space-x-3 py-5 text-xl font-bold"}
-            >
-              <span className={"mr-3 block text-red-500"}>
-                <MapIcon className={"w-7"} />
-              </span>
-              Venue Map
-            </h3>
+        <div className={"flex  flex-col items-center"}>
+          <div className={"flex flex-col space-y-5"}>
+            <div className={"flex w-full items-center space-x-2 pl-0 md:pl-6"}>
+              <MapIcon className={"w-7 text-primary"} />
+              <h2 className={"text-xl font-bold"}>Venue Map</h2>
+            </div>
             <VenueMap activeEnclosure={payload.attendee.enclosure} />
           </div>
         </div>
-        <div className={"space-y-7"}>
-          <Ticket attendee={payload.attendee} />
-          <div className={"flex flex-col"}>
-            <div className={"flex flex-col py-5"}>
-              <h3 className={"flex items-center space-x-3  text-xl font-bold"}>
-                <span className={"mr-3 block text-red-500"}>
-                  <MapPinIcon className={"w-7"} />
-                </span>
-                Seat Map
-              </h3>
-              <h5 className={"pl-10 text-xs"}>
-                Enter from{" "}
-                <span className={"text-red-500"}>
-                  {payload.attendee.enterFrom.toLowerCase()}
-                </span>
-              </h5>
+        <div className={"flex flex-col px-7 md:px-0 md:pl-20"}>
+          <div className="flex flex-col space-y-5">
+            <div className={"flex flex-col space-y-5"}>
+              <div className={"flex w-full items-center space-x-2"}>
+                <TicketIcon className={"w-7 text-primary"} />
+                <h2 className={"text-xl font-bold"}>Pass</h2>
+              </div>
+              <Ticket attendee={payload.attendee} />
             </div>
-            {payload.enclosureMetadata.rows.map((row) => {
-              return (
-                <div
-                  key={row.letter}
-                  className={"flex h-10 items-center space-x-5 text-center"}
-                >
-                  <h5
-                    className={`w-[30px] items-center rounded-md  px-2 py-1 text-xs  ${
-                      row.letter === payload.attendee.row
-                        ? "border-red-700 bg-red-500 text-white"
-                        : "border-gray-300 bg-gray-200 text-gray-500"
-                    }`}
-                  >
-                    {row.letter}
-                  </h5>
-                  <div
-                    className={
-                      "flex h-10 max-w-[450px] justify-evenly space-x-5 overflow-x-auto px-5"
-                    }
-                  >
-                    {Array.from(
-                      { length: row.end - row.start + 1 },
-                      (v, k) => k + row.start,
-                    )
-                      .reverse()
-                      .map((seat) => {
-                        return (
-                          <Seat
-                            key={seat}
-                            number={seat}
-                            active={
-                              row.letter === payload.attendee.row &&
-                              seat === parseInt(payload.attendee.seat)
-                            }
-                          />
-                        );
-                      })}
-                  </div>
+            <div className={"flex flex-col space-y-5 pt-10"}>
+              <div className={"flex flex-col space-y-2"}>
+                <div className={"flex w-full items-center space-x-2"}>
+                  <MapPinIcon className={"w-7 text-primary"} />
+                  <h2 className={"text-xl font-bold"}>Seat Map</h2>
                 </div>
-              );
-            })}
+                <h6 className={"pl-9 text-xs font-medium"}>
+                  Enter from{" "}
+                  <span className={"font-bold text-primary"}>
+                    {payload.attendee.enterFrom}
+                  </span>
+                </h6>
+              </div>
+              <SeatMap
+                enclosure={payload.enclosureMetadata}
+                activeArrangement={{
+                  row: payload.attendee.row,
+                  seat: payload.attendee.seat,
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
