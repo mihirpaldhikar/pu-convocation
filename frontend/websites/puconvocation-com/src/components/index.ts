@@ -17,3 +17,4 @@ export { default as VenueMap } from "./venue_map";
 export { default as Seat } from "./seat";
 export { default as SpaceShip } from "./spaceship";
 export { default as Ticket } from "./ticket";
+export { default as Navbar } from "./navbar";
