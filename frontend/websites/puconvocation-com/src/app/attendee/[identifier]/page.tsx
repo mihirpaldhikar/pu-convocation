@@ -26,7 +26,7 @@ export default async function AttendeePage({
   params: { identifier: string };
 }): Promise<JSX.Element> {
   const response = await attendeeService.getAttendee(params.identifier);
-  console.log(response);
+
   if (response.statusCode === StatusCode.ATTENDEE_NOT_FOUND) {
     return (
       <div className="flex h-fit items-center">
