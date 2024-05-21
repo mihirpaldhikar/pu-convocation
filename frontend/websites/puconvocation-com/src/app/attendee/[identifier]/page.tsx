@@ -109,7 +109,7 @@ export default async function AttendeePage({
                   </h5>
                   <div
                     className={
-                      "flex h-10 max-w-[450px] justify-evenly space-x-3 overflow-x-auto px-5"
+                      "flex h-10 max-w-[450px] justify-evenly space-x-5 overflow-x-auto px-5"
                     }
                   >
                     {Array.from(
