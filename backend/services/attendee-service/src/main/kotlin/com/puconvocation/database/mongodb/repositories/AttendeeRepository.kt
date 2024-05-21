@@ -30,7 +30,7 @@ class AttendeeRepository(
 
     override suspend fun getAttendee(identifier: String): Attendee? {
         if (identifier.toLongOrNull() != null) {
-            return attendeesCollection.withDocumentClass<Attendee>().find(eq("_id", identifier.toLong())).firstOrNull()
+            return attendeesCollection.withDocumentClass<Attendee>().find(eq("_id", identifier)).firstOrNull()
         }
         return attendeesCollection.withDocumentClass<Attendee>().find(eq(Attendee::convocationId.name, identifier))
             .firstOrNull()
