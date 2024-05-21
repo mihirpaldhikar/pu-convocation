@@ -92,20 +92,20 @@ export default async function AttendeePage({
                 </span>
               </h5>
             </div>
-            {payload.enclosureMetadata.rows.map((rows) => {
+            {payload.enclosureMetadata.rows.map((row) => {
               return (
                 <div
-                  key={rows.letter}
+                  key={row.letter}
                   className={"flex h-10 items-center space-x-5 text-center"}
                 >
                   <h5
                     className={`w-[30px] items-center rounded-md  px-2 py-1 text-xs  ${
-                      rows.letter === payload.attendee.row
+                      row.letter === payload.attendee.row
                         ? "border-red-700 bg-red-500 text-white"
                         : "border-gray-300 bg-gray-200 text-gray-500"
                     }`}
                   >
-                    {rows.letter}
+                    {row.letter}
                   </h5>
                   <div
                     className={
@@ -113,20 +113,22 @@ export default async function AttendeePage({
                     }
                   >
                     {Array.from(
-                      { length: rows.end - rows.start + 1 },
-                      (v, k) => k + rows.start,
-                    ).map((seat) => {
-                      return (
-                        <Seat
-                          key={seat}
-                          number={seat}
-                          active={
-                            rows.letter === payload.attendee.row &&
-                            seat === parseInt(payload.attendee.seat)
-                          }
-                        />
-                      );
-                    })}
+                      { length: row.end - row.start + 1 },
+                      (v, k) => k + row.start,
+                    )
+                      .reverse()
+                      .map((seat) => {
+                        return (
+                          <Seat
+                            key={seat}
+                            number={seat}
+                            active={
+                              row.letter === payload.attendee.row &&
+                              seat === parseInt(payload.attendee.seat)
+                            }
+                          />
+                        );
+                      })}
                   </div>
                 </div>
               );
