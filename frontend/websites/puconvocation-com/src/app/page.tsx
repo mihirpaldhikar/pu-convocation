@@ -38,7 +38,7 @@ export default function Home() {
             "absolute inset-0 z-10 h-[25vh] pt-16 text-white md:min-h-dvh"
           }
         >
-          <div className="flex h-full flex-col items-center justify-center space-y-3 pt-12 md:space-y-5 md:pt-0">
+          <div className="flex h-full flex-col items-center justify-center space-y-3 pt-20 md:space-y-5 md:pt-0">
             <h5 className={"text-2xl font-bold md:text-5xl"}>
               Welcome{" "}
               <span className={"text-lg font-medium md:text-2xl"}>to the</span>
@@ -79,7 +79,7 @@ export default function Home() {
                 }}
               />
               <Button type={"submit"} className={"space-x-3 rounded-full"}>
-                <h5>Find your Seat</h5>
+                <h5 className={"font-bold"}>Find your Seat</h5>
                 <ChevronRightIcon className={"w-5"} />
               </Button>
             </form>
