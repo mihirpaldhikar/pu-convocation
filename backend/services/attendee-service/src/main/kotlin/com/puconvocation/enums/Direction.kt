@@ -15,5 +15,6 @@ package com.puconvocation.enums
 
 enum class Direction {
     LEFT,
-    RIGHT
+    RIGHT,
+    NONE
 }
