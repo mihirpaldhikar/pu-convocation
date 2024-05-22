@@ -19,3 +19,5 @@ export { default as SpaceShip } from "./spaceship";
 export { default as Ticket } from "./ticket";
 export { default as Navbar } from "./navbar";
 export { default as SeatMap } from "./seat_map";
+export { default as Footer } from "./footer";
+export { default as Flags } from "./flags";

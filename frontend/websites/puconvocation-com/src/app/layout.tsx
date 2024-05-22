@@ -16,7 +16,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
-import { Navbar } from "@components/index";
+import { Footer, Navbar } from "@components/index";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -41,6 +41,7 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
           <main className={"flex-1 pt-16"}>{children}</main>
           <Toaster />
         </div>
+        <Footer />
       </body>
     </html>
   );
