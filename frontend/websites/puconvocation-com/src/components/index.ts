@@ -21,3 +21,6 @@ export { default as Navbar } from "./navbar";
 export { default as SeatMap } from "./seat_map";
 export { default as Footer } from "./footer";
 export { default as Flags } from "./flags";
+export { default as GalleryFlagsRight } from "./gallery_flags_right";
+export { default as GalleryFlagsLeft } from "./gallery_flags_left";
+export { default as AboutUsBlob } from "./about_us_blob";

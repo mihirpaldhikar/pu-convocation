@@ -16,6 +16,14 @@ import { Button, Input } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  AboutUsBlob,
+  GalleryFlagsLeft,
+  GalleryFlagsRight,
+} from "@components/index";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import Link from "next/link";
 
 export default function Home() {
   const [identifier, setIdentifier] = useState<string>("");
@@ -83,6 +91,111 @@ export default function Home() {
                 <ChevronRightIcon className={"w-5"} />
               </Button>
             </form>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div className={"flex justify-between"}>
+          <GalleryFlagsLeft />
+          <h2
+            className={
+              "pt-14 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
+            }
+          >
+            Gallery
+          </h2>
+          <GalleryFlagsRight />
+        </div>
+        <div className={"px-5 py-5 md:px-16 md:py-14"}>
+          <Carousel autoPlay={true} infiniteLoop={true} showThumbs={false}>
+            <div>
+              <Image
+                width={700}
+                height={200}
+                src={"https://assets.puconvocation.com/carousel/1.png"}
+                alt={"PU Convocation"}
+                priority={true}
+                fetchPriority={"high"}
+                className={"rounded-lg md:rounded-2xl"}
+              />
+            </div>
+            <div>
+              <Image
+                width={700}
+                height={200}
+                src={"https://assets.puconvocation.com/carousel/2.png"}
+                alt={"PU Convocation"}
+                priority={true}
+                fetchPriority={"high"}
+                className={"rounded-lg md:rounded-2xl"}
+              />
+            </div>
+            <div>
+              <Image
+                width={700}
+                height={200}
+                src={"https://assets.puconvocation.com/carousel/3.png"}
+                alt={"PU Convocation"}
+                priority={true}
+                fetchPriority={"high"}
+                className={"rounded-lg md:rounded-2xl"}
+              />
+            </div>
+            <div>
+              <Image
+                width={700}
+                height={200}
+                src={"https://assets.puconvocation.com/carousel/4.png"}
+                alt={"PU Convocation"}
+                priority={true}
+                fetchPriority={"high"}
+                className={"w-32 rounded-lg md:rounded-2xl"}
+              />
+            </div>
+          </Carousel>
+        </div>
+        <div className={"flex flex-col justify-between md:flex-row"}>
+          <div className={"flex-1"}>
+            <div className={"relative z-0"}>
+              <AboutUsBlob />
+              <h2
+                className={
+                  "absolute inset-x-10 inset-y-24 z-10 text-2xl font-bold"
+                }
+              >
+                About Us
+              </h2>
+            </div>
+            <div className={"flex flex-col space-y-5 px-10 py-5"}>
+              <p>
+                A multidisciplinary destination of learning and innovation,
+                propelling quality in higher education with a record of being
+                India’s youngest private university to receive NAAC A++
+                accreditation in the first cycle. Situated in Vadodara, Gujarat,
+                Parul University, is an embodiment of the nation&apos;s essence
+                of cultural heritage blended with modern innovations and
+                academic practices for student enrichment, while fostering
+                national and global development.
+              </p>
+              <Link
+                className={
+                  "w-fit rounded-full bg-primary px-5 py-2 font-bold text-white "
+                }
+                href={"https://paruluniversity.ac.in"}
+                target={"_blank"}
+              >
+                Know More
+              </Link>
+            </div>
+          </div>
+          <div className={"flex flex-1 justify-end px-3 py-3"}>
+            <Image
+              src={"https://assets.puconvocation.com/images/about_us.png"}
+              alt={"1"}
+              width={600}
+              height={200}
+              className={"rounded-lg"}
+            />
           </div>
         </div>
       </div>
