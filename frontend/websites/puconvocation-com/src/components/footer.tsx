@@ -60,10 +60,46 @@ export default function Footer(): JSX.Element {
                   </Link>
                 </p>
                 <p className={"font-medium"}>
-                  Coordinated By Mohit Rathod, Manish Rahevar
+                  Coordinated By{" "}
+                  <Link
+                    href={"https://www.linkedin.com/in/er-mohit-68a447a0"}
+                    target={"_blank"}
+                    className={"font-medium text-primary"}
+                  >
+                    Prof. Mohit Rathod
+                  </Link>{" "}
+                  ,{" "}
+                  <Link
+                    href={
+                      "https://www.linkedin.com/in/manish-rahevar-b08a87108"
+                    }
+                    target={"_blank"}
+                    className={"font-medium text-primary"}
+                  >
+                    Prof. Manish Rahevar
+                  </Link>
                 </p>
                 <p className={"font-medium"}>
-                  Guided By Dr. Swapnil M Parikh, Prof. Sumitra Menaria
+                  Guided By{" "}
+                  <Link
+                    href={
+                      "https://www.linkedin.com/in/dr-swapnil-parikh-43a90715"
+                    }
+                    target={"_blank"}
+                    className={"font-medium text-primary"}
+                  >
+                    Dr. Swapnil M Parikh
+                  </Link>
+                  ,{" "}
+                  <Link
+                    href={
+                      "https://www.linkedin.com/in/sumitra-menaria-0bab23123"
+                    }
+                    target={"_blank"}
+                    className={"font-medium text-primary"}
+                  >
+                    Prof. Sumitra Menaria
+                  </Link>
                 </p>
               </div>
             </div>
