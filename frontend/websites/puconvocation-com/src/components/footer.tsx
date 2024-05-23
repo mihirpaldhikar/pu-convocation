@@ -31,16 +31,12 @@ export default function Footer(): JSX.Element {
             >
               <div className={"space-y-3"}>
                 <h4 className={"text-lg font-bold"}>Who We Are</h4>
-                <p className={"font-medium"}>
+                <p className={"w-full font-medium md:w-1/2"}>
                   Parul University - Gujarat’s leading private university having
-                  the <br />
-                  foundation of its first Institution laid in 1993 as Parul
-                  Group of <br />
-                  Institutes, and later established and incorporated as Parul{" "}
-                  <br />
-                  University in 2015 under the Gujarat Private Universities
-                  (Second <br />
-                  Amendment ) Act of 2009.
+                  the foundation of its first Institution laid in 1993 as Parul
+                  Group of Institutes, and later established and incorporated as
+                  Parul University in 2015 under the Gujarat Private
+                  Universities (Second Amendment ) Act of 2009.
                 </p>
               </div>
               <div className={"space-y-3"}>
@@ -63,9 +59,11 @@ export default function Footer(): JSX.Element {
                     Mihir Paldhikar
                   </Link>
                 </p>
-                <p className={"font-medium"}>Coordinated By Mohit Rathod</p>
                 <p className={"font-medium"}>
-                  Guided By DR. Swapnil Parikh, Prof. Sumitra Menaria
+                  Coordinated By Mohit Rathod, Manish Rahevar
+                </p>
+                <p className={"font-medium"}>
+                  Guided By Dr. Swapnil M Parikh, Prof. Sumitra Menaria
                 </p>
               </div>
             </div>
