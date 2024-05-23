@@ -43,7 +43,7 @@ export default function SeatMap({
             </h5>
             <div
               className={
-                "no-scrollbar mx-3 flex h-7 max-w-[470px] justify-evenly space-x-4 overflow-x-auto px-2"
+                "mx-3 flex h-7 max-w-[470px] justify-evenly space-x-4 overflow-x-auto px-2"
               }
             >
               {Array.from(
