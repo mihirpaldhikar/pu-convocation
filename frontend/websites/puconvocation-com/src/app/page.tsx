@@ -16,6 +16,8 @@ import { Button, Input } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import FlagLeft from "@components/flag_left";
+
 
 export default function Home() {
   const [identifier, setIdentifier] = useState<string>("");
@@ -23,6 +25,7 @@ export default function Home() {
 
   return (
     <section className={"min-h-dvh"}>
+      {/*HERO SECTION*/}
       <div className={"min-h-[25vh] md:min-h-dvh"}>
         <div className={"relative z-0 h-[25vh] md:min-h-dvh"}>
           <Image
@@ -69,7 +72,7 @@ export default function Home() {
               }}
             >
               <Input
-                className={"w-full bg-white font-medium text-black md:w-1/5"}
+                className={"w-full bg-white font-medium text-black md:w-1/5 rounded-full"}
                 name={"identifier"}
                 type={"text"}
                 value={identifier}
@@ -86,6 +89,15 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/*GALLERY*/}
+      <div className="bg-[#f5f5f5]">
+        <div className="flex w-full ">
+              <FlagLeft/>
+        </div>
+      </div>
+
+
     </section>
   );
 }
