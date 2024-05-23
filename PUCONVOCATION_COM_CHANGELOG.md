@@ -1,3 +1,10 @@
+## 1.0.3 (May 22, 2024)
+
+### Fixes:
+
+- Fix an issue in which it was not possible to scroll the seat map with the mouse.
+- Fix an issue in which seat map was not getting properly rendered as per the enclosure metadata.
+
 ## 1.0.2 (May 22, 2024)
 
 ### Fixes:
