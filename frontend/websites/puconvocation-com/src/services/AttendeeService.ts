@@ -169,6 +169,16 @@ const enclosures: Array<Enclosure> = [
         start: 1,
         end: 20,
       },
+      {
+        letter: "Y",
+        start: 1,
+        end: 13,
+      },
+      {
+        letter: "Z",
+        start: 1,
+        end: 14,
+      },
     ],
   },
 ];
