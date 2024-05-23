@@ -68,9 +68,9 @@ export default function Footer(): JSX.Element {
               </div>
             </div>
             <div className={"flex flex-col items-center space-y-5"}>
-              <p>
-                &copy; {new Date().getFullYear()} CSE Department, PIT, Parul
-                University
+              <p className={"text-center text-xs"}>
+                &copy; {new Date().getFullYear()} CSE Department, Parul
+                Institute of Technology, FET, Parul University
               </p>
               <Link href={"https://paruluniversity.ac.in"} target={"_blank"}>
                 <h1 className={"text-4xl font-black text-black/30 md:text-8xl"}>
