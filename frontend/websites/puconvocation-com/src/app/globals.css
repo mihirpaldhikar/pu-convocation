@@ -15,6 +15,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body{
+    background-color: #FAF9F6;
+}
 
 @layer base {
     :root {
