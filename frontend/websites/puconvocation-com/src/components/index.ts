@@ -26,3 +26,4 @@ export { default as GalleryFlagsLeft } from "./gallery_flags_left";
 export { default as AboutUsBlob } from "./about_us_blob";
 export { IdentifierForm } from "./forms";
 export { default as ConvocationCarousel } from "./convocation_carousel";
+export { default as ProgressBar } from "./progress_bar";
