@@ -24,8 +24,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     <section className={"min-h-dvh"}>
-      <div className={"min-h-[25vh] md:min-h-dvh"}>
-        <div className={"relative z-0 h-[25vh] md:min-h-dvh"}>
+      <div className={"min-h-[30vh] md:min-h-dvh"}>
+        <div className={"relative z-0 h-[30vh] md:min-h-dvh"}>
           <Image
             alt={"Graduating Students"}
             src={"https://assets.puconvocation.com/images/hero.png"}
@@ -36,16 +36,16 @@ export default function Home() {
         </div>
         <div
           className={
-            "absolute inset-0 z-10 h-[25vh] pt-16 text-white md:min-h-dvh"
+            "absolute inset-0 z-10 h-[30vh] pt-16 text-white md:min-h-dvh"
           }
         >
-          <div className="flex h-full flex-col items-center justify-center space-y-3 pt-20 md:space-y-5 md:pt-0">
+          <div className="flex h-full flex-col items-center justify-center space-y-3 pt-24 md:space-y-5 md:pt-0">
             <h5 className={"text-2xl font-bold md:text-5xl"}>
               Welcome{" "}
               <span className={"text-lg font-medium md:text-2xl"}>to the</span>
             </h5>
             <div className={"flex items-center space-x-3 md:space-x-5"}>
-              <h1 className={"text-4xl font-black md:text-7xl"}>PU</h1>
+              <h1 className={"text-4xl font-black md:text-7xl"}>PRE</h1>
               <svg
                 viewBox="0 0 648 87"
                 fill="none"
