@@ -13,9 +13,9 @@
 
 import { JSX } from "react";
 
-export default function FlagLeft(): JSX.Element {
+export default function GallerySvg(): JSX.Element {
     return (
-        <svg width="1512" height="275" viewBox="0 0 1512 275" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="1512" height="250" viewBox="0 0 1512 250" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clipPath="url(#clip0_59_245)">
                 <rect width="1512" height="3235" transform="translate(0 -902)" fill="#F5F5F5"/>
                 <path

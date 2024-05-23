@@ -20,6 +20,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "assets.puconvocation.com"
+      },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com"
       }
     ]
   }
