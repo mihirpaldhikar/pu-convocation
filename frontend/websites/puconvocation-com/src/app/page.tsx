@@ -64,7 +64,7 @@ export default function Home() {
               onSubmit={(event) => {
                 event.preventDefault();
                 if (identifier.length !== 0) {
-                  router.push(`/attendee/${identifier}`);
+                  router.push(`/attendee/${identifier.toUpperCase()}`);
                 }
               }}
             >

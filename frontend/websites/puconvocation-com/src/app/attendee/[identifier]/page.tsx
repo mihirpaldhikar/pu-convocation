@@ -25,7 +25,9 @@ export default async function AttendeePage({
 }: {
   params: { identifier: string };
 }): Promise<JSX.Element> {
-  const response = await attendeeService.getAttendee(params.identifier);
+  const response = await attendeeService.getAttendee(
+    params.identifier.toUpperCase(),
+  );
 
   if (
     response.statusCode === StatusCode.ATTENDEE_NOT_FOUND &&
