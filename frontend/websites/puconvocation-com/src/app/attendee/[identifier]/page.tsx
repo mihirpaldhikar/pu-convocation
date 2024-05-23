@@ -93,7 +93,10 @@ export default async function AttendeePage({
                   <MapPinIcon className={"w-7 text-primary"} />
                   <h2 className={"text-xl font-bold"}>Seat Map</h2>
                 </div>
-                <h6 className={"pl-9 text-xs font-medium"}>
+                <h6
+                  className={"pl-9 text-xs font-medium"}
+                  hidden={payload.attendee.enterFrom === "NONE"}
+                >
                   Enter from{" "}
                   <span className={"font-bold text-primary"}>
                     {payload.attendee.enterFrom}

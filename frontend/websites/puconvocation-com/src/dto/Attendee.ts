@@ -20,5 +20,5 @@ export default interface Attendee {
   enclosure: string;
   row: string;
   seat: string;
-  enterFrom: "LEFT" | "RIGHT";
+  enterFrom: "LEFT" | "RIGHT" | "NONE";
 }
