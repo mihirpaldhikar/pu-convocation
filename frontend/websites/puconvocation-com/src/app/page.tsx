@@ -25,6 +25,29 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Link from "next/link";
 
+const carouselImages = [
+  {
+    url: "https://assets.puconvocation.com/carousel/1.png",
+    alt: "Parul University Convocation",
+  },
+  {
+    url: "https://assets.puconvocation.com/carousel/2.png",
+    alt: "Parul University Convocation",
+  },
+  {
+    url: "https://assets.puconvocation.com/carousel/3.png",
+    alt: "Parul University Convocation",
+  },
+  {
+    url: "https://assets.puconvocation.com/carousel/4.png",
+    alt: "Parul University Convocation",
+  },
+  {
+    url: "https://assets.puconvocation.com/carousel/5.png",
+    alt: "Parul University Convocation",
+  },
+];
+
 export default function Home() {
   const [identifier, setIdentifier] = useState<string>("");
   const router = useRouter();
@@ -106,52 +129,36 @@ export default function Home() {
           </h2>
           <GalleryFlagsRight />
         </div>
-        <div className={"px-5 py-5 md:px-16 md:py-14"}>
-          <Carousel autoPlay={true} infiniteLoop={true} showThumbs={false}>
-            <div>
-              <Image
-                width={700}
-                height={200}
-                src={"https://assets.puconvocation.com/carousel/1.png"}
-                alt={"PU Convocation"}
-                priority={true}
-                fetchPriority={"high"}
-                className={"rounded-lg md:rounded-2xl"}
-              />
-            </div>
-            <div>
-              <Image
-                width={700}
-                height={200}
-                src={"https://assets.puconvocation.com/carousel/2.png"}
-                alt={"PU Convocation"}
-                priority={true}
-                fetchPriority={"high"}
-                className={"rounded-lg md:rounded-2xl"}
-              />
-            </div>
-            <div>
-              <Image
-                width={700}
-                height={200}
-                src={"https://assets.puconvocation.com/carousel/3.png"}
-                alt={"PU Convocation"}
-                priority={true}
-                fetchPriority={"high"}
-                className={"rounded-lg md:rounded-2xl"}
-              />
-            </div>
-            <div>
-              <Image
-                width={700}
-                height={200}
-                src={"https://assets.puconvocation.com/carousel/4.png"}
-                alt={"PU Convocation"}
-                priority={true}
-                fetchPriority={"high"}
-                className={"w-32 rounded-lg md:rounded-2xl"}
-              />
-            </div>
+        <div
+          className={
+            "flex items-center justify-center px-5 py-5 md:px-16 md:py-14"
+          }
+        >
+          <Carousel
+            infiniteLoop
+            swipeable
+            autoPlay={true}
+            showArrows={false}
+            showStatus={false}
+            showThumbs={false}
+            showIndicators={true}
+            dynamicHeight={true}
+            className="w-full md:w-3/4"
+          >
+            {carouselImages.map((image, index) => {
+              return (
+                <div key={index}>
+                  <Image
+                    height={1000}
+                    width={1500}
+                    className="rounded-lg md:rounded-2xl"
+                    src={image.url}
+                    alt={image.alt}
+                    priority={true}
+                  />
+                </div>
+              );
+            })}
           </Carousel>
         </div>
         <div className={"flex flex-col justify-between md:flex-row"}>
@@ -191,9 +198,10 @@ export default function Home() {
           <div className={"flex flex-1 justify-end px-3 py-3"}>
             <Image
               src={"https://assets.puconvocation.com/images/about_us.png"}
-              alt={"1"}
+              alt={"About Us"}
               width={600}
-              height={200}
+              height={400}
+              priority={true}
               className={"rounded-lg"}
             />
           </div>
