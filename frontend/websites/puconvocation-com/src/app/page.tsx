@@ -10,48 +10,18 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-"use client";
+
 import Image from "next/image";
-import { Button, Input } from "@components/ui";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   AboutUsBlob,
+  ConvocationCarousel,
   GalleryFlagsLeft,
   GalleryFlagsRight,
+  IdentifierForm,
 } from "@components/index";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Link from "next/link";
 
-const carouselImages = [
-  {
-    url: "https://assets.puconvocation.com/carousel/1.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/2.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/3.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/4.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/5.png",
-    alt: "Parul University Convocation",
-  },
-];
-
 export default function Home() {
-  const [identifier, setIdentifier] = useState<string>("");
-  const router = useRouter();
-
   return (
     <section className={"min-h-dvh"}>
       <div className={"min-h-[25vh] md:min-h-dvh"}>
@@ -90,30 +60,7 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <form
-              className="flex w-full flex-col items-center justify-center space-x-4 space-y-3 px-16 pt-5 md:flex-row md:space-y-0 md:px-0"
-              onSubmit={(event) => {
-                event.preventDefault();
-                if (identifier.length !== 0) {
-                  router.push(`/attendee/${identifier.toUpperCase()}`);
-                }
-              }}
-            >
-              <Input
-                className={"w-full bg-white font-medium text-black md:w-1/5"}
-                name={"identifier"}
-                type={"text"}
-                value={identifier}
-                placeholder={"Enter Enrollment or Convocation No."}
-                onChange={(event) => {
-                  setIdentifier(event.target.value);
-                }}
-              />
-              <Button type={"submit"} className={"space-x-3 rounded-full"}>
-                <h5 className={"font-bold"}>Find your Seat</h5>
-                <ChevronRightIcon className={"w-5"} />
-              </Button>
-            </form>
+            <IdentifierForm />
           </div>
         </div>
       </div>
@@ -134,32 +81,7 @@ export default function Home() {
             "flex items-center justify-center px-5 py-5 md:px-16 md:py-14"
           }
         >
-          <Carousel
-            infiniteLoop
-            swipeable
-            autoPlay={true}
-            showArrows={false}
-            showStatus={false}
-            showThumbs={false}
-            showIndicators={true}
-            dynamicHeight={true}
-            className="w-full md:w-3/4"
-          >
-            {carouselImages.map((image, index) => {
-              return (
-                <div key={index}>
-                  <Image
-                    height={1000}
-                    width={1500}
-                    className="rounded-lg md:rounded-2xl"
-                    src={image.url}
-                    alt={image.alt}
-                    priority={true}
-                  />
-                </div>
-              );
-            })}
-          </Carousel>
+          <ConvocationCarousel />
         </div>
         <div className={"flex flex-col justify-between md:flex-row"}>
           <div className={"flex-1"}>
