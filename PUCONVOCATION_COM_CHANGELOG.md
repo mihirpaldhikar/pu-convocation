@@ -1,3 +1,19 @@
+## 1.0.4 (May 22, 2024)
+
+### New:
+
+- Add Progress bar while the attendee details are being fetched.
+
+### Fixes:
+
+- Fix home page UI by making it a server component instead of client component for better performance and optimization.
+- Fix hero image for better accessibility.
+
+### Miscellaneous:
+
+- Change Enclosure Metadata to comply with latest venue changes.
+- Refactor Carousel for easier management of the images.
+
 ## 1.0.3 (May 22, 2024)
 
 ### Fixes:
