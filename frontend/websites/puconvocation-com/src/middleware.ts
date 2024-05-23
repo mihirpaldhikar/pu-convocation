@@ -107,5 +107,13 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(absoluteURL.toString());
       }
     }
+  } else {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-pathname", req.nextUrl.pathname);
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 }

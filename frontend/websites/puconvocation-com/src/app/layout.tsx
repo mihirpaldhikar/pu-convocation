@@ -17,6 +17,7 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Footer, Navbar } from "@components/index";
+import { headers } from "next/headers";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -31,14 +32,23 @@ interface RootLayout {
 }
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
+  const pathname = headers().get("x-pathname");
+  console.log(pathname);
+  const hideNavbar =
+    pathname === null ||
+    pathname.includes("/console") ||
+    pathname.includes("/auth");
+
   return (
     <html lang="en">
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
         <div className={"flex min-h-dvh flex-col"}>
-          <Navbar />
-          <main className={"flex-1 pt-20"}>{children}</main>
+          <Navbar hidden={hideNavbar} />
+          <main className={`flex-1 ${hideNavbar ? "pt-0" : "pt-20"}`}>
+            {children}
+          </main>
           <Toaster />
         </div>
         <Footer />
