@@ -71,6 +71,13 @@ export default async function AttendeePage({
       >
         <div className={"flex  flex-col items-center"}>
           <div className={"flex flex-col space-y-5"}>
+            <div className={"flex flex-col space-y-5 pb-7 md:hidden"}>
+              <div className={"flex w-full items-center space-x-2"}>
+                <TicketIcon className={"w-7 text-primary"} />
+                <h2 className={"text-xl font-bold"}>Pass</h2>
+              </div>
+              <Ticket attendee={payload.attendee} />
+            </div>
             <div className={"flex w-full items-center space-x-2 pl-0 md:pl-6"}>
               <MapIcon className={"w-7 text-primary"} />
               <h2 className={"text-xl font-bold"}>Venue Map</h2>
@@ -80,14 +87,14 @@ export default async function AttendeePage({
         </div>
         <div className={"flex flex-col px-7 md:px-0 md:pl-20"}>
           <div className="flex flex-col space-y-5">
-            <div className={"flex flex-col space-y-5"}>
+            <div className={"hidden flex-col space-y-5 md:flex"}>
               <div className={"flex w-full items-center space-x-2"}>
                 <TicketIcon className={"w-7 text-primary"} />
                 <h2 className={"text-xl font-bold"}>Pass</h2>
               </div>
               <Ticket attendee={payload.attendee} />
             </div>
-            <div className={"flex flex-col space-y-5 pt-10"}>
+            <div className={"flex flex-col space-y-5 pt-0 md:pt-10"}>
               <div className={"flex flex-col space-y-2"}>
                 <div className={"flex w-full items-center space-x-2"}>
                   <MapPinIcon className={"w-7 text-primary"} />
