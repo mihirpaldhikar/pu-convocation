@@ -24,8 +24,11 @@ at [puconvocation.com](https://puconvocation.com)
 |   |   |-- puconvocation-com/
 |
 |-- .gitignore
+|-- ATTENSEE_SERVICE_CHANGELOG.md
+|-- AUTH_SERVICE_CHANGELOG.md
 |-- COPYRIGHT_TEMPLATE.txt
 |-- LICENSE.md
+|-- PUCONVOCATION_COM_CHANGELOG.md
 |-- README.md
 
 ```
