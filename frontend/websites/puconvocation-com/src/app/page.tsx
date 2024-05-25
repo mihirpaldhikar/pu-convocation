@@ -24,8 +24,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     <section className={"min-h-dvh"}>
-      <div className={"min-h-[30vh] md:min-h-dvh"}>
-        <div className={"relative z-0 h-[30vh] md:min-h-dvh"}>
+      <div className={"min-h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
+        <div className={"relative z-0 h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
           <Image
             alt={"Graduating Students"}
             src={"https://assets.puconvocation.com/images/hero.png"}
@@ -36,21 +36,25 @@ export default function Home() {
         </div>
         <div
           className={
-            "absolute inset-0 z-10 h-[30vh] pt-16 text-white md:min-h-dvh"
+            "absolute inset-0 z-10 h-[30vh] pt-16 text-white md:min-h-[50vh] lg:min-h-dvh"
           }
         >
           <div className="flex h-full flex-col items-center justify-center space-y-3 pt-24 md:space-y-5 md:pt-0">
-            <h5 className={"text-2xl font-bold md:text-5xl"}>
+            <h5 className={"text-2xl font-bold md:text-3xl lg:text-5xl"}>
               Welcome{" "}
-              <span className={"text-lg font-medium md:text-2xl"}>to the</span>
+              <span className={"text-lg font-medium md:text-xl lg:text-2xl"}>
+                to the
+              </span>
             </h5>
             <div className={"flex items-center space-x-3 md:space-x-5"}>
-              <h1 className={"text-4xl font-black md:text-7xl"}>PRE</h1>
+              <h1 className={"text-4xl font-black md:text-5xl lg:text-7xl"}>
+                PRE
+              </h1>
               <svg
                 viewBox="0 0 648 87"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className={"w-[250px] md:w-[600px]"}
+                className={"w-[250px] md:w-[400px] lg:w-[600px]"}
               >
                 <path
                   fillRule="evenodd"
