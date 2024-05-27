@@ -11,27 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation
+package com.puconvocation.plugins
 
-import com.puconvocation.plugins.*
+import com.puconvocation.di.CoreModule
 import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import org.koin.ktor.plugin.Koin
 
-fun main() {
-    embeddedServer(
-        Netty,
-        port = 8083,
-        host = "0.0.0.0",
-        module = Application::module
-    )
-        .start(wait = true)
-}
-
-fun Application.module() {
-    configureDependencyInjection()
-    configureHTTP()
-    configureMonitoring()
-    configureSerialization()
-    configureRouting()
+fun Application.configureDependencyInjection() {
+    install(Koin) {
+        modules(CoreModule.init)
+    }
 }
