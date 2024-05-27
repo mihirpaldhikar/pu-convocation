@@ -11,15 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.di
+package com.puconvocation
 
-import com.puconvocation.Environment
-import org.koin.dsl.module
-
-object CoreModule {
-    val init = module {
-        single<Environment> {
-            Environment()
-        }
-    }
+class Environment {
+    val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
 }
