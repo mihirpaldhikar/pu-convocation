@@ -15,6 +15,7 @@ val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
+val mongoDBVersion: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -53,6 +54,10 @@ dependencies {
     // Koin Dependencies
     implementation("io.insert-koin:koin-ktor:$koinVersion")
     implementation("io.insert-koin:koin-logger-slf4j:$koinVersion")
+
+    // MongoDB Dependencies
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongoDBVersion")
+    implementation("org.mongodb:bson-kotlinx:$mongoDBVersion")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

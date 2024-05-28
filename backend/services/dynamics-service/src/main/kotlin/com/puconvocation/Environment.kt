@@ -15,4 +15,8 @@ package com.puconvocation
 
 class Environment {
     val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
+
+    val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
+    val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
+
 }

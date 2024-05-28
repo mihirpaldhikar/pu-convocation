@@ -11,18 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.database.mongodb
 
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import com.mongodb.kotlin.client.coroutine.MongoClient
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-        )
+class MongoDBConnector(
+    private val connectionURL: String,
+    private val database: String,
+) {
+    fun connectToDatabase(): MongoDatabase {
+        val mongoClient: MongoClient = MongoClient.create(connectionURL)
+        return mongoClient.getDatabase(database)
     }
 }
