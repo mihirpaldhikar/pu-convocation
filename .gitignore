@@ -82,3 +82,7 @@ out/
 */secrets/
 
 */.well-known/
+
+### MISC ###
+run-auth-service.ps1
+run-attendee-service.ps1
