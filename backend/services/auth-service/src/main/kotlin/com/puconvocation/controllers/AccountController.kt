@@ -32,7 +32,7 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController
 ) {
-    suspend fun signIn(credentials: CredentialsDTO): Result {
+    suspend fun authenticate(credentials: CredentialsDTO): Result {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
             statusCode = HttpStatusCode.NotFound,
             errorCode = ResponseCode.ACCOUNT_NOT_FOUND,

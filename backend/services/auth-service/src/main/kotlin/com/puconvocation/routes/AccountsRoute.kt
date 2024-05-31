@@ -30,7 +30,7 @@ fun Routing.accountsRoute(
     route("/accounts") {
         post("/signin") {
             val credentials: CredentialsDTO = call.receive<CredentialsDTO>()
-            val result = accountController.signIn(credentials)
+            val result = accountController.authenticate(credentials)
             setAccountCookies(result)
         }
 
