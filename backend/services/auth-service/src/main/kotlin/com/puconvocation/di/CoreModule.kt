@@ -14,7 +14,10 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
+import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.security.passkeys.PasskeyRelyingParty
+import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
 object CoreModule {
@@ -25,6 +28,13 @@ object CoreModule {
 
         single<JsonWebToken> {
             JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
+        }
+
+        single<RelyingParty> {
+            PasskeyRelyingParty(
+                developmentMode = get<Environment>().developmentMode,
+                accountRepository = get<AccountRepository>()
+            ).getRelyingParty()
         }
     }
 }
