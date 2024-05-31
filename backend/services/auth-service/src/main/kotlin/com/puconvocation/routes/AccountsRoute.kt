@@ -14,7 +14,7 @@
 package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.AuthenticationCredentials
-import com.puconvocation.commons.dto.NewAccountDTO
+import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.utils.getSecurityTokens
@@ -74,7 +74,7 @@ fun Routing.accountsRoute(
         }
 
         post("/signup") {
-            val newAccount: NewAccountDTO = call.receive<NewAccountDTO>()
+            val newAccount: NewAccount = call.receive<NewAccount>()
             val result = accountController.signUp(newAccount)
             setAccountCookies(result)
         }

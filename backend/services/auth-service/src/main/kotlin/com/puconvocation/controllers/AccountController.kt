@@ -14,7 +14,7 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.AuthenticationCredentials
-import com.puconvocation.commons.dto.NewAccountDTO
+import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.AuthenticationStrategy
@@ -93,7 +93,7 @@ class AccountController(
         )
     }
 
-    suspend fun signUp(newAccount: NewAccountDTO): Result {
+    suspend fun signUp(newAccount: NewAccount): Result {
         if (accountRepository.accountExists(newAccount.email) || accountRepository.accountExists(newAccount.username)) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
