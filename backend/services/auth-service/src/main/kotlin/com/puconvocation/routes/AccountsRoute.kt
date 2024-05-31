@@ -73,7 +73,7 @@ fun Routing.accountsRoute(
             setAccountCookies(result)
         }
 
-        post("/signup") {
+        post("/new") {
             val newAccount: NewAccount = call.receive<NewAccount>()
             val result = accountController.signUp(newAccount)
             setAccountCookies(result)
