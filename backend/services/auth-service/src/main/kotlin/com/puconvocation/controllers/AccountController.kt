@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.CredentialsDTO
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
+import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.core.Hash
@@ -29,6 +30,7 @@ import org.bson.types.ObjectId
 class AccountController(
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
+    private val passkeyController: PasskeyController
 ) {
     suspend fun signIn(credentials: CredentialsDTO): Result {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
@@ -36,6 +38,19 @@ class AccountController(
             errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
             message = "Account not found."
         )
+
+        if (account.fidoCredential.isNotEmpty() && account.password == null) {
+            val result = passkeyController.startPasskeyChallenge(credentials.identifier)
+            return result
+        }
+
+        if (credentials.password == null || account.password == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.BadRequest,
+                errorCode = ResponseCode.NULL_PASSWORD,
+                message = "Please provide password."
+            )
+        }
 
         val passwordMatched = Hash().verify(credentials.password, account.password)
 
@@ -76,7 +91,7 @@ class AccountController(
             username = newAccount.username,
             avatarURL = "https://assets.puconvocation.com/avatars/default.png",
             displayName = newAccount.displayName,
-            password = Hash().generateSaltedHash(newAccount.password),
+            password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)
@@ -86,6 +101,11 @@ class AccountController(
                 errorCode = ResponseCode.ACCOUNT_CREATION_ERROR,
                 message = "Account creation failed. Please try again."
             )
+        }
+
+        if (newAccount.authenticationStrategy === AuthenticationStrategy.PASSKEY) {
+            val result = passkeyController.startPasskeyRegistration(account.username)
+            return result;
         }
 
         val securityTokens = SecurityToken(

@@ -14,10 +14,12 @@
 package com.puconvocation.commons.dto
 
 import com.google.gson.annotations.Expose
+import com.puconvocation.enums.AuthenticationStrategy
 
 data class NewAccountDTO(
     @Expose val username: String,
     @Expose val displayName: String,
     @Expose val email: String,
-    @Expose val password: String,
+    @Expose val password: String?=null,
+    @Expose val authenticationStrategy: AuthenticationStrategy
 )

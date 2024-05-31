@@ -11,12 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.commons.dto
+package com.puconvocation.enums
 
-import com.google.gson.annotations.Expose
-
-data class CredentialsDTO(
-    @Expose val identifier: String,
-    @Expose val password: String? = null,
-    @Expose val passkeyCredentials: String? = null,
-)
+enum class AuthenticationStrategy {
+    PASSWORD,
+    PASSKEY
+}
