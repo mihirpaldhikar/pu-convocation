@@ -45,9 +45,9 @@ fun Routing.accountsRoute(
         }
 
         post("/passkeys/register") {
-            val credentials = call.receive<AuthenticationCredentials>()
-            val result = passkeyController.startPasskeyRegistration(
-                identifier = credentials.identifier
+            val securityToken = getSecurityTokens()
+            val result = passkeyController.startPasskeyRegistrationWithSecurityToken(
+                securityToken
             )
             sendResponse(result)
         }

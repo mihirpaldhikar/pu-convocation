@@ -17,6 +17,7 @@ import com.google.common.cache.CacheBuilder
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
@@ -53,6 +54,27 @@ class PasskeyController(
             data = pkcOptions.toCredentialsCreateJson(),
             encodeStringAsJSON = true
         )
+    }
+
+    suspend fun startPasskeyRegistrationWithSecurityToken(securityToken: SecurityToken): Result {
+        if (securityToken.authorizationToken == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Unauthorized,
+                errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+                message = "Invalid authorization token"
+            )
+        }
+        val jwtVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = securityToken.authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN
+        )
+
+        if (jwtVerificationResult is Result.Error) {
+            return jwtVerificationResult
+        }
+
+        return this.startPasskeyRegistration(jwtVerificationResult.responseData as String)
+
     }
 
     suspend fun validatePasskeyRegistration(identifier: String, credentials: String): Result {
