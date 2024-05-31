@@ -16,6 +16,7 @@ package com.puconvocation.routes
 import com.puconvocation.commons.dto.CredentialsDTO
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.controllers.AccountController
+import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.removeSecurityTokens
 import com.puconvocation.utils.sendResponse
@@ -25,12 +26,42 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
 fun Routing.accountsRoute(
-    accountController: AccountController
+    accountController: AccountController,
+    passkeyController: PasskeyController
 ) {
     route("/accounts") {
         post("/authenticate") {
             val credentials: CredentialsDTO = call.receive<CredentialsDTO>()
             val result = accountController.authenticate(credentials)
+            setAccountCookies(result)
+        }
+
+        post("/passkeys/register") {
+            val credentials = call.receive<CredentialsDTO>()
+            val result = passkeyController.startPasskeyRegistration(
+                identifier = credentials.identifier
+            )
+            sendResponse(result)
+        }
+
+        post("/passkeys/validateRegistrationChallenge") {
+            val credentials = call.receive<CredentialsDTO>()
+            val result =
+                passkeyController.validatePasskeyRegistration(
+                    identifier = credentials.identifier,
+                    credentials = credentials.passkeyCredentials!!
+                )
+
+            sendResponse(result)
+        }
+
+        post("/passkeys/validatePasskeyChallenge") {
+            val credentials = call.receive<CredentialsDTO>()
+            val result = passkeyController.validatePasskeyChallenge(
+                identifier = credentials.identifier,
+                credentials = credentials.passkeyCredentials!!
+            )
+
             setAccountCookies(result)
         }
 
@@ -46,14 +77,15 @@ fun Routing.accountsRoute(
             setAccountCookies(result)
         }
 
+        post("/signout") {
+            removeSecurityTokens()
+        }
+
         get("/") {
             val securityToken = getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
             sendResponse(result)
         }
 
-        post("/signout") {
-            removeSecurityTokens()
-        }
     }
 }
