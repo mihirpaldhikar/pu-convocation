@@ -19,6 +19,7 @@ import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasources.AccountDatasource
 import com.puconvocation.database.mongodb.entities.Account
+import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.utils.RegexValidator
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
@@ -73,6 +74,21 @@ class AccountRepository(
 
     override suspend fun deleteAccount(uuid: String): Boolean {
         return accountCollection.withDocumentClass<Account>().deleteOne(eq("_id", ObjectId(uuid))).wasAcknowledged()
+    }
+
+    override suspend fun addFidoCredentials(uuid: String, fidoCredential: FidoCredential): Boolean {
+        val account =
+            accountCollection.withDocumentClass<Account>().find(eq("_id", ObjectId(uuid))).firstOrNull() ?: return false
+
+        val fidoCredentialSet = account.fidoCredential
+        fidoCredentialSet.add(fidoCredential)
+
+        return accountCollection.withDocumentClass<Account>().updateOne(
+            eq("_id", ObjectId(uuid)),
+            Updates.combine(
+                Updates.set(Account::fidoCredential.name, fidoCredentialSet),
+            )
+        ).wasAcknowledged()
     }
 
 }

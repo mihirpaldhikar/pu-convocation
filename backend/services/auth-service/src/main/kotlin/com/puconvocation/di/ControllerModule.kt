@@ -14,8 +14,10 @@
 package com.puconvocation.di
 
 import com.puconvocation.controllers.AccountController
+import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
+import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -24,6 +26,14 @@ object ControllerModule {
             AccountController(
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>()
+            )
+        }
+
+        single<PasskeyController> {
+            PasskeyController(
+                accountRepository = get<AccountRepository>(),
+                jsonWebToken = get<JsonWebToken>(),
+                rp = get<RelyingParty>()
             )
         }
     }

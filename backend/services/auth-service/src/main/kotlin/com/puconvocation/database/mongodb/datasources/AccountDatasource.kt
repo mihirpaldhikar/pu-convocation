@@ -14,6 +14,7 @@
 package com.puconvocation.database.mongodb.datasources
 
 import com.puconvocation.database.mongodb.entities.Account
+import com.puconvocation.security.dao.FidoCredential
 
 interface AccountDatasource {
     suspend fun accountExists(identifier: String): Boolean
@@ -25,4 +26,7 @@ interface AccountDatasource {
     suspend fun updateAccount(account: Account): Boolean
 
     suspend fun deleteAccount(uuid: String): Boolean
+
+    suspend fun addFidoCredentials(uuid: String, fidoCredential: FidoCredential): Boolean
+
 }
