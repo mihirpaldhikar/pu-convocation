@@ -32,6 +32,24 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController
 ) {
+    suspend fun getAuthenticationStrategy(identifier: String): Result {
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+            message = "Account not found."
+        )
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = hashMapOf(
+                "authenticationStrategy" to
+                        if (account.fidoCredential.isEmpty()) AuthenticationStrategy.PASSWORD
+                        else AuthenticationStrategy.PASSKEY
+            )
+        )
+    }
+
     suspend fun authenticate(credentials: CredentialsDTO): Result {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
             statusCode = HttpStatusCode.NotFound,
