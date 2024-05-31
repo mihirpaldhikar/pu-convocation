@@ -11,20 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.entities
+package com.puconvocation.security.dao
 
 import com.google.gson.annotations.Expose
-import com.puconvocation.security.dao.FidoCredential
-import com.puconvocation.security.dao.SaltedHash
-import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
 
-data class Account(
-    @BsonId @Expose val uuid: ObjectId,
-    @Expose val username: String,
-    @Expose val displayName: String,
-    @Expose val email: String,
-    @Expose val avatarURL: String,
-    val password: SaltedHash,
-    val fidoCredential: MutableSet<FidoCredential>
+data class FidoCredential(
+    @Expose val keyId:String,
+    @Expose val keyType: String,
+    @Expose val publicKeyCose: String,
 )

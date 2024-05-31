@@ -76,7 +76,8 @@ class AccountController(
             username = newAccount.username,
             avatarURL = "https://assets.puconvocation.com/avatars/default.png",
             displayName = newAccount.displayName,
-            password = Hash().generateSaltedHash(newAccount.password)
+            password = Hash().generateSaltedHash(newAccount.password),
+            fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)
         if (!response) {
