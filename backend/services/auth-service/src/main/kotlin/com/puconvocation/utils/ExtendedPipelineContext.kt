@@ -33,6 +33,9 @@ val environment: Environment by KoinJavaComponent.inject(Environment::class.java
 suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
     repositoryResult: Result
 ) {
+    if (repositoryResult is Result.Success && repositoryResult.encodeStringAsJSON == true) {
+        call.response.headers.append("Content-Type", "application/json")
+    }
     call.respond(
         status = repositoryResult.httpStatusCode ?: HttpStatusCode.OK,
         message = if (repositoryResult is Result.Success) {

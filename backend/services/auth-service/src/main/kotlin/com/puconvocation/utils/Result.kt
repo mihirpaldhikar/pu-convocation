@@ -20,7 +20,7 @@ import io.ktor.http.*
 sealed class Result(
     val httpStatusCode: HttpStatusCode? = HttpStatusCode.OK,
     val responseCode: ResponseCode,
-    val responseData: Any
+    val responseData: Any,
 ) {
     data class Error(
         val statusCode: HttpStatusCode? = HttpStatusCode.BadRequest,
@@ -33,7 +33,8 @@ sealed class Result(
     data class Success(
         val statusCode: HttpStatusCode? = HttpStatusCode.OK,
         val code: ResponseCode = ResponseCode.OK,
-        @Expose val data: Any
+        @Expose val data: Any,
+        val encodeStringAsJSON: Boolean? = false
     ) : Result(
         httpStatusCode = statusCode, responseCode = code, responseData = data
 
