@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.security
+package com.puconvocation.security.core
 
 import com.puconvocation.security.dao.SaltedHash
 import org.apache.commons.codec.binary.Hex

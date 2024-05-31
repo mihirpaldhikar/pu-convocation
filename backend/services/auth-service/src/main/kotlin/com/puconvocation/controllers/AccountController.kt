@@ -19,9 +19,9 @@ import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
-import com.puconvocation.security.Hash
-import com.puconvocation.security.JsonWebToken
+import com.puconvocation.security.core.Hash
 import com.puconvocation.security.dao.SecurityToken
+import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId

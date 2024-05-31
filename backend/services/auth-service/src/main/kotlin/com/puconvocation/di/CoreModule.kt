@@ -14,7 +14,7 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
-import com.puconvocation.security.JsonWebToken
+import com.puconvocation.security.jwt.JsonWebToken
 import org.koin.dsl.module
 
 object CoreModule {

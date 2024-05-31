@@ -15,7 +15,7 @@ package com.puconvocation.di
 
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.security.JsonWebToken
+import com.puconvocation.security.jwt.JsonWebToken
 import org.koin.dsl.module
 
 object ControllerModule {

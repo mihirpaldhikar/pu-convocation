@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.security
+package com.puconvocation.security.jwt
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
