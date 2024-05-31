@@ -28,7 +28,7 @@ fun Routing.accountsRoute(
     accountController: AccountController
 ) {
     route("/accounts") {
-        post("/signin") {
+        post("/authenticate") {
             val credentials: CredentialsDTO = call.receive<CredentialsDTO>()
             val result = accountController.authenticate(credentials)
             setAccountCookies(result)
