@@ -16,6 +16,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
 val mongoDBVersion: String by project
+val webauthnVersion: String by project
 
 plugins {
     kotlin("jvm") version "1.9.23"
@@ -61,6 +62,11 @@ dependencies {
 
     // Apache Common Codec
     implementation("commons-codec:commons-codec:1.16.1")
+
+    // Yubico Webauthn
+    implementation("com.yubico:webauthn-server-core:$webauthnVersion")
+    implementation("com.yubico:webauthn-server-attestation:$webauthnVersion")
+    implementation("com.yubico:yubico-util:$webauthnVersion")
 
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
