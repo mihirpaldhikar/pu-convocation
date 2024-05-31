@@ -13,7 +13,7 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.commons.dto.CredentialsDTO
+import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
@@ -32,20 +32,20 @@ fun Routing.accountsRoute(
     route("/accounts") {
 
         post("/authenticationStrategy") {
-            val credentials = call.receive<CredentialsDTO>()
+            val credentials = call.receive<AuthenticationCredentials>()
 
             val result = accountController.getAuthenticationStrategy(credentials.identifier)
             sendResponse(result)
         }
 
         post("/authenticate") {
-            val credentials: CredentialsDTO = call.receive<CredentialsDTO>()
+            val credentials: AuthenticationCredentials = call.receive<AuthenticationCredentials>()
             val result = accountController.authenticate(credentials)
             setAccountCookies(result)
         }
 
         post("/passkeys/register") {
-            val credentials = call.receive<CredentialsDTO>()
+            val credentials = call.receive<AuthenticationCredentials>()
             val result = passkeyController.startPasskeyRegistration(
                 identifier = credentials.identifier
             )
@@ -53,7 +53,7 @@ fun Routing.accountsRoute(
         }
 
         post("/passkeys/validateRegistrationChallenge") {
-            val credentials = call.receive<CredentialsDTO>()
+            val credentials = call.receive<AuthenticationCredentials>()
             val result =
                 passkeyController.validatePasskeyRegistration(
                     identifier = credentials.identifier,
@@ -64,7 +64,7 @@ fun Routing.accountsRoute(
         }
 
         post("/passkeys/validatePasskeyChallenge") {
-            val credentials = call.receive<CredentialsDTO>()
+            val credentials = call.receive<AuthenticationCredentials>()
             val result = passkeyController.validatePasskeyChallenge(
                 identifier = credentials.identifier,
                 credentials = credentials.passkeyCredentials!!

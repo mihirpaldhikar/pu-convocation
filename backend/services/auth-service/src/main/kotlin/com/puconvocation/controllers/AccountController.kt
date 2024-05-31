@@ -13,7 +13,7 @@
 
 package com.puconvocation.controllers
 
-import com.puconvocation.commons.dto.CredentialsDTO
+import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccountDTO
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
@@ -50,7 +50,7 @@ class AccountController(
         )
     }
 
-    suspend fun authenticate(credentials: CredentialsDTO): Result {
+    suspend fun authenticate(credentials: AuthenticationCredentials): Result {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
             statusCode = HttpStatusCode.NotFound,
             errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
