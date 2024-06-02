@@ -30,7 +30,9 @@ export default class AuthService {
     });
   }
 
-  public async sigIn(credentials: Credentials): Promise<Response<string>> {
+  public async authenticate(
+    credentials: Credentials,
+  ): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
         `${this.ACCOUNT_SERVICE_URL}/signin`,

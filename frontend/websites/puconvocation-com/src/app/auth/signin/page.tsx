@@ -62,7 +62,7 @@ export default function SignInPage(): JSX.Element {
                   identifier: email,
                   password: password,
                 };
-                const response = await authService.sigIn(credentials);
+                const response = await authService.authenticate(credentials);
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
