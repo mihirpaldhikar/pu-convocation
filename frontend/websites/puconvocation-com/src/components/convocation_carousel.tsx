@@ -17,33 +17,16 @@ import Image from "next/image";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-const carouselImages: Array<{
-  url: string;
-  alt: string;
-}> = [
-  {
-    url: "https://assets.puconvocation.com/carousel/1.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/2.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/3.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/4.png",
-    alt: "Parul University Convocation",
-  },
-  {
-    url: "https://assets.puconvocation.com/carousel/5.png",
-    alt: "Parul University Convocation",
-  },
-];
+interface ConvocationCarouselProps {
+  carouselImages: Array<{
+    url: string;
+    alt: string;
+  }>;
+}
 
-export default function ConvocationCarousel(): JSX.Element {
+export default function ConvocationCarousel({
+  carouselImages,
+}: Readonly<ConvocationCarouselProps>): JSX.Element {
   return (
     <Carousel
       infiniteLoop
@@ -60,12 +43,12 @@ export default function ConvocationCarousel(): JSX.Element {
         return (
           <div key={index}>
             <Image
-              height={1000}
-              width={1500}
+              width={4096}
+              height={2731}
               className="rounded-lg md:rounded-2xl"
               src={image.url}
               alt={image.alt}
-              priority={true}
+              priority={index === 0}
             />
           </div>
         );

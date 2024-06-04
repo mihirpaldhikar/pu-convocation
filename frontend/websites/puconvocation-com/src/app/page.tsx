@@ -20,6 +20,7 @@ import {
   IdentifierForm,
 } from "@components/index";
 import Link from "next/link";
+import { Config } from "../config";
 
 export default function Home() {
   return (
@@ -28,10 +29,15 @@ export default function Home() {
         <div className={"relative z-0 h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
           <Image
             alt={"Graduating Students"}
-            src={"https://assets.puconvocation.com/images/hero.png"}
+            src={"https://assets.puconvocation.com/images/hero.avif"}
             fill={true}
+            sizes={"100vw"}
+            style={{
+              maxWidth: "100vw",
+              maxHeight: "auto",
+              objectFit: "cover",
+            }}
             priority={true}
-            fetchPriority={"high"}
           />
         </div>
         <div
@@ -48,7 +54,7 @@ export default function Home() {
             </h5>
             <div className={"flex items-center space-x-3 md:space-x-5"}>
               <h1 className={"text-4xl font-black md:text-5xl lg:text-7xl"}>
-                PRE
+                {Config.heroTitle}
               </h1>
               <svg
                 viewBox="0 0 648 87"
@@ -85,7 +91,7 @@ export default function Home() {
             "flex items-center justify-center px-5 py-5 md:px-16 md:py-14"
           }
         >
-          <ConvocationCarousel />
+          <ConvocationCarousel carouselImages={Config.carouselImages} />
         </div>
         <div className={"flex flex-col justify-between md:flex-row"}>
           <div className={"flex-1"}>
@@ -100,19 +106,10 @@ export default function Home() {
               </h2>
             </div>
             <div className={"flex flex-col space-y-5 px-10 py-5"}>
-              <p>
-                A multidisciplinary destination of learning and innovation,
-                propelling quality in higher education with a record of being
-                India’s youngest private university to receive NAAC A++
-                accreditation in the first cycle. Situated in Vadodara, Gujarat,
-                Parul University, is an embodiment of the nation&apos;s essence
-                of cultural heritage blended with modern innovations and
-                academic practices for student enrichment, while fostering
-                national and global development.
-              </p>
+              <p>{Config.aboutUs}</p>
               <Link
                 className={
-                  "w-fit rounded-full bg-primary px-5 py-2 font-bold text-white "
+                  "w-fit rounded-full bg-primary px-5 py-2 font-bold text-white"
                 }
                 href={"https://paruluniversity.ac.in"}
                 target={"_blank"}
@@ -123,12 +120,14 @@ export default function Home() {
           </div>
           <div className={"flex flex-1 justify-end px-3 py-3"}>
             <Image
-              src={"https://assets.puconvocation.com/images/about_us.png"}
+              src={"https://assets.puconvocation.com/images/about_us.avif"}
               alt={"About Us"}
-              width={600}
-              height={400}
-              priority={true}
+              width={1388}
+              height={968}
               className={"rounded-lg"}
+              style={{
+                objectFit: "cover",
+              }}
             />
           </div>
         </div>

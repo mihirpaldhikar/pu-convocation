@@ -18,6 +18,7 @@ import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Footer, Navbar } from "@components/index";
 import { headers } from "next/headers";
+import { Config } from "../config";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -33,7 +34,6 @@ interface RootLayout {
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
   const pathname = headers().get("x-pathname");
-  console.log(pathname);
   const hideNavbar =
     pathname === null ||
     pathname.includes("/console") ||
@@ -51,7 +51,7 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
           </main>
           <Toaster />
         </div>
-        <Footer />
+        <Footer credits={Config.credits} whoWeAre={Config.whoWeAre} />
       </body>
     </html>
   );

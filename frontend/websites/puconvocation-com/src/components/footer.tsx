@@ -15,69 +15,23 @@ import { Fragment, JSX } from "react";
 import { Flags } from "@components/index";
 import Link from "next/link";
 
-const credits: Array<{
-  name: string;
+interface FooterProps {
+  whoWeAre: string;
   credits: Array<{
     name: string;
-    link: string;
-    bold: boolean;
-    underline: boolean;
+    credits: Array<{
+      name: string;
+      link: string;
+      bold: boolean;
+      underline: boolean;
+    }>;
   }>;
-}> = [
-  {
-    name: "Developed By",
-    credits: [
-      {
-        name: "Suhani Shah",
-        link: "https://www.linkedin.com/in/suhani-shah-o13",
-        bold: true,
-        underline: true,
-      },
-      {
-        name: "Mihir Paldhikar",
-        link: "https://mihirpaldhikar.com",
-        bold: true,
-        underline: true,
-      },
-    ],
-  },
-  {
-    name: "Coordinated By",
-    credits: [
-      {
-        name: "Prof. Mohit Rathod",
-        link: "https://www.linkedin.com/in/er-mohit-68a447a0",
-        bold: false,
-        underline: false,
-      },
-      {
-        name: "Manish Rahevar",
-        link: "https://www.linkedin.com/in/manish-rahevar-b08a87108",
-        bold: false,
-        underline: false,
-      },
-    ],
-  },
-  {
-    name: "Guided By",
-    credits: [
-      {
-        name: "Dr. Swapnil M Parikh",
-        link: "https://www.linkedin.com/in/dr-swapnil-parikh-43a90715",
-        bold: false,
-        underline: false,
-      },
-      {
-        name: "Prof. Sumitra Menaria",
-        link: "https://www.linkedin.com/in/sumitra-menaria-0bab23123",
-        bold: false,
-        underline: false,
-      },
-    ],
-  },
-];
+}
 
-export default function Footer(): JSX.Element {
+export default function Footer({
+  whoWeAre,
+  credits,
+}: Readonly<FooterProps>): JSX.Element {
   return (
     <footer className={"relative z-0 bg-primary-foreground"}>
       <div className={"absolute -top-[2.8rem] right-0 md:-top-[5.3rem]"}>
@@ -86,13 +40,7 @@ export default function Footer(): JSX.Element {
       <div className={"space-y-10 px-5 pb-10 pt-24 md:px-10 md:pt-10"}>
         <section className={"space-y-3"}>
           <h3 className={"text-xl font-bold"}>We We Are</h3>
-          <p className={"w-full font-medium md:w-2/5"}>
-            Parul University - Gujarat’s leading private university having the
-            foundation of its first Institution laid in 1993 as Parul Group of
-            Institutes, and later established and incorporated as Parul
-            University in 2015 under the Gujarat Private Universities (Second
-            Amendment ) Act of 2009.
-          </p>
+          <p className={"w-full font-medium md:w-2/5"}>{whoWeAre}</p>
         </section>
         <section className={"space-y-3"}>
           <h3 className={"text-xl font-bold"}>Credits</h3>
@@ -106,10 +54,7 @@ export default function Footer(): JSX.Element {
                       <Link
                         href={c.link}
                         target={"_blank"}
-                        className={`
-                        ${c.bold ? "font-bold" : "font-medium"} 
-                        ${c.underline ? "underline" : "no-underline"} 
-                        text-primary `}
+                        className={` ${c.bold ? "font-bold text-primary" : "font-medium"} ${c.underline ? "underline" : "no-underline"} `}
                       >
                         {c.name}
                       </Link>
