@@ -15,7 +15,6 @@ package com.puconvocation.security.passkeys
 
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.yubico.webauthn.RelyingParty
-import com.yubico.webauthn.data.PublicKeyCredentialParameters
 import com.yubico.webauthn.data.RelyingPartyIdentity
 
 class PasskeyRelyingParty(
@@ -41,8 +40,6 @@ class PasskeyRelyingParty(
             )
             .allowOriginPort(true)
             .allowOriginSubdomain(true)
-            .allowUntrustedAttestation(false)
-            .preferredPubkeyParams(mutableListOf(PublicKeyCredentialParameters.RS512, PublicKeyCredentialParameters.ES512))
             .build()
         return rp;
     }
