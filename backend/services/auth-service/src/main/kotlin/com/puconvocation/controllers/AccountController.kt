@@ -40,6 +40,14 @@ class AccountController(
             message = "Account not found."
         )
 
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
@@ -57,6 +65,14 @@ class AccountController(
             errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
             message = "Account not found."
         )
+
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
 
         if (account.fidoCredential.isNotEmpty() && account.password == null) {
             val result = passkeyController.startPasskeyChallenge(credentials.identifier)
@@ -161,6 +177,15 @@ class AccountController(
                 errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
                 message = "Account not found."
             )
+
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,

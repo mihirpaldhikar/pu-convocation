@@ -47,6 +47,14 @@ class PasskeyController(
             message = "Account not found"
         )
 
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
+
         val pkcOptions = createPublicKeyCredentialCreationOptions(account)
         pkcCache.put(identifier, pkcOptions)
 
@@ -78,6 +86,20 @@ class PasskeyController(
     }
 
     suspend fun validatePasskeyRegistration(identifier: String, credentials: String): Result {
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+            message = "Account not found"
+        )
+
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
+
         val pkc: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> =
             PublicKeyCredential.parseRegistrationResponseJson(credentials)
 
@@ -86,11 +108,6 @@ class PasskeyController(
                 .request(pkcCache.getIfPresent(identifier))
                 .response(pkc)
                 .build()
-        )
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
         )
 
         val fidoCredentialAdded = accountRepository.addFidoCredentials(
@@ -137,6 +154,14 @@ class PasskeyController(
             errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
             message = "Account not found."
         )
+
+        if (account.suspended) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                message = "Your account has been suspended."
+            )
+        }
 
         val pkc =
             PublicKeyCredential.parseAssertionResponseJson(credentials)
