@@ -99,8 +99,12 @@ class AccountController(
 
         val securityTokens = SecurityToken(
             message = "Authenticated Successfully",
-            authorizationToken = jsonWebToken.generateAuthorizationToken(account.uuid.toHexString(), "null"),
-            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
+            authorizationToken = jsonWebToken.generateAuthorizationToken(
+                account.uuid.toHexString(),
+                "null",
+                account.type
+            ),
+            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
         )
 
         return Result.Success(
@@ -147,8 +151,12 @@ class AccountController(
 
         val securityTokens = SecurityToken(
             message = "Account Created.",
-            authorizationToken = jsonWebToken.generateAuthorizationToken(account.uuid.toHexString(), "null"),
-            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
+            authorizationToken = jsonWebToken.generateAuthorizationToken(
+                account.uuid.toHexString(),
+                "null",
+                account.type
+            ),
+            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
         )
 
         return Result.Success(

@@ -183,8 +183,12 @@ class PasskeyController(
 
             val securityTokens = SecurityToken(
                 message = "Authenticated Successfully.",
-                authorizationToken = jsonWebToken.generateAuthorizationToken(account.uuid.toHexString(), "null"),
-                refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
+                authorizationToken = jsonWebToken.generateAuthorizationToken(
+                    account.uuid.toHexString(),
+                    "null",
+                    account.type
+                ),
+                refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
             )
             return Result.Success(
                 statusCode = HttpStatusCode.OK,
