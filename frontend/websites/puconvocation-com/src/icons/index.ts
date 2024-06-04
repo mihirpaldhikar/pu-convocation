@@ -11,5 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as IdentifierForm } from "./identifier_form";
-export { default as AuthenticationForm } from "./authentication_form";
+export { default as PasskeyIcon } from "./passkey_icon";
