@@ -17,4 +17,5 @@ export default interface Account {
   displayName: string;
   email: string;
   avatarURL: string;
+  type: "SUPER_ADMIN" | "ADMIN" | "USER";
 }
