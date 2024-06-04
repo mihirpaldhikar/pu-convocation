@@ -127,7 +127,7 @@ class JsonWebToken(
             val jwtVerifier = jwtVerifier(tokenType)
 
             Result.Success(
-                data = jwtVerifier.verify(authorizationToken).getClaim(claim)
+                data = jwtVerifier.verify(authorizationToken).getClaim(claim).asString()
             )
         } catch (e: TokenExpiredException) {
             Result.Error(
