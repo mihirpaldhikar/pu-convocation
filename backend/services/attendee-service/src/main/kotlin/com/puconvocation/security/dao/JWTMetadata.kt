@@ -11,16 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.enums
+package com.puconvocation.security.dao
 
-enum class ResponseCode {
-    OK,
-    FILE_UPLOADED,
-    ATTENDEE_NOT_FOUND,
-    INVALID_FILE_FORMAT,
-    FILE_NOT_UPLOADED,
-    INVALID_OR_NULL_IDENTIFIER,
-    TOKEN_EXPIRED,
-    INVALID_OR_NULL_TOKEN,
-    NOT_PERMITTED
-}
+import com.auth0.jwk.JwkProvider
+
+data class JWTMetadata(
+    val provider: JwkProvider,
+    val authorizationTokenPrivateKey: String,
+    val refreshTokenPrivateKey: String,
+    val audience: String,
+    val issuer: String,
+    val authorizationTokenKeyId: String,
+    val refreshTokenKeyId: String,
+    val realm: String,
+)

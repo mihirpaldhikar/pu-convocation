@@ -16,6 +16,7 @@ package com.puconvocation.routes
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
+import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -40,8 +41,9 @@ fun Routing.attendeesRoute(
         }
 
         post("/upload") {
+            val authorizationToken = getSecurityTokens().authorizationToken
             val multipartData = call.receiveMultipart()
-            val result = attendeeController.uploadAttendees(multipartData)
+            val result = attendeeController.uploadAttendees(authorizationToken, multipartData)
             sendResponse(result)
         }
 

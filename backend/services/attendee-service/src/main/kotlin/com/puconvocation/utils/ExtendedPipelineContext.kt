@@ -13,10 +13,16 @@
 
 package com.puconvocation.utils
 
+import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
+
+object CookieName {
+    const val AUTHORIZATION_TOKEN_COOKIE = "__puc_at__"
+    const val REFRESH_TOKEN_COOKIE = "__puc_rt__"
+}
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
     repositoryResult: Result
@@ -28,5 +34,15 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
         } else {
             repositoryResult
         }
+    )
+}
+
+fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {
+    val authorizationToken = call.request.cookies[CookieName.AUTHORIZATION_TOKEN_COOKIE]
+    val refreshToken = call.request.cookies[CookieName.REFRESH_TOKEN_COOKIE]
+
+    return SecurityToken(
+        authorizationToken = authorizationToken,
+        refreshToken = refreshToken
     )
 }

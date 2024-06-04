@@ -15,6 +15,7 @@ package com.puconvocation.di
 
 import com.puconvocation.Environment
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.CacheService
 import org.koin.dsl.module
@@ -34,6 +35,12 @@ object CoreModule {
             CacheService(
                 expiryDuration = 5,
                 timeUnit = TimeUnit.MINUTES
+            )
+        }
+
+        single<JsonWebToken> {
+            JsonWebToken(
+                jwtMetadata = get<Environment>().jwtMetadata
             )
         }
     }

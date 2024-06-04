@@ -16,6 +16,7 @@ package com.puconvocation.di
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
+import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.CacheService
 import org.koin.dsl.module
@@ -26,7 +27,8 @@ object ControllerModule {
             AttendeeController(
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
-                cacheService = get<CacheService<Attendee>>()
+                cacheService = get<CacheService<Attendee>>(),
+                jsonWebToken = get<JsonWebToken>()
             )
         }
     }

@@ -15,7 +15,10 @@ package com.puconvocation.controllers
 
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
+import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.enums.TokenType
+import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
@@ -25,7 +28,8 @@ import io.ktor.http.content.*
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
-    private val cacheService: CacheService<Attendee>
+    private val cacheService: CacheService<Attendee>,
+    private val jsonWebToken: JsonWebToken
 ) {
     suspend fun getAttendee(identifier: String): Result {
         val attendee = cacheService.get(identifier) ?: attendeeRepository.getAttendee(identifier)
@@ -44,7 +48,35 @@ class AttendeeController(
         )
     }
 
-    suspend fun uploadAttendees(multiPart: MultiPartData): Result {
+    suspend fun uploadAttendees(authorizationToken: String?, multiPart: MultiPartData): Result {
+
+        if (authorizationToken == null) return Result.Error(
+            statusCode = HttpStatusCode.Unauthorized,
+            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+            message = "Authorization token is invalid or expired."
+        )
+
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return tokenVerificationResult
+        }
+
+        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+
+
+        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to upload attendee details."
+            )
+        }
+
         val part = multiPart.readAllParts().first()
         if (part !is PartData.FileItem ||
             !part.originalFileName?.lowercase()?.contains(".csv")!!
