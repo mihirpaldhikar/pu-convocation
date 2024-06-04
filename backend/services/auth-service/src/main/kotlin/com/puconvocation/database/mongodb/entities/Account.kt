@@ -27,6 +27,7 @@ data class Account(
     @Expose val email: String,
     @Expose val avatarURL: String,
     @Expose val type: AccountType,
+    val suspended: Boolean,
     val password: SaltedHash? = null,
     val fidoCredential: MutableSet<FidoCredential>
 )
