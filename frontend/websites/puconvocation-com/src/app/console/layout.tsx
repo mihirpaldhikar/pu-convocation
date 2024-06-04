@@ -28,7 +28,7 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
   return (
     <div className={"flex min-h-dvh flex-col"}>
       <ConsoleNavbar />
-      <main className={"flex-1"}>{children}</main>
+      <main className={"flex-1 px-3 pt-24"}>{children}</main>
     </div>
   );
 }

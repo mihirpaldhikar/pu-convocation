@@ -11,6 +11,16 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as IdentifierForm } from "./identifier_form";
-export { default as AuthenticationForm } from "./authentication_form";
-export { default as NewAccountForm } from "./new_account_form";
+import { Fragment, JSX } from "react";
+import { NewAccountForm } from "@components/forms";
+
+export default function NewAccountPage(): JSX.Element {
+  return (
+    <Fragment>
+      <section className={"space-y-5"}>
+        <h2 className={"text-2xl font-bold"}>Create New Account</h2>
+        <NewAccountForm />
+      </section>
+    </Fragment>
+  );
+}

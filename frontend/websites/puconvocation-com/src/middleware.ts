@@ -13,7 +13,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes: Array<string> = ["/console"];
+const protectedRoutes: Array<string> = [
+  "/console",
+  "/console/account",
+  "/console/account/new",
+];
 
 function parseCookie(cookieArray: string[]): Record<string, string> {
   const cookieObject: Record<string, string> = {};

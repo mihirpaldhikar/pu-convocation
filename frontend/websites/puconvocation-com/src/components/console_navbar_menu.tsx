@@ -25,6 +25,7 @@ import { StatusCode } from "@enums/StatusCode";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
+import Link from "next/link";
 
 const authService: AuthService = new AuthService();
 
@@ -54,8 +55,16 @@ export default function ConsoleNavbarMenu(): JSX.Element {
       <div
         className={`${account.type === "SUPER_ADMIN" || account.type === "ADMIN" ? "flex items-center space-x-2" : "hidden"}`}
       >
-        <Button>Upload</Button>
-        <div className={"h-10 w-0.5 bg-foreground/20"}></div>
+        <Button className={"font-medium"}>Upload</Button>
+        <div className={"h-10 w-0.5 bg-foreground/10"}></div>
+        <Link
+          href={"/console/account/new"}
+          className={
+            "rounded-md border-2 border-primary px-2 py-1 font-medium text-primary"
+          }
+        >
+          New Account
+        </Link>
       </div>
       <Popover>
         <PopoverTrigger className={"flex items-center space-x-3"}>
