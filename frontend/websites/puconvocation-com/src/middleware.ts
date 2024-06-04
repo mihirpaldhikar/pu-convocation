@@ -58,6 +58,14 @@ export default async function middleware(req: NextRequest) {
       authenticationResponse.status !== 200 &&
       protectedRoutes.includes(req.nextUrl.pathname)
     ) {
+      if (
+        authenticationResponse.status === 403 &&
+        protectedRoutes.includes(req.nextUrl.pathname)
+      ) {
+        const absoluteURL = new URL("/authenticate", req.nextUrl.origin);
+        return NextResponse.redirect(absoluteURL.toString());
+      }
+
       if (req.cookies.has("__puc_rt__") && !req.cookies.has("__puc_at__")) {
         const refreshSecurityTokenResponse = await fetch(
           `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/refresh`,
