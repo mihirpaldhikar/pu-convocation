@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
+import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -110,6 +111,7 @@ class AccountController(
             avatarURL = "https://assets.puconvocation.com/avatars/default.png",
             displayName = newAccount.displayName,
             password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
+            type = AccountType.USER,
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)

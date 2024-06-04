@@ -14,6 +14,7 @@
 package com.puconvocation.database.mongodb.entities
 
 import com.google.gson.annotations.Expose
+import com.puconvocation.enums.AccountType
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SaltedHash
 import org.bson.codecs.pojo.annotations.BsonId
@@ -25,6 +26,7 @@ data class Account(
     @Expose val displayName: String,
     @Expose val email: String,
     @Expose val avatarURL: String,
+    @Expose val type: AccountType,
     val password: SaltedHash? = null,
     val fidoCredential: MutableSet<FidoCredential>
 )
