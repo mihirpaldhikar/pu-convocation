@@ -100,7 +100,9 @@ export default function ConsoleNavbarMenu(): JSX.Element {
             </h5>
           </div>
           <div className={"flex items-center space-x-3"}>
-            <Button variant={"outline"}>Manage Account</Button>
+            <Link href={"/console/account"}>
+              <Button variant={"outline"}>Manage Account</Button>
+            </Link>
             <Button
               variant={"outline"}
               onClick={async () => {

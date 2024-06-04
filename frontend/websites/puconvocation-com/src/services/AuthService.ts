@@ -254,9 +254,6 @@ export default class AuthService {
     try {
       const response = await this.httpClient.post(
         `${this.ACCOUNT_SERVICE_URL}/passkeys/register`,
-        {
-          identifier: identifier,
-        },
       );
 
       if (response.status === 200) {
