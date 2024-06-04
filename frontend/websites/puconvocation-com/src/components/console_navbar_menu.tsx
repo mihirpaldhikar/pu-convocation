@@ -14,7 +14,12 @@
 "use client";
 import { Fragment, JSX, useEffect, useState } from "react";
 import { AuthService } from "@services/index";
-import { Button, Popover, PopoverContent, PopoverTrigger } from "@components/ui";
+import {
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui";
 import { Account } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import Image from "next/image";
@@ -46,8 +51,12 @@ export default function ConsoleNavbarMenu(): JSX.Element {
 
   return (
     <nav className="flex items-center space-x-5">
-      <Button>Upload</Button>
-      <div className={"h-10 w-0.5 bg-foreground/20"}></div>
+      <div
+        className={`${account.type === "SUPER_ADMIN" || account.type === "ADMIN" ? "flex items-center space-x-2" : "hidden"}`}
+      >
+        <Button>Upload</Button>
+        <div className={"h-10 w-0.5 bg-foreground/20"}></div>
+      </div>
       <Popover>
         <PopoverTrigger className={"flex items-center space-x-3"}>
           <h4 className={"hidden font-medium md:block"}>{account.username}</h4>
