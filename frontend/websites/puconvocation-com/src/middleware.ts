@@ -32,7 +32,7 @@ function parseCookie(cookieArray: string[]): Record<string, string> {
 
 export default async function middleware(req: NextRequest) {
   if (
-    req.nextUrl.pathname.includes("/auth") ||
+    req.nextUrl.pathname.includes("/authenticate") ||
     req.nextUrl.pathname.includes("/console")
   ) {
     const authenticationResponse = await fetch(
@@ -47,7 +47,7 @@ export default async function middleware(req: NextRequest) {
     );
 
     if (
-      req.nextUrl.pathname.startsWith("/auth") &&
+      req.nextUrl.pathname.startsWith("/authenticate") &&
       authenticationResponse.status === 200
     ) {
       const absoluteURL = new URL("/console", req.nextUrl.origin);
@@ -71,7 +71,7 @@ export default async function middleware(req: NextRequest) {
         );
 
         if (refreshSecurityTokenResponse.status !== 200) {
-          const absoluteURL = new URL("/auth/signin", req.nextUrl.origin);
+          const absoluteURL = new URL("/authenticate", req.nextUrl.origin);
           return NextResponse.redirect(absoluteURL.toString());
         }
 
@@ -103,7 +103,7 @@ export default async function middleware(req: NextRequest) {
 
         return nextResponse;
       } else {
-        const absoluteURL = new URL("/auth/signin", req.nextUrl.origin);
+        const absoluteURL = new URL("/authenticate", req.nextUrl.origin);
         return NextResponse.redirect(absoluteURL.toString());
       }
     }
