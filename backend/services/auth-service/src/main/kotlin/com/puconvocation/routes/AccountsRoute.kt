@@ -74,8 +74,9 @@ fun Routing.accountsRoute(
         }
 
         post("/new") {
+            val securityToken = getSecurityTokens()
             val newAccount: NewAccount = call.receive<NewAccount>()
-            val result = accountController.signUp(newAccount)
+            val result = accountController.createNewAccount(newAccount, securityToken)
             setAccountCookies(result)
         }
 

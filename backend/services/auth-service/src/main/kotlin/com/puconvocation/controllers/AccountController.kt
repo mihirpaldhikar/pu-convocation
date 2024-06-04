@@ -114,7 +114,36 @@ class AccountController(
         )
     }
 
-    suspend fun signUp(newAccount: NewAccount): Result {
+    suspend fun createNewAccount(newAccount: NewAccount, securityToken: SecurityToken): Result {
+
+        if (securityToken.authorizationToken == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Unauthorized,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid or expired."
+            )
+        }
+
+        val verificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = securityToken.authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+        )
+
+        if (verificationResult is Result.Error) {
+            return verificationResult
+        }
+        val currentAccountType = AccountType.valueOf(verificationResult.responseData as String)
+
+
+        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to create new accounts."
+            )
+        }
+
         if (accountRepository.accountExists(newAccount.email) || accountRepository.accountExists(newAccount.username)) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,

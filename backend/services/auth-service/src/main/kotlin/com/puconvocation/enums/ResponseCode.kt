@@ -32,4 +32,5 @@ enum class ResponseCode {
     INVALID_TOKEN,
     SESSION_EXPIRED,
     NULL_PASSWORD,
+    NOT_PERMITTED
 }
