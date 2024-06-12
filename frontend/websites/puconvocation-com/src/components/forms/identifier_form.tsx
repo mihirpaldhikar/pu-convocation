@@ -36,7 +36,7 @@ export default function IdentifierForm(): JSX.Element {
         value={identifier}
         placeholder={"Enter Enrollment or Convocation No."}
         onChange={(event) => {
-          setIdentifier(event.target.value);
+          setIdentifier(event.target.value.trim());
         }}
       />
       <Button type={"submit"} className={"space-x-3 rounded-full"}>

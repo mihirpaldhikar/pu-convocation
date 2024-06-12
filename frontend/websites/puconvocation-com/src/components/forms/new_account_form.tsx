@@ -66,7 +66,7 @@ export default function NewAccountForm(): JSX.Element {
         value={identifier}
         placeholder={"Username..."}
         onChange={(event) => {
-          setIdentifier(event.target.value);
+          setIdentifier(event.target.value.trim());
         }}
       />
 
@@ -76,7 +76,7 @@ export default function NewAccountForm(): JSX.Element {
         value={displayName}
         placeholder={"Name..."}
         onChange={(event) => {
-          setDisplayName(event.target.value);
+          setDisplayName(event.target.value.trim());
         }}
       />
 
@@ -86,7 +86,7 @@ export default function NewAccountForm(): JSX.Element {
         value={email}
         placeholder={"Email..."}
         onChange={(event) => {
-          setEmail(event.target.value);
+          setEmail(event.target.value.trim());
         }}
       />
 

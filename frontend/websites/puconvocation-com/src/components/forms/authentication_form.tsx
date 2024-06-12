@@ -102,7 +102,7 @@ export default function AuthenticationForm(): JSX.Element {
         value={identifier}
         placeholder={"Username..."}
         onChange={(event) => {
-          setIdentifier(event.target.value);
+          setIdentifier(event.target.value.trim());
         }}
       />
       <Input
@@ -112,7 +112,7 @@ export default function AuthenticationForm(): JSX.Element {
         value={password}
         placeholder={"Password..."}
         onChange={(event) => {
-          setPassword(event.target.value);
+          setPassword(event.target.value.trim());
         }}
       />
       <Button
