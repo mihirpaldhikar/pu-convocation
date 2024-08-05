@@ -39,7 +39,7 @@ export default function Footer({
       </div>
       <div className={"space-y-10 px-5 pb-10 pt-24 md:px-10 md:pt-10"}>
         <section className={"space-y-3"}>
-          <h3 className={"text-xl font-bold"}>We We Are</h3>
+          <h3 className={"text-xl font-bold"}>Who We Are</h3>
           <p className={"w-full font-medium md:w-2/5"}>{whoWeAre}</p>
         </section>
         <section className={"space-y-3"}>
