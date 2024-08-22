@@ -10,22 +10,20 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
+"use client";
 
 import { JSX } from "react";
 import Link from "next/link";
 import { Logo } from "@components/ui";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
 
-interface NavbarProps {
-  hidden: boolean;
-}
+export default function Navbar(): JSX.Element {
+  const path = usePathname();
 
-export default function Navbar({ hidden }: NavbarProps): JSX.Element {
   return (
     <header
-      className={`${
-        hidden ? "hidden" : "flex"
-      } fixed z-50 h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-16 backdrop-blur-3xl`}
+      className={`fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-16 backdrop-blur-3xl`}
     >
       <div className="flex items-center">
         <Link href={"/"}>
@@ -35,9 +33,7 @@ export default function Navbar({ hidden }: NavbarProps): JSX.Element {
       <div className="flex items-center space-x-4">
         <Link
           href={"/authenticate"}
-          className={
-            "flex items-center rounded-2xl bg-black px-4 py-2 text-white"
-          }
+          className={`${path.includes("/authenticate") ? "hidden" : "flex"} items-center rounded-2xl bg-black px-4 py-2 text-white`}
         >
           <UserCircleIcon className={"mr-2 size-5"} />
           <span className="mr-2">Login</span>

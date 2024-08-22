@@ -33,22 +33,14 @@ interface RootLayout {
 }
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
-  const pathname = headers().get("x-pathname");
-  const hideNavbar =
-    pathname === null ||
-    pathname.includes("/console") ||
-    pathname.includes("/auth");
-
   return (
     <html lang="en">
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
         <div className={"flex min-h-dvh flex-col"}>
-          <Navbar hidden={hideNavbar} />
-          <main className={`flex-1 ${hideNavbar ? "pt-0" : "pt-20"}`}>
-            {children}
-          </main>
+          <Navbar />
+          <main className={`flex-1 pt-20`}>{children}</main>
           <Toaster />
         </div>
         <Footer credits={Config.credits} whoWeAre={Config.whoWeAre} />
