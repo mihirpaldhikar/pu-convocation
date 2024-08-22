@@ -11,22 +11,22 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { JSX } from "react";
-import Link from "next/link";
-import ConsoleNavbarMenu from "@components/console_navbar_menu";
-import { Logo } from "@components/ui";
+"use client";
 
-export default function ConsoleNavbar(): JSX.Element {
+import { JSX } from "react";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+
+export default function NavbarMenu(): JSX.Element {
   return (
-    <header
-      className={
-        "fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-5 backdrop-blur-3xl"
-      }
-    >
-      <Link href={"/console"}>
-        <Logo />
+    <nav className="flex items-center space-x-5">
+      <Link
+        href={"/authenticate"}
+        className={`flex items-center rounded-2xl bg-black px-4 py-2 text-white`}
+      >
+        <UserCircleIcon className={"mr-2 size-5"} />
+        <span className="mr-2">Login</span>
       </Link>
-      <ConsoleNavbarMenu />
-    </header>
+    </nav>
   );
 }

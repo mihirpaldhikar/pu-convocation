@@ -108,7 +108,7 @@ export default function ConsoleNavbarMenu(): JSX.Element {
               onClick={async () => {
                 const response = await authService.signOut();
                 if (response.statusCode === StatusCode.SUCCESS) {
-                  router.refresh();
+                  router.replace("/authenticate");
                 } else {
                   toast({
                     title: "Error",

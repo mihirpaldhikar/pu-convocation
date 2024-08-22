@@ -13,21 +13,21 @@
 
 import type { Metadata } from "next";
 import { ReactNode } from "react";
-import { ConsoleNavbar } from "@components/index";
 
 export const metadata: Metadata = {
   title: "PU Convocation Console",
   description: "Manage PU Convocation System",
 };
 
-interface RootLayout {
+interface ConsoleRootLayout {
   children: ReactNode;
 }
 
-export default function RootLayout({ children }: Readonly<RootLayout>) {
+export default function ConsoleRootLayout({
+  children,
+}: Readonly<ConsoleRootLayout>) {
   return (
     <div className={"flex min-h-dvh flex-col"}>
-      <ConsoleNavbar />
       <main className={"flex-1 px-3 pt-24"}>{children}</main>
     </div>
   );
