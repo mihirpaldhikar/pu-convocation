@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Fragment, JSX } from "react";
+import { JSX } from "react";
 import { Enclosure } from "@dto/index";
 import Seat from "@components/seat";
 
@@ -28,7 +28,7 @@ export default function SeatMap({
   activeArrangement,
 }: SeatMapProps): JSX.Element {
   return (
-    <Fragment>
+    <div className={"flex flex-col space-y-5"}>
       {enclosure.rows.map((row) => {
         return (
           <div key={row.letter} className={"flex items-center"}>
@@ -43,7 +43,7 @@ export default function SeatMap({
             </h5>
             <div
               className={
-                "mx-3 flex h-7 max-w-[470px] justify-evenly space-x-4 overflow-x-auto px-2"
+                "mx-3 flex h-7 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
               }
             >
               {Array.from(
@@ -71,6 +71,6 @@ export default function SeatMap({
         If your seat is not visible in the Seat Map, Please scroll the
         Highlighted row.
       </h3>
-    </Fragment>
+    </div>
   );
 }
