@@ -24,7 +24,7 @@ export default function Navbar(): JSX.Element {
 
   return (
     <header
-      className={`fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-16 backdrop-blur-3xl`}
+      className={`fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-3 backdrop-blur-3xl md:px-16`}
     >
       <div className="flex items-center">
         <Link href={path.includes("/console") ? "/console" : "/"}>
