@@ -15,6 +15,8 @@ package com.puconvocation.enums
 
 enum class AccountType {
     SUPER_ADMIN,
-    ADMIN,
-    USER
+    DEAN,
+    PRINCIPAL,
+    HEAD_OF_DEPARTMENT,
+    FACULTY,
 }

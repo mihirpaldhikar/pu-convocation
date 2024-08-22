@@ -136,7 +136,7 @@ class AccountController(
         val currentAccountType = AccountType.valueOf(verificationResult.responseData as String)
 
 
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (currentAccountType != AccountType.SUPER_ADMIN) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -161,7 +161,7 @@ class AccountController(
             displayName = newAccount.displayName,
             suspended = false,
             password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
-            type = AccountType.USER,
+            type = AccountType.FACULTY,
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)
