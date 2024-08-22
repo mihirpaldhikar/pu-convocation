@@ -81,39 +81,5 @@ export const Config: {
         },
       ],
     },
-    {
-      name: "Coordinated By",
-      credits: [
-        {
-          name: "Prof. Mohit Rathod",
-          link: "https://www.linkedin.com/in/er-mohit-68a447a0",
-          bold: false,
-          underline: false,
-        },
-        {
-          name: "Manish Rahevar",
-          link: "https://www.linkedin.com/in/manish-rahevar-b08a87108",
-          bold: false,
-          underline: false,
-        },
-      ],
-    },
-    {
-      name: "Guided By",
-      credits: [
-        {
-          name: "Dr. Swapnil M Parikh",
-          link: "https://www.linkedin.com/in/dr-swapnil-parikh-43a90715",
-          bold: false,
-          underline: false,
-        },
-        {
-          name: "Prof. Sumitra Menaria",
-          link: "https://www.linkedin.com/in/sumitra-menaria-0bab23123",
-          bold: false,
-          underline: false,
-        },
-      ],
-    },
   ],
 };
