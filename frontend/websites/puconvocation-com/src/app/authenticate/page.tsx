@@ -12,25 +12,29 @@
  */
 import { JSX } from "react";
 import { AuthenticationForm } from "@components/forms";
-import Image from "next/image";
-import UniversityLogo from "@public/assets/logo.png";
+import { Pattern } from "@components/ui";
 
 export default function SignInPage(): JSX.Element {
   return (
-    <section className={"flex min-h-dvh"}>
-      <div className="m-auto flex w-full items-center justify-center px-3 md:px-20 lg:px-0">
-        <div className="flex w-full flex-col space-y-5 rounded-lg border bg-white px-3 pb-5 pt-10 lg:w-1/3">
-          <div
-            className={"flex flex-col items-center justify-center space-y-3"}
-          >
-            <Image
-              src={UniversityLogo}
-              alt={"Parul University"}
-              className={"w-36"}
-            />
-            <h2 className={"text-lg font-bold"}>
+    <section className={"grid h-dvh grid-cols-1 lg:grid-cols-2"}>
+      <div className={"hidden flex-1 lg:flex"}>
+        <Pattern />
+      </div>
+      <div
+        className={
+          "flex flex-1 items-center justify-center px-3 lg:bg-red-50 lg:px-0"
+        }
+      >
+        <div
+          className={
+            "flex w-full flex-col space-y-10 rounded-xl border border-gray-300 bg-white px-5 py-10 md:w-2/3"
+          }
+        >
+          <div className={"flex flex-col items-center space-y-5"}>
+            <h3 className={"text-xl font-bold"}>
               Convocation Management System
-            </h2>
+            </h3>
+            <h5 className={"font-medium"}>Authenticate to continue...</h5>
           </div>
           <AuthenticationForm />
         </div>

@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { Input } from "./ui";
+export { Input, Pattern } from "./ui";
 export { default as VenueMap } from "./venue_map";
 export { default as Seat } from "./seat";
 export { default as SpaceShip } from "./spaceship";
