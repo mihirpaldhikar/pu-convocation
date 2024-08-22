@@ -26,5 +26,7 @@ data class Attendee(
     @Expose val enclosure: String,
     @Expose val row: String,
     @Expose val seat: String,
-    @Expose val enterFrom: Direction
+    @Expose val enterFrom: Direction,
+    @Expose val verificationToken: String,
+    @Expose val verificationCode: String,
 )

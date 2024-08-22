@@ -18,6 +18,8 @@ import com.puconvocation.enums.Direction
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.InputStreamReader
+import java.util.*
+import kotlin.random.Random
 
 class CSVSerializer {
     fun serializeAttendeesCSV(reader: InputStreamReader): List<Attendee> {
@@ -52,7 +54,19 @@ class CSVSerializer {
                     enclosure = attendee.get("enclosure").toString(),
                     row = attendee.get("row").toString(),
                     seat = attendee.get("seat").toString(),
-                    enterFrom = Direction.valueOf(attendee.get("enterFrom").uppercase())
+                    enterFrom = Direction.valueOf(attendee.get("enterFrom").uppercase()),
+                    verificationToken = UUID.randomUUID().toString().replace("-", ""),
+                    verificationCode = "${Random.nextInt(0, 9)}${
+                        Random.nextInt(
+                            0,
+                            9
+                        )
+                    }${Random.nextInt(0, 9)}${
+                        Random.nextInt(
+                            0,
+                            9
+                        )
+                    }${Random.nextInt(0, 9)}${Random.nextInt(0, 9)}"
                 )
             )
         }
