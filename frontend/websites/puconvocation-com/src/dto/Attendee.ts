@@ -21,4 +21,6 @@ export default interface Attendee {
   row: string;
   seat: string;
   enterFrom: "LEFT" | "RIGHT" | "NONE";
+  verificationToken: string;
+  verificationCode: string;
 }
