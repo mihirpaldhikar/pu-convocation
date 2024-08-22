@@ -16,7 +16,7 @@ import { AttendeeService } from "@services/index";
 import { StatusCode } from "@enums/StatusCode";
 import { SeatMap, SpaceShip, Ticket, VenueMap } from "@components/index";
 import Link from "next/link";
-import { MapIcon, MapPinIcon, TicketIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
 
 const attendeeService: AttendeeService = new AttendeeService();
 
@@ -66,37 +66,15 @@ export default async function AttendeePage({
     const payload = response.payload;
 
     return (
-      <section
-        className={
-          "grid grid-cols-1 gap-10 pb-10 pt-14 md:grid-cols-2 md:pt-24"
-        }
-      >
-        <div className={"flex  flex-col items-center"}>
-          <div className={"flex flex-col space-y-5"}>
-            <div className={"flex flex-col space-y-5 pb-7 md:hidden"}>
-              <div className={"flex w-full items-center space-x-2"}>
-                <TicketIcon className={"w-7 text-primary"} />
-                <h2 className={"text-xl font-bold"}>Pass</h2>
-              </div>
-              <Ticket attendee={payload.attendee} />
-            </div>
-            <div className={"flex w-full items-center space-x-2 pl-0 md:pl-6"}>
-              <MapIcon className={"w-7 text-primary"} />
-              <h2 className={"text-xl font-bold"}>Venue Map</h2>
-            </div>
+      <section className={"grid grid-cols-1 gap-10 px-3 lg:grid-cols-2"}>
+        <div className={"order-2 flex-1 lg:order-1 lg:min-h-screen"}>
+          <div
+            className={
+              "flex h-full flex-col items-center justify-center space-y-6"
+            }
+          >
             <VenueMap activeEnclosure={payload.attendee.enclosure} />
-          </div>
-        </div>
-        <div className={"flex flex-col px-7 md:px-0 md:pl-20"}>
-          <div className="flex flex-col space-y-5">
-            <div className={"hidden flex-col space-y-5 md:flex"}>
-              <div className={"flex w-full items-center space-x-2"}>
-                <TicketIcon className={"w-7 text-primary"} />
-                <h2 className={"text-xl font-bold"}>Pass</h2>
-              </div>
-              <Ticket attendee={payload.attendee} />
-            </div>
-            <div className={"flex flex-col space-y-5 pt-0 md:pt-10"}>
+            <div className={"flex flex-col space-y-5"}>
               <div className={"flex flex-col space-y-2"}>
                 <div className={"flex w-full items-center space-x-2"}>
                   <MapPinIcon className={"w-7 text-primary"} />
@@ -120,6 +98,20 @@ export default async function AttendeePage({
                 }}
               />
             </div>
+            <div className={"flex flex-col space-y-5 pt-0 md:pt-10"}></div>
+          </div>
+        </div>
+        <div
+          className={
+            "order-1 flex flex-1 flex-col items-center pt-7 lg:order-2 lg:min-h-screen lg:pt-10"
+          }
+        >
+          <div className={"flex w-full flex-col space-y-5"}>
+            <div className={"flex w-full items-center space-x-2"}>
+              <TicketIcon className={"size-7 text-primary"} />
+              <h2 className={"text-xl font-bold"}>Pass</h2>
+            </div>
+            <Ticket attendee={payload.attendee} />
           </div>
         </div>
       </section>
