@@ -17,7 +17,6 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Footer, Navbar } from "@components/index";
-import { headers } from "next/headers";
 import { Config } from "../config";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
