@@ -74,7 +74,7 @@ class AccountController(
             )
         }
 
-        if (account.fidoCredential.isNotEmpty() && account.password == null) {
+        if (account.fidoCredential.isNotEmpty()) {
             val result = passkeyController.startPasskeyChallenge(credentials.identifier)
             return result
         }
