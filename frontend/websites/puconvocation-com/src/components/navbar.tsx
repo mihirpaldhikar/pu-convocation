@@ -33,11 +33,14 @@ export default function Navbar({ hidden }: NavbarProps): JSX.Element {
         </Link>
       </div>
       <div className="flex items-center space-x-4">
-        <Link href={"/login"}>
-          <button className="flex items-center rounded-2xl bg-black px-4 py-2 text-white">
-            <UserCircleIcon className={"mr-2 size-5"} />
-            <span className="mr-2">Login</span>
-          </button>
+        <Link
+          href={"/authenticate"}
+          className={
+            "flex items-center rounded-2xl bg-black px-4 py-2 text-white"
+          }
+        >
+          <UserCircleIcon className={"mr-2 size-5"} />
+          <span className="mr-2">Login</span>
         </Link>
       </div>
     </header>
