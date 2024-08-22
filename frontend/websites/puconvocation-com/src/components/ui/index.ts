@@ -28,3 +28,4 @@ export {
   PopoverContent,
   PopoverTrigger,
 } from "./popover";
+export { default as Logo } from "./logo";
