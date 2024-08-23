@@ -238,6 +238,38 @@ export default class AuthService {
     }
   }
 
+  public async getAttendeeFromVerificationToken(
+    token: string,
+  ): Promise<Response<Attendee | string>> {
+    try {
+      const response = await this.httpClient.get(
+        `${this.ATTENDEE_SERVICE_URL}/verificationToken/${token}`,
+      );
+
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        } as Response<Attendee>;
+      }
+
+      return {
+        statusCode: StatusCode.FAILURE,
+        payload: "Unknown Error occurred.",
+      } as Response<string>;
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+      return {
+        statusCode: StatusCode.ATTENDEE_NOT_FOUND,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
   public async uploadAttendeeList(
     file: File,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
