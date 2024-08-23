@@ -237,4 +237,40 @@ export default class AuthService {
       } as Response<string>;
     }
   }
+
+  public async uploadAttendeeList(
+    file: File,
+  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+    try {
+      const form = new FormData();
+      form.append(file.name, file);
+
+      const response = await this.httpClient.post(
+        `${this.ATTENDEE_SERVICE_URL}/upload`,
+        form,
+      );
+
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        };
+      }
+
+      return {
+        statusCode: StatusCode.FAILURE,
+        payload: "Unknown Error occurred.",
+      } as Response<string>;
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+      return {
+        statusCode: StatusCode.ATTENDEE_NOT_FOUND,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
 }
