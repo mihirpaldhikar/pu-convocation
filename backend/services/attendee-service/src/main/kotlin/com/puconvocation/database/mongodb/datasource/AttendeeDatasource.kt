@@ -18,6 +18,8 @@ import com.puconvocation.database.mongodb.entities.Attendee
 interface AttendeeDatasource {
     suspend fun getAttendee(identifier: String): Attendee?
 
+    suspend fun getAttendeeFromVerificationToken(token: String): Attendee?
+
     suspend fun uploadAttendees(attendee: List<Attendee>): Boolean
 
     suspend fun getTotalAttendees(): Int

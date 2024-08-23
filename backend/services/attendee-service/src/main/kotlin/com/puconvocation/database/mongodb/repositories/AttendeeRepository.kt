@@ -41,6 +41,11 @@ class AttendeeRepository(
             .firstOrNull()
     }
 
+    override suspend fun getAttendeeFromVerificationToken(token: String): Attendee? {
+        return attendeesCollection.withDocumentClass<Attendee>().find(eq(Attendee::verificationToken.name, token))
+            .firstOrNull()
+    }
+
     override suspend fun uploadAttendees(attendee: List<Attendee>): Boolean {
         attendeesCollection.withDocumentClass<Attendee>().drop()
         return attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()

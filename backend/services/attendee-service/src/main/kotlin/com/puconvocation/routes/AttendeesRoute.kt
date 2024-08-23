@@ -52,6 +52,19 @@ fun Routing.attendeesRoute(
             sendResponse(result)
         }
 
+        get("/verificationToken/{verificationToken}") {
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val token = call.parameters["verificationToken"] ?: return@get sendResponse(
+                Result.Error(
+                    statusCode = HttpStatusCode.BadRequest,
+                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                    message = "Please provide a valid token."
+                )
+            )
+            val result = attendeeController.getAttendeeFromVerificationToken(authorizationToken, token)
+            sendResponse(result)
+        }
+
         post("/lockAttendees") {
             val authorizationToken = getSecurityTokens().authorizationToken
             val result = attendeeController.lockAttendees(authorizationToken)

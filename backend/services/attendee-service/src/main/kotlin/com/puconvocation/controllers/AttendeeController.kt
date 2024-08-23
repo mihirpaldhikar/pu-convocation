@@ -123,6 +123,48 @@ class AttendeeController(
         )
     }
 
+    suspend fun getAttendeeFromVerificationToken(authorizationToken: String?, token: String): Result {
+        if (authorizationToken == null) return Result.Error(
+            statusCode = HttpStatusCode.Unauthorized,
+            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+            message = "Authorization token is invalid or expired."
+        )
+
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return tokenVerificationResult
+        }
+
+        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+
+
+        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to Lock attendee details."
+            )
+        }
+
+        val attendee = attendeeRepository.getAttendeeFromVerificationToken(token = token) ?: return return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
+            message = "Could not find attendee"
+        )
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = attendee
+        )
+    }
+
+
     suspend fun lockAttendees(authorizationToken: String?): Result {
         if (authorizationToken == null) return Result.Error(
             statusCode = HttpStatusCode.Unauthorized,
