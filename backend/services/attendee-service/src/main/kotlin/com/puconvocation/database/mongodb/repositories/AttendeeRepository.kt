@@ -14,10 +14,12 @@
 package com.puconvocation.database.mongodb.repositories
 
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasource.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.database.mongodb.entities.AttendeeConfig
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
@@ -27,6 +29,9 @@ class AttendeeRepository(
 
     private val attendeesCollection: MongoCollection<Attendee> =
         database.getCollection<Attendee>("attendees")
+
+    private val attendeesConfigCollection: MongoCollection<Attendee> =
+        database.getCollection<Attendee>("attendee_config")
 
     override suspend fun getAttendee(identifier: String): Attendee? {
         if (identifier.toLongOrNull() != null) {
@@ -44,4 +49,28 @@ class AttendeeRepository(
     override suspend fun getTotalAttendees(): Int {
         return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
     }
+
+    override suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean {
+        val config = attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config"))
+            .firstOrNull()
+        if (config == null) {
+            return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().insertOne(
+                AttendeeConfig(
+                    isLocked = isLocked,
+                )
+            ).wasAcknowledged()
+        }
+
+        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().updateOne(
+            eq("_id", "attendee_config"), Updates.combine(
+                Updates.set(AttendeeConfig::isLocked.name, isLocked)
+            )
+        ).wasAcknowledged()
+    }
+
+    override suspend fun isAttendeeLockEnforced(): Boolean {
+        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config"))
+            .firstOrNull()?.isLocked ?: false
+    }
+
 }

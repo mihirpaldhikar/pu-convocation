@@ -77,6 +77,14 @@ class AttendeeController(
             )
         }
 
+        if (attendeeRepository.isAttendeeLockEnforced()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Locked,
+                errorCode = ResponseCode.ALREADY_LOCKED,
+                message = "Couldn't upload attendees list. The Attendees List is already locked."
+            )
+        }
+
         val part = multiPart.readAllParts().first()
         if (part !is PartData.FileItem ||
             !part.originalFileName?.lowercase()?.contains(".csv")!!
@@ -112,6 +120,64 @@ class AttendeeController(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
             data = hashMapOf("count" to totalCount)
+        )
+    }
+
+    suspend fun lockAttendees(): Result {
+        if (attendeeRepository.isAttendeeLockEnforced()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Conflict,
+                errorCode = ResponseCode.ALREADY_LOCKED,
+                message = "Attendees List is already locked."
+            )
+        }
+
+        val locked = attendeeRepository.mutateAttendeeLock(isLocked = true);
+
+        if (!locked) {
+            return Result.Error(
+                statusCode = HttpStatusCode.NotModified,
+                errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
+                message = "The Attendees List couldn't be locked. Please try again later."
+            )
+        }
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = mapOf(
+                "code" to ResponseCode.OK,
+                "message" to "Attendees List is now Locked."
+            )
+        )
+    }
+
+    suspend fun unLockAttendees(): Result {
+        if (!attendeeRepository.isAttendeeLockEnforced()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Conflict,
+                errorCode = ResponseCode.ALREADY_UNLOCKED,
+                message = "Attendees List is already unlocked."
+            )
+        }
+
+        val unlocked = attendeeRepository.mutateAttendeeLock(isLocked = false);
+
+        if (!unlocked) {
+            return Result.Error(
+                statusCode = HttpStatusCode.NotModified,
+                errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
+                message = "The Attendees List couldn't be unlocked. Please try again later."
+            )
+        }
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = mapOf(
+                "code" to ResponseCode.OK,
+                "message" to "Attendees List is now UnLocked."
+            )
         )
     }
 }

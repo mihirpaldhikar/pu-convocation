@@ -21,4 +21,8 @@ interface AttendeeDatasource {
     suspend fun uploadAttendees(attendee: List<Attendee>): Boolean
 
     suspend fun getTotalAttendees(): Int
+
+    suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean
+
+    suspend fun isAttendeeLockEnforced(): Boolean
 }

@@ -51,5 +51,15 @@ fun Routing.attendeesRoute(
             val result = attendeeController.getTotalAttendees()
             sendResponse(result)
         }
+
+        post("/lockAttendees") {
+            val result = attendeeController.lockAttendees()
+            sendResponse(result)
+        }
+
+        post("/unLockAttendees") {
+            val result = attendeeController.unLockAttendees()
+            sendResponse(result)
+        }
     }
 }
