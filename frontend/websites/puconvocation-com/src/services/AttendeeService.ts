@@ -184,15 +184,16 @@ const enclosures: Array<Enclosure> = [
 ];
 
 export default class AuthService {
-  private ATTENDEE_SERVICE_URL = (
-    process.env.NEXT_PUBLIC_ATTENDEE_SERVICE_URL as string
-  ).concat("/attendees");
+  private BASE_URL = process.env.NEXT_PUBLIC_ATTENDEE_SERVICE_URL as string;
+
+  private ATTENDEE_ROUTES = this.BASE_URL.concat("/attendees");
+
   private httpClient: AxiosInstance;
   private REQUEST_TIMEOUT = 1000 * 10;
 
   public constructor() {
     this.httpClient = axios.create({
-      baseURL: this.ATTENDEE_SERVICE_URL,
+      baseURL: this.BASE_URL,
       timeout: this.REQUEST_TIMEOUT,
       withCredentials: true,
     });
@@ -203,7 +204,7 @@ export default class AuthService {
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
     try {
       const response = await this.httpClient.get(
-        `${this.ATTENDEE_SERVICE_URL}/${identifier}`,
+        `${this.ATTENDEE_ROUTES}/${identifier}`,
       );
       if (response.status === 200) {
         const attendee = response.data as Attendee;
@@ -243,7 +244,7 @@ export default class AuthService {
   ): Promise<Response<Attendee | string>> {
     try {
       const response = await this.httpClient.get(
-        `${this.ATTENDEE_SERVICE_URL}/verificationToken/${token}`,
+        `${this.ATTENDEE_ROUTES}/verificationToken/${token}`,
       );
 
       if (response.status === 200) {
@@ -253,18 +254,23 @@ export default class AuthService {
         } as Response<Attendee>;
       }
 
-      return {
-        statusCode: StatusCode.FAILURE,
-        payload: "Unknown Error occurred.",
-      } as Response<string>;
+      throw new AxiosError("INTERNAL:Failed to fetch Account.");
     } catch (error) {
       let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
       let errorResponseString = JSON.stringify(
         (await axiosError.response?.data) as string,
       );
       let errorResponse = JSON.parse(errorResponseString);
+
       return {
-        statusCode: StatusCode.ATTENDEE_NOT_FOUND,
+        statusCode: StatusCode.FAILURE,
         message: errorResponse["message"],
       } as Response<string>;
     }
@@ -278,7 +284,7 @@ export default class AuthService {
       form.append(file.name, file);
 
       const response = await this.httpClient.post(
-        `${this.ATTENDEE_SERVICE_URL}/upload`,
+        `${this.ATTENDEE_ROUTES}/upload`,
         form,
       );
 
@@ -289,18 +295,63 @@ export default class AuthService {
         };
       }
 
-      return {
-        statusCode: StatusCode.FAILURE,
-        payload: "Unknown Error occurred.",
-      } as Response<string>;
+      throw new AxiosError("INTERNAL:Failed to fetch Account.");
     } catch (error) {
       let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
       let errorResponseString = JSON.stringify(
         (await axiosError.response?.data) as string,
       );
       let errorResponse = JSON.parse(errorResponseString);
+
       return {
-        statusCode: StatusCode.ATTENDEE_NOT_FOUND,
+        statusCode: StatusCode.FAILURE,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
+  public async createTransaction(
+    studentEnrollmentNumber: string,
+  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+    try {
+      const response = await this.httpClient.post(
+        `${this.BASE_URL}/transactions/new`,
+        {
+          studentEnrollmentNumber: studentEnrollmentNumber,
+        },
+      );
+
+      if (response.status === 201) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        };
+      }
+
+      throw new AxiosError("INTERNAL:Failed to fetch Account.");
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+
+      return {
+        statusCode: StatusCode.FAILURE,
         message: errorResponse["message"],
       } as Response<string>;
     }
