@@ -53,12 +53,14 @@ fun Routing.attendeesRoute(
         }
 
         post("/lockAttendees") {
-            val result = attendeeController.lockAttendees()
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val result = attendeeController.lockAttendees(authorizationToken)
             sendResponse(result)
         }
 
         post("/unLockAttendees") {
-            val result = attendeeController.unLockAttendees()
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val result = attendeeController.unLockAttendees(authorizationToken)
             sendResponse(result)
         }
     }

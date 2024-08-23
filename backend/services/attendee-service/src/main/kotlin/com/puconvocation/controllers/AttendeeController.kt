@@ -123,7 +123,35 @@ class AttendeeController(
         )
     }
 
-    suspend fun lockAttendees(): Result {
+    suspend fun lockAttendees(authorizationToken: String?): Result {
+        if (authorizationToken == null) return Result.Error(
+            statusCode = HttpStatusCode.Unauthorized,
+            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+            message = "Authorization token is invalid or expired."
+        )
+
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return tokenVerificationResult
+        }
+
+        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+
+
+        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to Lock attendee details."
+            )
+        }
+
+
         if (attendeeRepository.isAttendeeLockEnforced()) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
@@ -152,7 +180,35 @@ class AttendeeController(
         )
     }
 
-    suspend fun unLockAttendees(): Result {
+    suspend fun unLockAttendees(authorizationToken: String?): Result {
+        if (authorizationToken == null) return Result.Error(
+            statusCode = HttpStatusCode.Unauthorized,
+            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+            message = "Authorization token is invalid or expired."
+        )
+
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return tokenVerificationResult
+        }
+
+        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+
+
+        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to unlock attendee details."
+            )
+        }
+
+
         if (!attendeeRepository.isAttendeeLockEnforced()) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
