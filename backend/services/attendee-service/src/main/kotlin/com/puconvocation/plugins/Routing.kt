@@ -14,14 +14,19 @@
 package com.puconvocation.plugins
 
 import com.puconvocation.controllers.AttendeeController
+import com.puconvocation.controllers.TransactionController
 import com.puconvocation.routes.attendeesRoute
+import com.puconvocation.routes.transactionsRoute
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
 
 fun Application.configureRouting() {
     val attendeeController by KoinJavaComponent.inject<AttendeeController>(AttendeeController::class.java)
+    val transactionController by KoinJavaComponent.inject<TransactionController>(TransactionController::class.java)
+
     routing {
         attendeesRoute(attendeeController = attendeeController)
+        transactionsRoute(transactionController = transactionController)
     }
 }

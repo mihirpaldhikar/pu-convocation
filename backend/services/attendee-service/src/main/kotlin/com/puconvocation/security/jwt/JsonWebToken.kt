@@ -73,13 +73,19 @@ class JsonWebToken(
     fun verifySecurityToken(
         authorizationToken: String,
         tokenType: TokenType,
-        claim: String = UUID_CLAIM
+        claims: List<String> = listOf(UUID_CLAIM)
     ): Result {
         return try {
             val jwtVerifier = jwtVerifier(tokenType)
 
+            val claimData: MutableList<String> = mutableListOf();
+
+            claims.map { claim ->
+                claimData.add(jwtVerifier.verify(authorizationToken).getClaim(claim).asString())
+            }
+
             Result.Success(
-                data = jwtVerifier.verify(authorizationToken).getClaim(claim).asString()
+                data = claimData
             )
         } catch (e: TokenExpiredException) {
             Result.Error(

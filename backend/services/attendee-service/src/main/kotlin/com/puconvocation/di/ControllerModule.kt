@@ -14,8 +14,10 @@
 package com.puconvocation.di
 
 import com.puconvocation.controllers.AttendeeController
+import com.puconvocation.controllers.TransactionController
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
+import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.CacheService
@@ -28,6 +30,13 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
                 cacheService = get<CacheService<Attendee>>(),
+                jsonWebToken = get<JsonWebToken>()
+            )
+        }
+
+        single<TransactionController> {
+            TransactionController(
+                transactionRepository = get<TransactionRepository>(),
                 jsonWebToken = get<JsonWebToken>()
             )
         }

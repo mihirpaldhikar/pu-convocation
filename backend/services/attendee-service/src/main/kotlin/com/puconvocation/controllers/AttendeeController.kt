@@ -59,14 +59,14 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
 
         if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
@@ -133,14 +133,14 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
 
         if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
@@ -151,7 +151,7 @@ class AttendeeController(
             )
         }
 
-        val attendee = attendeeRepository.getAttendeeFromVerificationToken(token = token) ?: return return Result.Error(
+        val attendee = attendeeRepository.getAttendeeFromVerificationToken(token = token) ?: return Result.Error(
             statusCode = HttpStatusCode.NotFound,
             errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
             message = "Could not find attendee"
@@ -175,14 +175,14 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
 
         if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
@@ -232,14 +232,14 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf(tokenVerificationResult.responseData as String)
+        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
 
         if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
