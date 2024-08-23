@@ -55,6 +55,7 @@ class CSVSerializer {
                     row = attendee.get("row").toString(),
                     seat = attendee.get("seat").toString(),
                     enterFrom = Direction.valueOf(attendee.get("enterFrom").uppercase()),
+                    degreeReceived = false,
                     verificationToken = UUID.randomUUID().toString().replace("-", ""),
                     verificationCode = "${Random.nextInt(0, 9)}${
                         Random.nextInt(

@@ -2,6 +2,7 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.TransactionRequest
 import com.puconvocation.database.mongodb.entities.Transaction
+import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.ResponseCode
@@ -15,6 +16,7 @@ import java.time.ZoneOffset
 
 class TransactionController(
     private val transactionRepository: TransactionRepository,
+    private val attendeeRepository: AttendeeRepository,
     private val jsonWebToken: JsonWebToken
 ) {
     suspend fun insertTransaction(authorizationToken: String?, transactionRequest: TransactionRequest): Result {
@@ -46,7 +48,7 @@ class TransactionController(
             )
         }
 
-        if(transactionRepository.transactionExists(transactionRequest.studentEnrollmentNumber)){
+        if (transactionRepository.transactionExists(transactionRequest.studentEnrollmentNumber)) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
                 errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
@@ -70,6 +72,8 @@ class TransactionController(
 
             )
         }
+
+        attendeeRepository.setDegreeReceivedStatus(transactionRequest.studentEnrollmentNumber, true);
 
         return Result.Success(
             statusCode = HttpStatusCode.Created,

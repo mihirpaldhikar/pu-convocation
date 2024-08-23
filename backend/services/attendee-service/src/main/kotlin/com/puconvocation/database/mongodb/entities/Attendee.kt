@@ -29,4 +29,5 @@ data class Attendee(
     @Expose val enterFrom: Direction,
     @Expose val verificationToken: String,
     @Expose val verificationCode: String,
+    @Expose val degreeReceived: Boolean,
 )

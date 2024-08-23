@@ -51,6 +51,15 @@ class AttendeeRepository(
         return attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
     }
 
+    override suspend fun setDegreeReceivedStatus(enrollmentNumber: String, status: Boolean): Boolean {
+        return attendeesCollection.withDocumentClass<Attendee>().updateOne(
+            eq("_id", enrollmentNumber),
+            Updates.combine(
+                Updates.set(Attendee::degreeReceived.name, status),
+            )
+        ).wasAcknowledged()
+    }
+
     override suspend fun getTotalAttendees(): Int {
         return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
     }

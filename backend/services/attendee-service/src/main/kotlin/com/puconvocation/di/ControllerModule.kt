@@ -37,6 +37,7 @@ object ControllerModule {
         single<TransactionController> {
             TransactionController(
                 transactionRepository = get<TransactionRepository>(),
+                attendeeRepository = get<AttendeeRepository>(),
                 jsonWebToken = get<JsonWebToken>()
             )
         }

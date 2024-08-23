@@ -22,6 +22,8 @@ interface AttendeeDatasource {
 
     suspend fun uploadAttendees(attendee: List<Attendee>): Boolean
 
+    suspend fun setDegreeReceivedStatus(enrollmentNumber: String, status: Boolean): Boolean
+
     suspend fun getTotalAttendees(): Int
 
     suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean
