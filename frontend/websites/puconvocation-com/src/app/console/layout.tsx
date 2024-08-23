@@ -28,7 +28,7 @@ export default function ConsoleRootLayout({
 }: Readonly<ConsoleRootLayout>) {
   return (
     <div className={"flex min-h-dvh flex-col"}>
-      <main className={"flex-1 px-3 pt-24"}>{children}</main>
+      <main className={"flex-1 px-3"}>{children}</main>
     </div>
   );
 }
