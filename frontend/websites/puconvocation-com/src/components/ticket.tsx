@@ -35,7 +35,17 @@ export default function Ticket({ attendee }: TicketProps): JSX.Element {
           <div
             className={"flex flex-col items-center justify-center space-y-2"}
           >
-            <QRCode size={100} value={attendee.verificationToken} />
+            <QRCode
+              size={100}
+              value={
+                attendee.degreeReceived
+                  ? attendee.verificationToken.concat(
+                      parseInt(String(Math.random() * 10)).toString(),
+                    )
+                  : attendee.verificationToken
+              }
+              className={`${attendee.degreeReceived ? "blur-md" : ""}`}
+            />
             <h6 className={"text-xs"}>{attendee.convocationId}</h6>
           </div>
         </div>

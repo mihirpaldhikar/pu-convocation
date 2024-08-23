@@ -23,4 +23,5 @@ export default interface Attendee {
   enterFrom: "LEFT" | "RIGHT" | "NONE";
   verificationToken: string;
   verificationCode: string;
+  degreeReceived: boolean;
 }
