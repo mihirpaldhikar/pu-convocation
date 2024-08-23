@@ -17,6 +17,8 @@ const protectedRoutes: Array<string> = [
   "/console",
   "/console/account",
   "/console/account/new",
+  "/console/scan",
+  "/console/verify",
 ];
 
 function parseCookie(cookieArray: string[]): Record<string, string> {
