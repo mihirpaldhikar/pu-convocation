@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+  <title></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+  <style>
+      body {
+          font-family: "Montserrat", sans-serif;
+          font-optical-sizing: auto;
+          font-weight: 500;
+          font-style: normal;
+      }
+  </style>
+</head>
+<body>
+<header>
+  <div style="width: 100%; align-items: center; justify-content: center; text-align: center">
+    <img src="https://assets.puconvocation.com/logos/university_logo.png" alt="Parul University" width="75%">
+    <h1 style="font-size: 3rem;">{{convocationNumber}} Convocation</h1>
+  </div>
+</header>
+<section>
+  <div>
+    <h1 style="font-size: 2rem;">Hello {{studentName}}!</h1>
+    <p>
+      Congratulations on your remarkable achievement! Today marks the culmination of years of hard work, dedication, and
+      unwavering perseverance. As you walk across the stage and receive your degree, know that Parul University beams
+      with pride.
+      <br>
+      <br>
+      Below is the verification code that you will need to share with your Faculty/Coordinator after scanning your
+      Unique QR Code displayed on your Profile after which you will receive you Degree.
+      <br>
+      <br>
+    </p>
+    <div style="text-align: center">
+      <h1 style="font-size: 2rem;">{{verificationCode}}</h1>
+      <br>
+      <br>
+      <a href="{{attendeePassURL}}" style="background-color: #dc2626; padding: 1rem 3rem 1rem 3rem; border-radius: 2rem; color: white; text-decoration: none; font-weight: bold;">View Your Pass</a>
+    </div>
+    <p>
+      <br>
+      <br>
+      We've watched you grow, evolve, and blossom into the extraordinary individual you are today. From late-night study
+      sessions in the library to lively debates in classrooms, your journey has been filled with unforgettable memories.
+      We'll cherish the grand events that brought us all together - the vibrant cultural festivals, the exhilarating
+      sports competitions, and the thought-provoking conferences.
+      <br>
+      <br>
+      Parul University will miss your infectious energy, your inquisitive spirit, and your passion for learning. But as
+      you embark on this exciting new chapter, remember that you'll always be a part of our family. Go forth and conquer
+      the world, knowing that you carry with you the knowledge, skills, and values instilled in you during your time
+      here.
+      <br>
+      <br>
+      Congratulations once again, graduate! The future is yours to shape. Make us proud!
+    </p>
+  </div>
+  <div>
+    <p>
+      With warmest regards,
+      <br>
+      <a href="https://paruluniveristy.ac.in" style="color: #dc2626; text-decoration-line: underline;"><strong>Parul
+        University</strong></a>
+    </p>
+  </div>
+</section>
+<footer data-role="module-unsubscribe" class="module" role="module" data-type="unsubscribe"
+        style="color:#444444; font-size:12px; line-height:20px; padding:16px 16px 16px 16px; text-align:Center;"
+        data-muid="4e838cf3-9892-4a6d-94d6-170e474d21e5">
+
+  <p>
+    This mail was sent to you because you are going to get your degree certificate. This mail contains the verification
+    code required for the convocation.
+  </p>
+  <p>Developed with love by <a href="https://mihirpaldhikar.com"
+                               style="color: #dc2626; text-decoration-line: underline;"><strong>Mihir Paldhikar</strong></a>
+    & <a href="https://www.linkedin.com/in/suhani-shah-o13" style="color: #dc2626; text-decoration-line: underline;"><strong>Suhani
+      Shah</strong></a> for our seniors.</p>
+  <p>&copy; {{year}} Parul University</p>
+</footer>
+
+</body>
+</html>
