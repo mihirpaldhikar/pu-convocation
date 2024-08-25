@@ -25,14 +25,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
 import Link from "next/link";
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "@providers/index";
 
 const authService = new AuthService();
 
 export default function ConsoleNavbarMenu(): JSX.Element {
   const router = useRouter();
   const { toast } = useToast();
-  const { state } = useAuth();
+  const { state, dispatch } = useAuth();
 
   if (state.account === null) {
     return <Fragment />;
@@ -98,6 +98,12 @@ export default function ConsoleNavbarMenu(): JSX.Element {
               onClick={async () => {
                 const response = await authService.signOut();
                 if (response.statusCode === StatusCode.SUCCESS) {
+                  dispatch({
+                    type: "SIGN_OUT",
+                    payload: {
+                      account: null,
+                    },
+                  });
                   router.replace("/authenticate");
                 } else {
                   toast({

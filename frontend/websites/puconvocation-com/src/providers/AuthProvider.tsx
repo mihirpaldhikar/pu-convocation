@@ -24,13 +24,19 @@ export type AuthAction =
   | {
       type: "SET_ACCOUNT";
       payload: {
-        account: Account;
+        account: Account | null;
       };
     }
   | {
       type: "LOADING";
       payload: {
         loading: boolean;
+      };
+    }
+  | {
+      type: "SIGN_OUT";
+      payload: {
+        account: null;
       };
     };
 
@@ -53,6 +59,12 @@ const authReducer = (
       return {
         ...state,
         account: action.payload.account,
+      };
+    }
+    case "SIGN_OUT": {
+      return {
+        ...state,
+        account: null,
       };
     }
     case "LOADING": {

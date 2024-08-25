@@ -11,4 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as AuthProvider } from "./AuthProvider";
+export { default as AuthProvider, useAuth } from "./AuthProvider";

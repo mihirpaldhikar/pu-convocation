@@ -14,7 +14,7 @@
 "use client";
 
 import { JSX, ReactNode } from "react";
-import AuthProvider from "../providers/AuthProvider";
+import { AuthProvider } from "@providers/index";
 
 interface AuthWrapperProps {
   children: ReactNode;
