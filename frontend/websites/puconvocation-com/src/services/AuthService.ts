@@ -20,15 +20,18 @@ import { Account, Response } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 
 export default class AuthService {
-  private ACCOUNT_SERVICE_URL = (
-    process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string
-  ).concat("/accounts");
+  private BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string;
+
+  private ACCOUNT_ROUTE = this.BASE_URL.concat("/accounts");
+  private UAC_ROUTE = this.BASE_URL.concat("/uac");
+
   private httpClient: AxiosInstance;
+
   private REQUEST_TIMEOUT = 1000 * 10;
 
   public constructor() {
     this.httpClient = axios.create({
-      baseURL: this.ACCOUNT_SERVICE_URL,
+      baseURL: this.BASE_URL,
       timeout: this.REQUEST_TIMEOUT,
       withCredentials: true,
     });
@@ -36,9 +39,7 @@ export default class AuthService {
 
   public async getAccount(): Promise<Response<Account | string>> {
     try {
-      const response = await this.httpClient.get(
-        `${this.ACCOUNT_SERVICE_URL}/`,
-      );
+      const response = await this.httpClient.get(`${this.ACCOUNT_ROUTE}/`);
 
       if (response.status === 200) {
         return {
@@ -47,6 +48,42 @@ export default class AuthService {
         };
       }
       throw new AxiosError("INTERNAL:Failed to fetch Account.");
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
+  public async getUACRulesForAccount(
+    identifier: string,
+  ): Promise<Response<Array<string> | string>> {
+    try {
+      const response = await this.httpClient.get(
+        `${this.UAC_ROUTE}/${identifier}/rules`,
+      );
+
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        };
+      }
+      throw new AxiosError("INTERNAL:Failed to fetch Account Rules.");
     } catch (error) {
       let axiosError = (await error) as AxiosError;
       if (axiosError.message.includes("INTERNAL:")) {
@@ -77,7 +114,7 @@ export default class AuthService {
   ): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
-        `${this.ACCOUNT_SERVICE_URL}/new`,
+        `${this.ACCOUNT_ROUTE}/new`,
         password === undefined && authenticationStrategy === "PASSKEY"
           ? {
               username: username,
@@ -102,7 +139,7 @@ export default class AuthService {
             await createPasskeyCredentials(passkeyChallenge);
 
           const challengeResponse = await this.httpClient.post(
-            `${this.ACCOUNT_SERVICE_URL}/passkeys/validateRegistrationChallenge`,
+            `${this.BASE_URL}/passkeys/validateRegistrationChallenge`,
             {
               identifier: username,
               passkeyCredentials: JSON.stringify(passkeyCredentials),
@@ -149,7 +186,7 @@ export default class AuthService {
   ): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
-        `${this.ACCOUNT_SERVICE_URL}/authenticationStrategy`,
+        `${this.ACCOUNT_ROUTE}/authenticationStrategy`,
         {
           identifier: identifier,
         },
@@ -190,7 +227,7 @@ export default class AuthService {
   ): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
-        `${this.ACCOUNT_SERVICE_URL}/authenticate`,
+        `${this.ACCOUNT_ROUTE}/authenticate`,
         password === undefined
           ? {
               identifier: identifier,
@@ -206,7 +243,7 @@ export default class AuthService {
         const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
 
         const challengeResponse = await this.httpClient.post(
-          `${this.ACCOUNT_SERVICE_URL}/passkeys/validatePasskeyChallenge`,
+          `${this.BASE_URL}/passkeys/validatePasskeyChallenge`,
           {
             identifier: identifier,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
@@ -253,7 +290,7 @@ export default class AuthService {
   public async registerPasskey(identifier: string): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
-        `${this.ACCOUNT_SERVICE_URL}/passkeys/register`,
+        `${this.ACCOUNT_ROUTE}/passkeys/register`,
       );
 
       if (response.status === 200) {
@@ -262,7 +299,7 @@ export default class AuthService {
           await createPasskeyCredentials(passkeyChallenge);
 
         const challengeResponse = await this.httpClient.post(
-          `${this.ACCOUNT_SERVICE_URL}/passkeys/validateRegistrationChallenge`,
+          `${this.BASE_URL}/passkeys/validateRegistrationChallenge`,
           {
             identifier: identifier,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
@@ -302,7 +339,7 @@ export default class AuthService {
   public async signOut(): Promise<Response<string>> {
     try {
       const response = await this.httpClient.post(
-        `${this.ACCOUNT_SERVICE_URL}/signout`,
+        `${this.ACCOUNT_ROUTE}/signout`,
       );
       return {
         statusCode:
