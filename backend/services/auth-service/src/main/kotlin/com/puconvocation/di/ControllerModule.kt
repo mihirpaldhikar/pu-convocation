@@ -27,7 +27,8 @@ object ControllerModule {
         single<UACController> {
             UACController(
                 accountRepository = get<AccountRepository>(),
-                uacRepository = get<UACRepository>()
+                uacRepository = get<UACRepository>(),
+                jsonWebToken = get<JsonWebToken>(),
             )
         }
 

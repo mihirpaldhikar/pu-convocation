@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.NewUACRule
 import com.puconvocation.controllers.UACController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
+import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -29,6 +30,7 @@ fun Routing.uacRoute(
     route("/uac") {
         route("/rules") {
             get("/{name}") {
+                val authorizationToken = getSecurityTokens().authorizationToken
                 val rule = call.parameters["name"] ?: return@get sendResponse(
                     Result.Error(
                         statusCode = HttpStatusCode.BadRequest,
@@ -36,13 +38,14 @@ fun Routing.uacRoute(
                         message = "Please provide a rule name."
                     )
                 )
-                val result = uacController.getRule(rule)
+                val result = uacController.getRule(authorizationToken, rule)
                 sendResponse(result)
             }
 
             post("/create") {
+                val authorizationToken = getSecurityTokens().authorizationToken
                 val rule = call.receive<NewUACRule>()
-                val result = uacController.createRule(rule)
+                val result = uacController.createRule(authorizationToken, rule)
                 sendResponse(result)
             }
         }
