@@ -13,12 +13,14 @@
 
 package com.puconvocation.database.mongodb.repositories
 
+import com.mongodb.client.model.Aggregates
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasources.UACDatasource
 import com.puconvocation.database.mongodb.entities.UACRule
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 
 class UACRepository(
     database: MongoDatabase,
@@ -45,5 +47,17 @@ class UACRepository(
         }
 
         return ruleSet.accounts.toList()
+    }
+
+    override suspend fun listRulesForAccount(accountId: String): List<String> {
+        val matchedRules = uacRulesCollection.withDocumentClass<UACRule>()
+            .aggregate(listOf(Aggregates.match(eq(UACRule::accounts.name, accountId))))
+        val rules = mutableListOf<String>()
+
+        for (rule in matchedRules.toList()) {
+            rules.add(rule.rule)
+        }
+
+        return rules
     }
 }

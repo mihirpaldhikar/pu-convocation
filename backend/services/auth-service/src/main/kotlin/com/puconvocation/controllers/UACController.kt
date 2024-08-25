@@ -149,4 +149,43 @@ class UACController(
             )
         )
     }
+
+    suspend fun getAccountRules(authorizationToken: String?, identifier: String): Result {
+        if (authorizationToken == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Unauthorized,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid or expired."
+            )
+        }
+        val verificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (verificationResult is Result.Error) {
+            return verificationResult
+        }
+
+        val isAllowed =
+            uacRepository.getAccountsForRule("viewAccountRules")
+                .contains((verificationResult.responseData as List<String>)[0])
+
+        if (!isAllowed) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to view rules."
+            )
+        }
+
+        val rules = uacRepository.listRulesForAccount(identifier)
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = rules
+        )
+    }
 }

@@ -48,6 +48,20 @@ fun Routing.uacRoute(
                 val result = uacController.createRule(authorizationToken, rule)
                 sendResponse(result)
             }
+
+        }
+
+        get("/{identifier}/rules") {
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val identifier = call.parameters["identifier"] ?: return@get sendResponse(
+                Result.Error(
+                    statusCode = HttpStatusCode.BadRequest,
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Please provide a account identifier."
+                )
+            )
+            val result = uacController.getAccountRules(authorizationToken, identifier)
+            sendResponse(result)
         }
     }
 }
