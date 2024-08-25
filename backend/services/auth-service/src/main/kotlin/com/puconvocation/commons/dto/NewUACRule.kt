@@ -18,5 +18,5 @@ import com.google.gson.annotations.Expose
 data class NewUACRule(
     @Expose val rule: String,
     @Expose val description: String,
-    @Expose val accounts: MutableList<String>,
+    @Expose val accounts: MutableSet<String>,
 )

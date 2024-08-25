@@ -44,6 +44,6 @@ class UACRepository(
             return emptyList()
         }
 
-        return ruleSet.accounts
+        return ruleSet.accounts.toList()
     }
 }

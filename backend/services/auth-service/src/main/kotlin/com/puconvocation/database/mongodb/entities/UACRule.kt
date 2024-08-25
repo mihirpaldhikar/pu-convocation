@@ -20,5 +20,5 @@ data class UACRule(
     @BsonId @Expose val rule: String,
     @Expose val description: String,
     @Expose val enabled: Boolean,
-    @Expose val accounts: MutableList<String>
+    @Expose val accounts: MutableSet<String>
 )
