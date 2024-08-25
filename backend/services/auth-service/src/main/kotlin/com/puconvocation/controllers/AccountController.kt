@@ -13,6 +13,7 @@
 
 package com.puconvocation.controllers
 
+import com.puconvocation.commons.dto.AccountWithUACRules
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.database.mongodb.entities.Account
@@ -135,7 +136,8 @@ class AccountController(
         }
 
         val isAllowedToCreateAccount =
-            uacRepository.getAccountsForRule("createNewAccounts").contains((verificationResult.responseData as List<String>)[0])
+            uacRepository.getAccountsForRule("createNewAccounts")
+                .contains((verificationResult.responseData as List<String>)[0])
 
         if (!isAllowedToCreateAccount) {
             return Result.Error(
@@ -208,11 +210,12 @@ class AccountController(
             return jwtResult
         }
         val account =
-            accountRepository.getAccount((jwtResult.responseData as List<String>)[0].toString().replace("\"", "")) ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                message = "Account not found."
-            )
+            accountRepository.getAccount((jwtResult.responseData as List<String>)[0].toString().replace("\"", ""))
+                ?: return Result.Error(
+                    statusCode = HttpStatusCode.NotFound,
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
+                )
 
         if (account.suspended) {
             return Result.Error(
@@ -222,10 +225,21 @@ class AccountController(
             )
         }
 
+        val accountPrivileges = uacRepository.listRulesForAccount(account.uuid.toHexString())
+
+        val accountWithUACRules = AccountWithUACRules(
+            uuid = account.uuid,
+            email = account.email,
+            username = account.username,
+            avatarURL = account.avatarURL,
+            displayName = account.displayName,
+            privileges = accountPrivileges
+        )
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
-            data = account
+            data = accountWithUACRules
         )
     }
 
