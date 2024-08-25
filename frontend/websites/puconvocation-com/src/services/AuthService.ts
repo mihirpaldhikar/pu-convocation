@@ -243,7 +243,7 @@ export default class AuthService {
         const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
 
         const challengeResponse = await this.httpClient.post(
-          `${this.BASE_URL}/passkeys/validatePasskeyChallenge`,
+          `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
           {
             identifier: identifier,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
@@ -299,7 +299,7 @@ export default class AuthService {
           await createPasskeyCredentials(passkeyChallenge);
 
         const challengeResponse = await this.httpClient.post(
-          `${this.BASE_URL}/passkeys/validateRegistrationChallenge`,
+          `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
           {
             identifier: identifier,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
