@@ -60,6 +60,9 @@
       ],
       "@icons/*": [
         "./src/icons/*"
+      ],
+      "@providers/*": [
+        "./src/providers/*"
       ]
     }
   },
