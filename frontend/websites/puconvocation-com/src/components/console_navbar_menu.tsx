@@ -53,7 +53,7 @@ export default function ConsoleNavbarMenu(): JSX.Element {
   return (
     <nav className="flex items-center space-x-5">
       <div
-        className={`${account.type === "SUPER_ADMIN" || account.type === "ADMIN" ? "flex items-center space-x-2" : "hidden"}`}
+        className={`${account.privileges.includes("createNewAccounts") ? "flex items-center space-x-2" : "hidden"}`}
       >
         <Button className={"font-medium"}>Upload</Button>
         <div className={"h-10 w-0.5 bg-foreground/10"}></div>
