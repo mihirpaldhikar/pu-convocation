@@ -15,12 +15,17 @@ package com.puconvocation.di
 
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.repositories.AccountRepository
+import com.puconvocation.database.mongodb.repositories.UACRepository
 import org.koin.dsl.module
 
 object RepositoriesModule {
     val init = module {
         single<AccountRepository> {
             AccountRepository(database = get<MongoDatabase>())
+        }
+
+        single<UACRepository> {
+            UACRepository(database = get<MongoDatabase>())
         }
     }
 }

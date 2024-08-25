@@ -15,13 +15,22 @@ package com.puconvocation.di
 
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
+import com.puconvocation.controllers.UACController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
+import com.puconvocation.database.mongodb.repositories.UACRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
 object ControllerModule {
     val init = module {
+        single<UACController> {
+            UACController(
+                accountRepository = get<AccountRepository>(),
+                uacRepository = get<UACRepository>()
+            )
+        }
+
         single<AccountController> {
             AccountController(
                 accountRepository = get<AccountRepository>(),
