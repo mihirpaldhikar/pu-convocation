@@ -16,7 +16,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
-import { Footer, Navbar } from "@components/index";
+import { AuthWrapper, Footer, Navbar } from "@components/index";
 import { Config } from "../config";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
@@ -33,17 +33,19 @@ interface RootLayout {
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
   return (
-    <html lang="en">
-      <body
-        className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
-      >
-        <div className={"flex min-h-dvh flex-col"}>
-          <Navbar />
-          <main className={`flex-1 pt-20`}>{children}</main>
-          <Toaster />
-        </div>
-        <Footer credits={Config.credits} whoWeAre={Config.whoWeAre} />
-      </body>
-    </html>
+    <AuthWrapper>
+      <html lang="en">
+        <body
+          className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
+        >
+          <div className={"flex min-h-dvh flex-col"}>
+            <Navbar />
+            <main className={`flex-1 pt-20`}>{children}</main>
+            <Toaster />
+          </div>
+          <Footer credits={Config.credits} whoWeAre={Config.whoWeAre} />
+        </body>
+      </html>
+    </AuthWrapper>
   );
 }

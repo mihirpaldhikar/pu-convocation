@@ -12,7 +12,7 @@
  */
 
 "use client";
-import { Fragment, JSX, useEffect, useState } from "react";
+import { Fragment, JSX } from "react";
 import { AuthService } from "@services/index";
 import {
   Button,
@@ -20,40 +20,28 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@components/ui";
-import { Account } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
 import Link from "next/link";
+import { useAuth } from "../providers/AuthProvider";
 
-const authService: AuthService = new AuthService();
+const authService = new AuthService();
 
 export default function ConsoleNavbarMenu(): JSX.Element {
   const router = useRouter();
   const { toast } = useToast();
-  const [account, setAccount] = useState<Account | null>(null);
+  const { state } = useAuth();
 
-  useEffect(() => {
-    authService.getAccount().then((response) => {
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        setAccount(response.payload);
-      }
-    });
-  }, []);
-
-  if (account === null) {
+  if (state.account === null) {
     return <Fragment />;
   }
 
   return (
     <nav className="flex items-center space-x-5">
       <div
-        className={`${account.privileges.includes("createNewAccounts") ? "flex items-center space-x-2" : "hidden"}`}
+        className={`${state.account.privileges.includes("createNewAccounts") ? "flex items-center space-x-2" : "hidden"}`}
       >
         <Button className={"font-medium"}>Upload</Button>
         <div className={"h-10 w-0.5 bg-foreground/10"}></div>
@@ -68,10 +56,12 @@ export default function ConsoleNavbarMenu(): JSX.Element {
       </div>
       <Popover>
         <PopoverTrigger className={"flex items-center space-x-3"}>
-          <h4 className={"hidden font-medium md:block"}>{account.username}</h4>
+          <h4 className={"hidden font-medium md:block"}>
+            {state.account.username}
+          </h4>
           <Image
-            src={account.avatarURL}
-            alt={account.displayName}
+            src={state.account.avatarURL}
+            alt={state.account.displayName}
             width={40}
             height={40}
             draggable={false}
@@ -83,11 +73,11 @@ export default function ConsoleNavbarMenu(): JSX.Element {
         <PopoverContent
           className={"flex flex-col items-center space-y-3 rounded-md"}
         >
-          <h5 className={"text-xs text-primary"}>{account.email}</h5>
+          <h5 className={"text-xs text-primary"}>{state.account.email}</h5>
           <div className={"flex flex-col items-center space-y-2"}>
             <Image
-              src={account.avatarURL}
-              alt={account.displayName}
+              src={state.account.avatarURL}
+              alt={state.account.displayName}
               width={80}
               height={80}
               draggable={false}
@@ -96,7 +86,7 @@ export default function ConsoleNavbarMenu(): JSX.Element {
               className={"rounded-full border border-border"}
             />
             <h5 className={"text-lg font-semibold"}>
-              Hi, {account.displayName.split(" ")[0]}
+              Hi, {state.account.displayName.split(" ")[0]}
             </h5>
           </div>
           <div className={"flex items-center space-x-3"}>

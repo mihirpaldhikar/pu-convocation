@@ -10,15 +10,41 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
+"use client";
+import { JSX, useEffect } from "react";
+import { useAuth } from "../../providers/AuthProvider";
+import { AuthService } from "@services/index";
+import { StatusCode } from "@enums/StatusCode";
 
-import { JSX } from "react";
+const authService = new AuthService();
 
 export default function ConsolePage(): JSX.Element {
+  const { state, dispatch } = useAuth();
+
+  useEffect(() => {
+    if (state.account === null) {
+      authService.getAccount().then((res) => {
+        if (
+          res.statusCode === StatusCode.SUCCESS &&
+          "payload" in res &&
+          typeof res.payload === "object"
+        ) {
+          dispatch({
+            type: "SET_ACCOUNT",
+            payload: {
+              account: res.payload,
+            },
+          });
+        }
+      });
+    }
+  }, [dispatch, state.account]);
+
   return (
     <div className={"flex min-h-screen"}>
       <div className={"m-auto"}>
         <div>
-          <h1 className={"text-2xl font-bold"}>PU Convocation Console</h1>
+          <h1 className={"text-2xl font-bold"}>{state.account?.displayName}</h1>
         </div>
       </div>
     </div>

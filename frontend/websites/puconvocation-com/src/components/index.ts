@@ -27,3 +27,4 @@ export { IdentifierForm } from "./forms";
 export { default as ConvocationCarousel } from "./convocation_carousel";
 export { default as ProgressBar } from "./progress_bar";
 export { default as FilePicker } from "./file_picker";
+export { default as AuthWrapper } from "./auth_wrapper";

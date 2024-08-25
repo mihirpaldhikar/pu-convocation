@@ -18,11 +18,13 @@ import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import { AuthService } from "@services/index";
 import { Button, Input } from "@components/ui";
+import { useAuth } from "../../providers/AuthProvider";
 
 const authService = new AuthService();
 
 export default function AuthenticationForm(): JSX.Element {
   const router = useRouter();
+  const { dispatch } = useAuth();
   const { toast } = useToast();
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -63,7 +65,21 @@ export default function AuthenticationForm(): JSX.Element {
               identifier,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              router.replace("/console");
+              authService.getAccount().then((res) => {
+                if (
+                  res.statusCode === StatusCode.SUCCESS &&
+                  "payload" in res &&
+                  typeof res.payload === "object"
+                ) {
+                  dispatch({
+                    type: "SET_ACCOUNT",
+                    payload: {
+                      account: res.payload,
+                    },
+                  });
+                }
+                router.replace("/console");
+              });
             } else if ("message" in response) {
               toast({
                 title: "Authentication Failed",
