@@ -32,6 +32,15 @@ class AttendeeController(
     private val jsonWebToken: JsonWebToken
 ) {
     suspend fun getAttendee(identifier: String): Result {
+
+        if(!attendeeRepository.isAttendeeLockEnforced()){
+            return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
+                message = "Could not find attendee for identifier $identifier"
+            )
+        }
+
         val attendee = cacheService.get(identifier) ?: attendeeRepository.getAttendee(identifier)
         ?: return Result.Error(
             statusCode = HttpStatusCode.NotFound,
