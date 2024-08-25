@@ -127,7 +127,7 @@ class AccountController(
         val verificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claim = JsonWebToken.ACCOUNT_TYPE_CLAIM
+            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
         )
 
         if (verificationResult is Result.Error) {
