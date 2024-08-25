@@ -34,4 +34,16 @@ class UACRepository(
     override suspend fun getRule(name: String): UACRule? {
         return uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(eq("_id", name)).firstOrNull()
     }
+
+    override suspend fun getAccountsForRule(rule: String): List<String> {
+        val ruleSet = uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(
+            eq("_id", rule)
+        ).firstOrNull()
+
+        if (ruleSet == null) {
+            return emptyList()
+        }
+
+        return ruleSet.accounts
+    }
 }

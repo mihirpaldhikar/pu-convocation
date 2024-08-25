@@ -17,7 +17,7 @@ import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.enums.AccountType
+import com.puconvocation.database.mongodb.repositories.UACRepository
 import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -31,7 +31,8 @@ import org.bson.types.ObjectId
 class AccountController(
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
-    private val passkeyController: PasskeyController
+    private val passkeyController: PasskeyController,
+    private val uacRepository: UACRepository,
 ) {
     suspend fun getAuthenticationStrategy(identifier: String): Result {
         val account = accountRepository.getAccount(identifier) ?: return Result.Error(
@@ -102,9 +103,8 @@ class AccountController(
             authorizationToken = jsonWebToken.generateAuthorizationToken(
                 account.uuid.toHexString(),
                 "null",
-                account.type
             ),
-            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
+            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
         )
 
         return Result.Success(
@@ -127,16 +127,17 @@ class AccountController(
         val verificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (verificationResult is Result.Error) {
             return verificationResult
         }
-        val currentAccountType = AccountType.valueOf(verificationResult.responseData as String)
 
+        val isAllowedToCreateAccount =
+            uacRepository.getAccountsForRule("createNewAccounts").contains((verificationResult.responseData as List<String>)[0])
 
-        if (currentAccountType != AccountType.SUPER_ADMIN) {
+        if (!isAllowedToCreateAccount) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -161,7 +162,6 @@ class AccountController(
             displayName = newAccount.displayName,
             suspended = false,
             password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
-            type = AccountType.FACULTY,
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)
@@ -183,9 +183,8 @@ class AccountController(
             authorizationToken = jsonWebToken.generateAuthorizationToken(
                 account.uuid.toHexString(),
                 "null",
-                account.type
             ),
-            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
+            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
         )
 
         return Result.Success(
@@ -209,7 +208,7 @@ class AccountController(
             return jwtResult
         }
         val account =
-            accountRepository.getAccount(jwtResult.responseData.toString().replace("\"", "")) ?: return Result.Error(
+            accountRepository.getAccount((jwtResult.responseData as List<String>)[0].toString().replace("\"", "")) ?: return Result.Error(
                 statusCode = HttpStatusCode.NotFound,
                 errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
                 message = "Account not found."

@@ -18,7 +18,6 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.TokenExpiredException
-import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.JWTMetadata
@@ -74,7 +73,7 @@ class JsonWebToken(
         ).withIssuer(jwtMetadata.issuer).build()
     }
 
-    fun generateAuthorizationToken(uuid: String, sessionId: String, accountType: AccountType): String {
+    fun generateAuthorizationToken(uuid: String, sessionId: String): String {
 
         val currentTime = System.currentTimeMillis()
         val tokenCreatedAt = Date(currentTime)
@@ -84,8 +83,6 @@ class JsonWebToken(
             jwtMetadata.issuer
         ).withClaim(UUID_CLAIM, uuid).withClaim(
             SESSION_ID_CLAIM, sessionId
-        ).withClaim(
-            ACCOUNT_TYPE_CLAIM, accountType.toString()
         ).withIssuedAt(tokenCreatedAt).withExpiresAt(tokenExpiresAt)
             .withSubject(API_AUTHORIZATION_SUBJECT).sign(
                 Algorithm.RSA256(
@@ -95,7 +92,7 @@ class JsonWebToken(
             )
     }
 
-    fun generateRefreshToken(uuid: String, sessionId: String, accountType: AccountType): String {
+    fun generateRefreshToken(uuid: String, sessionId: String): String {
         val currentTime = System.currentTimeMillis()
         val tokenCreatedAt = Date(currentTime)
         val tokenExpiresAt = Date(currentTime + 31556952000)
@@ -106,8 +103,6 @@ class JsonWebToken(
             SESSION_ID_CLAIM, sessionId
         ).withClaim(
             UUID_CLAIM, uuid
-        ).withClaim(
-            ACCOUNT_TYPE_CLAIM, accountType.toString()
         ).withIssuedAt(tokenCreatedAt)
             .withExpiresAt(tokenExpiresAt)
             .withSubject(API_AUTHORIZATION_SUBJECT).sign(
@@ -129,7 +124,7 @@ class JsonWebToken(
             val claimData: MutableList<String> = mutableListOf();
 
             claims.map { claim ->
-                claimData.add(jwtVerifier.verify(authorizationToken).getClaim(claim).asString())
+                claimData.add(jwtVerifier.verify(authorizationToken).getClaim(claim).asString().replace("\"", ""))
             }
 
             Result.Success(
@@ -148,13 +143,11 @@ class JsonWebToken(
             val uuid = jwtVerifier.verify(securityToken.refreshToken).getClaim(UUID_CLAIM).asString()
             val sessionId =
                 jwtVerifier.verify(securityToken.refreshToken).getClaim(SESSION_ID_CLAIM).asString()
-            val accountType =
-                jwtVerifier.verify(securityToken.refreshToken).getClaim(ACCOUNT_TYPE_CLAIM).asString()
 
             Result.Success(
                 data = SecurityToken(
-                    authorizationToken = generateAuthorizationToken(uuid, sessionId, AccountType.valueOf(accountType)),
-                    refreshToken = generateRefreshToken(uuid, sessionId, AccountType.valueOf(accountType))
+                    authorizationToken = generateAuthorizationToken(uuid, sessionId),
+                    refreshToken = generateRefreshToken(uuid, sessionId)
                 )
             )
         } catch (e: TokenExpiredException) {
@@ -174,6 +167,5 @@ class JsonWebToken(
         const val UUID_CLAIM = "uuid"
         const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
         const val SESSION_ID_CLAIM = "session"
-        const val ACCOUNT_TYPE_CLAIM = "type"
     }
 }

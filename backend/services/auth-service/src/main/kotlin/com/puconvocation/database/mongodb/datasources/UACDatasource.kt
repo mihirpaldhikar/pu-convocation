@@ -20,5 +20,7 @@ interface UACDatasource {
 
     suspend fun getRule(name: String): UACRule?
 
+    suspend fun getAccountsForRule(rule: String): List<String>
+
 
 }

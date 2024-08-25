@@ -186,9 +186,8 @@ class PasskeyController(
                 authorizationToken = jsonWebToken.generateAuthorizationToken(
                     account.uuid.toHexString(),
                     "null",
-                    account.type
                 ),
-                refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null", account.type),
+                refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
             )
             return Result.Success(
                 statusCode = HttpStatusCode.OK,
