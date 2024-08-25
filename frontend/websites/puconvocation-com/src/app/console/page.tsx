@@ -22,6 +22,12 @@ export default function ConsolePage(): JSX.Element {
   const { state, dispatch } = useAuth();
 
   useEffect(() => {
+    dispatch({
+      type: "LOADING",
+      payload: {
+        loading: true,
+      },
+    });
     if (state.account === null) {
       authService.getAccount().then((res) => {
         if (
@@ -38,13 +44,21 @@ export default function ConsolePage(): JSX.Element {
         }
       });
     }
+    dispatch({
+      type: "LOADING",
+      payload: {
+        loading: false,
+      },
+    });
   }, [dispatch, state.account]);
 
   return (
     <div className={"flex min-h-screen"}>
       <div className={"m-auto"}>
         <div>
-          <h1 className={"text-2xl font-bold"}>{state.account?.displayName}</h1>
+          <h1 hidden={state.loading} className={"text-2xl font-bold"}>
+            {state.account?.displayName}
+          </h1>
         </div>
       </div>
     </div>

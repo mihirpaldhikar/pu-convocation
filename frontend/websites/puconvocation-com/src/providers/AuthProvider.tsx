@@ -20,19 +20,28 @@ import {
 } from "react";
 import { Account } from "@dto/index";
 
-export type AuthAction = {
-  type: "SET_ACCOUNT";
-  payload: {
-    account: Account;
-  };
-};
+export type AuthAction =
+  | {
+      type: "SET_ACCOUNT";
+      payload: {
+        account: Account;
+      };
+    }
+  | {
+      type: "LOADING";
+      payload: {
+        loading: boolean;
+      };
+    };
 
 export type AuthState = {
   account: Account | null;
+  loading: boolean;
 };
 
 const initialAuthState: AuthState = {
   account: null,
+  loading: true,
 };
 
 const authReducer = (
@@ -44,6 +53,12 @@ const authReducer = (
       return {
         ...state,
         account: action.payload.account,
+      };
+    }
+    case "LOADING": {
+      return {
+        ...state,
+        loading: action.payload.loading,
       };
     }
     default: {

@@ -66,6 +66,12 @@ export default function AuthenticationForm(): JSX.Element {
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
               authService.getAccount().then((res) => {
+                dispatch({
+                  type: "LOADING",
+                  payload: {
+                    loading: true,
+                  },
+                });
                 if (
                   res.statusCode === StatusCode.SUCCESS &&
                   "payload" in res &&
@@ -78,6 +84,12 @@ export default function AuthenticationForm(): JSX.Element {
                     },
                   });
                 }
+                dispatch({
+                  type: "LOADING",
+                  payload: {
+                    loading: false,
+                  },
+                });
                 router.replace("/console");
               });
             } else if ("message" in response) {
