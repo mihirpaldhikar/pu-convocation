@@ -25,4 +25,7 @@ interface UACDatasource {
     suspend fun listRulesForAccount(accountId: String): List<String>
 
     suspend fun isRuleAllowedForAccount(ruleName: String, accountId: String): Boolean
+
+    suspend fun updateRule(rule: UACRule): Boolean
+
 }

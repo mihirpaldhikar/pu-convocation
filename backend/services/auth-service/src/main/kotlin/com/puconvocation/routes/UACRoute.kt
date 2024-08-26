@@ -15,6 +15,7 @@ package com.puconvocation.routes
 
 import com.puconvocation.Environment
 import com.puconvocation.commons.dto.NewUACRule
+import com.puconvocation.commons.dto.UpdateUACRuleRequest
 import com.puconvocation.controllers.UACController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
@@ -60,6 +61,21 @@ fun Routing.uacRoute(
                 val authorizationToken = getSecurityTokens().authorizationToken
                 val rule = call.parameters["name"] ?: return@get call.respond(false)
                 call.respond(uacController.isRuleAllowedForAccount(authorizationToken, rule))
+            }
+
+            patch("/{name}/update") {
+                val authorizationToken = getSecurityTokens().authorizationToken
+                val rule = call.parameters["name"] ?: return@patch sendResponse(
+                    Result.Error(
+                        statusCode = HttpStatusCode.BadRequest,
+                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                        message = "Please provide a rule name."
+                    )
+                )
+                val updateUACRuleRequest = call.receive<UpdateUACRuleRequest>()
+                val result = uacController.updateRule(authorizationToken, rule, updateUACRuleRequest)
+                sendResponse(result)
+
             }
 
         }

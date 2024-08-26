@@ -14,11 +14,13 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.NewUACRule
+import com.puconvocation.commons.dto.UpdateUACRuleRequest
 import com.puconvocation.database.mongodb.entities.UACRule
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.UACRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
+import com.puconvocation.enums.UACAccountOperation
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.utils.Result
 import io.ktor.http.*
@@ -205,5 +207,91 @@ class UACController(
         }
 
         return uacRepository.isRuleAllowedForAccount(ruleName, (verificationResult.responseData as List<String>)[0])
+    }
+
+    suspend fun updateRule(
+        authorizationToken: String?,
+        ruleName: String,
+        updateUACRuleRequest: UpdateUACRuleRequest
+    ): Result {
+        if (authorizationToken == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Unauthorized,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid or expired."
+            )
+        }
+        val verificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (verificationResult is Result.Error) {
+            return verificationResult
+        }
+
+        val isAllowed =
+            uacRepository.getAccountsForRule("updateRules")
+                .contains((verificationResult.responseData as List<String>)[0])
+
+        if (!isAllowed) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to update rules."
+            )
+        }
+
+        var ruleSet = uacRepository.getRule(ruleName)
+            ?: return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.RULE_NOT_FOUND,
+                message = "Rule $ruleName not found",
+            )
+
+        if (updateUACRuleRequest.description != null) {
+            ruleSet = ruleSet.copy(description = updateUACRuleRequest.description)
+        }
+
+        if (updateUACRuleRequest.enabled != null) {
+            ruleSet = ruleSet.copy(enabled = updateUACRuleRequest.enabled)
+        }
+
+        if (updateUACRuleRequest.accounts != null) {
+            for (account in updateUACRuleRequest.accounts) {
+                if (!accountRepository.accountExists(account.id)) {
+                    return Result.Error(
+                        statusCode = HttpStatusCode.NotFound,
+                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                        message = "Account $account not found",
+                    )
+                }
+                if (account.operation == UACAccountOperation.ADD) {
+                    ruleSet.accounts.add(account.id)
+                } else if (account.operation == UACAccountOperation.REMOVE) {
+                    ruleSet.accounts.remove(account.id)
+                }
+            }
+        }
+
+        val success = uacRepository.updateRule(ruleSet)
+
+        if (!success) {
+            return Result.Error(
+                statusCode = HttpStatusCode.InternalServerError,
+                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                message = "Failed to update rules."
+            )
+        }
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = mapOf(
+                "code" to ResponseCode.OK,
+                "message" to "Successfully updated rule.",
+            )
+        )
     }
 }

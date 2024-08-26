@@ -15,6 +15,7 @@ package com.puconvocation.database.mongodb.repositories
 
 import com.mongodb.client.model.Aggregates
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasources.UACDatasource
@@ -72,4 +73,15 @@ class UACRepository(
 
         return rule.accounts.contains(accountId)
     }
+
+    override suspend fun updateRule(rule: UACRule): Boolean {
+        return uacRulesCollection.withDocumentClass<UACRule>().updateOne(
+            eq("_id", rule.rule),
+            Updates.combine(
+                Updates.set(UACRule::description.name, rule.description),
+                Updates.set(UACRule::accounts.name, rule.accounts),
+            )
+        ).wasAcknowledged()
+    }
+
 }
