@@ -87,4 +87,9 @@ class AttendeeRepository(
             .firstOrNull()?.isLocked ?: false
     }
 
+    override suspend fun getAttendees(page: Int, limit: Int): List<Attendee> {
+        return attendeesCollection.withDocumentClass<Attendee>().find().skip((page - 1) * limit).limit(limit)
+            .partial(true).toList()
+    }
+
 }

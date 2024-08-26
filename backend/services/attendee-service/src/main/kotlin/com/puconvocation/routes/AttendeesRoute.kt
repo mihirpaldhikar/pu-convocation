@@ -40,6 +40,14 @@ fun Routing.attendeesRoute(
             sendResponse(result)
         }
 
+        get("/all") {
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val page = call.request.queryParameters["page"]?.toInt() ?: 1
+            val limit = call.request.queryParameters["limit"]?.toInt() ?: 10
+            val result = attendeeController.getAttendees(authorizationToken, page, limit)
+            sendResponse(result)
+        }
+
         post("/upload") {
             val authorizationToken = getSecurityTokens().authorizationToken
             val multipartData = call.receiveMultipart()

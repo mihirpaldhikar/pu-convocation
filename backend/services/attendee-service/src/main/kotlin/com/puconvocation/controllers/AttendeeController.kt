@@ -279,4 +279,43 @@ class AttendeeController(
             )
         )
     }
+
+    suspend fun getAttendees(authorizationToken: String?, page: Int, limit: Int): Result {
+        if (authorizationToken == null) return Result.Error(
+            statusCode = HttpStatusCode.Unauthorized,
+            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
+            message = "Authorization token is invalid or expired."
+        )
+
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return tokenVerificationResult
+        }
+
+
+        if (!authService.isOperationAllowed(authorizationToken, "viewAttendeesDetails")) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to view attendee details."
+            )
+        }
+
+        val attendees = attendeeRepository.getAttendees(page, limit)
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = mapOf(
+                "page" to page,
+                "next" to page + limit,
+                "attendees" to attendees
+            )
+        )
+    }
 }

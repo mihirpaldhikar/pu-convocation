@@ -29,4 +29,6 @@ interface AttendeeDatasource {
     suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean
 
     suspend fun isAttendeeLockEnforced(): Boolean
+
+    suspend fun getAttendees(page: Int, limit: Int): List<Attendee>
 }
