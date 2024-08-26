@@ -82,3 +82,5 @@ out/
 */secrets/
 
 */.well-known/
+
+.react-email
