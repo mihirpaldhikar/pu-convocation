@@ -68,7 +68,7 @@ export default function NavbarMenu(): JSX.Element {
         },
       });
     }, 500);
-  }, [dispatch, state.account]);
+  }, [dispatch, state.account, state.authService]);
 
   return (
     <nav
