@@ -16,7 +16,7 @@ import {
   get as getPublicCredentials,
 } from "@github/webauthn-json";
 import axios, { AxiosError, AxiosInstance } from "axios";
-import { Account, Response } from "@dto/index";
+import { Account, Response, UpdateUACRuleRequest } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 
 export default class AuthService {
@@ -84,6 +84,44 @@ export default class AuthService {
         };
       }
       throw new AxiosError("INTERNAL:Failed to fetch Account Rules.");
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
+  public async updateUACRule(
+    ruleName: string,
+    updateUACRuleRequest: UpdateUACRuleRequest,
+  ): Promise<Response<Array<string> | string>> {
+    try {
+      const response = await this.httpClient.patch(
+        `${this.UAC_ROUTE}/rules/${ruleName}/update`,
+        updateUACRuleRequest,
+      );
+
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        };
+      }
+      throw new AxiosError("INTERNAL:Failed to update rule.");
     } catch (error) {
       let axiosError = (await error) as AxiosError;
       if (axiosError.message.includes("INTERNAL:")) {
