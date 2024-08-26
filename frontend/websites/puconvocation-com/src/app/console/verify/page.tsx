@@ -140,6 +140,7 @@ export default function VerificationPage({
                       description: response.message,
                       duration: 5000,
                     });
+                    setVerificationCode("");
                     setLoading(false);
                   } else {
                     router.push("/console/scan");
