@@ -72,7 +72,7 @@ export default function NavbarMenu(): JSX.Element {
 
   return (
     <nav
-      className={`${!state.loading ? "flex" : "hidden"} items-center space-x-5`}
+      className={`${!state.loading ? "flex" : "hidden"} items-center space-x-5 rounded-xl bg-white px-5 py-3`}
     >
       <Link
         href={"/authenticate"}
