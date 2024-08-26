@@ -4,10 +4,10 @@ import com.puconvocation.commons.dto.TransactionRequest
 import com.puconvocation.database.mongodb.entities.Transaction
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
-import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.AuthService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -17,7 +17,8 @@ import java.time.ZoneOffset
 class TransactionController(
     private val transactionRepository: TransactionRepository,
     private val attendeeRepository: AttendeeRepository,
-    private val jsonWebToken: JsonWebToken
+    private val jsonWebToken: JsonWebToken,
+    private val authService: AuthService
 ) {
     suspend fun insertTransaction(authorizationToken: String?, transactionRequest: TransactionRequest): Result {
 
@@ -30,17 +31,15 @@ class TransactionController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM, JsonWebToken.UUID_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
-
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (!authService.isOperationAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -58,7 +57,7 @@ class TransactionController(
 
         val transaction = Transaction(
             id = ObjectId().toHexString(),
-            approvedBy = tokenVerificationResult.responseData[1],
+            approvedBy = (tokenVerificationResult.responseData as List<String>)[0],
             studentEnrollmentNumber = transactionRequest.studentEnrollmentNumber,
             timestamp = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(),
         )

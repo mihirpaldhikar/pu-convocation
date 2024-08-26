@@ -15,11 +15,11 @@ package com.puconvocation.controllers
 
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
-import com.puconvocation.enums.AccountType
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
+import com.puconvocation.services.AuthService
 import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
@@ -29,11 +29,11 @@ class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
     private val cacheService: CacheService<Attendee>,
-    private val jsonWebToken: JsonWebToken
+    private val jsonWebToken: JsonWebToken,
+    private val authService: AuthService
 ) {
     suspend fun getAttendee(identifier: String): Result {
-
-        if(!attendeeRepository.isAttendeeLockEnforced()){
+        if (!attendeeRepository.isAttendeeLockEnforced()) {
             return Result.Error(
                 statusCode = HttpStatusCode.NotFound,
                 errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
@@ -68,17 +68,15 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
-
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (!authService.isOperationAllowed(authorizationToken, "uploadAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -142,17 +140,15 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
-
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (!authService.isOperationAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -184,17 +180,15 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
-
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (!authService.isOperationAllowed(authorizationToken, "lockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -241,17 +235,15 @@ class AttendeeController(
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
             authorizationToken = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.ACCOUNT_TYPE_CLAIM)
+            claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
         if (tokenVerificationResult is Result.Error) {
             return tokenVerificationResult
         }
 
-        val currentAccountType = AccountType.valueOf((tokenVerificationResult.responseData as List<String>)[0])
 
-
-        if (currentAccountType != AccountType.SUPER_ADMIN && currentAccountType != AccountType.ADMIN) {
+        if (!authService.isOperationAllowed(authorizationToken, "unLockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,

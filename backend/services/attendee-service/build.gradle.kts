@@ -48,6 +48,10 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-gson-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-gson")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Koin Dependencies
@@ -63,6 +67,7 @@ dependencies {
 
     // Google Guava Cache
     implementation("com.google.guava:guava:33.2.0-jre")
+    implementation("io.ktor:ktor-client-cio-jvm:2.3.10")
 
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")

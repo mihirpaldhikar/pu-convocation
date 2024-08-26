@@ -98,6 +98,5 @@ class JsonWebToken(
         const val UUID_CLAIM = "uuid"
         const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
         const val SESSION_ID_CLAIM = "session"
-        const val ACCOUNT_TYPE_CLAIM = "type"
     }
 }
