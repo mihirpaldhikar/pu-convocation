@@ -11,46 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useEffect } from "react";
-import { useAuth } from "../../providers/AuthProvider";
-import { AuthService } from "@services/index";
-import { StatusCode } from "@enums/StatusCode";
-
-const authService = new AuthService();
+import { JSX } from "react";
+import { useAuth } from "@providers/index";
 
 export default function ConsolePage(): JSX.Element {
-  const { state, dispatch } = useAuth();
-
-  useEffect(() => {
-    dispatch({
-      type: "LOADING",
-      payload: {
-        loading: true,
-      },
-    });
-    if (state.account === null) {
-      authService.getAccount().then((res) => {
-        if (
-          res.statusCode === StatusCode.SUCCESS &&
-          "payload" in res &&
-          typeof res.payload === "object"
-        ) {
-          dispatch({
-            type: "SET_ACCOUNT",
-            payload: {
-              account: res.payload,
-            },
-          });
-        }
-      });
-    }
-    dispatch({
-      type: "LOADING",
-      payload: {
-        loading: false,
-      },
-    });
-  }, [dispatch, state.account]);
+  const { state } = useAuth();
 
   return (
     <div className={"flex min-h-screen"}>
