@@ -12,11 +12,10 @@
  */
 "use client";
 
-import { Fragment, JSX } from "react";
+import { JSX } from "react";
 import Link from "next/link";
 import { Logo } from "@components/ui";
 import { usePathname } from "next/navigation";
-import ConsoleNavbarMenu from "@components/console_navbar_menu";
 import NavbarMenu from "@components/navbar_menu";
 
 export default function Navbar(): JSX.Element {
@@ -31,13 +30,7 @@ export default function Navbar(): JSX.Element {
           <Logo />
         </Link>
       </div>
-      {path.includes("/console") ? (
-        <ConsoleNavbarMenu />
-      ) : !path.includes("/authenticate") ? (
-        <NavbarMenu />
-      ) : (
-        <Fragment />
-      )}
+      <NavbarMenu />
     </header>
   );
 }
