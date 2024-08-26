@@ -18,7 +18,6 @@ import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useAuth } from "@providers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { AuthService } from "@services/index";
 import {
   Button,
   Popover,
@@ -28,8 +27,6 @@ import {
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
-
-const authService = new AuthService();
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
@@ -48,7 +45,7 @@ export default function NavbarMenu(): JSX.Element {
       },
     });
     if (state.account === null) {
-      authService.getAccount().then((res) => {
+      state.authService.getAccount().then((res) => {
         if (
           res.statusCode === StatusCode.SUCCESS &&
           "payload" in res &&
@@ -145,7 +142,7 @@ export default function NavbarMenu(): JSX.Element {
                 variant={"outline"}
                 onClick={async () => {
                   openPopup(false);
-                  const response = await authService.signOut();
+                  const response = await state.authService.signOut();
                   if (response.statusCode === StatusCode.SUCCESS) {
                     dispatch({
                       type: "SIGN_OUT",

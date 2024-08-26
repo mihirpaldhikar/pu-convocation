@@ -16,15 +16,12 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
-import { AuthService } from "@services/index";
 import { Button, Input } from "@components/ui";
-import { useAuth } from "../../providers/AuthProvider";
-
-const authService = new AuthService();
+import { useAuth } from "@providers/index";
 
 export default function AuthenticationForm(): JSX.Element {
   const router = useRouter();
-  const { dispatch } = useAuth();
+  const { state, dispatch } = useAuth();
   const { toast } = useToast();
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -42,7 +39,7 @@ export default function AuthenticationForm(): JSX.Element {
         switch (authenticationStrategy) {
           case "UNKNOWN": {
             const response =
-              await authService.getAuthenticationStrategy(identifier);
+              await state.authService.getAuthenticationStrategy(identifier);
             if (
               response.statusCode === StatusCode.SUCCESS &&
               "payload" in response
@@ -60,12 +57,12 @@ export default function AuthenticationForm(): JSX.Element {
             break;
           }
           case "PASSKEY": {
-            const response = await authService.authenticate(
+            const response = await state.authService.authenticate(
               authenticationStrategy,
               identifier,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              authService.getAccount().then((res) => {
+              state.authService.getAccount().then((res) => {
                 dispatch({
                   type: "LOADING",
                   payload: {
@@ -102,7 +99,7 @@ export default function AuthenticationForm(): JSX.Element {
             break;
           }
           case "PASSWORD": {
-            const response = await authService.authenticate(
+            const response = await state.authService.authenticate(
               authenticationStrategy,
               identifier,
               password,

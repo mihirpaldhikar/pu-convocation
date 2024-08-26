@@ -19,6 +19,7 @@ import {
   useReducer,
 } from "react";
 import { Account } from "@dto/index";
+import { AuthService } from "@services/index";
 
 export type AuthAction =
   | {
@@ -43,11 +44,13 @@ export type AuthAction =
 export type AuthState = {
   account: Account | null;
   loading: boolean;
+  authService: AuthService;
 };
 
 const initialAuthState: AuthState = {
   account: null,
   loading: true,
+  authService: new AuthService(),
 };
 
 const authReducer = (
