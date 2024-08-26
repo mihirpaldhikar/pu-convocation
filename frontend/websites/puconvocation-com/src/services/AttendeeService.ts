@@ -15,6 +15,7 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import {
   Attendee,
   AttendeeWithEnclosureMetadata,
+  AttendeeWithPagination,
   Enclosure,
   Response,
 } from "@dto/index";
@@ -226,6 +227,34 @@ export default class AuthService {
         statusCode: StatusCode.FAILURE,
         payload: "Unknown Error occurred.",
       } as Response<string>;
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+      return {
+        statusCode: StatusCode.ATTENDEE_NOT_FOUND,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
+  public async getAllAttendees(
+    page: number,
+    limit: number,
+  ): Promise<Response<AttendeeWithPagination | string>> {
+    try {
+      const response = await this.httpClient.get(
+        `${this.ATTENDEE_ROUTES}/all?page=${page}&limit=${limit}`,
+      );
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: response.data,
+        } as Response<AttendeeWithPagination>;
+      }
+      throw new AxiosError("INTERNAL:Failed to attendees.");
     } catch (error) {
       let axiosError = (await error) as AxiosError;
       let errorResponseString = JSON.stringify(

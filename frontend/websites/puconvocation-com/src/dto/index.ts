@@ -18,3 +18,4 @@ export type { default as Attendee } from "./Attendee";
 export type { default as AttendeeWithEnclosureMetadata } from "./AttendeeWithEnclosureMetadata";
 export type { default as Enclosure } from "./Enclosure";
 export type { default as UpdateUACRuleRequest } from "./UpdateUACRuleRequest";
+export type { default as AttendeeWithPagination } from "./AttendeeWithPagination";
