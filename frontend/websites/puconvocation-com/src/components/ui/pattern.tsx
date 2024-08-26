@@ -28,18 +28,18 @@ export default function Pattern(): JSX.Element {
           y2="1.14423775e-15%"
           id="linearGradient-1"
         >
-          <stop stop-color="#FFFFFF" offset="0%"></stop>
-          <stop stop-color="#FAD961" offset="100%"></stop>
+          <stop stopColor="#FFFFFF" offset="0%"></stop>
+          <stop stopColor="#FAD961" offset="100%"></stop>
         </linearGradient>
       </defs>
       <g
         id="Patterns"
         stroke="none"
-        stroke-width="1"
+        strokeWidth="1"
         fill="none"
-        fill-rule="evenodd"
+        fillRule="evenodd"
       >
-        <g id="Linth" fill-rule="nonzero">
+        <g id="Linth" fillRule="nonzero">
           <g transform="translate(0.000000, -1.000000)" id="Module">
             <g transform="translate(240.600000, 241.000000)">
               <circle
