@@ -13,6 +13,7 @@
 
 package com.puconvocation.routes
 
+import com.puconvocation.Environment
 import com.puconvocation.commons.dto.NewUACRule
 import com.puconvocation.controllers.UACController
 import com.puconvocation.enums.ResponseCode
@@ -22,10 +23,12 @@ import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.uacRoute(
-    uacController: UACController
+    uacController: UACController,
+    environment: Environment
 ) {
     route("/uac") {
         route("/rules") {
@@ -47,6 +50,16 @@ fun Routing.uacRoute(
                 val rule = call.receive<NewUACRule>()
                 val result = uacController.createRule(authorizationToken, rule)
                 sendResponse(result)
+            }
+
+            get("/{name}/allowed") {
+                val host = call.request.host()
+                if (host != environment.attendeeServiceHost) {
+                    return@get call.respond(false)
+                }
+                val authorizationToken = getSecurityTokens().authorizationToken
+                val rule = call.parameters["name"] ?: return@get call.respond(false)
+                call.respond(uacController.isRuleAllowedForAccount(authorizationToken, rule))
             }
 
         }

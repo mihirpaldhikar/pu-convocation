@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.controllers.UACController
@@ -26,12 +27,17 @@ fun Application.configureRouting() {
     val accountController by KoinJavaComponent.inject<AccountController>(AccountController::class.java)
     val passkeyController by KoinJavaComponent.inject<PasskeyController>(PasskeyController::class.java)
     val uacController by KoinJavaComponent.inject<UACController>(UACController::class.java)
+    val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
 
     routing {
-        uacRoute(uacController = uacController)
+        uacRoute(
+            uacController = uacController,
+            environment = environment
+        )
         accountsRoute(
             accountController = accountController,
             passkeyController = passkeyController
         )
     }
+
 }

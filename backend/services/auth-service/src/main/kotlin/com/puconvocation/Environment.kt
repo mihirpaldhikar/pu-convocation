@@ -22,6 +22,8 @@ class Environment {
     val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
     val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
 
+    val attendeeServiceHost = System.getenv("ATTENDEE_SERVICE_HOST").toString()
+
     val jwtMetadata: JWTMetadata = JWTMetadata(
         authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY"),
         refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY"),

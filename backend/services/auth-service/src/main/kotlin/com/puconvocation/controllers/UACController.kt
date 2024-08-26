@@ -188,4 +188,22 @@ class UACController(
             data = rules
         )
     }
+
+    suspend fun isRuleAllowedForAccount(authorizationToken: String?, ruleName: String): Boolean {
+        if (authorizationToken == null) {
+            return false
+        }
+
+        val verificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (verificationResult is Result.Error) {
+            return false
+        }
+
+        return uacRepository.isRuleAllowedForAccount(ruleName, (verificationResult.responseData as List<String>)[0])
+    }
 }

@@ -60,4 +60,16 @@ class UACRepository(
 
         return rules
     }
+
+    override suspend fun isRuleAllowedForAccount(ruleName: String, accountId: String): Boolean {
+        val rule = uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(
+            eq("_id", ruleName)
+        ).firstOrNull()
+
+        if (rule == null) {
+            return false
+        }
+
+        return rule.accounts.contains(accountId)
+    }
 }
