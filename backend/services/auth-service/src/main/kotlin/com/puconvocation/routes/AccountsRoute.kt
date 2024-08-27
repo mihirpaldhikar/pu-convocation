@@ -44,35 +44,6 @@ fun Routing.accountsRoute(
             sendResponseWithAccountCookies(result)
         }
 
-        post("/passkeys/register") {
-            val securityToken = getSecurityTokens()
-            val result = passkeyController.startPasskeyRegistrationWithSecurityToken(
-                securityToken
-            )
-            sendResponse(result)
-        }
-
-        post("/passkeys/validateRegistrationChallenge") {
-            val credentials = call.receive<AuthenticationCredentials>()
-            val result =
-                passkeyController.validatePasskeyRegistration(
-                    identifier = credentials.identifier,
-                    credentials = credentials.passkeyCredentials!!
-                )
-
-            sendResponse(result)
-        }
-
-        post("/passkeys/validatePasskeyChallenge") {
-            val credentials = call.receive<AuthenticationCredentials>()
-            val result = passkeyController.validatePasskeyChallenge(
-                identifier = credentials.identifier,
-                credentials = credentials.passkeyCredentials!!
-            )
-
-            sendResponseWithAccountCookies(result)
-        }
-
         post("/new") {
             val securityToken = getSecurityTokens()
             val newAccount: NewAccount = call.receive<NewAccount>()
@@ -88,6 +59,38 @@ fun Routing.accountsRoute(
             val securityToken = getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
             sendResponseWithAccountCookies(result)
+        }
+
+        route("/passkeys") {
+
+            post("/register") {
+                val securityToken = getSecurityTokens()
+                val result = passkeyController.startPasskeyRegistrationWithSecurityToken(
+                    securityToken
+                )
+                sendResponse(result)
+            }
+
+            post("/validateRegistrationChallenge") {
+                val credentials = call.receive<AuthenticationCredentials>()
+                val result =
+                    passkeyController.validatePasskeyRegistration(
+                        identifier = credentials.identifier,
+                        credentials = credentials.passkeyCredentials!!
+                    )
+
+                sendResponse(result)
+            }
+
+            post("/validatePasskeyChallenge") {
+                val credentials = call.receive<AuthenticationCredentials>()
+                val result = passkeyController.validatePasskeyChallenge(
+                    identifier = credentials.identifier,
+                    credentials = credentials.passkeyCredentials!!
+                )
+
+                sendResponseWithAccountCookies(result)
+            }
         }
 
     }
