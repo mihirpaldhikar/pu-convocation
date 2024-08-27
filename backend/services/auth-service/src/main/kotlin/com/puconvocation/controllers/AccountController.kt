@@ -20,7 +20,6 @@ import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.UACRepository
 import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -36,7 +35,7 @@ class AccountController(
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
-    private val uacRepository: UACRepository,
+    private val uacController: UACController,
     private val gson: Gson,
     private val cacheService: CacheService,
 ) {
@@ -174,11 +173,12 @@ class AccountController(
             return verificationResult
         }
 
-        val isAllowedToCreateAccount =
-            uacRepository.getAccountsForRule("createNewAccounts")
-                .contains((verificationResult.responseData as List<String>)[0])
+        val isAllowed = uacController.isAllowed(
+            identifier = (verificationResult.responseData as List<String>)[0],
+            ruleName = "createNewAccounts"
+        )
 
-        if (!isAllowedToCreateAccount) {
+        if (!isAllowed) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -321,19 +321,7 @@ class AccountController(
             )
         }
 
-        val cachedAccountPrivileges = cacheService.get(CachedKeys.getAccountPrivilegesKey(account.uuid.toHexString()))
-        val accountPrivileges = if (cachedAccountPrivileges != null) {
-            gson.fromJson(cachedAccount, List::class.java)
-        } else {
-            val fetchedAccountPrivileges = uacRepository.listRulesForAccount(account.uuid.toHexString())
-
-            cacheService.set(
-                CachedKeys.getAccountPrivilegesKey(account.uuid.toHexString()),
-                gson.toJson(fetchedAccountPrivileges)
-            )
-
-            fetchedAccountPrivileges
-        }
+        val accountPrivileges = uacController.getRulesAssociatedWithAccount(account.uuid.toHexString())
 
         val accountWithUACRules = AccountWithUACRules(
             uuid = account.uuid,
@@ -360,6 +348,81 @@ class AccountController(
                 )
             )
         }
+
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = accountWithUACRules
+        )
+    }
+
+    suspend fun accountDetails(authorizationToken:String?, identifier: String): Result {
+        if (authorizationToken == null) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Unauthorized,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid or expired."
+            )
+        }
+
+        val verificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (verificationResult is Result.Error) {
+            return verificationResult
+        }
+
+        val isAllowed = uacController.isAllowed(
+            identifier = (verificationResult.responseData as List<String>)[0],
+            ruleName = "viewAccounts"
+        )
+
+        if (!isAllowed) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.NOT_PERMITTED,
+                message = "You don't have privilege to view accounts."
+            )
+        }
+
+        val cachedAccount =
+            cacheService.get(CachedKeys.getAccountKey(identifier))
+
+
+        val account = if (cachedAccount != null) {
+            gson.fromJson(cachedAccount, Account::class.java)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier)
+                ?: return Result.Error(
+                    statusCode = HttpStatusCode.NotFound,
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
+                )
+
+            cacheService.set(CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()), gson.toJson(fetchedAccount))
+
+            fetchedAccount
+        }
+
+
+        val accountPrivileges = uacController.getRulesAssociatedWithAccount(account.uuid.toHexString())
+
+        val accountWithUACRules = AccountWithUACRules(
+            uuid = account.uuid,
+            email = account.email,
+            username = account.username,
+            avatarURL = account.avatarURL,
+            displayName = account.displayName,
+            privileges = accountPrivileges
+        )
+
+        cacheService.set(
+            CachedKeys.getAccountWithPrivilegesKey(account.uuid.toHexString()),
+            gson.toJson(accountWithUACRules)
+        )
 
         return Result.Success(
             statusCode = HttpStatusCode.OK,

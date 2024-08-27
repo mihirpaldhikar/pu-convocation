@@ -31,6 +31,8 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 uacRepository = get<UACRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
+                gson = get<Gson>(),
+                cacheService = get<CacheService>()
             )
         }
 
@@ -39,7 +41,7 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
-                uacRepository = get<UACRepository>(),
+                uacController = get<UACController>(),
                 gson = get<Gson>(),
                 cacheService = get<CacheService>(),
             )

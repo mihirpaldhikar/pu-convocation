@@ -17,12 +17,12 @@ import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
-import com.puconvocation.utils.getSecurityTokens
-import com.puconvocation.utils.removeSecurityTokens
-import com.puconvocation.utils.sendResponse
-import com.puconvocation.utils.sendResponseWithAccountCookies
+import com.puconvocation.enums.ResponseCode
+import com.puconvocation.utils.*
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.accountsRoute(
@@ -59,6 +59,19 @@ fun Routing.accountsRoute(
             val securityToken = getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
             sendResponseWithAccountCookies(result)
+        }
+
+        get("/{identifier}") {
+            val authorizationToken = getSecurityTokens().authorizationToken
+            val identifier = call.parameters["identifier"] ?: return@get sendResponse(
+                Result.Error(
+                    statusCode = HttpStatusCode.BadRequest,
+                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                    message = "Please provide a valid identifier."
+                )
+            )
+            val result = accountController.accountDetails(authorizationToken, identifier)
+            sendResponse(result)
         }
 
         route("/passkeys") {

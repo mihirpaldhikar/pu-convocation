@@ -22,10 +22,6 @@ object CachedKeys {
         return "account:$identifier"
     }
 
-    fun getAccountPrivilegesKey(identifier: String): String {
-        return "accountPrivileges:$identifier"
-    }
-
     fun getAccountWithPrivilegesKey(identifier: String): String {
         return "accountWithPrivileges:$identifier"
     }
@@ -36,5 +32,13 @@ object CachedKeys {
 
     fun getPasskeyAssertionKey(identifier: String): String {
         return "passkeyAssertionKey:$identifier"
+    }
+
+    fun getIsAccountAllowedForRuleKey(identifier: String, ruleName: String): String {
+        return "$identifier:$ruleName"
+    }
+
+    fun getAllRulesAssociatedWithAccount(identifier: String): String {
+        return "allAssociatedRules:$identifier"
     }
 }
