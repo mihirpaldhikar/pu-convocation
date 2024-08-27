@@ -13,10 +13,12 @@
 
 package com.puconvocation.di
 
+import com.google.gson.Gson
 import com.puconvocation.Environment
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.security.passkeys.PasskeyRelyingParty
+import com.puconvocation.services.CacheService
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
@@ -24,6 +26,10 @@ object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<Gson> {
+            Gson()
         }
 
         single<JsonWebToken> {
@@ -35,6 +41,12 @@ object CoreModule {
                 developmentMode = get<Environment>().developmentMode,
                 accountRepository = get<AccountRepository>()
             ).getRelyingParty()
+        }
+
+        single<CacheService> {
+            CacheService(
+                environment = get<Environment>()
+            )
         }
     }
 }
