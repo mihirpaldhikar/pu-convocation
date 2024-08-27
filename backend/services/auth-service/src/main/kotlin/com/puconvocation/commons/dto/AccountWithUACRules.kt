@@ -23,5 +23,5 @@ data class AccountWithUACRules(
     @Expose val displayName: String,
     @Expose val email: String,
     @Expose val avatarURL: String,
-    @Expose val privileges: List<String>,
+    @Expose val privileges: List<Any?>,
 )

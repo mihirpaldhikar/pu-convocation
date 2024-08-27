@@ -13,12 +13,14 @@
 
 package com.puconvocation.di
 
+import com.google.gson.Gson
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.controllers.UACController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.UACRepository
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.CacheService
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
@@ -38,6 +40,8 @@ object ControllerModule {
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
                 uacRepository = get<UACRepository>(),
+                gson = get<Gson>(),
+                cacheService = get<CacheService>(),
             )
         }
 
