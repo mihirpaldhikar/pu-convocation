@@ -62,7 +62,7 @@ export default function AuthenticationForm(): JSX.Element {
               identifier,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              state.authService.getAccount().then((res) => {
+              state.authService.getCurrentAccount().then((res) => {
                 dispatch({
                   type: "LOADING",
                   payload: {

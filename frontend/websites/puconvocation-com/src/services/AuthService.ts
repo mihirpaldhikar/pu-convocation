@@ -37,7 +37,7 @@ export default class AuthService {
     });
   }
 
-  public async getAccount(): Promise<Response<Account | string>> {
+  public async getCurrentAccount(): Promise<Response<Account | string>> {
     try {
       const response = await this.httpClient.get(`${this.ACCOUNT_ROUTE}/`);
 

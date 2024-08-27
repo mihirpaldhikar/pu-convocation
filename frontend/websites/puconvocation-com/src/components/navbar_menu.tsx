@@ -45,7 +45,7 @@ export default function NavbarMenu(): JSX.Element {
       },
     });
     if (state.account === null) {
-      state.authService.getAccount().then((res) => {
+      state.authService.getCurrentAccount().then((res) => {
         if (
           res.statusCode === StatusCode.SUCCESS &&
           "payload" in res &&
@@ -66,6 +66,9 @@ export default function NavbarMenu(): JSX.Element {
         payload: {
           loading: false,
         },
+      });
+      state.authService.getAccount("suhanishah").then((res) => {
+        console.log(res);
       });
     }, 500);
   }, [dispatch, state.account, state.authService]);
