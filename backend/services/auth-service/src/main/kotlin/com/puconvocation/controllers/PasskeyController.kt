@@ -13,7 +13,8 @@
 
 package com.puconvocation.controllers
 
-import com.google.common.cache.CacheBuilder
+import com.google.gson.Gson
+import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.ResponseCode
@@ -21,31 +22,37 @@ import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.CacheService
 import com.puconvocation.utils.PasskeyUtils
 import com.puconvocation.utils.Result
 import com.yubico.webauthn.*
 import com.yubico.webauthn.data.*
 import com.yubico.webauthn.exception.AssertionFailedException
 import io.ktor.http.*
-import java.util.concurrent.TimeUnit
 
 class PasskeyController(
     private val rp: RelyingParty,
     private val accountRepository: AccountRepository,
-    private val jsonWebToken: JsonWebToken
+    private val jsonWebToken: JsonWebToken,
+    private val gson: Gson,
+    private val cacheService: CacheService,
 ) {
-    private val pkcCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
-        .build<String, PublicKeyCredentialCreationOptions>()
-
-    private val assertionCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES)
-        .build<String, AssertionRequest>()
-
     suspend fun startPasskeyRegistration(identifier: String): Result {
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
-        )
+        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+
+        val account = if (cachedAccount != null) {
+            gson.fromJson(cachedAccount, Account::class.java)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
+
+            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+
+            fetchedAccount
+        }
 
         if (account.suspended) {
             return Result.Error(
@@ -56,7 +63,7 @@ class PasskeyController(
         }
 
         val pkcOptions = createPublicKeyCredentialCreationOptions(account)
-        pkcCache.put(identifier, pkcOptions)
+        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), pkcOptions.toCredentialsCreateJson())
 
         return Result.Success(
             data = pkcOptions.toCredentialsCreateJson(),
@@ -86,11 +93,21 @@ class PasskeyController(
     }
 
     suspend fun validatePasskeyRegistration(identifier: String, credentials: String): Result {
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
-        )
+        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+
+        val account = if (cachedAccount != null) {
+            gson.fromJson(cachedAccount, Account::class.java)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
+
+            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+
+            fetchedAccount
+        }
 
         if (account.suspended) {
             return Result.Error(
@@ -100,12 +117,19 @@ class PasskeyController(
             )
         }
 
+        val pkcOptions = cacheService.get(CachedKeys.getPasskeyPKCKey(identifier))
+            ?: return Result.Error(
+                statusCode = HttpStatusCode.InternalServerError,
+                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                message = "An internal error occurred."
+            )
+
         val pkc: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> =
             PublicKeyCredential.parseRegistrationResponseJson(credentials)
 
         val result = rp.finishRegistration(
             FinishRegistrationOptions.builder()
-                .request(pkcCache.getIfPresent(identifier))
+                .request(PublicKeyCredentialCreationOptions.fromJson(pkcOptions))
                 .response(pkc)
                 .build()
         )
@@ -140,7 +164,8 @@ class PasskeyController(
                 .username(identifier)
                 .build()
         )
-        assertionCache.put(identifier, request)
+        cacheService.set(CachedKeys.getPasskeyAssertionKey(identifier), gson.toJson(request))
+
         return Result.Success(
             data = request.toCredentialsGetJson(),
             encodeStringAsJSON = true
@@ -149,11 +174,21 @@ class PasskeyController(
 
     suspend fun validatePasskeyChallenge(identifier: String, credentials: String): Result {
 
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found."
-        )
+        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+
+        val account = if (cachedAccount != null) {
+            gson.fromJson(cachedAccount, Account::class.java)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
+                statusCode = HttpStatusCode.NotFound,
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
+
+            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+
+            fetchedAccount
+        }
 
         if (account.suspended) {
             return Result.Error(
@@ -163,12 +198,19 @@ class PasskeyController(
             )
         }
 
+        val assertion = cacheService.get(CachedKeys.getPasskeyAssertionKey(identifier))
+            ?: return Result.Error(
+                statusCode = HttpStatusCode.InternalServerError,
+                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                message = "An internal error occurred."
+            )
+
         val pkc =
             PublicKeyCredential.parseAssertionResponseJson(credentials)
         try {
             val result = rp.finishAssertion(
                 FinishAssertionOptions.builder()
-                    .request(assertionCache.getIfPresent(identifier))
+                    .request(gson.fromJson(assertion, AssertionRequest::class.java))
                     .response(pkc)
                     .build()
             )

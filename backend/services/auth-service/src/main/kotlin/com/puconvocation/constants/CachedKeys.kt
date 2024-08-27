@@ -29,4 +29,12 @@ object CachedKeys {
     fun getAccountWithPrivilegesKey(identifier: String): String {
         return "accountWithPrivileges:$identifier"
     }
+
+    fun getPasskeyPKCKey(identifier: String): String {
+        return "passkeyPKCKey:$identifier"
+    }
+
+    fun getPasskeyAssertionKey(identifier: String): String {
+        return "passkeyAssertionKey:$identifier"
+    }
 }

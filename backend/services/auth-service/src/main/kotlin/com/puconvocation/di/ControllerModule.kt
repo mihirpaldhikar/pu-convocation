@@ -49,7 +49,9 @@ object ControllerModule {
             PasskeyController(
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
-                rp = get<RelyingParty>()
+                rp = get<RelyingParty>(),
+                gson = get<Gson>(),
+                cacheService = get<CacheService>(),
             )
         }
     }
