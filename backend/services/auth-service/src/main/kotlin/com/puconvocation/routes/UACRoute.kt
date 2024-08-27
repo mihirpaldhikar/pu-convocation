@@ -32,18 +32,48 @@ fun Routing.uacRoute(
     environment: Environment
 ) {
     route("/uac") {
+
         route("/rules") {
-            get("/{name}") {
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@get sendResponse(
-                    Result.Error(
-                        statusCode = HttpStatusCode.BadRequest,
-                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                        message = "Please provide a rule name."
+
+            route("/{name}") {
+
+                get("/") {
+                    val authorizationToken = getSecurityTokens().authorizationToken
+                    val rule = call.parameters["name"] ?: return@get sendResponse(
+                        Result.Error(
+                            statusCode = HttpStatusCode.BadRequest,
+                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                            message = "Please provide a rule name."
+                        )
                     )
-                )
-                val result = uacController.getRule(authorizationToken, rule)
-                sendResponse(result)
+                    val result = uacController.getRule(authorizationToken, rule)
+                    sendResponse(result)
+                }
+
+                get("/allowed") {
+                    val host = call.request.host()
+                    if (host != environment.attendeeServiceHost) {
+                        return@get call.respond(false)
+                    }
+                    val authorizationToken = getSecurityTokens().authorizationToken
+                    val rule = call.parameters["name"] ?: return@get call.respond(false)
+                    call.respond(uacController.isRuleAllowedForAccount(authorizationToken, rule))
+                }
+
+                patch("/update") {
+                    val authorizationToken = getSecurityTokens().authorizationToken
+                    val rule = call.parameters["name"] ?: return@patch sendResponse(
+                        Result.Error(
+                            statusCode = HttpStatusCode.BadRequest,
+                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                            message = "Please provide a rule name."
+                        )
+                    )
+                    val updateUACRuleRequest = call.receive<UpdateUACRuleRequest>()
+                    val result = uacController.updateRule(authorizationToken, rule, updateUACRuleRequest)
+                    sendResponse(result)
+
+                }
             }
 
             post("/create") {
@@ -53,44 +83,6 @@ fun Routing.uacRoute(
                 sendResponse(result)
             }
 
-            get("/{name}/allowed") {
-                val host = call.request.host()
-                if (host != environment.attendeeServiceHost) {
-                    return@get call.respond(false)
-                }
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@get call.respond(false)
-                call.respond(uacController.isRuleAllowedForAccount(authorizationToken, rule))
-            }
-
-            patch("/{name}/update") {
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@patch sendResponse(
-                    Result.Error(
-                        statusCode = HttpStatusCode.BadRequest,
-                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                        message = "Please provide a rule name."
-                    )
-                )
-                val updateUACRuleRequest = call.receive<UpdateUACRuleRequest>()
-                val result = uacController.updateRule(authorizationToken, rule, updateUACRuleRequest)
-                sendResponse(result)
-
-            }
-
-        }
-
-        get("/{identifier}/rules") {
-            val authorizationToken = getSecurityTokens().authorizationToken
-            val identifier = call.parameters["identifier"] ?: return@get sendResponse(
-                Result.Error(
-                    statusCode = HttpStatusCode.BadRequest,
-                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                    message = "Please provide a account identifier."
-                )
-            )
-            val result = uacController.getAccountRules(authorizationToken, identifier)
-            sendResponse(result)
         }
     }
 }
