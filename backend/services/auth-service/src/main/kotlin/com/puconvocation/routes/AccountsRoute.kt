@@ -20,7 +20,7 @@ import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.removeSecurityTokens
 import com.puconvocation.utils.sendResponse
-import com.puconvocation.utils.setAccountCookies
+import com.puconvocation.utils.sendResponseWithAccountCookies
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -41,7 +41,7 @@ fun Routing.accountsRoute(
         post("/authenticate") {
             val credentials: AuthenticationCredentials = call.receive<AuthenticationCredentials>()
             val result = accountController.authenticate(credentials)
-            setAccountCookies(result)
+            sendResponseWithAccountCookies(result)
         }
 
         post("/passkeys/register") {
@@ -70,20 +70,14 @@ fun Routing.accountsRoute(
                 credentials = credentials.passkeyCredentials!!
             )
 
-            setAccountCookies(result)
+            sendResponseWithAccountCookies(result)
         }
 
         post("/new") {
             val securityToken = getSecurityTokens()
             val newAccount: NewAccount = call.receive<NewAccount>()
             val result = accountController.createNewAccount(newAccount, securityToken)
-            setAccountCookies(result)
-        }
-
-        post("/refresh") {
-            val securityToken = getSecurityTokens()
-            val result = accountController.generateNewSecurityTokens(securityToken)
-            setAccountCookies(result)
+            sendResponseWithAccountCookies(result)
         }
 
         post("/signout") {
@@ -93,7 +87,7 @@ fun Routing.accountsRoute(
         get("/") {
             val securityToken = getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
-            sendResponse(result)
+            sendResponseWithAccountCookies(result)
         }
 
     }

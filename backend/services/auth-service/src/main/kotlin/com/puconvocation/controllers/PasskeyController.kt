@@ -182,7 +182,7 @@ class PasskeyController(
             }
 
             val securityTokens = SecurityToken(
-                message = "Authenticated Successfully.",
+                payload = "Authenticated Successfully.",
                 authorizationToken = jsonWebToken.generateAuthorizationToken(
                     account.uuid.toHexString(),
                     "null",

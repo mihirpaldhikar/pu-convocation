@@ -100,7 +100,7 @@ class AccountController(
         }
 
         val securityTokens = SecurityToken(
-            message = "Authenticated Successfully",
+            payload = "Authenticated Successfully",
             authorizationToken = jsonWebToken.generateAuthorizationToken(
                 account.uuid.toHexString(),
                 "null",
@@ -181,7 +181,7 @@ class AccountController(
         }
 
         val securityTokens = SecurityToken(
-            message = "Account Created.",
+            payload = "Account Created.",
             authorizationToken = jsonWebToken.generateAuthorizationToken(
                 account.uuid.toHexString(),
                 "null",
@@ -197,18 +197,35 @@ class AccountController(
     }
 
     suspend fun accountDetails(securityToken: SecurityToken): Result {
-        if (securityToken.authorizationToken == null) {
+        var tokens: SecurityToken = securityToken;
+
+        var newTokenGenerated = false;
+
+        if (tokens.refreshToken == null && tokens.authorizationToken == null) {
             return Result.Error(
                 statusCode = HttpStatusCode.Unauthorized,
                 errorCode = ResponseCode.INVALID_TOKEN,
                 message = "Authorization token is invalid or expired."
             )
         }
+
+        if (tokens.refreshToken != null && tokens.authorizationToken == null) {
+            val newTokenGenerationResult = jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken)
+
+            if (newTokenGenerationResult is Result.Error) {
+                return newTokenGenerationResult
+            }
+
+            tokens = newTokenGenerationResult.responseData as SecurityToken
+            newTokenGenerated = true
+        }
+
         val jwtResult =
-            jsonWebToken.verifySecurityToken(securityToken.authorizationToken, TokenType.AUTHORIZATION_TOKEN)
+            jsonWebToken.verifySecurityToken(tokens.authorizationToken!!, TokenType.AUTHORIZATION_TOKEN)
         if (jwtResult is Result.Error) {
             return jwtResult
         }
+
         val account =
             accountRepository.getAccount((jwtResult.responseData as List<String>)[0].toString().replace("\"", ""))
                 ?: return Result.Error(
@@ -236,6 +253,18 @@ class AccountController(
             privileges = accountPrivileges
         )
 
+        if (newTokenGenerated) {
+            return Result.Success(
+                statusCode = HttpStatusCode.OK,
+                code = ResponseCode.OK,
+                data = SecurityToken(
+                    authorizationToken = tokens.authorizationToken,
+                    refreshToken = tokens.refreshToken,
+                    payload = accountWithUACRules
+                )
+            )
+        }
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
@@ -243,7 +272,4 @@ class AccountController(
         )
     }
 
-    fun generateNewSecurityTokens(securityToken: SecurityToken): Result {
-        return jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken)
-    }
 }

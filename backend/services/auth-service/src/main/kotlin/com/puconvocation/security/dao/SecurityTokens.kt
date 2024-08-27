@@ -16,7 +16,7 @@ package com.puconvocation.security.dao
 import com.google.gson.annotations.Expose
 
 data class SecurityToken(
-    @Expose val message: String? = null,
+    @Expose val payload: Any? = null,
     @Expose val authorizationToken: String?,
     @Expose val refreshToken: String?,
 )

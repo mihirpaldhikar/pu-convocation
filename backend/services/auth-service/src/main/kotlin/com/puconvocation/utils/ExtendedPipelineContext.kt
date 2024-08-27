@@ -66,7 +66,7 @@ fun PipelineContext<Unit, ApplicationCall>.setCookie(
     )
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.setAccountCookies(result: Result) {
+suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookies(result: Result) {
     if (result is Result.Success &&
         result.responseData is SecurityToken &&
         result.responseData.refreshToken != null &&
@@ -82,10 +82,10 @@ suspend fun PipelineContext<Unit, ApplicationCall>.setAccountCookies(result: Res
             value = result.responseData.refreshToken,
             expiresAt = 2629800000
         )
-        if (result.responseData.message != null) {
+        if (result.responseData.payload != null) {
             return sendResponse(
                 Result.Success(
-                    data = mapOf("message" to result.responseData.message),
+                    data = result.responseData.payload,
                 )
             )
         }
