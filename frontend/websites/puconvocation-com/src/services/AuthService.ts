@@ -69,6 +69,42 @@ export default class AuthService {
     }
   }
 
+  public async getAccount(
+    identifier: string,
+  ): Promise<Response<Account | string>> {
+    try {
+      const response = await this.httpClient.get(
+        `${this.ACCOUNT_ROUTE}/${identifier}`,
+      );
+
+      if (response.status === 200) {
+        return {
+          statusCode: StatusCode.SUCCESS,
+          payload: await response.data,
+        };
+      }
+      throw new AxiosError("INTERNAL:Failed to fetch Account.");
+    } catch (error) {
+      let axiosError = (await error) as AxiosError;
+      if (axiosError.message.includes("INTERNAL:")) {
+        return {
+          statusCode: StatusCode.FAILURE,
+          message: axiosError.message.replaceAll("INTERNAL:", ""),
+        } as Response<string>;
+      }
+
+      let errorResponseString = JSON.stringify(
+        (await axiosError.response?.data) as string,
+      );
+      let errorResponse = JSON.parse(errorResponseString);
+
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: errorResponse["message"],
+      } as Response<string>;
+    }
+  }
+
   public async getUACRulesForAccount(
     identifier: string,
   ): Promise<Response<Array<string> | string>> {
