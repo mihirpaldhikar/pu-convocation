@@ -44,6 +44,8 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
+                cacheService = get<CacheService>(),
+                gson = get<Gson>(),
             )
         }
     }
