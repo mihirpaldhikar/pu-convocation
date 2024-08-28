@@ -13,6 +13,7 @@
 
 package com.puconvocation.di
 
+import com.google.gson.Gson
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.TransactionController
 import com.puconvocation.database.mongodb.entities.Attendee
@@ -30,9 +31,10 @@ object ControllerModule {
             AttendeeController(
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
-                cacheService = get<CacheService<Attendee>>(),
+                cacheService = get<CacheService>(),
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
+                gson = get<Gson>(),
             )
         }
 

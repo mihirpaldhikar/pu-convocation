@@ -11,29 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.services
+package com.puconvocation.constants
 
-import com.puconvocation.Environment
-import redis.clients.jedis.JedisPool
-
-class CacheService(
-    environment: Environment,
-) {
-    private val pool = JedisPool(
-        environment.redisURL
-    )
-
-    private val cache = pool.resource
-
-    fun set(key: String, value: String) {
-        cache.set(key, value)
+object CachedKeys {
+    fun getAllRulesAssociatedWithAccount(identifier: String): String {
+        return "allAssociatedRules:$identifier"
     }
 
-    fun get(key: String): String? {
-        return cache.get(key)
+    fun getAttendeeKey(identifier: String): String {
+        return "attendee:$identifier"
     }
 
-    fun remove(key: String) {
-        cache.del(key)
+    fun getAttendeeConfigKey(): String {
+        return "config:attendeeConfig"
     }
 }

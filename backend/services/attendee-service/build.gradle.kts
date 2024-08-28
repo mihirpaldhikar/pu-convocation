@@ -69,6 +69,9 @@ dependencies {
     implementation("com.google.guava:guava:33.2.0-jre")
     implementation("io.ktor:ktor-client-cio-jvm:2.3.10")
 
+    // Redis
+    implementation("redis.clients:jedis:5.1.5")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

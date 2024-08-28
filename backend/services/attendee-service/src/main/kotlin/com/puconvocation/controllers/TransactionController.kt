@@ -1,6 +1,8 @@
 package com.puconvocation.controllers
 
+import com.google.gson.Gson
 import com.puconvocation.commons.dto.TransactionRequest
+import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Transaction
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
@@ -8,6 +10,7 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -18,7 +21,9 @@ class TransactionController(
     private val transactionRepository: TransactionRepository,
     private val attendeeRepository: AttendeeRepository,
     private val jsonWebToken: JsonWebToken,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val cacheService: CacheService,
+    private val gson: Gson,
 ) {
     suspend fun insertTransaction(authorizationToken: String?, transactionRequest: TransactionRequest): Result {
 
@@ -39,7 +44,7 @@ class TransactionController(
         }
 
 
-        if (!authService.isOperationAllowed(authorizationToken, "verifyAttendeeDetails")) {
+        if (!isAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -73,6 +78,7 @@ class TransactionController(
         }
 
         attendeeRepository.setDegreeReceivedStatus(transactionRequest.studentEnrollmentNumber, true);
+        cacheService.remove(CachedKeys.getAttendeeKey(transactionRequest.studentEnrollmentNumber))
 
         return Result.Success(
             statusCode = HttpStatusCode.Created,
@@ -96,5 +102,26 @@ class TransactionController(
             code = ResponseCode.OK,
             data = transaction
         )
+    }
+
+    private suspend fun isAllowed(authorizationToken: String, ruleName: String): Boolean {
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return false
+        }
+
+        val cachedRulesForAccount =
+            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
+
+        return if (cachedRulesForAccount != null) {
+            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+        } else {
+            authService.isOperationAllowed(authorizationToken, ruleName)
+        }
     }
 }

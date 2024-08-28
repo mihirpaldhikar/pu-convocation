@@ -20,6 +20,7 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.datasource.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
@@ -64,27 +65,16 @@ class AttendeeRepository(
         return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
     }
 
-    override suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean {
-        val config = attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config"))
-            .firstOrNull()
-        if (config == null) {
-            return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().insertOne(
-                AttendeeConfig(
-                    isLocked = isLocked,
-                )
-            ).wasAcknowledged()
-        }
-
-        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().updateOne(
-            eq("_id", "attendee_config"), Updates.combine(
-                Updates.set(AttendeeConfig::isLocked.name, isLocked)
-            )
-        ).wasAcknowledged()
+    override suspend fun getAttendeeConfig(): AttendeeConfig {
+        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config")).first()
     }
 
-    override suspend fun isAttendeeLockEnforced(): Boolean {
-        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config"))
-            .firstOrNull()?.isLocked ?: false
+    override suspend fun updateAttendeeConfig(attendeeConfig: AttendeeConfig): Boolean {
+        return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().updateOne(
+            eq("_id", "attendee_config"), Updates.combine(
+                Updates.set(AttendeeConfig::isLocked.name, attendeeConfig.isLocked),
+            )
+        ).wasAcknowledged()
     }
 
     override suspend fun getAttendees(page: Int, limit: Int): List<Attendee> {

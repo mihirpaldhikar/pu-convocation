@@ -13,8 +13,8 @@
 
 package com.puconvocation.di
 
+import com.google.gson.Gson
 import com.puconvocation.Environment
-import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
@@ -22,12 +22,15 @@ import com.puconvocation.services.CacheService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
-import java.util.concurrent.TimeUnit
 
 object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<Gson> {
+            Gson()
         }
 
         single<HttpClient> {
@@ -38,10 +41,9 @@ object CoreModule {
             CSVSerializer()
         }
 
-        single<CacheService<Attendee>> {
+        single<CacheService> {
             CacheService(
-                expiryDuration = 5,
-                timeUnit = TimeUnit.MINUTES
+                environment = get<Environment>(),
             )
         }
 

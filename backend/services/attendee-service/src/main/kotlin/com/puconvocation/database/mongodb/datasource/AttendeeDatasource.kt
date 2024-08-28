@@ -14,6 +14,7 @@
 package com.puconvocation.database.mongodb.datasource
 
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.database.mongodb.entities.AttendeeConfig
 
 interface AttendeeDatasource {
     suspend fun getAttendee(identifier: String): Attendee?
@@ -26,9 +27,9 @@ interface AttendeeDatasource {
 
     suspend fun getTotalAttendees(): Int
 
-    suspend fun mutateAttendeeLock(isLocked: Boolean): Boolean
+    suspend fun getAttendeeConfig(): AttendeeConfig
 
-    suspend fun isAttendeeLockEnforced(): Boolean
+    suspend fun updateAttendeeConfig(attendeeConfig: AttendeeConfig): Boolean
 
     suspend fun getAttendees(page: Int, limit: Int): List<Attendee>
 }

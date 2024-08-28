@@ -13,7 +13,10 @@
 
 package com.puconvocation.controllers
 
+import com.google.gson.Gson
+import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.database.mongodb.entities.AttendeeConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -28,12 +31,13 @@ import io.ktor.http.content.*
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
-    private val cacheService: CacheService<Attendee>,
+    private val cacheService: CacheService,
     private val jsonWebToken: JsonWebToken,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val gson: Gson,
 ) {
     suspend fun getAttendee(identifier: String): Result {
-        if (!attendeeRepository.isAttendeeLockEnforced()) {
+        if (!getAttendeeConfig().isLocked) {
             return Result.Error(
                 statusCode = HttpStatusCode.NotFound,
                 errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
@@ -41,15 +45,22 @@ class AttendeeController(
             )
         }
 
-        val attendee = cacheService.get(identifier) ?: attendeeRepository.getAttendee(identifier)
-        ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
-            message = "Could not find attendee for identifier $identifier"
-        )
-        if (cacheService.get(identifier) == null) {
-            cacheService.put(identifier, attendee)
+        val cachedAttendee = cacheService.get(CachedKeys.getAttendeeKey(identifier))
+        val attendee = if (cachedAttendee != null) {
+            gson.fromJson(cachedAttendee, Attendee::class.java)
+        } else {
+            val fetchedAttendee = attendeeRepository.getAttendee(identifier)
+                ?: return Result.Error(
+                    statusCode = HttpStatusCode.NotFound,
+                    errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
+                    message = "Could not find attendee for identifier $identifier"
+                )
+
+            cacheService.set(CachedKeys.getAttendeeKey(identifier), gson.toJson(fetchedAttendee))
+
+            fetchedAttendee
         }
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
@@ -65,18 +76,7 @@ class AttendeeController(
             message = "Authorization token is invalid or expired."
         )
 
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return tokenVerificationResult
-        }
-
-
-        if (!authService.isOperationAllowed(authorizationToken, "uploadAttendeesDetails")) {
+        if (!isAllowed(authorizationToken, "uploadAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -84,7 +84,7 @@ class AttendeeController(
             )
         }
 
-        if (attendeeRepository.isAttendeeLockEnforced()) {
+        if (getAttendeeConfig().isLocked) {
             return Result.Error(
                 statusCode = HttpStatusCode.Locked,
                 errorCode = ResponseCode.ALREADY_LOCKED,
@@ -137,18 +137,7 @@ class AttendeeController(
             message = "Authorization token is invalid or expired."
         )
 
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return tokenVerificationResult
-        }
-
-
-        if (!authService.isOperationAllowed(authorizationToken, "verifyAttendeeDetails")) {
+        if (!isAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -177,18 +166,7 @@ class AttendeeController(
             message = "Authorization token is invalid or expired."
         )
 
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return tokenVerificationResult
-        }
-
-
-        if (!authService.isOperationAllowed(authorizationToken, "lockAttendeesDetails")) {
+        if (!isAllowed(authorizationToken, "lockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -197,7 +175,7 @@ class AttendeeController(
         }
 
 
-        if (attendeeRepository.isAttendeeLockEnforced()) {
+        if (getAttendeeConfig().isLocked) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
                 errorCode = ResponseCode.ALREADY_LOCKED,
@@ -205,7 +183,11 @@ class AttendeeController(
             )
         }
 
-        val locked = attendeeRepository.mutateAttendeeLock(isLocked = true);
+        val locked = attendeeRepository.updateAttendeeConfig(
+            getAttendeeConfig().copy(
+                isLocked = true,
+            )
+        )
 
         if (!locked) {
             return Result.Error(
@@ -214,6 +196,8 @@ class AttendeeController(
                 message = "The Attendees List couldn't be locked. Please try again later."
             )
         }
+
+        cacheService.remove(CachedKeys.getAttendeeConfigKey())
 
         return Result.Success(
             statusCode = HttpStatusCode.OK,
@@ -232,18 +216,7 @@ class AttendeeController(
             message = "Authorization token is invalid or expired."
         )
 
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return tokenVerificationResult
-        }
-
-
-        if (!authService.isOperationAllowed(authorizationToken, "unLockAttendeesDetails")) {
+        if (!isAllowed(authorizationToken, "unLockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -251,8 +224,7 @@ class AttendeeController(
             )
         }
 
-
-        if (!attendeeRepository.isAttendeeLockEnforced()) {
+        if (!getAttendeeConfig().isLocked) {
             return Result.Error(
                 statusCode = HttpStatusCode.Conflict,
                 errorCode = ResponseCode.ALREADY_UNLOCKED,
@@ -260,7 +232,11 @@ class AttendeeController(
             )
         }
 
-        val unlocked = attendeeRepository.mutateAttendeeLock(isLocked = false);
+        val unlocked = attendeeRepository.updateAttendeeConfig(
+            getAttendeeConfig().copy(
+                isLocked = false,
+            )
+        )
 
         if (!unlocked) {
             return Result.Error(
@@ -269,6 +245,8 @@ class AttendeeController(
                 message = "The Attendees List couldn't be unlocked. Please try again later."
             )
         }
+
+        cacheService.remove(CachedKeys.getAttendeeConfigKey())
 
         return Result.Success(
             statusCode = HttpStatusCode.OK,
@@ -287,18 +265,7 @@ class AttendeeController(
             message = "Authorization token is invalid or expired."
         )
 
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return tokenVerificationResult
-        }
-
-
-        if (!authService.isOperationAllowed(authorizationToken, "viewAttendeesDetails")) {
+        if (!isAllowed(authorizationToken, "viewAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -317,5 +284,40 @@ class AttendeeController(
                 "attendees" to attendees
             )
         )
+    }
+
+
+    private suspend fun isAllowed(authorizationToken: String, ruleName: String): Boolean {
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            authorizationToken = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return false
+        }
+
+        val cachedRulesForAccount =
+            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
+
+        return if (cachedRulesForAccount != null) {
+            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+        } else {
+            authService.isOperationAllowed(authorizationToken, ruleName)
+        }
+    }
+
+    private suspend fun getAttendeeConfig(): AttendeeConfig {
+        val cachedAttendeeConfig = cacheService.get(CachedKeys.getAttendeeConfigKey())
+        return if (cachedAttendeeConfig != null) {
+            gson.fromJson(cachedAttendeeConfig, AttendeeConfig::class.java)
+        } else {
+            val fetchedAttendeeConfig = attendeeRepository.getAttendeeConfig()
+
+            cacheService.set(CachedKeys.getAttendeeConfigKey(), gson.toJson(fetchedAttendeeConfig))
+
+            fetchedAttendeeConfig
+        }
     }
 }
