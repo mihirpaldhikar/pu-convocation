@@ -128,8 +128,8 @@ export default function Home() {
             <Image
               src={"https://assets.puconvocation.com/images/about_us.avif"}
               alt={"About Us"}
-              width={1388}
-              height={968}
+              width={1920}
+              height={1080}
               className={"rounded-lg"}
               style={{
                 objectFit: "cover",
