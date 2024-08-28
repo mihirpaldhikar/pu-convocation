@@ -67,12 +67,25 @@ export default function NavbarMenu(): JSX.Element {
           loading: false,
         },
       });
-    }, 500);
+    }, 300);
   }, [dispatch, state.account, state.authService]);
+
+  if (state.loading) {
+    return (
+      <nav
+        className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
+      >
+        <div role="status" className="max-w-sm animate-pulse">
+          <div className="h-10 w-28 rounded-lg bg-gray-300 dark:bg-gray-700"></div>
+          <span className="sr-only">Loading...</span>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav
-      className={`${!state.loading ? "flex" : "hidden"} items-center space-x-5 rounded-xl bg-white px-5 py-3`}
+      className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
     >
       <Link
         href={"/authenticate"}

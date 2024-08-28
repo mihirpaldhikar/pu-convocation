@@ -13,9 +13,20 @@
 "use client";
 import { JSX } from "react";
 import { useAuth } from "@providers/index";
+import { ProgressBar } from "@components/index";
 
 export default function ConsolePage(): JSX.Element {
   const { state } = useAuth();
+
+  if (state.loading) {
+    return (
+      <div className={"flex min-h-screen"}>
+        <div className={"m-auto"}>
+          <ProgressBar />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={"flex min-h-screen"}>
