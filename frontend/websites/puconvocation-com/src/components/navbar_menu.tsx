@@ -67,9 +67,6 @@ export default function NavbarMenu(): JSX.Element {
           loading: false,
         },
       });
-      state.authService.getAccount("suhanishah").then((res) => {
-        console.log(res);
-      });
     }, 500);
   }, [dispatch, state.account, state.authService]);
 
