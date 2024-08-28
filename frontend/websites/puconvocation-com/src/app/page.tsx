@@ -14,7 +14,7 @@
 import Image from "next/image";
 import {
   AboutUsBlob,
-  ConvocationCarousel,
+  Carousel,
   GalleryFlagsLeft,
   GalleryFlagsRight,
   IdentifierForm,
@@ -88,10 +88,16 @@ export default function Home() {
         </div>
         <div
           className={
-            "flex items-center justify-center px-5 py-5 md:px-16 md:py-14"
+            "flex w-full items-center justify-center px-3 py-10 lg:px-0"
           }
         >
-          <ConvocationCarousel carouselImages={Config.carouselImages} />
+          <div className={"w-full lg:w-2/3"}>
+            <Carousel
+              width={1920}
+              height={1080}
+              images={Config.carouselImages}
+            />
+          </div>
         </div>
         <div className={"flex flex-col justify-between md:flex-row"}>
           <div className={"flex-1"}>
