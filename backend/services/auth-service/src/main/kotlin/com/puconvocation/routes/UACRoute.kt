@@ -52,7 +52,7 @@ fun Routing.uacRoute(
 
                 get("/allowed") {
                     val host = call.request.host()
-                    if (host != environment.attendeeServiceHost) {
+                    if (environment.servicesHosts.split(";;").contains(host)) {
                         return@get call.respond(false)
                     }
                     val authorizationToken = getSecurityTokens().authorizationToken

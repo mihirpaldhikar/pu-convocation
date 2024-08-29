@@ -22,7 +22,7 @@ class Environment {
     val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
     val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
 
-    val attendeeServiceHost = System.getenv("ATTENDEE_SERVICE_HOST").toString()
+    val servicesHosts = System.getenv("SERVICES_HOSTS").toString()
 
     val redisURL = System.getenv("REDIS_URL").toString()
 
