@@ -11,22 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.constants
 
-import com.puconvocation.di.ControllerModule
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoryModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
-
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoryModule.init,
-            ControllerModule.init
-        )
+object CachedKeys {
+    fun getAllRulesAssociatedWithAccount(identifier: String): String {
+        return "allAssociatedRules:$identifier"
     }
+
+    fun getWebsiteConfigKey(): String {
+        return "config:Website"
+    }
+
 }

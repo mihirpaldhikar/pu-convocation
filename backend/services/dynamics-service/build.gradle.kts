@@ -49,6 +49,10 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-gson-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-client-core")
+    implementation("io.ktor:ktor-client-cio")
+    implementation("io.ktor:ktor-client-content-negotiation")
+    implementation("io.ktor:ktor-serialization-gson")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Koin Dependencies
@@ -58,6 +62,9 @@ dependencies {
     // MongoDB Dependencies
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongoDBVersion")
     implementation("org.mongodb:bson-kotlinx:$mongoDBVersion")
+
+    // Redis
+    implementation("redis.clients:jedis:5.1.5")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

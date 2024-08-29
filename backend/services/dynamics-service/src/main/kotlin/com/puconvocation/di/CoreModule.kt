@@ -13,13 +13,44 @@
 
 package com.puconvocation.di
 
+import com.google.gson.Gson
 import com.puconvocation.Environment
+import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.AuthService
+import com.puconvocation.services.CacheService
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
 
 object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<Gson> {
+            Gson()
+        }
+
+        single<HttpClient> {
+            HttpClient(CIO)
+        }
+
+        single<JsonWebToken> {
+            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
+        }
+
+        single<AuthService> {
+            AuthService(
+                environment = get<Environment>(),
+                client = get<HttpClient>()
+            )
+        }
+
+        single<CacheService> {
+            CacheService(
+                environment = get<Environment>(),
+            )
         }
     }
 }

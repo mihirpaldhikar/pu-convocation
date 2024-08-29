@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
@@ -20,9 +21,11 @@ import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.conditionalheaders.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureHTTP() {
+    val environment: Environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
+
     install(CachingHeaders) {
         options { _, outgoingContent ->
             when (outgoingContent.contentType?.withoutParameters()) {
@@ -37,16 +40,40 @@ fun Application.configureHTTP() {
         }
         deflate {
             priority = 10.0
-            minimumSize(1024) // condition
+            minimumSize(1024)
         }
     }
     install(ConditionalHeaders)
     install(CORS) {
+        allowCredentials = true
+
         allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Get)
+        allowMethod(HttpMethod.Post)
         allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+
+        allowHeader(HttpHeaders.Origin)
+        allowHeader(HttpHeaders.Accept)
+        allowHeader(HttpHeaders.ContentType)
         allowHeader(HttpHeaders.Authorization)
-        anyHost()
+        allowHeader(HttpHeaders.AuthenticationInfo)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.AccessControlAllowHeaders)
+        allowHeader(HttpHeaders.AccessControlAllowCredentials)
+
+
+        if (environment.developmentMode) {
+            allowHost("localhost:3000", listOf("http", "https"))
+            allowHost("localhost:8080", listOf("http", "https"))
+            allowHost("localhost:8081", listOf("http", "https"))
+            allowHost("localhost:8082", listOf("http", "https"))
+        }
+
+        allowHost(
+            host = "puconvocation.com",
+            schemes = listOf("http", "https"),
+            subDomains = listOf("api", "accounts", "dashboard")
+        )
     }
 }

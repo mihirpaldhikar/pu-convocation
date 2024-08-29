@@ -13,15 +13,19 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.controllers.WebsiteController
+import com.puconvocation.routes.websiteConfigRoute
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureRouting() {
+
+    val websiteController by KoinJavaComponent.inject<WebsiteController>(WebsiteController::class.java)
+
     routing {
-        get("/") {
-            call.respondText("Hello From Dynamics Service!")
-        }
+        websiteConfigRoute(
+            websiteController = websiteController,
+        )
     }
 }
