@@ -11,6 +11,19 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as AuthService } from "./AuthService";
-export { default as AttendeeService } from "./AttendeeService";
-export { default as DynamicsService } from "./DynamicsService";
+export default interface WebsiteConfig {
+  id: string;
+  heroTitle: string;
+  gallery: Array<{
+    url: string;
+    title: string;
+    description: string;
+  }>;
+  showInstructionsBanner: boolean;
+  instructionsFileURL: string;
+  aboutUs: string;
+  aboutUsImage: string;
+  heroImage: string;
+  showCountDown: boolean;
+  countDownEndTime: number;
+}

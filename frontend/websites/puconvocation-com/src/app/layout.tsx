@@ -17,7 +17,6 @@ import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { AuthWrapper, Footer, Navbar } from "@components/index";
-import { Config } from "../config";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -43,7 +42,30 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
             <main className={`flex-1 pt-20`}>{children}</main>
             <Toaster />
           </div>
-          <Footer credits={Config.credits} whoWeAre={Config.whoWeAre} />
+          <Footer
+            credits={[
+              {
+                name: "Developed By",
+                credits: [
+                  {
+                    name: "Mihir Paldhikar",
+                    link: "https://mihirpaldhikar.com",
+                    bold: true,
+                    underline: true,
+                  },
+                  {
+                    name: "Suhani Shah",
+                    link: "https://www.linkedin.com/in/suhani-shah-o13",
+                    bold: true,
+                    underline: true,
+                  },
+                ],
+              },
+            ]}
+            whoWeAre={
+              "Parul University - Gujarat’s leading private university having the\nfoundation of its first Institution laid in 1993 as Parul Group of\nInstitutes, and later established and incorporated as Parul\nUniversity in 2015 under the Gujarat Private Universities (Second\n Amendment) Act of 2009."
+            }
+          />
         </body>
       </html>
     </AuthWrapper>

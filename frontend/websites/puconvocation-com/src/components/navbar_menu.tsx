@@ -16,7 +16,7 @@
 import { JSX, useEffect, useState } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useAuth } from "@providers/index";
+import { useAuth, useWebsiteConfig } from "@providers/index";
 import { StatusCode } from "@enums/StatusCode";
 import {
   Button,
@@ -33,6 +33,7 @@ export default function NavbarMenu(): JSX.Element {
   const path = usePathname();
   const { toast } = useToast();
   const { state, dispatch } = useAuth();
+  const { state: website, dispatch: dispatchConfig } = useWebsiteConfig();
   const [isPopupOpen, openPopup] = useState<boolean>(false);
 
   const account = state.account;
@@ -44,6 +45,28 @@ export default function NavbarMenu(): JSX.Element {
         loading: true,
       },
     });
+    dispatchConfig({
+      type: "LOADING",
+      payload: {
+        loading: true,
+      },
+    });
+    if (website.config === null) {
+      website.dynamicsService.getWebsiteConfig().then((res) => {
+        if (
+          res.statusCode === StatusCode.SUCCESS &&
+          "payload" in res &&
+          typeof res.payload === "object"
+        ) {
+          dispatchConfig({
+            type: "SET_CONFIG",
+            payload: {
+              config: res.payload,
+            },
+          });
+        }
+      });
+    }
     if (state.account === null) {
       state.authService.getCurrentAccount().then((res) => {
         if (
@@ -61,6 +84,12 @@ export default function NavbarMenu(): JSX.Element {
       });
     }
     setTimeout(() => {
+      dispatchConfig({
+        type: "LOADING",
+        payload: {
+          loading: false,
+        },
+      });
       dispatch({
         type: "LOADING",
         payload: {
@@ -68,7 +97,14 @@ export default function NavbarMenu(): JSX.Element {
         },
       });
     }, 300);
-  }, [dispatch, state.account, state.authService]);
+  }, [
+    dispatch,
+    dispatchConfig,
+    state.account,
+    state.authService,
+    website.config,
+    website.dynamicsService,
+  ]);
 
   if (state.loading) {
     return (

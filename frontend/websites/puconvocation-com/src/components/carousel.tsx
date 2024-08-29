@@ -24,7 +24,8 @@ interface CarouselProps {
   height: number;
   images: Array<{
     url: string;
-    alt: string;
+    title: string;
+    description: string;
   }>;
 }
 
@@ -62,7 +63,7 @@ export default function Carousel({
             <Image
               key={image.url}
               src={image.url}
-              alt={image.alt}
+              alt={image.title}
               width={width}
               height={height}
               className={`block h-full w-full rounded-lg object-cover`}

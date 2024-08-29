@@ -14,14 +14,18 @@
 "use client";
 
 import { JSX, ReactNode } from "react";
-import { AuthProvider } from "@providers/index";
+import { AuthProvider, WebsiteConfigProvider } from "@providers/index";
 
-interface AuthWrapperProps {
+interface providerWrapperProps {
   children: ReactNode;
 }
 
-export default function AuthWrapper({
+export default function ProviderWrapper({
   children,
-}: Readonly<AuthWrapperProps>): JSX.Element {
-  return <AuthProvider>{children}</AuthProvider>;
+}: Readonly<providerWrapperProps>): JSX.Element {
+  return (
+    <WebsiteConfigProvider>
+      <AuthProvider>{children}</AuthProvider>
+    </WebsiteConfigProvider>
+  );
 }

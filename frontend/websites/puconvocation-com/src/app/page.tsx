@@ -11,6 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
+"use client";
 import Image from "next/image";
 import {
   AboutUsBlob,
@@ -18,18 +19,31 @@ import {
   GalleryFlagsLeft,
   GalleryFlagsRight,
   IdentifierForm,
+  ProgressBar,
 } from "@components/index";
 import Link from "next/link";
-import { Config } from "../config";
+import { useWebsiteConfig } from "@providers/WebsiteConfig";
 
 export default function Home() {
+  const { state: website } = useWebsiteConfig();
+
+  if (website.loading) {
+    return (
+      <div className={"flex min-h-screen"}>
+        <div className={"m-auto"}>
+          <ProgressBar />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className={"min-h-dvh"}>
       <div className={"min-h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
         <div className={"relative z-0 h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
           <Image
             alt={"Graduating Students"}
-            src={"https://assets.puconvocation.com/images/hero.avif"}
+            src={website.config?.heroImage ?? ""}
             fill={true}
             sizes={"100vw"}
             style={{
@@ -54,7 +68,7 @@ export default function Home() {
             </h5>
             <div className={"flex items-center space-x-3 md:space-x-5"}>
               <h1 className={"text-4xl font-black md:text-5xl lg:text-7xl"}>
-                {Config.heroTitle}
+                {website.config?.heroTitle}
               </h1>
               <svg
                 viewBox="0 0 648 87"
@@ -95,7 +109,7 @@ export default function Home() {
             <Carousel
               width={1920}
               height={1080}
-              images={Config.carouselImages}
+              images={website.config?.gallery ?? []}
             />
           </div>
         </div>
@@ -112,7 +126,7 @@ export default function Home() {
               </h2>
             </div>
             <div className={"flex flex-col space-y-5 px-10 py-5"}>
-              <p>{Config.aboutUs}</p>
+              <p>{website.config?.aboutUs}</p>
               <Link
                 className={
                   "w-fit rounded-full bg-primary px-5 py-2 font-bold text-white"
@@ -126,7 +140,7 @@ export default function Home() {
           </div>
           <div className={"flex flex-1 justify-end px-3 py-3"}>
             <Image
-              src={"https://assets.puconvocation.com/images/about_us.avif"}
+              src={website.config?.aboutUsImage ?? ""}
               alt={"About Us"}
               width={1920}
               height={1080}
