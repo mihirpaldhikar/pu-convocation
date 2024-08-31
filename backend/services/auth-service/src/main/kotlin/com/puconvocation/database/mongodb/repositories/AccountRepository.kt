@@ -48,14 +48,19 @@ class AccountRepository(
     }
 
     override suspend fun getAccount(identifier: String): Account? {
-        return if (RegexValidator.isValidEmail(identifier)) {
-            accountCollection.withDocumentClass<Account>().find(eq(Account::email.name, identifier)).firstOrNull()
+        try {
+            return if (RegexValidator.isValidEmail(identifier)) {
+                accountCollection.withDocumentClass<Account>().find(eq(Account::email.name, identifier)).firstOrNull()
 
-        } else if (RegexValidator.isValidUserName(identifier)) {
-            accountCollection.withDocumentClass<Account>().find(eq(Account::username.name, identifier)).firstOrNull()
+            } else if (RegexValidator.isValidUserName(identifier)) {
+                accountCollection.withDocumentClass<Account>().find(eq(Account::username.name, identifier))
+                    .firstOrNull()
 
-        } else {
-            accountCollection.withDocumentClass<Account>().find(eq("_id", ObjectId(identifier))).firstOrNull()
+            } else {
+                accountCollection.withDocumentClass<Account>().find(eq("_id", ObjectId(identifier))).firstOrNull()
+            }
+        } catch (e: IllegalArgumentException) {
+            return null
         }
     }
 
