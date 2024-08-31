@@ -34,6 +34,9 @@ export default async function middleware(req: NextRequest) {
         headers: {
           Cookie: req.cookies.toString(),
         },
+        next: {
+          revalidate: 1800,
+        },
       },
     );
 
