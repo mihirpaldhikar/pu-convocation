@@ -63,7 +63,7 @@ class PasskeyController(
         }
 
         val pkcOptions = createPublicKeyCredentialCreationOptions(account)
-        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), pkcOptions.toCredentialsCreateJson())
+        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), gson.toJson(pkcOptions))
 
         return Result.Success(
             data = pkcOptions.toCredentialsCreateJson(),
@@ -129,7 +129,7 @@ class PasskeyController(
 
         val result = rp.finishRegistration(
             FinishRegistrationOptions.builder()
-                .request(PublicKeyCredentialCreationOptions.fromJson(pkcOptions))
+                .request(gson.fromJson(pkcOptions, PublicKeyCredentialCreationOptions::class.java))
                 .response(pkc)
                 .build()
         )
@@ -149,6 +149,10 @@ class PasskeyController(
                 message = "Cannot register Passkey at the moment."
             )
         }
+
+        cacheService.remove(CachedKeys.getPasskeyPKCKey(identifier))
+        cacheService.remove(CachedKeys.getPasskeyAssertionKey(identifier))
+        cacheService.remove(CachedKeys.getAccountKey(identifier))
 
         return Result.Success(
             statusCode = HttpStatusCode.Created,
