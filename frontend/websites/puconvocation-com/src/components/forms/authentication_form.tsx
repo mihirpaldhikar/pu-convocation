@@ -42,10 +42,11 @@ export default function AuthenticationForm(): JSX.Element {
               await state.authService.getAuthenticationStrategy(identifier);
             if (
               response.statusCode === StatusCode.SUCCESS &&
-              "payload" in response
+              "payload" in response &&
+              typeof response.payload === "object"
             ) {
               setAuthenticationStrategy(
-                response.payload as "UNKNOWN" | "PASSWORD" | "PASSKEY",
+                response.payload.authenticationStrategy,
               );
             } else if ("message" in response) {
               toast({
@@ -105,7 +106,33 @@ export default function AuthenticationForm(): JSX.Element {
               password,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              router.replace("/console");
+              state.authService.getCurrentAccount().then((res) => {
+                dispatch({
+                  type: "LOADING",
+                  payload: {
+                    loading: true,
+                  },
+                });
+                if (
+                  res.statusCode === StatusCode.SUCCESS &&
+                  "payload" in res &&
+                  typeof res.payload === "object"
+                ) {
+                  dispatch({
+                    type: "SET_ACCOUNT",
+                    payload: {
+                      account: res.payload,
+                    },
+                  });
+                }
+                dispatch({
+                  type: "LOADING",
+                  payload: {
+                    loading: false,
+                  },
+                });
+                router.replace("/console");
+              });
             } else if ("message" in response) {
               toast({
                 title: "Authentication Failed",

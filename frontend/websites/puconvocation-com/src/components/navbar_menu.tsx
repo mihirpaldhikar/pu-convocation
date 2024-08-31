@@ -106,7 +106,7 @@ export default function NavbarMenu(): JSX.Element {
     website.dynamicsService,
   ]);
 
-  if (state.loading) {
+  if (state.loading || website.loading) {
     return (
       <nav
         className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
