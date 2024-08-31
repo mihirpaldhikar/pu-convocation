@@ -91,7 +91,7 @@ class WebsiteController(
             showInstructionsBanner = updateWebsiteConfigRequest.showInstructionsBanner ?: config.showInstructionsBanner,
             showCountDown = updateWebsiteConfigRequest.showCountDown ?: config.showCountDown,
             countDownEndTime = updateWebsiteConfigRequest.countDownEndTime ?: config.countDownEndTime,
-            encloserMapping = updateWebsiteConfigRequest.encloserMapping ?: config.encloserMapping,
+            enclosureMapping = updateWebsiteConfigRequest.enclosureMapping ?: config.enclosureMapping,
         )
 
         val success = websiteConfigRepository.updateWebsiteConfig(config)

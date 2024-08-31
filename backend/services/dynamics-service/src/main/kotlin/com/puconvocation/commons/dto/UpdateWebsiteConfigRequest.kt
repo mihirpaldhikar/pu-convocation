@@ -14,5 +14,5 @@ data class UpdateWebsiteConfigRequest(
     @Expose val heroImage: String?,
     @Expose val showCountDown: Boolean?,
     @Expose val countDownEndTime: Long?,
-    @Expose val encloserMapping: MutableList<Enclosure>?,
+    @Expose val enclosureMapping: MutableList<Enclosure>?,
 )
