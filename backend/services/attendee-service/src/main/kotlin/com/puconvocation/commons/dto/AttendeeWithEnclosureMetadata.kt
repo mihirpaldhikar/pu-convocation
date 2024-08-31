@@ -11,22 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.constants
+package com.puconvocation.commons.dto
 
-object CachedKeys {
-    fun getAllRulesAssociatedWithAccount(identifier: String): String {
-        return "allAssociatedRules:$identifier"
-    }
+import com.google.gson.annotations.Expose
+import com.puconvocation.database.mongodb.entities.Attendee
 
-    fun getAttendeeKey(identifier: String): String {
-        return "attendee:$identifier"
-    }
-
-    fun getAttendeeConfigKey(): String {
-        return "config:attendeeConfig"
-    }
-
-    fun getWebsiteConfigKey(): String {
-        return "config:Website"
-    }
-}
+data class AttendeeWithEnclosureMetadata(
+    @Expose val attendee: Attendee,
+    @Expose val enclosureMetadata: Enclosure.EnclosureMapping,
+)

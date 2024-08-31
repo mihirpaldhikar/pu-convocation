@@ -11,22 +11,21 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.constants
+package com.puconvocation.commons.dto
 
-object CachedKeys {
-    fun getAllRulesAssociatedWithAccount(identifier: String): String {
-        return "allAssociatedRules:$identifier"
-    }
+import com.google.gson.annotations.Expose
 
-    fun getAttendeeKey(identifier: String): String {
-        return "attendee:$identifier"
-    }
-
-    fun getAttendeeConfigKey(): String {
-        return "config:attendeeConfig"
-    }
-
-    fun getWebsiteConfigKey(): String {
-        return "config:Website"
+data class Enclosure(
+    @Expose val enclosureMapping: MutableList<EnclosureMapping>,
+) {
+    data class EnclosureMapping(
+        @Expose val letter: String,
+        @Expose val rows: MutableList<Row>,
+    ) {
+        data class Row(
+            @Expose val letter: String,
+            @Expose val start: Int,
+            @Expose val end: Int,
+        )
     }
 }

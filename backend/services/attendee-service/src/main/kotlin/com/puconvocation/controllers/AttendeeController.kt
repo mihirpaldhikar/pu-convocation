@@ -14,6 +14,8 @@
 package com.puconvocation.controllers
 
 import com.google.gson.Gson
+import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
+import com.puconvocation.commons.dto.Enclosure
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
@@ -61,10 +63,21 @@ class AttendeeController(
             fetchedAttendee
         }
 
+        val enclosure = gson.fromJson(cacheService.get(CachedKeys.getWebsiteConfigKey()), Enclosure::class.java)
+
+
         return Result.Success(
             statusCode = HttpStatusCode.OK,
             code = ResponseCode.OK,
-            data = attendee
+            data = AttendeeWithEnclosureMetadata(
+                attendee = attendee,
+                enclosureMetadata = enclosure.enclosureMapping.first {
+                    it.letter.equals(
+                        attendee.enclosure,
+                        ignoreCase = true
+                    )
+                }
+            )
         )
     }
 
