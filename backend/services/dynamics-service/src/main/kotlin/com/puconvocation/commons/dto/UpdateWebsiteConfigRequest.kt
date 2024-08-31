@@ -2,6 +2,7 @@ package com.puconvocation.commons.dto
 
 import com.google.gson.annotations.Expose
 import com.puconvocation.database.mongodb.entities.WebsiteConfig
+import com.puconvocation.database.mongodb.entities.WebsiteConfig.Enclosure
 
 data class UpdateWebsiteConfigRequest(
     @Expose val heroTitle: String?,
@@ -13,4 +14,5 @@ data class UpdateWebsiteConfigRequest(
     @Expose val heroImage: String?,
     @Expose val showCountDown: Boolean?,
     @Expose val countDownEndTime: Long?,
+    @Expose val encloserMapping: MutableList<Enclosure>?,
 )

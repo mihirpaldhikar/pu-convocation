@@ -39,6 +39,7 @@ class WebsiteConfigRepository(
                 Updates.set(WebsiteConfig::heroImage.name, websiteConfig.heroImage),
                 Updates.set(WebsiteConfig::showCountDown.name, websiteConfig.showCountDown),
                 Updates.set(WebsiteConfig::countDownEndTime.name, websiteConfig.countDownEndTime),
+                Updates.set(WebsiteConfig::encloserMapping.name, websiteConfig.encloserMapping),
             )
         ).wasAcknowledged()
     }
