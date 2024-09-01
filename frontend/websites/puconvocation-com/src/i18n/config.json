@@ -28,5 +28,15 @@
     "hrefLang": "en-US",
     "enabled": true,
     "default": false
+  },
+  {
+    "code": "mr",
+    "localName": "मराठी",
+    "name": "Marathi",
+    "langDir": "ltr",
+    "dateFormat": "MM.DD.YYYY",
+    "hrefLang": "en-US",
+    "enabled": true,
+    "default": false
   }
 ]
