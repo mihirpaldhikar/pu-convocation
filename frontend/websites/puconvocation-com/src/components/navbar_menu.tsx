@@ -13,7 +13,7 @@
 
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useAuth, useWebsiteConfig } from "@providers/index";
@@ -27,60 +27,70 @@ import {
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useToast } from "@hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
   const path = usePathname();
   const { toast } = useToast();
-  const { state, dispatch } = useAuth();
-  const { state: website, dispatch: dispatchConfig } = useWebsiteConfig();
+
+  const {
+    state: { account, authService },
+    dispatch: dispatchAccountMutation,
+  } = useAuth();
+
+  const {
+    state: { dynamicsService },
+    dispatch: dispatchConfigMutation,
+  } = useWebsiteConfig();
+
   const [isPopupOpen, openPopup] = useState<boolean>(false);
 
-  const account = state.account;
+  useQuery({
+    queryKey: ["websiteConfig"],
+    refetchOnWindowFocus: "always",
+    queryFn: async () => {
+      const response = await dynamicsService.getWebsiteConfig();
+      if (
+        response.statusCode === StatusCode.SUCCESS &&
+        "payload" in response &&
+        typeof response.payload === "object"
+      ) {
+        dispatchConfigMutation({
+          type: "SET_CONFIG",
+          payload: {
+            config: response.payload,
+          },
+        });
+        return response.payload;
+      }
+      return null;
+    },
+  });
 
-  useEffect(() => {
-    if (website.config === null) {
-      website.dynamicsService.getWebsiteConfig().then((res) => {
-        if (
-          res.statusCode === StatusCode.SUCCESS &&
-          "payload" in res &&
-          typeof res.payload === "object"
-        ) {
-          dispatchConfig({
-            type: "SET_CONFIG",
-            payload: {
-              config: res.payload,
-            },
-          });
-        }
-      });
-    }
-    if (state.account === null) {
-      state.authService.getCurrentAccount().then((res) => {
-        if (
-          res.statusCode === StatusCode.SUCCESS &&
-          "payload" in res &&
-          typeof res.payload === "object"
-        ) {
-          dispatch({
-            type: "SET_ACCOUNT",
-            payload: {
-              account: res.payload,
-            },
-          });
-        }
-      });
-    }
-  }, [
-    dispatch,
-    dispatchConfig,
-    state.account,
-    state.authService,
-    website.config,
-    website.dynamicsService,
-  ]);
+  const { isLoading: isAccountLoading, isError: isAccountError } = useQuery({
+    queryKey: ["currentAccount"],
+    refetchOnWindowFocus: "always",
+    queryFn: async () => {
+      const response = await authService.getCurrentAccount();
+      if (
+        response.statusCode === StatusCode.SUCCESS &&
+        "payload" in response &&
+        typeof response.payload === "object"
+      ) {
+        dispatchAccountMutation({
+          type: "SET_ACCOUNT",
+          payload: {
+            account: response.payload,
+          },
+        });
+        return response.payload;
+      }
+      return null;
+    },
+  });
 
-  if (state.loading || website.loading) {
+  if (isAccountLoading || isAccountError) {
     return (
       <nav
         className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
@@ -105,7 +115,7 @@ export default function NavbarMenu(): JSX.Element {
         <span className="mr-2">Login</span>
       </Link>
       <div
-        className={`${!state.loading && state.account !== null && account?.privileges.includes("createNewAccounts") ? "flex" : "hidden"} items-center space-x-2`}
+        className={`${account !== null && account?.privileges.includes("createNewAccounts") ? "flex" : "hidden"} items-center space-x-2`}
       >
         <Popover
           open={isPopupOpen}
@@ -165,9 +175,9 @@ export default function NavbarMenu(): JSX.Element {
                 variant={"outline"}
                 onClick={async () => {
                   openPopup(false);
-                  const response = await state.authService.signOut();
+                  const response = await authService.signOut();
                   if (response.statusCode === StatusCode.SUCCESS) {
-                    dispatch({
+                    dispatchAccountMutation({
                       type: "SIGN_OUT",
                       payload: {
                         account: null,

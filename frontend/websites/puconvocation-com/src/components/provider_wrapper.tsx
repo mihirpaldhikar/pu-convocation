@@ -15,6 +15,7 @@
 
 import { JSX, ReactNode } from "react";
 import { AuthProvider, WebsiteConfigProvider } from "@providers/index";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 interface providerWrapperProps {
   children: ReactNode;
@@ -23,9 +24,13 @@ interface providerWrapperProps {
 export default function ProviderWrapper({
   children,
 }: Readonly<providerWrapperProps>): JSX.Element {
+  const queryClient = new QueryClient();
+
   return (
-    <WebsiteConfigProvider>
-      <AuthProvider>{children}</AuthProvider>
-    </WebsiteConfigProvider>
+    <QueryClientProvider client={queryClient}>
+      <WebsiteConfigProvider>
+        <AuthProvider>{children}</AuthProvider>
+      </WebsiteConfigProvider>
+    </QueryClientProvider>
   );
 }
