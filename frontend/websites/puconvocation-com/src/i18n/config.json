@@ -8,5 +8,15 @@
     "hrefLang": "en-US",
     "enabled": true,
     "default": true
+  },
+  {
+    "code": "gu",
+    "localName": "ગુજરાતી",
+    "name": "Gujarati",
+    "langDir": "ltr",
+    "dateFormat": "MM.DD.YYYY",
+    "hrefLang": "en-US",
+    "enabled": true,
+    "default": false
   }
 ]
