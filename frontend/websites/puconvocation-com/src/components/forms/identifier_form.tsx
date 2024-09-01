@@ -40,7 +40,7 @@ export default function IdentifierForm(): JSX.Element {
         }}
       />
       <Button type={"submit"} className={"space-x-3 rounded-full"}>
-        <h5 className={"font-bold"}>Find your Seat</h5>
+        <p className={"text-lg font-bold"}>Find your Seat</p>
         <ChevronRightIcon className={"w-5"} />
       </Button>
     </form>

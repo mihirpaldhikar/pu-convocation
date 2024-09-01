@@ -34,12 +34,12 @@ export default function Footer(): JSX.Element {
         </section>
         <section className={"space-y-3"}>
           <h3 className={"text-xl font-bold"}>Credits</h3>
-          <h6 className={"font-semibold"}>
+          <p className={"font-semibold"}>
             Developed By{" "}
             <Link
               target={"_blank"}
               href={"https://mihirpaldhikar.com"}
-              className={"text-red-600 underline"}
+              className={"text-red-800 underline"}
             >
               Mihir Paldhikar
             </Link>{" "}
@@ -47,11 +47,11 @@ export default function Footer(): JSX.Element {
             <Link
               target={"_blank"}
               href={"https://www.linkedin.com/in/suhani-shah-o13"}
-              className={"text-red-600 underline"}
+              className={"text-red-800 underline"}
             >
               Suhani Shah
             </Link>
-          </h6>
+          </p>
         </section>
         <section className={"space-y-10 text-center"}>
           <p className={"text-xs"}>

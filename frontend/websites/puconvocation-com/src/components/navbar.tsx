@@ -26,7 +26,12 @@ export default function Navbar(): JSX.Element {
       className={`fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-3 backdrop-blur-3xl md:px-16`}
     >
       <div className="flex items-center">
-        <Link href={path.includes("/console") ? "/console" : "/"}>
+        <Link
+          href={path.includes("/console") ? "/console" : "/"}
+          aria-label={
+            path.includes("/console") ? "Go To Console Home" : "Go To Home"
+          }
+        >
           <Logo />
         </Link>
       </div>

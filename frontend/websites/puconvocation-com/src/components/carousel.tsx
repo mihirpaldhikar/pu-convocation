@@ -81,6 +81,7 @@ export default function Carousel({
         }
       >
         <button
+          aria-label="Previous Slide"
           className={
             "cursor-pointer rounded-full bg-red-100/80 p-1 backdrop-blur-lg"
           }
@@ -102,6 +103,7 @@ export default function Carousel({
         }
       >
         <button
+          aria-label="Next Slide"
           className={
             "cursor-pointer rounded-full bg-red-100/80 p-1 backdrop-blur-lg"
           }
@@ -125,8 +127,9 @@ export default function Carousel({
         {images.map((image, index) => {
           return (
             <button
+              aria-label={`Slide ${index + 1}`}
               key={image.url}
-              className={`size-2 rounded-full ${index === imageIndex ? "bg-red-600" : "border border-black"}`}
+              className={`size-3 rounded-full ${index === imageIndex ? "bg-red-600" : "border border-black"}`}
               onClick={() => {
                 console.log("kkk");
                 setImageIndex(index);
