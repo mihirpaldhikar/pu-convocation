@@ -18,8 +18,11 @@ import i18nConfig from "@i18n/config.json";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@i18n/routing";
+import { useTranslations } from "use-intl";
 
 export default function LanguageSelector(): JSX.Element {
+  const translations = useTranslations("components.footer.languageSelector");
+
   const currentLocale = useLocale();
   const pathName = usePathname();
   const router = useRouter();
@@ -27,7 +30,8 @@ export default function LanguageSelector(): JSX.Element {
   return (
     <div className={"flex flex-col items-start space-y-3"}>
       <h6 className={"font-semibold"}>
-        <GlobeAltIcon className={"inline-block size-5"} /> Supported Languages
+        <GlobeAltIcon className={"inline-block size-5"} />{" "}
+        {translations("title")}
       </h6>
       <div className={"flex space-x-4"}>
         {i18nConfig.map((lang) => {

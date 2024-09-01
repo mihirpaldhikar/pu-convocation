@@ -33,6 +33,9 @@
       "credits": {
         "title": "શ્રેય",
         "developedBy": "વિકસિત દ્વારા"
+      },
+      "languageSelector": {
+        "title": "સમર્થિત ભાષાઓ"
       }
     }
   }

@@ -33,6 +33,9 @@
       "credits": {
         "title": "क्रेडिट",
         "developedBy": "विकसित द्वारा"
+      },
+      "languageSelector": {
+        "title": "समर्थित भाषाएँ"
       }
     }
   }
