@@ -12,11 +12,16 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { routing } from "./i18n/routing";
+import createMiddleware from "next-intl/middleware";
+
+const i18nMiddleware = createMiddleware(routing);
 
 const protectedRoutes: Array<string> = ["/console"];
 
 export default async function middleware(req: NextRequest) {
   const pathName = req.nextUrl.pathname;
+  const response = i18nMiddleware(req);
 
   if (pathName.includes("_next") || pathName.includes("/favicon.ico")) {
     return;
@@ -56,4 +61,10 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(absoluteURL.toString());
     }
   }
+
+  return response;
 }
+
+export const config = {
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
+};

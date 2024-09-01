@@ -29,3 +29,4 @@ export { default as FilePicker } from "./file_picker";
 export { default as Carousel } from "./carousel";
 export { default as CountDown } from "./countdown";
 export { default as Convocation } from "./convocation";
+export { default as LanguageSelector } from "./language_selector";

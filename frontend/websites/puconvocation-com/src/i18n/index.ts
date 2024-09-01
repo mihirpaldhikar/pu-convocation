@@ -11,22 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import createNextIntlPlugin from "next-intl/plugin";
-
-const i18n = createNextIntlPlugin();
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone",
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "assets.puconvocation.com",
-      },
-    ],
-  },
-};
-
-export default i18n(nextConfig);
+export { Link, useRouter, usePathname } from "./routing";

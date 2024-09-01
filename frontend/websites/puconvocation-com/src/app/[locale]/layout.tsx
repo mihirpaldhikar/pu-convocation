@@ -18,6 +18,7 @@ import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
 import { Footer, Navbar } from "@components/index";
+import { getMessages } from "next-intl/server";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -29,15 +30,24 @@ export const metadata: Metadata = {
 
 interface RootLayout {
   children: ReactNode;
+  params: { locale: string };
 }
 
-export default function RootLayout({ children }: Readonly<RootLayout>) {
+export default async function RootLayout({
+  children,
+  params: { locale },
+}: Readonly<RootLayout>) {
+  const translations = await getMessages({
+    locale: locale,
+  });
+
+  console.log(locale);
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
-        <Providers>
+        <Providers locale={locale} translations={translations}>
           <div className={"flex min-h-dvh flex-col"}>
             <Navbar />
             <main className={`flex-1 pt-20`}>{children}</main>

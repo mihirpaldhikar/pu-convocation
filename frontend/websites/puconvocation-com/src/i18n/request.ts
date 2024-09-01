@@ -11,22 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import createNextIntlPlugin from "next-intl/plugin";
+import { notFound } from "next/navigation";
+import { getRequestConfig } from "next-intl/server";
+import { routing } from "./routing";
 
-const i18n = createNextIntlPlugin();
+export default getRequestConfig(async ({ locale }) => {
+  if (!routing.locales.includes(locale as any)) notFound();
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone",
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "assets.puconvocation.com",
-      },
-    ],
-  },
-};
-
-export default i18n(nextConfig);
+  return {
+    messages: (await import(`./locales/${locale}.json`)).default,
+    timeZone: "Asia/Kolkata",
+  };
+});

@@ -11,22 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import createNextIntlPlugin from "next-intl/plugin";
+import { defineRouting } from "next-intl/routing";
+import { createSharedPathnamesNavigation } from "next-intl/navigation";
+import config from "./config.json";
 
-const i18n = createNextIntlPlugin();
+export const routing = defineRouting({
+  locales: config
+    .filter((lang) => lang.enabled === true)
+    .map((lang) => lang.code),
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone",
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "assets.puconvocation.com",
-      },
-    ],
-  },
-};
+  defaultLocale: config.filter((lang) => lang.default === true)[0].code,
+});
 
-export default i18n(nextConfig);
+export const { Link, redirect, usePathname, useRouter } =
+  createSharedPathnamesNavigation(routing);

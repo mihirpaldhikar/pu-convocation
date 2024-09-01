@@ -14,10 +14,14 @@
 import { JSX, useState } from "react";
 import { Button, Input } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "use-intl";
+import { useRouter } from "@i18n/routing";
 
 export default function IdentifierForm(): JSX.Element {
   const router = useRouter();
+
+  const formTranslations = useTranslations("components.forms.identifierForm");
+
   const [identifier, setIdentifier] = useState("");
   return (
     <form
@@ -34,13 +38,15 @@ export default function IdentifierForm(): JSX.Element {
         name={"identifier"}
         type={"text"}
         value={identifier}
-        placeholder={"Enter Enrollment or Convocation No."}
+        placeholder={formTranslations("identifierInputHint")}
         onChange={(event) => {
           setIdentifier(event.target.value.trim());
         }}
       />
       <Button type={"submit"} className={"space-x-3 rounded-full"}>
-        <p className={"text-lg font-bold"}>Find your Seat</p>
+        <p className={"text-lg font-bold"}>
+          {formTranslations("submitButton")}
+        </p>
         <ChevronRightIcon className={"w-5"} />
       </Button>
     </form>

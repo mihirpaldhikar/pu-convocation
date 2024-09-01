@@ -1,0 +1,12 @@
+[
+  {
+    "code": "en",
+    "localName": "English (US)",
+    "name": "English",
+    "langDir": "ltr",
+    "dateFormat": "MM.DD.YYYY",
+    "hrefLang": "en-US",
+    "enabled": true,
+    "default": true
+  }
+]
