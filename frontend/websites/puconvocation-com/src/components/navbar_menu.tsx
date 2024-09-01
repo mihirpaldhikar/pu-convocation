@@ -39,18 +39,6 @@ export default function NavbarMenu(): JSX.Element {
   const account = state.account;
 
   useEffect(() => {
-    dispatch({
-      type: "LOADING",
-      payload: {
-        loading: true,
-      },
-    });
-    dispatchConfig({
-      type: "LOADING",
-      payload: {
-        loading: true,
-      },
-    });
     if (website.config === null) {
       website.dynamicsService.getWebsiteConfig().then((res) => {
         if (
@@ -83,20 +71,6 @@ export default function NavbarMenu(): JSX.Element {
         }
       });
     }
-    setTimeout(() => {
-      dispatchConfig({
-        type: "LOADING",
-        payload: {
-          loading: false,
-        },
-      });
-      dispatch({
-        type: "LOADING",
-        payload: {
-          loading: false,
-        },
-      });
-    }, 300);
   }, [
     dispatch,
     dispatchConfig,

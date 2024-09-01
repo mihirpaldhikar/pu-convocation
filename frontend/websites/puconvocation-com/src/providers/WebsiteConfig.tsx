@@ -56,6 +56,7 @@ const configReducer = (
       return {
         ...state,
         config: action.payload.config,
+        loading: false,
       };
     }
     case "LOADING": {

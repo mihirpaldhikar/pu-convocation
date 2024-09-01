@@ -62,6 +62,7 @@ const authReducer = (
       return {
         ...state,
         account: action.payload.account,
+        loading: false,
       };
     }
     case "SIGN_OUT": {
