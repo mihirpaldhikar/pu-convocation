@@ -24,7 +24,7 @@ import {
   ProgressBar,
 } from "@components/index";
 import Link from "next/link";
-import { useWebsiteConfig } from "@providers/WebsiteConfig";
+import { useWebsiteConfig } from "@hooks/index";
 
 export default function Home() {
   const { state: website } = useWebsiteConfig();

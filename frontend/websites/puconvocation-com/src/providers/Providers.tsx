@@ -14,16 +14,17 @@
 "use client";
 
 import { JSX, ReactNode } from "react";
-import { AuthProvider, WebsiteConfigProvider } from "@providers/index";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import WebsiteConfigProvider from "@providers/WebsiteConfig";
+import AuthProvider from "@providers/AuthProvider";
 
-interface providerWrapperProps {
+interface ProvidersProps {
   children: ReactNode;
 }
 
-export default function ProviderWrapper({
+export default function Providers({
   children,
-}: Readonly<providerWrapperProps>): JSX.Element {
+}: Readonly<ProvidersProps>): JSX.Element {
   const queryClient = new QueryClient();
 
   return (

@@ -16,8 +16,7 @@ import { AuthService } from "@services/index";
 import { StatusCode } from "@enums/StatusCode";
 import { ProgressBar } from "@components/index";
 import { Button } from "@components/ui";
-import { useToast } from "@hooks/use-toast";
-import { useAuth } from "@providers/AuthProvider";
+import { useAuth, useToast } from "@hooks/index";
 
 const authService = new AuthService();
 

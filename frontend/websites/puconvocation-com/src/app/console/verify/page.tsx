@@ -25,7 +25,7 @@ import {
   InputOTPSlot,
 } from "@components/ui/input_otp";
 import { Button } from "@components/ui";
-import { useToast } from "@hooks/use-toast";
+import { useToast } from "@hooks/useToast";
 import { useRouter } from "next/navigation";
 
 const attendeeService = new AttendeeService();

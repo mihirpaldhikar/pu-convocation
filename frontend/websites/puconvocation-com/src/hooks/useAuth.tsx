@@ -11,4 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as Providers } from "./Providers";
+import { useContext } from "react";
+import { AuthContext } from "@providers/AuthProvider";
+
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth Hook must be used within the Auth Provider");
+  }
+  return context;
+};
+
+export default useAuth;

@@ -11,4 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as Providers } from "./Providers";
+import { useContext } from "react";
+import { WebsiteConfigContext } from "@providers/WebsiteConfig";
+
+const useWebsiteConfig = () => {
+  const context = useContext(WebsiteConfigContext);
+  if (!context) {
+    throw new Error(
+      "useWebsiteConfig Hook must be used within the WebsiteConfig Provider",
+    );
+  }
+  return context;
+};
+
+export default useWebsiteConfig;

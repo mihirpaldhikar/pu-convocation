@@ -16,7 +16,7 @@
 import { JSX, useState } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useAuth, useWebsiteConfig } from "@providers/index";
+import { useAuth, useToast, useWebsiteConfig } from "@hooks/index";
 import { StatusCode } from "@enums/StatusCode";
 import {
   Button,
@@ -26,7 +26,6 @@ import {
 } from "@components/ui";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useToast } from "@hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 
 export default function NavbarMenu(): JSX.Element {

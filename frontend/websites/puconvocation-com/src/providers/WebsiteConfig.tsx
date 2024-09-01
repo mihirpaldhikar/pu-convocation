@@ -11,13 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useReducer,
-} from "react";
+import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { WebsiteConfig } from "@dto/index";
 import { DynamicsService } from "@services/index";
 
@@ -99,16 +93,6 @@ const WebsiteConfigProvider = ({ children }: WebsiteConfigProviderProps) => {
       {children}
     </WebsiteConfigContext.Provider>
   );
-};
-
-export const useWebsiteConfig = () => {
-  const context = useContext(WebsiteConfigContext);
-  if (!context) {
-    throw new Error(
-      "useWebsiteConfig Hook must be used within the WebsiteConfig Provider",
-    );
-  }
-  return context;
 };
 
 export default WebsiteConfigProvider;

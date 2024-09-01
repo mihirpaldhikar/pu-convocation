@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { JSX, useState } from "react";
 import { StatusCode } from "@enums/StatusCode";
 import { Button, Input } from "@components/ui";
-import { useToast } from "@hooks/use-toast";
+import { useToast } from "@hooks/index";
 
 const authService = new AuthService();
 
@@ -29,9 +29,7 @@ export default function NewAccountForm(): JSX.Element {
   const [displayName, setDisplayName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [authenticationStrategy, setAuthenticationStrategy] = useState<
-    "PASSKEY" | "PASSWORD"
-  >("PASSKEY");
+  const [authenticationStrategy] = useState<"PASSKEY" | "PASSWORD">("PASSKEY");
 
   return (
     <form

@@ -11,13 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  useContext,
-  useReducer,
-} from "react";
+import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { Account } from "@dto/index";
 import { AuthService } from "@services/index";
 
@@ -108,14 +102,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth Hook must be used within the Auth Provider");
-  }
-  return context;
 };
 
 export default AuthProvider;

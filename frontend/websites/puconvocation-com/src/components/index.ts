@@ -26,7 +26,6 @@ export { default as AboutUsBlob } from "./about_us_blob";
 export { IdentifierForm } from "./forms";
 export { default as ProgressBar } from "./progress_bar";
 export { default as FilePicker } from "./file_picker";
-export { default as AuthWrapper } from "./provider_wrapper";
 export { default as Carousel } from "./carousel";
 export { default as CountDown } from "./countdown";
 export { default as Convocation } from "./convocation";

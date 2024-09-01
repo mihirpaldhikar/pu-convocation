@@ -11,4 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { useToast, toast } from "./use-toast";
+export { useToast, toast } from "./useToast";
+export { default as useAuth } from "./useAuth";
+export { default as useWebsiteConfig } from "./useWebsiteConfig";

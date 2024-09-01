@@ -13,11 +13,10 @@
 "use client";
 import { Fragment, JSX, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useToast } from "@hooks/use-toast";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import { Button, Input } from "@components/ui";
-import { useAuth } from "@providers/index";
+import { useAuth, useToast } from "@hooks/index";
 
 export default function AuthenticationForm(): JSX.Element {
   const router = useRouter();

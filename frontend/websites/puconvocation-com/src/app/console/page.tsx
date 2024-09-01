@@ -12,7 +12,7 @@
  */
 "use client";
 import { JSX } from "react";
-import { useAuth } from "@providers/index";
+import { useAuth } from "@hooks/index";
 import { ProgressBar } from "@components/index";
 
 export default function ConsolePage(): JSX.Element {

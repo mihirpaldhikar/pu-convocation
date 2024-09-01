@@ -16,7 +16,8 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
-import { AuthWrapper, Footer, Navbar } from "@components/index";
+import { Providers } from "@providers/index";
+import { Footer, Navbar } from "@components/index";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,11 +33,11 @@ interface RootLayout {
 
 export default function RootLayout({ children }: Readonly<RootLayout>) {
   return (
-    <AuthWrapper>
-      <html lang="en">
-        <body
-          className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
-        >
+    <html lang="en">
+      <body
+        className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
+      >
+        <Providers>
           <div className={"flex min-h-dvh flex-col"}>
             <Navbar />
             <main className={`flex-1 pt-20`}>{children}</main>
@@ -66,8 +67,8 @@ export default function RootLayout({ children }: Readonly<RootLayout>) {
               "Parul University - Gujarat’s leading private university having the\nfoundation of its first Institution laid in 1993 as Parul Group of\nInstitutes, and later established and incorporated as Parul\nUniversity in 2015 under the Gujarat Private Universities (Second\n Amendment) Act of 2009."
             }
           />
-        </body>
-      </html>
-    </AuthWrapper>
+        </Providers>
+      </body>
+    </html>
   );
 }
