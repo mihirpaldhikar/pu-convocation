@@ -17,9 +17,12 @@ import { JSX } from "react";
 import i18nConfig from "@i18n/config.json";
 import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { useLocale } from "next-intl";
+import { usePathname, useRouter } from "@i18n/routing";
 
 export default function LanguageSelector(): JSX.Element {
   const currentLocale = useLocale();
+  const pathName = usePathname();
+  const router = useRouter();
 
   return (
     <div className={"flex flex-col items-start space-y-3"}>
@@ -33,6 +36,11 @@ export default function LanguageSelector(): JSX.Element {
               hidden={!lang.enabled}
               key={lang.code}
               className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border"} rounded-full px-2 py-1 text-xs`}
+              onClick={() => {
+                router.replace(pathName, {
+                  locale: lang.code,
+                });
+              }}
             >
               {lang.localName}
             </button>
