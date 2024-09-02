@@ -13,10 +13,9 @@
 "use client";
 
 import { JSX } from "react";
-import Link from "next/link";
 import { Logo } from "@components/ui";
-import { usePathname } from "next/navigation";
 import NavbarMenu from "@components/navbar_menu";
+import { Link, usePathname } from "@i18n/routing";
 
 export default function Navbar(): JSX.Element {
   const path = usePathname();
