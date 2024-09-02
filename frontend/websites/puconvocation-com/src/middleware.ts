@@ -12,7 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { routing } from "./i18n/routing";
+import { routing } from "@i18n/routing";
 import createMiddleware from "next-intl/middleware";
 
 const i18nMiddleware = createMiddleware(routing);
@@ -49,7 +49,10 @@ export default async function middleware(req: NextRequest) {
       authenticationResponse.status !== 200 &&
       !pathName.includes("/authenticate")
     ) {
-      const absoluteURL = new URL("/authenticate", req.nextUrl.origin);
+      const absoluteURL = new URL(
+        `/authenticate?redirect=${req.nextUrl.href}`,
+        req.nextUrl.origin,
+      );
       return NextResponse.redirect(absoluteURL.toString());
     }
 

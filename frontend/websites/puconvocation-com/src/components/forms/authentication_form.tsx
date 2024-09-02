@@ -18,7 +18,13 @@ import { PasskeyIcon } from "@icons/index";
 import { Button, Input } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 
-export default function AuthenticationForm(): JSX.Element {
+interface AuthenticationFormProps {
+  redirect?: string;
+}
+
+export default function AuthenticationForm({
+  redirect,
+}: Readonly<AuthenticationFormProps>): JSX.Element {
   const router = useRouter();
   const { state, dispatch } = useAuth();
   const { toast } = useToast();
@@ -81,13 +87,7 @@ export default function AuthenticationForm(): JSX.Element {
                     },
                   });
                 }
-                dispatch({
-                  type: "LOADING",
-                  payload: {
-                    loading: false,
-                  },
-                });
-                router.replace("/console");
+                router.replace(redirect ?? "/console");
               });
             } else if ("message" in response) {
               toast({
@@ -106,12 +106,6 @@ export default function AuthenticationForm(): JSX.Element {
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
               state.authService.getCurrentAccount().then((res) => {
-                dispatch({
-                  type: "LOADING",
-                  payload: {
-                    loading: true,
-                  },
-                });
                 if (
                   res.statusCode === StatusCode.SUCCESS &&
                   "payload" in res &&
@@ -124,13 +118,7 @@ export default function AuthenticationForm(): JSX.Element {
                     },
                   });
                 }
-                dispatch({
-                  type: "LOADING",
-                  payload: {
-                    loading: false,
-                  },
-                });
-                router.replace("/console");
+                router.replace(redirect ?? "/console");
               });
             } else if ("message" in response) {
               toast({

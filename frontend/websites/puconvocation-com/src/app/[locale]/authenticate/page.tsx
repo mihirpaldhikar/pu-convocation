@@ -14,7 +14,13 @@ import { JSX } from "react";
 import { AuthenticationForm } from "@components/forms";
 import { Pattern } from "@components/ui";
 
-export default function SignInPage(): JSX.Element {
+interface AuthenticationProps {
+  searchParams: { redirect: string };
+}
+
+export default function AuthenticationPage({
+  searchParams,
+}: Readonly<AuthenticationProps>): JSX.Element {
   return (
     <section className={"grid h-dvh grid-cols-1 lg:grid-cols-2"}>
       <div className={"hidden flex-1 lg:flex"}>
@@ -36,7 +42,7 @@ export default function SignInPage(): JSX.Element {
             </h3>
             <h5 className={"font-medium"}>Authenticate to continue...</h5>
           </div>
-          <AuthenticationForm />
+          <AuthenticationForm redirect={searchParams.redirect} />
         </div>
       </div>
     </section>
