@@ -15,9 +15,11 @@ import { JSX } from "react";
 import { useZxing } from "react-zxing";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "use-intl";
 
 export default function VerificationPage(): JSX.Element {
   const router = useRouter();
+  const pageTranslations = useTranslations("pages.scanPage");
 
   const { ref: qrCodeScanner } = useZxing({
     onDecodeResult(result) {
@@ -35,12 +37,13 @@ export default function VerificationPage(): JSX.Element {
       <div className="m-auto flex w-full flex-col items-center justify-center">
         <div className={"flex flex-col items-center justify-center space-y-3"}>
           <QrCodeIcon className={"size-14 text-red-600"} />
-          <h6 className={"text-xl font-semibold"}>Scan the QR Code</h6>
+          <h6 className={"text-xl font-semibold"}>
+            {pageTranslations("title")}
+          </h6>
         </div>
         <video ref={qrCodeScanner} className={"h-96 w-96 rounded-lg"} />
         <p className={"text-center text-lg"}>
-          You will be automatically redirected to verification page for the
-          transaction confirmation.
+          {pageTranslations("description")}
         </p>
       </div>
     </section>

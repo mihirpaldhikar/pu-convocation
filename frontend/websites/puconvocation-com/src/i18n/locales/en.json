@@ -19,6 +19,10 @@
     "authenticationPage": {
       "title": "Convocation Management System",
       "subTitle": "Authenticate to continue..."
+    },
+    "scanPage": {
+      "title": "Scan the QR Code",
+      "description": "You will be automatically redirected to verification page for the transaction confirmation."
     }
   },
   "components": {
