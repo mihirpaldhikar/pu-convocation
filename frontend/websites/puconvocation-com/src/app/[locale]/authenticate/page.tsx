@@ -13,14 +13,17 @@
 import { JSX } from "react";
 import { AuthenticationForm } from "@components/forms";
 import { Pattern } from "@components/ui";
+import { getTranslations } from "next-intl/server";
 
 interface AuthenticationProps {
   searchParams: { redirect: string };
 }
 
-export default function AuthenticationPage({
+export default async function AuthenticationPage({
   searchParams,
-}: Readonly<AuthenticationProps>): JSX.Element {
+}: Readonly<AuthenticationProps>): Promise<JSX.Element> {
+  const pageTranslations = await getTranslations("pages.authenticationPage");
+
   return (
     <section className={"grid h-dvh grid-cols-1 lg:grid-cols-2"}>
       <div className={"hidden flex-1 lg:flex"}>
@@ -37,10 +40,8 @@ export default function AuthenticationPage({
           }
         >
           <div className={"flex flex-col items-center space-y-5"}>
-            <h3 className={"text-xl font-bold"}>
-              Convocation Management System
-            </h3>
-            <h5 className={"font-medium"}>Authenticate to continue...</h5>
+            <h3 className={"text-xl font-bold"}>{pageTranslations("title")}</h3>
+            <h5 className={"font-medium"}>{pageTranslations("subTitle")}</h5>
           </div>
           <AuthenticationForm redirect={searchParams.redirect} />
         </div>

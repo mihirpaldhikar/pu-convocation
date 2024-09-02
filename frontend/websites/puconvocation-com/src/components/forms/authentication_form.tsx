@@ -17,6 +17,7 @@ import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import { Button, Input } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
+import { useTranslations } from "use-intl";
 
 interface AuthenticationFormProps {
   redirect?: string;
@@ -25,6 +26,10 @@ interface AuthenticationFormProps {
 export default function AuthenticationForm({
   redirect,
 }: Readonly<AuthenticationFormProps>): JSX.Element {
+  const formTranslations = useTranslations(
+    "components.forms.authenticationForm",
+  );
+
   const router = useRouter();
   const { state, dispatch } = useAuth();
   const { toast } = useToast();
@@ -139,7 +144,7 @@ export default function AuthenticationForm({
         disabled={submitting}
         type={"text"}
         value={identifier}
-        placeholder={"Username..."}
+        placeholder={formTranslations("inputs.identifier")}
         onChange={(event) => {
           setIdentifier(event.target.value.trim());
         }}
@@ -149,7 +154,7 @@ export default function AuthenticationForm({
         disabled={submitting}
         type={"password"}
         value={password}
-        placeholder={"Password..."}
+        placeholder={formTranslations("inputs.password")}
         onChange={(event) => {
           setPassword(event.target.value.trim());
         }}
@@ -161,10 +166,11 @@ export default function AuthenticationForm({
       >
         {authenticationStrategy === "PASSKEY" ? (
           <Fragment>
-            <PasskeyIcon color={"#ffffff"} /> <h2>Continue With Passkey</h2>
+            <PasskeyIcon color={"#ffffff"} />{" "}
+            <h2>{formTranslations("buttons.passkey")}</h2>
           </Fragment>
         ) : (
-          <span>Continue</span>
+          <span>{formTranslations("buttons.continue")}</span>
         )}
       </Button>
     </form>
