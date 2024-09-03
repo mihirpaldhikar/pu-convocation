@@ -37,16 +37,8 @@ class UACController(
 
 ) {
     suspend fun getRule(authorizationToken: String?, name: String): Result {
-
-        if (authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid or expired."
-            )
-        }
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -82,16 +74,8 @@ class UACController(
     }
 
     suspend fun createRule(authorizationToken: String?, newUACRuleRequest: NewUACRule): Result {
-
-        if (authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid or expired."
-            )
-        }
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -161,12 +145,9 @@ class UACController(
     }
 
     suspend fun isRuleAllowedForAccount(authorizationToken: String?, ruleName: String): Boolean {
-        if (authorizationToken == null) {
-            return false
-        }
 
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -186,15 +167,8 @@ class UACController(
         ruleName: String,
         updateUACRuleRequest: UpdateUACRuleRequest
     ): Result {
-        if (authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid or expired."
-            )
-        }
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )

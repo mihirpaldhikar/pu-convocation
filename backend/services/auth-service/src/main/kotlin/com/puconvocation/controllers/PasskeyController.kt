@@ -38,21 +38,11 @@ class PasskeyController(
     private val cacheService: CacheService,
 ) {
     suspend fun startPasskeyRegistration(identifier: String): Result {
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
-
-        val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                message = "Account not found"
-            )
-
-            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
-
-            fetchedAccount
-        }
+        val account = getAccount(identifier) ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+            message = "Account not found"
+        )
 
         if (account.suspended) {
             return Result.Error(
@@ -72,15 +62,8 @@ class PasskeyController(
     }
 
     suspend fun startPasskeyRegistrationWithSecurityToken(securityToken: SecurityToken): Result {
-        if (securityToken.authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-                message = "Invalid authorization token"
-            )
-        }
         val jwtVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = securityToken.authorizationToken,
+            token = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN
         )
 
@@ -93,21 +76,11 @@ class PasskeyController(
     }
 
     suspend fun validatePasskeyRegistration(identifier: String, credentials: String): Result {
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
-
-        val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                message = "Account not found"
-            )
-
-            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
-
-            fetchedAccount
-        }
+        val account = getAccount(identifier) ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+            message = "Account not found"
+        )
 
         if (account.suspended) {
             return Result.Error(
@@ -178,21 +151,11 @@ class PasskeyController(
 
     suspend fun validatePasskeyChallenge(identifier: String, credentials: String): Result {
 
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
-
-        val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                message = "Account not found"
-            )
-
-            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
-
-            fetchedAccount
-        }
+        val account = getAccount(identifier) ?: return Result.Error(
+            statusCode = HttpStatusCode.NotFound,
+            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+            message = "Account not found"
+        )
 
         if (account.suspended) {
             return Result.Error(
@@ -275,5 +238,21 @@ class PasskeyController(
             rp.startRegistration(startRegistrationOptions)
 
         return options
+    }
+
+    private suspend fun getAccount(identifier: String): Account? {
+        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+
+        return if (cachedAccount != null) {
+            gson.fromJson(cachedAccount, Account::class.java)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier)
+
+            if (fetchedAccount != null) {
+                cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+
+            }
+            fetchedAccount
+        }
     }
 }

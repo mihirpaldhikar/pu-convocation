@@ -155,16 +155,8 @@ class AccountController(
 
     suspend fun createNewAccount(newAccount: NewAccount, securityToken: SecurityToken): Result {
 
-        if (securityToken.authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid or expired."
-            )
-        }
-
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = securityToken.authorizationToken,
+            token = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -321,21 +313,7 @@ class AccountController(
             )
         }
 
-        val accountPrivileges = uacController.getRulesAssociatedWithAccount(account.uuid.toHexString())
-
-        val accountWithUACRules = AccountWithUACRules(
-            uuid = account.uuid,
-            email = account.email,
-            username = account.username,
-            avatarURL = account.avatarURL,
-            displayName = account.displayName,
-            privileges = accountPrivileges
-        )
-
-        cacheService.set(
-            CachedKeys.getAccountWithPrivilegesKey(account.uuid.toHexString()),
-            gson.toJson(accountWithUACRules)
-        )
+        val accountWithUACRules = getAccountWithPrivileges(account)
 
         if (newTokenGenerated) {
             return Result.Success(
@@ -356,17 +334,9 @@ class AccountController(
         )
     }
 
-    suspend fun accountDetails(authorizationToken:String?, identifier: String): Result {
-        if (authorizationToken == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid or expired."
-            )
-        }
-
+    suspend fun accountDetails(authorizationToken: String?, identifier: String): Result {
         val verificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -407,7 +377,14 @@ class AccountController(
             fetchedAccount
         }
 
+        return Result.Success(
+            statusCode = HttpStatusCode.OK,
+            code = ResponseCode.OK,
+            data = getAccountWithPrivileges(account)
+        )
+    }
 
+    private suspend fun getAccountWithPrivileges(account: Account): AccountWithUACRules {
         val accountPrivileges = uacController.getRulesAssociatedWithAccount(account.uuid.toHexString())
 
         val accountWithUACRules = AccountWithUACRules(
@@ -424,11 +401,7 @@ class AccountController(
             gson.toJson(accountWithUACRules)
         )
 
-        return Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = accountWithUACRules
-        )
+        return accountWithUACRules
     }
 
 }
