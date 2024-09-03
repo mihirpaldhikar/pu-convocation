@@ -18,7 +18,6 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cachingheaders.*
-import io.ktor.server.plugins.compression.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import org.koin.java.KoinJavaComponent
@@ -34,15 +33,7 @@ fun Application.configureHTTP() {
             }
         }
     }
-    install(Compression) {
-        gzip {
-            priority = 1.0
-        }
-        deflate {
-            priority = 10.0
-            minimumSize(1024)
-        }
-    }
+
     install(CORS) {
         allowCredentials = true
 
