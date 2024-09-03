@@ -13,19 +13,48 @@
 
 package com.puconvocation.services
 
+import com.google.gson.Gson
 import com.puconvocation.Environment
+import com.puconvocation.constants.CachedKeys
+import com.puconvocation.enums.TokenType
+import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.utils.Result
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 
 class AuthService(
     private val client: HttpClient,
+    private val cacheService: CacheService,
+    private val jsonWebToken: JsonWebToken,
+    private val gson: Gson,
     environment: Environment
 ) {
 
     private val uacRoute = "${environment.authServiceURL}/uac"
 
-    suspend fun isOperationAllowed(authorizationToken: String, rule: String): Boolean {
+    suspend fun isAllowed(authorizationToken: String?, ruleName: String): Boolean {
+        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+            token = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (tokenVerificationResult is Result.Error) {
+            return false
+        }
+
+        val cachedRulesForAccount =
+            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
+
+        return if (cachedRulesForAccount != null) {
+            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+        } else {
+            isOperationAllowed(authorizationToken!!, ruleName)
+        }
+    }
+
+    private suspend fun isOperationAllowed(authorizationToken: String, rule: String): Boolean {
         val response = client.get("$uacRoute/rules/$rule/allowed") {
             cookie(AUTHORIZATION_TOKEN_COOKIE, authorizationToken)
         }

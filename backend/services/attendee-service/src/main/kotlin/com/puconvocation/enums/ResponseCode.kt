@@ -27,4 +27,5 @@ enum class ResponseCode {
     ALREADY_LOCKED,
     ALREADY_UNLOCKED,
     NOT_FOUND,
+    INVALID_TOKEN,
 }

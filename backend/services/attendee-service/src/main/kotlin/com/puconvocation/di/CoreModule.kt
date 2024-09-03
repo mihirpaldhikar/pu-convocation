@@ -50,7 +50,10 @@ object CoreModule {
         single<AuthService> {
             AuthService(
                 environment = get<Environment>(),
-                client = get<HttpClient>()
+                client = get<HttpClient>(),
+                cacheService = get<CacheService>(),
+                gson = get<Gson>(),
+                jsonWebToken = get<JsonWebToken>(),
             )
         }
 

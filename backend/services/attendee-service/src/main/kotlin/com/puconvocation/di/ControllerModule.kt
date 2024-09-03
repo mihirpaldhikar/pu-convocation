@@ -32,7 +32,6 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
                 cacheService = get<CacheService>(),
-                jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
                 gson = get<Gson>(),
             )
@@ -45,7 +44,6 @@ object ControllerModule {
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
                 cacheService = get<CacheService>(),
-                gson = get<Gson>(),
             )
         }
     }

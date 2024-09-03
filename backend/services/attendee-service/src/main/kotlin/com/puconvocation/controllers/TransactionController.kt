@@ -36,18 +36,10 @@ class TransactionController(
     private val jsonWebToken: JsonWebToken,
     private val authService: AuthService,
     private val cacheService: CacheService,
-    private val gson: Gson,
 ) {
     suspend fun insertTransaction(authorizationToken: String?, transactionRequest: TransactionRequest): Result {
-
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
         val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
+            token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -57,7 +49,7 @@ class TransactionController(
         }
 
 
-        if (!isAllowed(authorizationToken, "verifyAttendeeDetails")) {
+        if (!authService.isAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -115,26 +107,5 @@ class TransactionController(
             code = ResponseCode.OK,
             data = transaction
         )
-    }
-
-    private suspend fun isAllowed(authorizationToken: String, ruleName: String): Boolean {
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return false
-        }
-
-        val cachedRulesForAccount =
-            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
-
-        return if (cachedRulesForAccount != null) {
-            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
-        } else {
-            authService.isOperationAllowed(authorizationToken, ruleName)
-        }
     }
 }

@@ -21,7 +21,6 @@ import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
-import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
@@ -34,7 +33,6 @@ class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
     private val cacheService: CacheService,
-    private val jsonWebToken: JsonWebToken,
     private val authService: AuthService,
     private val gson: Gson,
 ) {
@@ -83,13 +81,7 @@ class AttendeeController(
 
     suspend fun uploadAttendees(authorizationToken: String?, multiPart: MultiPartData): Result {
 
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
-        if (!isAllowed(authorizationToken, "uploadAttendeesDetails")) {
+        if (!authService.isAllowed(authorizationToken, "uploadAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -144,13 +136,7 @@ class AttendeeController(
     }
 
     suspend fun getAttendeeFromVerificationToken(authorizationToken: String?, token: String): Result {
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
-        if (!isAllowed(authorizationToken, "verifyAttendeeDetails")) {
+        if (!authService.isAllowed(authorizationToken, "verifyAttendeeDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -173,20 +159,13 @@ class AttendeeController(
 
 
     suspend fun lockAttendees(authorizationToken: String?): Result {
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
-        if (!isAllowed(authorizationToken, "lockAttendeesDetails")) {
+        if (!authService.isAllowed(authorizationToken, "lockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
                 message = "You don't have privilege to Lock attendee details."
             )
         }
-
 
         if (getAttendeeConfig().isLocked) {
             return Result.Error(
@@ -223,13 +202,7 @@ class AttendeeController(
     }
 
     suspend fun unLockAttendees(authorizationToken: String?): Result {
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
-        if (!isAllowed(authorizationToken, "unLockAttendeesDetails")) {
+        if (!authService.isAllowed(authorizationToken, "unLockAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -272,13 +245,7 @@ class AttendeeController(
     }
 
     suspend fun getAttendees(authorizationToken: String?, page: Int, limit: Int): Result {
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
-
-        if (!isAllowed(authorizationToken, "viewAttendeesDetails")) {
+        if (!authService.isAllowed(authorizationToken, "viewAttendeesDetails")) {
             return Result.Error(
                 statusCode = HttpStatusCode.Forbidden,
                 errorCode = ResponseCode.NOT_PERMITTED,
@@ -297,28 +264,6 @@ class AttendeeController(
                 "attendees" to attendees
             )
         )
-    }
-
-
-    private suspend fun isAllowed(authorizationToken: String, ruleName: String): Boolean {
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return false
-        }
-
-        val cachedRulesForAccount =
-            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
-
-        return if (cachedRulesForAccount != null) {
-            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
-        } else {
-            authService.isOperationAllowed(authorizationToken, ruleName)
-        }
     }
 
     private suspend fun getAttendeeConfig(): AttendeeConfig {
