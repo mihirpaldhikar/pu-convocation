@@ -42,7 +42,6 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt-jvm")
     implementation("io.ktor:ktor-server-host-common-jvm")
     implementation("io.ktor:ktor-server-caching-headers-jvm")
-    implementation("io.ktor:ktor-server-compression-jvm")
     implementation("io.ktor:ktor-server-conditional-headers-jvm")
     implementation("io.ktor:ktor-server-cors-jvm")
     implementation("io.ktor:ktor-server-call-logging-jvm")
