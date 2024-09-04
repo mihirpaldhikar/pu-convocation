@@ -18,7 +18,6 @@ import com.puconvocation.Environment
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
-import com.puconvocation.utils.onSuccess
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -48,24 +47,22 @@ class AuthService(
                 isOperationAllowed(string, ruleName)
             }
         }
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
+        val claims = jsonWebToken.getClaims(
             token = string,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        tokenVerificationResult.onSuccess { claims, _ ->
-            val cachedRulesForAccount =
-                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
+        if (claims.isEmpty()) return false
 
-            return if (cachedRulesForAccount != null) {
-                (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
-            } else {
-                isOperationAllowed(claims[0], ruleName)
-            }
+        val cachedRulesForAccount =
+            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
+
+        return if (cachedRulesForAccount != null) {
+            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+        } else {
+            isOperationAllowed(claims[0], ruleName)
         }
-
-        return false
     }
 
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
