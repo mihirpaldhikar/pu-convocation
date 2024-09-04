@@ -13,35 +13,33 @@
 
 package com.puconvocation.utils
 
-import com.puconvocation.Environment
 import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
-import org.koin.java.KoinJavaComponent
 
 object CookieName {
     const val AUTHORIZATION_TOKEN_COOKIE = "__puc_at__"
     const val REFRESH_TOKEN_COOKIE = "__puc_rt__"
 }
 
-val environment: Environment by KoinJavaComponent.inject(Environment::class.java)
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
-    repositoryResult: Result
+    repositoryResult: Result<Any, Error>
 ) {
-    if (repositoryResult is Result.Success && repositoryResult.encodeStringAsJSON == true) {
-        call.response.headers.append("Content-Type", "application/json")
+    repositoryResult.onSuccess { payload, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.OK,
+            message = payload
+        )
     }
-    call.respond(
-        status = repositoryResult.httpStatusCode ?: HttpStatusCode.OK,
-        message = if (repositoryResult is Result.Success) {
-            repositoryResult.responseData
-        } else {
-            repositoryResult
-        }
-    )
+    repositoryResult.onError { error, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.InternalServerError,
+            message = error
+        )
+    }
 }
 
 fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {

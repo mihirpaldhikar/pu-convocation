@@ -13,7 +13,6 @@ object ControllerModule {
         single<WebsiteController> {
             WebsiteController(
                 websiteConfigRepository = get<WebsiteConfigRepository>(),
-                jsonWebToken = get<JsonWebToken>(),
                 gson = get<Gson>(),
                 cacheService = get<CacheService>(),
                 authService = get<AuthService>()

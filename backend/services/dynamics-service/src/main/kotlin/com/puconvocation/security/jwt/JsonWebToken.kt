@@ -17,10 +17,8 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.TokenExpiredException
-import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.JWTMetadata
-import com.puconvocation.utils.Result
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -70,33 +68,31 @@ class JsonWebToken(
         ).withIssuer(jwtMetadata.issuer).build()
     }
 
-    fun verifySecurityToken(
-        authorizationToken: String,
+    fun getClaims(
+        token: String?,
         tokenType: TokenType,
         claims: List<String> = listOf(UUID_CLAIM)
-    ): Result {
+    ): List<String> {
+        if (token == null) {
+            return emptyList()
+        }
+
         return try {
             val jwtVerifier = jwtVerifier(tokenType)
 
             val claimData: MutableList<String> = mutableListOf();
 
             claims.map { claim ->
-                claimData.add(jwtVerifier.verify(authorizationToken).getClaim(claim).asString())
+                claimData.add(jwtVerifier.verify(token).getClaim(claim).asString())
             }
 
-            Result.Success(
-                data = claimData
-            )
+            claimData
         } catch (e: TokenExpiredException) {
-            Result.Error(
-                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Token is expired."
-            )
+            return emptyList()
         }
     }
 
     companion object {
         const val UUID_CLAIM = "uuid"
-        const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
-        const val SESSION_ID_CLAIM = "session"
     }
 }

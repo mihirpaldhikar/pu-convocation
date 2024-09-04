@@ -13,28 +13,63 @@
 
 package com.puconvocation.services
 
+import com.google.gson.Gson
 import com.puconvocation.Environment
+import com.puconvocation.constants.CachedKeys
+import com.puconvocation.enums.TokenType
+import com.puconvocation.security.jwt.JsonWebToken
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import org.bson.types.ObjectId
 
 class AuthService(
     private val client: HttpClient,
+    private val cacheService: CacheService,
+    private val jsonWebToken: JsonWebToken,
+    private val gson: Gson,
     environment: Environment
 ) {
 
     private val uacRoute = "${environment.authServiceURL}/uac"
 
-    suspend fun isOperationAllowed(authorizationToken: String, rule: String): Boolean {
+    suspend fun isAllowed(string: String?, ruleName: String): Boolean {
+
+        if (string.isNullOrEmpty()) return false
+
+        if (ObjectId.isValid(string)) {
+            val cachedRulesForAccount =
+                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(string))
+
+            return if (cachedRulesForAccount != null) {
+                (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+            } else {
+                isOperationAllowed(string, ruleName)
+            }
+        }
+        val claims = jsonWebToken.getClaims(
+            token = string,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (claims.isEmpty()) return false
+
+        val cachedRulesForAccount =
+            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
+
+        return if (cachedRulesForAccount != null) {
+            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+        } else {
+            isOperationAllowed(claims[0], ruleName)
+        }
+    }
+
+    private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
         val response = client.get("$uacRoute/rules/$rule/allowed") {
-            cookie(AUTHORIZATION_TOKEN_COOKIE, authorizationToken)
+            header("X-UAC-CHECK", uuid)
         }
 
         return response.bodyAsText().toBoolean()
-    }
-
-    companion object {
-        const val AUTHORIZATION_TOKEN_COOKIE = "__puc_at__"
-        const val REFRESH_TOKEN_COOKIE = "__puc_rt__"
     }
 }

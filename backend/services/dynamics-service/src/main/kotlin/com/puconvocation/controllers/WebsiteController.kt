@@ -1,12 +1,12 @@
 package com.puconvocation.controllers
 
 import com.google.gson.Gson
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.UpdateWebsiteConfigRequest
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.WebsiteConfig
 import com.puconvocation.database.mongodb.repositories.WebsiteConfigRepository
 import com.puconvocation.enums.ResponseCode
-import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CacheService
@@ -15,33 +15,33 @@ import io.ktor.http.*
 
 class WebsiteController(
     private val websiteConfigRepository: WebsiteConfigRepository,
-    private val jsonWebToken: JsonWebToken,
     private val gson: Gson,
     private val cacheService: CacheService,
     private val authService: AuthService
 ) {
-    suspend fun setWebsiteConfig(websiteConfig: WebsiteConfig): Result {
+    suspend fun setWebsiteConfig(websiteConfig: WebsiteConfig): Result<HashMap<String, Any>, ErrorResponse> {
         val success = websiteConfigRepository.setWebsiteConfig(websiteConfig)
 
         if (!success) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "Something went wrong!"
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Something went wrong!"
+                )
+
             )
         }
 
         return Result.Success(
-            statusCode = HttpStatusCode.Created,
-            code = ResponseCode.OK,
-            data = mapOf(
+            data = hashMapOf(
                 "code" to ResponseCode.OK,
                 "message" to "Website config created."
             )
         )
     }
 
-    suspend fun getWebsiteConfig(): Result {
+    suspend fun getWebsiteConfig(): Result<WebsiteConfig, ErrorResponse> {
         val cachedConfig = cacheService.get(CachedKeys.getWebsiteConfigKey())
 
         val config = if (cachedConfig != null) {
@@ -54,28 +54,22 @@ class WebsiteController(
             fetchedConfig
         }
 
-        return Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = config
-        )
+        return Result.Success(config)
     }
 
     suspend fun updateWebsiteConfig(
         authorizationToken: String?,
         updateWebsiteConfigRequest: UpdateWebsiteConfigRequest
-    ): Result {
-        if (authorizationToken == null) return Result.Error(
-            statusCode = HttpStatusCode.Unauthorized,
-            errorCode = ResponseCode.INVALID_OR_NULL_TOKEN,
-            message = "Authorization token is invalid or expired."
-        )
+    ): Result<HashMap<String, Any>, ErrorResponse> {
 
-        if (!isAllowed(authorizationToken, "manageWebsite")) {
+        if (!authService.isAllowed(authorizationToken, "manageWebsite")) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.NOT_PERMITTED,
-                message = "You don't have privilege to change website configurations."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to change website configurations."
+                )
+
             )
         }
 
@@ -98,42 +92,21 @@ class WebsiteController(
 
         if (!success) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "Something went wrong!"
+                ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Something went wrong!"
+                )
             )
         }
 
         cacheService.set(CachedKeys.getWebsiteConfigKey(), gson.toJson(config))
 
         return Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = mapOf(
+            hashMapOf(
                 "code" to ResponseCode.OK,
                 "message" to "Website configuration updated."
             )
         )
     }
 
-    private suspend fun isAllowed(authorizationToken: String, ruleName: String): Boolean {
-        val tokenVerificationResult = jsonWebToken.verifySecurityToken(
-            authorizationToken = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenVerificationResult is Result.Error) {
-            return false
-        }
-
-        val cachedRulesForAccount =
-            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount((tokenVerificationResult.responseData as List<String>)[0]))
-
-        return if (cachedRulesForAccount != null) {
-            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
-        } else {
-            authService.isOperationAllowed(authorizationToken, ruleName)
-        }
-    }
 }
