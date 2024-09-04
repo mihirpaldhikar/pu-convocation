@@ -20,8 +20,8 @@ import com.auth0.jwt.exceptions.TokenExpiredException
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.JWTMetadata
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.utils.Result
-import io.ktor.http.*
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -75,13 +75,15 @@ class JsonWebToken(
         token: String?,
         tokenType: TokenType,
         claims: List<String> = listOf(UUID_CLAIM)
-    ): Result {
+    ): Result<List<String>, ErrorResponse> {
 
         if (token == null) {
             return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Token is invalid or expired."
+                ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Token is invalid or expired."
+                )
+
             )
         }
 
@@ -95,11 +97,14 @@ class JsonWebToken(
             }
 
             Result.Success(
-                data = claimData
+                claimData
             )
         } catch (e: TokenExpiredException) {
             Result.Error(
-                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Token is expired."
+                ErrorResponse(
+                    errorCode = ResponseCode.TOKEN_EXPIRED,
+                    message = "Token is expired.",
+                )
             )
         }
     }

@@ -15,10 +15,10 @@ package com.puconvocation.routes
 
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -30,9 +30,11 @@ fun Routing.attendeesRoute(
         get("/{identifier}") {
             val identifier = call.parameters["identifier"] ?: return@get sendResponse(
                 Result.Error(
-                    statusCode = HttpStatusCode.BadRequest,
-                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
-                    message = "Please provide a valid identifier."
+                    ErrorResponse(
+                        errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                        message = "Please provide a valid identifier."
+                    )
+
                 )
             )
 
@@ -64,9 +66,10 @@ fun Routing.attendeesRoute(
             val authorizationToken = getSecurityTokens().authorizationToken
             val token = call.parameters["verificationToken"] ?: return@get sendResponse(
                 Result.Error(
-                    statusCode = HttpStatusCode.BadRequest,
-                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
-                    message = "Please provide a valid token."
+                    ErrorResponse(
+                        errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                        message = "Please provide a valid token."
+                    )
                 )
             )
             val result = attendeeController.getAttendeeFromVerificationToken(authorizationToken, token)

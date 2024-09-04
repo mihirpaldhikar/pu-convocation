@@ -25,16 +25,20 @@ object CookieName {
 }
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
-    repositoryResult: Result
+    repositoryResult: Result<Any, Error>
 ) {
-    call.respond(
-        status = repositoryResult.httpStatusCode ?: HttpStatusCode.OK,
-        message = if (repositoryResult is Result.Success) {
-            repositoryResult.responseData
-        } else {
-            repositoryResult
-        }
-    )
+    repositoryResult.onSuccess { payload, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.OK,
+            message = payload
+        )
+    }
+    repositoryResult.onError { error, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.InternalServerError,
+            message = error
+        )
+    }
 }
 
 fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {

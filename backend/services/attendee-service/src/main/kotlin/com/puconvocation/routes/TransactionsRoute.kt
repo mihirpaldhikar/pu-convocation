@@ -16,10 +16,10 @@ package com.puconvocation.routes
 import com.puconvocation.commons.dto.TransactionRequest
 import com.puconvocation.controllers.TransactionController
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
@@ -31,9 +31,10 @@ fun Routing.transactionsRoute(
         get("/{transactionId}") {
             val transactionId = call.parameters["transactionId"] ?: return@get sendResponse(
                 Result.Error(
-                    statusCode = HttpStatusCode.BadRequest,
-                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
-                    message = "Please provide a valid transaction id."
+                    ErrorResponse(
+                        errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                        message = "Please provide a valid transaction id."
+                    )
                 )
             )
 
