@@ -18,12 +18,9 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.TokenExpiredException
-import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.JWTMetadata
 import com.puconvocation.security.dao.SecurityToken
-import com.puconvocation.utils.Result
-import io.ktor.http.*
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -113,18 +110,14 @@ class JsonWebToken(
             )
     }
 
-    fun verifySecurityToken(
+    fun getClaims(
         token: String?,
         tokenType: TokenType,
         claims: List<String> = listOf(UUID_CLAIM)
-    ): Result {
+    ): List<String> {
 
         if (token == null) {
-            return Result.Error(
-                statusCode = HttpStatusCode.Unauthorized,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Token is invalid or expired."
-            )
+            return emptyList()
         }
 
         return try {
@@ -135,40 +128,28 @@ class JsonWebToken(
             claims.map { claim ->
                 claimData.add(jwtVerifier.verify(token).getClaim(claim).asString().replace("\"", ""))
             }
-
-            Result.Success(
-                data = claimData
-            )
+            claimData
         } catch (e: TokenExpiredException) {
-            Result.Error(
-                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Token is expired."
-            )
+            return emptyList()
         }
     }
 
-    fun generateSecurityTokenFromRefreshToken(securityToken: SecurityToken): Result {
+    fun generateSecurityTokenFromRefreshToken(securityToken: SecurityToken): SecurityToken? {
         return try {
             val jwtVerifier = jwtVerifier(TokenType.REFRESH_TOKEN)
             val uuid = jwtVerifier.verify(securityToken.refreshToken).getClaim(UUID_CLAIM).asString()
             val sessionId =
                 jwtVerifier.verify(securityToken.refreshToken).getClaim(SESSION_ID_CLAIM).asString()
 
-            Result.Success(
-                data = SecurityToken(
-                    authorizationToken = generateAuthorizationToken(uuid, sessionId),
-                    refreshToken = generateRefreshToken(uuid, sessionId)
-                )
+            SecurityToken(
+                authorizationToken = generateAuthorizationToken(uuid, sessionId),
+                refreshToken = generateRefreshToken(uuid, sessionId)
             )
+
         } catch (e: TokenExpiredException) {
-            Result.Error(
-                statusCode = HttpStatusCode.BadRequest,
-                errorCode = ResponseCode.TOKEN_EXPIRED, message = "Refresh Token is expired."
-            )
+            return null
         } catch (e: JWTDecodeException) {
-            Result.Error(
-                statusCode = HttpStatusCode.BadRequest,
-                errorCode = ResponseCode.INVALID_OR_NULL_TOKEN, message = "Refresh Token is invalid or null."
-            )
+            return null
         }
     }
 

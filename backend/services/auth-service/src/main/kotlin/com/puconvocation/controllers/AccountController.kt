@@ -155,18 +155,23 @@ class AccountController(
 
     suspend fun createNewAccount(newAccount: NewAccount, securityToken: SecurityToken): Result {
 
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
-            return verificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         val isAllowed = uacController.isAllowed(
-            identifier = (verificationResult.responseData as List<String>)[0],
+            identifier = tokenClaims[0],
             ruleName = "createNewAccounts"
         )
 
@@ -241,25 +246,33 @@ class AccountController(
         }
 
         if (tokens.refreshToken != null && tokens.authorizationToken == null) {
-            val newTokenGenerationResult = jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken)
+            val newTokens =
+                jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken) ?: return Result.Error(
+                    statusCode = HttpStatusCode.Unauthorized,
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid or expired."
+                )
 
-            if (newTokenGenerationResult is Result.Error) {
-                return newTokenGenerationResult
-            }
 
-            tokens = newTokenGenerationResult.responseData as SecurityToken
+            tokens = newTokens
             newTokenGenerated = true
         }
 
-        val jwtResult =
-            jsonWebToken.verifySecurityToken(tokens.authorizationToken!!, TokenType.AUTHORIZATION_TOKEN)
-        if (jwtResult is Result.Error) {
-            return jwtResult
+        val tokenClaims =
+            jsonWebToken.getClaims(tokens.authorizationToken!!, TokenType.AUTHORIZATION_TOKEN)
+
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         val cachedAccountWithPrivileges = cacheService.get(
             CachedKeys.getAccountWithPrivilegesKey(
-                (jwtResult.responseData as List<String>)[0].replace(
+                tokenClaims[0].replace(
                     "\"",
                     ""
                 )
@@ -287,13 +300,13 @@ class AccountController(
         }
 
         val cachedAccount =
-            cacheService.get(CachedKeys.getAccountKey(jwtResult.responseData[0].replace("\"", "")))
+            cacheService.get(CachedKeys.getAccountKey(tokenClaims[0].replace("\"", "")))
 
 
         val account = if (cachedAccount != null) {
             gson.fromJson(cachedAccount, Account::class.java)
         } else {
-            val fetchedAccount = accountRepository.getAccount(jwtResult.responseData[0].replace("\"", ""))
+            val fetchedAccount = accountRepository.getAccount(tokenClaims[0].replace("\"", ""))
                 ?: return Result.Error(
                     statusCode = HttpStatusCode.NotFound,
                     errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
@@ -335,18 +348,23 @@ class AccountController(
     }
 
     suspend fun accountDetails(authorizationToken: String?, identifier: String): Result {
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
-            return verificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         val isAllowed = uacController.isAllowed(
-            identifier = (verificationResult.responseData as List<String>)[0],
+            identifier = tokenClaims[0],
             ruleName = "viewAccounts"
         )
 

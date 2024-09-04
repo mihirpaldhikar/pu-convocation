@@ -37,18 +37,23 @@ class UACController(
 
 ) {
     suspend fun getRule(authorizationToken: String?, name: String): Result {
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
-            return verificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         if (!isAllowed(
-                identifier = (verificationResult.responseData as List<String>)[0],
+                identifier = tokenClaims[0],
                 ruleName = "createNewRules"
             )
         ) {
@@ -74,18 +79,23 @@ class UACController(
     }
 
     suspend fun createRule(authorizationToken: String?, newUACRuleRequest: NewUACRule): Result {
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
-            return verificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         if (!isAllowed(
-                identifier = (verificationResult.responseData as List<String>)[0],
+                identifier = tokenClaims[0],
                 ruleName = "createNewRules"
             )
         ) {
@@ -146,18 +156,18 @@ class UACController(
 
     suspend fun isRuleAllowedForAccount(authorizationToken: String?, ruleName: String): Boolean {
 
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
+        if (tokenClaims.isEmpty()) {
             return false
         }
 
         return isAllowed(
-            identifier = (verificationResult.responseData as List<String>)[0],
+            identifier = tokenClaims[0],
             ruleName = ruleName,
         )
     }
@@ -167,18 +177,23 @@ class UACController(
         ruleName: String,
         updateUACRuleRequest: UpdateUACRuleRequest
     ): Result {
-        val verificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (verificationResult is Result.Error) {
-            return verificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
         if (!isAllowed(
-                identifier = (verificationResult.responseData as List<String>)[0],
+                identifier = tokenClaims[0],
                 ruleName = "updateRules"
             )
         ) {

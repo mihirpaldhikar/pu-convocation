@@ -62,16 +62,21 @@ class PasskeyController(
     }
 
     suspend fun startPasskeyRegistrationWithSecurityToken(securityToken: SecurityToken): Result {
-        val jwtVerificationResult = jsonWebToken.verifySecurityToken(
+        val tokenClaims = jsonWebToken.getClaims(
             token = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN
         )
 
-        if (jwtVerificationResult is Result.Error) {
-            return jwtVerificationResult
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                statusCode = HttpStatusCode.Forbidden,
+                errorCode = ResponseCode.INVALID_TOKEN,
+                message = "Authorization token is invalid."
+
+            )
         }
 
-        return this.startPasskeyRegistration(jwtVerificationResult.responseData as String)
+        return this.startPasskeyRegistration(tokenClaims[0])
 
     }
 
