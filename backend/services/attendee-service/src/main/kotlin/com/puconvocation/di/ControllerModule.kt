@@ -13,10 +13,10 @@
 
 package com.puconvocation.di
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.Gson
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.TransactionController
-import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
@@ -33,7 +33,7 @@ object ControllerModule {
                 csvSerializer = get<CSVSerializer>(),
                 cacheService = get<CacheService>(),
                 authService = get<AuthService>(),
-                gson = get<Gson>(),
+                json = get<ObjectMapper>(),
             )
         }
 

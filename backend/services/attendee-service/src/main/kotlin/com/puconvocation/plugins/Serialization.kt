@@ -13,17 +13,12 @@
 
 package com.puconvocation.plugins
 
-import com.puconvocation.serializers.ObjectIdSerializer
-import io.ktor.serialization.gson.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import org.bson.types.ObjectId
 
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
-        gson {
-            excludeFieldsWithoutExposeAnnotation()
-            registerTypeAdapter(ObjectId::class.java, ObjectIdSerializer()).create()
-        }
+        jackson()
     }
 }

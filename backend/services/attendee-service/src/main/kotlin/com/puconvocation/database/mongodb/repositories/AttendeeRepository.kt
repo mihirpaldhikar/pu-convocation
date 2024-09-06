@@ -72,7 +72,7 @@ class AttendeeRepository(
     override suspend fun updateAttendeeConfig(attendeeConfig: AttendeeConfig): Boolean {
         return attendeesConfigCollection.withDocumentClass<AttendeeConfig>().updateOne(
             eq("_id", "attendee_config"), Updates.combine(
-                Updates.set(AttendeeConfig::isLocked.name, attendeeConfig.isLocked),
+                Updates.set(AttendeeConfig::locked.name, attendeeConfig.locked),
             )
         ).wasAcknowledged()
     }

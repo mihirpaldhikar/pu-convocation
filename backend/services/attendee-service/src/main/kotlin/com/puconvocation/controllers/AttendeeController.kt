@@ -13,9 +13,11 @@
 
 package com.puconvocation.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.Enclosure
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
@@ -24,7 +26,6 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CacheService
-import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -34,10 +35,10 @@ class AttendeeController(
     private val csvSerializer: CSVSerializer,
     private val cacheService: CacheService,
     private val authService: AuthService,
-    private val gson: Gson,
+    private val json: ObjectMapper,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
-        if (!getAttendeeConfig().isLocked) {
+        if (!getAttendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -50,7 +51,7 @@ class AttendeeController(
 
         val cachedAttendee = cacheService.get(CachedKeys.getAttendeeKey(identifier))
         val attendee = if (cachedAttendee != null) {
-            gson.fromJson(cachedAttendee, Attendee::class.java)
+            json.readValue<Attendee>(cachedAttendee)
         } else {
             val fetchedAttendee = attendeeRepository.getAttendee(identifier)
                 ?: return Result.Error(
@@ -62,12 +63,12 @@ class AttendeeController(
 
                 )
 
-            cacheService.set(CachedKeys.getAttendeeKey(identifier), gson.toJson(fetchedAttendee))
+            cacheService.set(CachedKeys.getAttendeeKey(identifier), json.writeValueAsString(fetchedAttendee))
 
             fetchedAttendee
         }
 
-        val enclosure = gson.fromJson(cacheService.get(CachedKeys.getWebsiteConfigKey()), Enclosure::class.java)
+        val enclosure = json.readValue<Enclosure>(cacheService.get(CachedKeys.getWebsiteConfigKey())!!)
 
 
         return Result.Success(
@@ -99,7 +100,7 @@ class AttendeeController(
             )
         }
 
-        if (getAttendeeConfig().isLocked) {
+        if (getAttendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
@@ -189,10 +190,10 @@ class AttendeeController(
             )
         }
 
-        if (getAttendeeConfig().isLocked) {
+        if (getAttendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
-                error =  ErrorResponse(
+                error = ErrorResponse(
                     errorCode = ResponseCode.ALREADY_LOCKED,
                     message = "Attendees List is already locked."
                 )
@@ -201,7 +202,7 @@ class AttendeeController(
 
         val locked = attendeeRepository.updateAttendeeConfig(
             getAttendeeConfig().copy(
-                isLocked = true,
+                locked = true,
             )
         )
 
@@ -235,7 +236,7 @@ class AttendeeController(
             )
         }
 
-        if (!getAttendeeConfig().isLocked) {
+        if (!getAttendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
                 error = ErrorResponse(
@@ -247,7 +248,7 @@ class AttendeeController(
 
         val unlocked = attendeeRepository.updateAttendeeConfig(
             getAttendeeConfig().copy(
-                isLocked = false,
+                locked = false,
             )
         )
 
@@ -301,11 +302,11 @@ class AttendeeController(
     private suspend fun getAttendeeConfig(): AttendeeConfig {
         val cachedAttendeeConfig = cacheService.get(CachedKeys.getAttendeeConfigKey())
         return if (cachedAttendeeConfig != null) {
-            gson.fromJson(cachedAttendeeConfig, AttendeeConfig::class.java)
+            json.readValue<AttendeeConfig>(cachedAttendeeConfig.toString())
         } else {
             val fetchedAttendeeConfig = attendeeRepository.getAttendeeConfig()
 
-            cacheService.set(CachedKeys.getAttendeeConfigKey(), gson.toJson(fetchedAttendeeConfig))
+            cacheService.set(CachedKeys.getAttendeeConfigKey(), json.writeValueAsString(fetchedAttendeeConfig))
 
             fetchedAttendeeConfig
         }

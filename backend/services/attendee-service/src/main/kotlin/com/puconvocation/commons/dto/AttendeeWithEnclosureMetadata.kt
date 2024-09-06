@@ -13,10 +13,10 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.database.mongodb.entities.Attendee
 
 data class AttendeeWithEnclosureMetadata(
-    @Expose val attendee: Attendee,
-    @Expose val enclosureMetadata: Enclosure.EnclosureMapping,
+    @JsonProperty("attendee") val attendee: Attendee,
+    @JsonProperty("enclosureMetadata") val enclosureMetadata: Enclosure.EnclosureMapping,
 )

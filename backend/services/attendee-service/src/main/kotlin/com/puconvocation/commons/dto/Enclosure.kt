@@ -13,19 +13,21 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class Enclosure(
-    @Expose val enclosureMapping: MutableList<EnclosureMapping>,
+    @JsonProperty("enclosureMapping") val enclosureMapping: MutableList<EnclosureMapping>,
 ) {
     data class EnclosureMapping(
-        @Expose val letter: String,
-        @Expose val rows: MutableList<Row>,
+        @JsonProperty("letter") val letter: String,
+        @JsonProperty("rows") val rows: MutableList<Row>,
     ) {
         data class Row(
-            @Expose val letter: String,
-            @Expose val start: Int,
-            @Expose val end: Int,
+            @JsonProperty("letter") val letter: String,
+            @JsonProperty("start") val start: Int,
+            @JsonProperty("end") val end: Int,
         )
     }
 }

@@ -13,21 +13,21 @@
 
 package com.puconvocation.database.mongodb.entities
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.enums.Direction
 import org.bson.codecs.pojo.annotations.BsonId
 
 data class Attendee(
-    @BsonId @Expose val enrollmentNumber: String,
-    @Expose val convocationId: String,
-    @Expose val studentName: String,
-    @Expose val department: String,
-    @Expose val institute: String,
-    @Expose val enclosure: String,
-    @Expose val row: String,
-    @Expose val seat: String,
-    @Expose val enterFrom: Direction,
-    @Expose val verificationToken: String,
-    @Expose val verificationCode: String,
-    @Expose val degreeReceived: Boolean,
+    @BsonId @JsonProperty("enrollmentNumber") val enrollmentNumber: String,
+    @JsonProperty("convocationId") val convocationId: String,
+    @JsonProperty("studentName") val studentName: String,
+    @JsonProperty("department") val department: String,
+    @JsonProperty("institute") val institute: String,
+    @JsonProperty("enclosure") val enclosure: String,
+    @JsonProperty("row") val row: String,
+    @JsonProperty("seat") val seat: String,
+    @JsonProperty("enterFrom") val enterFrom: Direction,
+    @JsonProperty("verificationToken") val verificationToken: String,
+    @JsonProperty("verificationCode") val verificationCode: String,
+    @JsonProperty("degreeReceived") val degreeReceived: Boolean,
 )
