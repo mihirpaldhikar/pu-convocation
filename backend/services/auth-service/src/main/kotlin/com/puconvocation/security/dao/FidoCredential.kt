@@ -13,10 +13,10 @@
 
 package com.puconvocation.security.dao
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class FidoCredential(
-    @Expose val keyId:String,
-    @Expose val keyType: String,
-    @Expose val publicKeyCose: String,
+    @JsonProperty("keyId") val keyId: String,
+    @JsonProperty("keyType") val keyType: String,
+    @JsonProperty("publicKeyCose") val publicKeyCose: String,
 )

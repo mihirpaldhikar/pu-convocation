@@ -13,7 +13,8 @@
 
 package com.puconvocation.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.AccountWithUACRules
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
@@ -37,7 +38,7 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
     private val uacController: UACController,
-    private val gson: Gson,
+    private val json: ObjectMapper,
     private val cacheService: CacheService,
 ) {
     suspend fun getAuthenticationStrategy(identifier: String): Result<HashMap<String, Any>, ErrorResponse> {
@@ -54,7 +55,7 @@ class AccountController(
         val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
 
         val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
+            json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
@@ -64,7 +65,7 @@ class AccountController(
                 )
             )
 
-            cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+            cacheService.set(CachedKeys.getAccountKey(identifier), json.writeValueAsString(fetchedAccount))
 
             fetchedAccount
         }
@@ -96,7 +97,7 @@ class AccountController(
         val cachedAccount = cacheService.get(CachedKeys.getAccountKey(credentials.identifier))
 
         val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
+            json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
@@ -106,7 +107,7 @@ class AccountController(
                 )
             )
 
-            cacheService.set(CachedKeys.getAccountKey(credentials.identifier), gson.toJson(fetchedAccount))
+            cacheService.set(CachedKeys.getAccountKey(credentials.identifier), json.writeValueAsString(fetchedAccount))
 
             fetchedAccount
         }
@@ -305,13 +306,13 @@ class AccountController(
                     SecurityToken(
                         authorizationToken = tokens.authorizationToken,
                         refreshToken = tokens.refreshToken,
-                        payload = gson.fromJson(cachedAccountWithPrivileges, AccountWithUACRules::class.java),
+                        payload = json.readValue<AccountWithUACRules>(cachedAccountWithPrivileges),
                     )
                 )
             }
 
             return Result.Success(
-                gson.fromJson(cachedAccountWithPrivileges, AccountWithUACRules::class.java)
+                json.readValue<AccountWithUACRules>(cachedAccountWithPrivileges)
             )
         }
 
@@ -320,7 +321,7 @@ class AccountController(
 
 
         val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
+            json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(tokenClaims[0].replace("\"", ""))
                 ?: return Result.Error(
@@ -331,7 +332,10 @@ class AccountController(
                     )
                 )
 
-            cacheService.set(CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()), gson.toJson(fetchedAccount))
+            cacheService.set(
+                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
+                json.writeValueAsString(fetchedAccount)
+            )
 
             fetchedAccount
         }
@@ -404,7 +408,7 @@ class AccountController(
 
 
         val account = if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
+            json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(identifier)
                 ?: return Result.Error(
@@ -415,7 +419,10 @@ class AccountController(
                     )
                 )
 
-            cacheService.set(CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()), gson.toJson(fetchedAccount))
+            cacheService.set(
+                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
+                json.writeValueAsString(fetchedAccount)
+            )
 
             fetchedAccount
         }
@@ -439,7 +446,7 @@ class AccountController(
 
         cacheService.set(
             CachedKeys.getAccountWithPrivilegesKey(account.uuid.toHexString()),
-            gson.toJson(accountWithUACRules)
+            json.writeValueAsString(accountWithUACRules)
         )
 
         return accountWithUACRules

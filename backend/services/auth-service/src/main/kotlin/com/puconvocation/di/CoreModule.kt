@@ -13,7 +13,7 @@
 
 package com.puconvocation.di
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
@@ -28,8 +28,8 @@ object CoreModule {
             Environment()
         }
 
-        single<Gson> {
-            Gson()
+        single<ObjectMapper> {
+            ObjectMapper()
         }
 
         single<JsonWebToken> {

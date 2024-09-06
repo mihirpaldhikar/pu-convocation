@@ -13,15 +13,19 @@
 
 package com.puconvocation.serializers
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
+import com.fasterxml.jackson.core.*
+import com.fasterxml.jackson.databind.*
 import org.bson.types.ObjectId
-import java.lang.reflect.Type
 
-class ObjectIdSerializer : JsonSerializer<ObjectId> {
-    override fun serialize(src: ObjectId, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        return JsonPrimitive(src.toHexString())
+class ObjectIdSerializer : JsonSerializer<ObjectId>() {
+    override fun serialize(value: ObjectId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.toHexString())
+    }
+}
+
+class ObjectIdDeserializer : JsonDeserializer<ObjectId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ObjectId {
+        val value = p.valueAsString
+        return ObjectId(value)
     }
 }

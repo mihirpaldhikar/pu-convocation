@@ -13,7 +13,8 @@
 
 package com.puconvocation.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewUACRule
 import com.puconvocation.commons.dto.UpdateUACRuleRequest
@@ -33,7 +34,7 @@ class UACController(
     private val accountRepository: AccountRepository,
     private val uacRepository: UACRepository,
     private val jsonWebToken: JsonWebToken,
-    private val gson: Gson,
+    private val json: ObjectMapper,
     private val cacheService: CacheService
 
 ) {
@@ -287,12 +288,12 @@ class UACController(
     suspend fun getRulesAssociatedWithAccount(identifier: String): List<String> {
         val cachedRulesForAccount = cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(identifier))
         return if (cachedRulesForAccount != null) {
-            gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>
+            json.readValue<List<String>>(cachedRulesForAccount)
         } else {
             val fetchedAllRulesAssociatedWithAccount = uacRepository.listRulesForAccount(identifier)
             cacheService.set(
                 CachedKeys.getAllRulesAssociatedWithAccount(identifier),
-                gson.toJson(fetchedAllRulesAssociatedWithAccount)
+                json.writeValueAsString(fetchedAllRulesAssociatedWithAccount)
             )
             fetchedAllRulesAssociatedWithAccount
         }

@@ -13,13 +13,13 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.enums.AuthenticationStrategy
 
 data class NewAccount(
-    @Expose val username: String,
-    @Expose val displayName: String,
-    @Expose val email: String,
-    @Expose val password: String?=null,
-    @Expose val authenticationStrategy: AuthenticationStrategy
+    @JsonProperty("username") val username: String,
+    @JsonProperty("displayName") val displayName: String,
+    @JsonProperty("email") val email: String,
+    @JsonProperty("password") val password: String? = null,
+    @JsonProperty("authenticationStrategy") val authenticationStrategy: AuthenticationStrategy
 )

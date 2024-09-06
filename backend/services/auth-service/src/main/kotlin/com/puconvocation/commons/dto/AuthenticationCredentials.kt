@@ -13,10 +13,10 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AuthenticationCredentials(
-    @Expose val identifier: String,
-    @Expose val password: String? = null,
-    @Expose val passkeyCredentials: String? = null,
+    @JsonProperty("identifier") val identifier: String,
+    @JsonProperty("password") val password: String? = null,
+    @JsonProperty("passkeyCredentials") val passkeyCredentials: String? = null,
 )

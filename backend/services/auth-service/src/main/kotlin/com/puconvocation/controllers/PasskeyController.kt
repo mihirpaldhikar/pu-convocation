@@ -13,7 +13,8 @@
 
 package com.puconvocation.controllers
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
@@ -35,7 +36,7 @@ class PasskeyController(
     private val rp: RelyingParty,
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
-    private val gson: Gson,
+    private val json: ObjectMapper,
     private val cacheService: CacheService,
 ) {
     suspend fun startPasskeyRegistration(identifier: String): Result<String, ErrorResponse> {
@@ -58,10 +59,10 @@ class PasskeyController(
         }
 
         val pkcOptions = createPublicKeyCredentialCreationOptions(account)
-        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), gson.toJson(pkcOptions))
+        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), pkcOptions.toJson())
 
         return Result.Success(
-            pkcOptions.toCredentialsCreateJson(),
+            pkcOptions.toCredentialsCreateJson()
         )
     }
 
@@ -122,7 +123,7 @@ class PasskeyController(
 
         val result = rp.finishRegistration(
             FinishRegistrationOptions.builder()
-                .request(gson.fromJson(pkcOptions, PublicKeyCredentialCreationOptions::class.java))
+                .request(PublicKeyCredentialCreationOptions.fromJson(pkcOptions))
                 .response(pkc)
                 .build()
         )
@@ -162,10 +163,10 @@ class PasskeyController(
                 .username(identifier)
                 .build()
         )
-        cacheService.set(CachedKeys.getPasskeyAssertionKey(identifier), gson.toJson(request))
+        cacheService.set(CachedKeys.getPasskeyAssertionKey(identifier), request.toJson())
 
         return Result.Success(
-            request.toCredentialsGetJson(),
+            request.toCredentialsGetJson()
         )
     }
 
@@ -204,9 +205,10 @@ class PasskeyController(
         val pkc =
             PublicKeyCredential.parseAssertionResponseJson(credentials)
         try {
+
             val result = rp.finishAssertion(
                 FinishAssertionOptions.builder()
-                    .request(gson.fromJson(assertion, AssertionRequest::class.java))
+                    .request(AssertionRequest.fromJson(assertion))
                     .response(pkc)
                     .build()
             )
@@ -275,12 +277,12 @@ class PasskeyController(
         val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
 
         return if (cachedAccount != null) {
-            gson.fromJson(cachedAccount, Account::class.java)
+            json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(identifier)
 
             if (fetchedAccount != null) {
-                cacheService.set(CachedKeys.getAccountKey(identifier), gson.toJson(fetchedAccount))
+                cacheService.set(CachedKeys.getAccountKey(identifier), json.writeValueAsString(fetchedAccount))
 
             }
             fetchedAccount

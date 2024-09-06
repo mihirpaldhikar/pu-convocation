@@ -13,10 +13,10 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class NewUACRule(
-    @Expose val rule: String,
-    @Expose val description: String,
-    @Expose val accounts: MutableSet<String>,
+    @JsonProperty("rule") val rule: String,
+    @JsonProperty("description") val description: String,
+    @JsonProperty("accounts") val accounts: MutableSet<String>,
 )

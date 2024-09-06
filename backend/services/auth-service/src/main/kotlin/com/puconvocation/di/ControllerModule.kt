@@ -13,7 +13,7 @@
 
 package com.puconvocation.di
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.controllers.UACController
@@ -31,7 +31,7 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 uacRepository = get<UACRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
-                gson = get<Gson>(),
+                json = get<ObjectMapper>(),
                 cacheService = get<CacheService>()
             )
         }
@@ -42,7 +42,7 @@ object ControllerModule {
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
                 uacController = get<UACController>(),
-                gson = get<Gson>(),
+                json = get<ObjectMapper>(),
                 cacheService = get<CacheService>(),
             )
         }
@@ -52,7 +52,7 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 rp = get<RelyingParty>(),
-                gson = get<Gson>(),
+                json = get<ObjectMapper>(),
                 cacheService = get<CacheService>(),
             )
         }

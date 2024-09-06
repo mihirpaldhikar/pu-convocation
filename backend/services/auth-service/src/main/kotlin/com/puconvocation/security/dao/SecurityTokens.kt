@@ -13,10 +13,10 @@
 
 package com.puconvocation.security.dao
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class SecurityToken(
-    @Expose val payload: Any? = null,
-    @Expose val authorizationToken: String?,
-    @Expose val refreshToken: String?,
+    @JsonProperty("payload") val payload: Any? = null,
+    @JsonProperty("authorizationToken") val authorizationToken: String?,
+    @JsonProperty("refreshToken") val refreshToken: String?,
 )

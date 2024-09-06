@@ -13,15 +13,30 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
 data class AccountWithUACRules(
-    @BsonId @Expose val uuid: ObjectId,
-    @Expose val username: String,
-    @Expose val displayName: String,
-    @Expose val email: String,
-    @Expose val avatarURL: String,
-    @Expose val privileges: List<Any?>,
+    @JsonSerialize(using = ObjectIdSerializer::class)
+    @BsonId
+    @JsonProperty("uuid")
+    val uuid: ObjectId,
+
+    @JsonProperty("username")
+    val username: String,
+
+    @JsonProperty("displayName")
+    val displayName: String,
+
+    @JsonProperty("email")
+    val email: String,
+
+    @JsonProperty("avatarURL")
+    val avatarURL: String,
+
+    @JsonProperty("privileges")
+    val privileges: List<Any?>,
 )

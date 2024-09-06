@@ -13,7 +13,10 @@
 
 package com.puconvocation.security.dao
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class SaltedHash(
-    val hash: String,
-    val salt: String,
+    @JsonIgnore @JsonProperty("hash") val hash: String,
+    @JsonIgnore @JsonProperty("salt") val salt: String,
 )

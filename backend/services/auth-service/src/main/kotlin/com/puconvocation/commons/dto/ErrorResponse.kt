@@ -13,11 +13,11 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Error
 
 data class ErrorResponse(
-    @Expose val errorCode: ResponseCode,
-    @Expose val message: String,
+    @JsonProperty("errorCode") val errorCode: ResponseCode,
+    @JsonProperty("message") val message: String,
 ) : Error

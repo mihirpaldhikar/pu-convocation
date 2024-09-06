@@ -13,19 +13,42 @@
 
 package com.puconvocation.database.mongodb.entities
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonIncludeProperties
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SaltedHash
+import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
 data class Account(
-    @BsonId @Expose val uuid: ObjectId,
-    @Expose val username: String,
-    @Expose val displayName: String,
-    @Expose val email: String,
-    @Expose val avatarURL: String,
+    @JsonSerialize(using = ObjectIdSerializer::class)
+    @JsonProperty("uuid")
+    @BsonId
+    val uuid: ObjectId,
+
+    @JsonProperty("username")
+    val username: String,
+
+    @JsonProperty("displayName")
+    val displayName: String,
+
+    @JsonProperty("email")
+    val email: String,
+
+    @JsonProperty("avatarURL")
+    val avatarURL: String,
+
+    @JsonIgnore @JsonProperty("suspended")
     val suspended: Boolean,
+
+    @JsonIgnore @JsonProperty("password")
     val password: SaltedHash? = null,
+
+    @JsonIgnore @JsonProperty("fidoCredential")
     val fidoCredential: MutableSet<FidoCredential>
 )

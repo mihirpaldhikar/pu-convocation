@@ -13,12 +13,20 @@
 
 package com.puconvocation.database.mongodb.entities
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.codecs.pojo.annotations.BsonId
 
 data class UACRule(
-    @BsonId @Expose val rule: String,
-    @Expose val description: String,
-    @Expose val enabled: Boolean,
-    @Expose val accounts: MutableSet<String>
+    @JsonProperty("rule")
+    @BsonId
+    val rule: String,
+
+    @JsonProperty("description")
+    val description: String,
+
+    @JsonProperty("enabled")
+    val enabled: Boolean,
+
+    @JsonProperty("accounts")
+    val accounts: MutableSet<String>
 )
