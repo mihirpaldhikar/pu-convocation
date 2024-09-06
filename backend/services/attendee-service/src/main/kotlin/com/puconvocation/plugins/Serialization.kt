@@ -22,8 +22,6 @@ import org.bson.types.ObjectId
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         gson {
-            setPrettyPrinting()
-            disableHtmlEscaping()
             excludeFieldsWithoutExposeAnnotation()
             registerTypeAdapter(ObjectId::class.java, ObjectIdSerializer()).create()
         }
