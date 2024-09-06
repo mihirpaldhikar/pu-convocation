@@ -1,18 +1,17 @@
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
 import com.puconvocation.database.mongodb.entities.WebsiteConfig
 import com.puconvocation.database.mongodb.entities.WebsiteConfig.Enclosure
 
 data class UpdateWebsiteConfigRequest(
-    @Expose val heroTitle: String?,
-    @Expose val gallery: MutableList<WebsiteConfig.Gallery>?,
-    @Expose val showInstructionsBanner: Boolean?,
-    @Expose val instructionsFileURL: String?,
-    @Expose val aboutUs: String?,
-    @Expose val aboutUsImage: String?,
-    @Expose val heroImage: String?,
-    @Expose val showCountDown: Boolean?,
-    @Expose val countDownEndTime: Long?,
-    @Expose val enclosureMapping: MutableList<Enclosure>?,
+    val heroTitle: String?,
+    val gallery: MutableList<WebsiteConfig.Gallery>?,
+    val showInstructionsBanner: Boolean?,
+    val instructionsFileURL: String?,
+    val aboutUs: String?,
+    val aboutUsImage: String?,
+    val heroImage: String?,
+    val showCountDown: Boolean?,
+    val countDownEndTime: Long?,
+    val enclosureMapping: MutableList<Enclosure>?,
 )

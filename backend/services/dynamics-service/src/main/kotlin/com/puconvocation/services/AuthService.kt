@@ -13,7 +13,8 @@
 
 package com.puconvocation.services
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.enums.TokenType
@@ -27,7 +28,7 @@ class AuthService(
     private val client: HttpClient,
     private val cacheService: CacheService,
     private val jsonWebToken: JsonWebToken,
-    private val gson: Gson,
+    private val json: ObjectMapper,
     environment: Environment
 ) {
 
@@ -42,7 +43,7 @@ class AuthService(
                 cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(string))
 
             return if (cachedRulesForAccount != null) {
-                (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+                json.readValue<List<String>>(cachedRulesForAccount).contains(ruleName)
             } else {
                 isOperationAllowed(string, ruleName)
             }
@@ -59,7 +60,7 @@ class AuthService(
             cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
 
         return if (cachedRulesForAccount != null) {
-            (gson.fromJson(cachedRulesForAccount, List::class.java) as List<String>).contains(ruleName)
+            json.readValue<List<String>>(cachedRulesForAccount).contains(ruleName)
         } else {
             isOperationAllowed(claims[0], ruleName)
         }

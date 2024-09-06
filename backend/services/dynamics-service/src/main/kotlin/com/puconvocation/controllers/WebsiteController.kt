@@ -1,5 +1,7 @@
 package com.puconvocation.controllers
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.gson.Gson
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.UpdateWebsiteConfigRequest
@@ -7,7 +9,6 @@ import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.WebsiteConfig
 import com.puconvocation.database.mongodb.repositories.WebsiteConfigRepository
 import com.puconvocation.enums.ResponseCode
-import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
@@ -15,7 +16,7 @@ import io.ktor.http.*
 
 class WebsiteController(
     private val websiteConfigRepository: WebsiteConfigRepository,
-    private val gson: Gson,
+    private val json: ObjectMapper,
     private val cacheService: CacheService,
     private val authService: AuthService
 ) {
@@ -45,11 +46,11 @@ class WebsiteController(
         val cachedConfig = cacheService.get(CachedKeys.getWebsiteConfigKey())
 
         val config = if (cachedConfig != null) {
-            gson.fromJson(cachedConfig, WebsiteConfig::class.java)
+            json.readValue<WebsiteConfig>(cachedConfig)
         } else {
             val fetchedConfig = websiteConfigRepository.getWebsiteConfig()
 
-            cacheService.set(CachedKeys.getWebsiteConfigKey(), gson.toJson(fetchedConfig))
+            cacheService.set(CachedKeys.getWebsiteConfigKey(), json.writeValueAsString(fetchedConfig))
 
             fetchedConfig
         }
@@ -99,7 +100,7 @@ class WebsiteController(
             )
         }
 
-        cacheService.set(CachedKeys.getWebsiteConfigKey(), gson.toJson(config))
+        cacheService.set(CachedKeys.getWebsiteConfigKey(), json.writeValueAsString(config))
 
         return Result.Success(
             hashMapOf(

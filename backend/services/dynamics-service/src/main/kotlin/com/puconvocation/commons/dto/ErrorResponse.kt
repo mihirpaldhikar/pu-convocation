@@ -13,11 +13,10 @@
 
 package com.puconvocation.commons.dto
 
-import com.google.gson.annotations.Expose
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Error
 
 data class ErrorResponse(
-    @Expose val errorCode: ResponseCode,
-    @Expose val message: String,
+    val errorCode: ResponseCode,
+    val message: String,
 ) : Error

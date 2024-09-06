@@ -14,15 +14,12 @@
 package com.puconvocation.plugins
 
 import io.ktor.serialization.gson.*
+import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
-        gson {
-            setPrettyPrinting()
-            disableHtmlEscaping()
-            excludeFieldsWithoutExposeAnnotation()
-        }
+        jackson()
     }
 }

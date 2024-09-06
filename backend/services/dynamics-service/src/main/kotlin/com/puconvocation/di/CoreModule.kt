@@ -13,7 +13,7 @@
 
 package com.puconvocation.di
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
@@ -28,8 +28,8 @@ object CoreModule {
             Environment()
         }
 
-        single<Gson> {
-            Gson()
+        single<ObjectMapper> {
+            ObjectMapper()
         }
 
         single<HttpClient> {
@@ -45,7 +45,7 @@ object CoreModule {
                 environment = get<Environment>(),
                 client = get<HttpClient>(),
                 cacheService = get<CacheService>(),
-                gson = get<Gson>(),
+                json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>()
             )
         }

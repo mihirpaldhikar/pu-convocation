@@ -1,35 +1,35 @@
 package com.puconvocation.database.mongodb.entities
 
-import com.google.gson.annotations.Expose
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.codecs.pojo.annotations.BsonId
 
 data class WebsiteConfig(
-    @BsonId @Expose val id: String = "website_config",
-    @Expose val heroTitle: String,
-    @Expose val gallery: MutableList<Gallery>,
-    @Expose val showInstructionsBanner: Boolean,
-    @Expose val instructionsFileURL: String,
-    @Expose val aboutUs: String,
-    @Expose val aboutUsImage: String,
-    @Expose val heroImage: String,
-    @Expose val showCountDown: Boolean,
-    @Expose val countDownEndTime: Long,
-    @Expose val enclosureMapping: MutableList<Enclosure>,
+    @BsonId @JsonProperty("id") val id: String = "website_config",
+    @JsonProperty("heroTitle") val heroTitle: String,
+    @JsonProperty("gallery") val gallery: MutableList<Gallery>,
+    @JsonProperty("showInstructionsBanner") val showInstructionsBanner: Boolean,
+    @JsonProperty("instructionsFileURL") val instructionsFileURL: String,
+    @JsonProperty("aboutUs") val aboutUs: String,
+    @JsonProperty("aboutUsImage") val aboutUsImage: String,
+    @JsonProperty("heroImage") val heroImage: String,
+    @JsonProperty("showCountDown") val showCountDown: Boolean,
+    @JsonProperty("countDownEndTime") val countDownEndTime: Long,
+    @JsonProperty("enclosureMapping") val enclosureMapping: MutableList<Enclosure>,
 ) {
     data class Gallery(
-        @Expose val title: String,
-        @Expose val url: String,
-        @Expose val description: String,
+        @JsonProperty("title") val title: String,
+        @JsonProperty("url") val url: String,
+        @JsonProperty("description") val description: String,
     )
 
     data class Enclosure(
-        @Expose val letter: String,
-        @Expose val rows: MutableList<Row>,
+        @JsonProperty("letter") val letter: String,
+        @JsonProperty("rows") val rows: MutableList<Row>,
     ) {
         data class Row(
-            @Expose val letter: String,
-            @Expose val start: Int,
-            @Expose val end: Int,
+            @JsonProperty("letter") val letter: String,
+            @JsonProperty("start") val start: Int,
+            @JsonProperty("end") val end: Int,
         )
     }
 }

@@ -52,6 +52,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio")
     implementation("io.ktor:ktor-client-content-negotiation")
     implementation("io.ktor:ktor-serialization-gson")
+    implementation("io.ktor:ktor-serialization-jackson-jvm")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Koin Dependencies
