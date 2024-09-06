@@ -14,7 +14,7 @@
 package com.puconvocation.utils
 
 import com.puconvocation.Environment
-import com.puconvocation.enums.ResponseCode
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -31,19 +31,20 @@ object CookieName {
 val environment: Environment by KoinJavaComponent.inject(Environment::class.java)
 
 suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
-    repositoryResult: Result
+    result: Result<Any, Error>
 ) {
-    if (repositoryResult is Result.Success && repositoryResult.encodeStringAsJSON == true) {
-        call.response.headers.append("Content-Type", "application/json")
+    result.onSuccess { payload, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.OK,
+            message = payload
+        )
     }
-    call.respond(
-        status = repositoryResult.httpStatusCode ?: HttpStatusCode.OK,
-        message = if (repositoryResult is Result.Success) {
-            repositoryResult.responseData
-        } else {
-            repositoryResult
-        }
-    )
+    result.onError { error, httpStatusCode ->
+        call.respond(
+            status = httpStatusCode ?: HttpStatusCode.InternalServerError,
+            message = error
+        )
+    }
 }
 
 fun PipelineContext<Unit, ApplicationCall>.setCookie(
@@ -66,30 +67,39 @@ fun PipelineContext<Unit, ApplicationCall>.setCookie(
     )
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookies(result: Result) {
-    if (result is Result.Success &&
-        result.responseData is SecurityToken &&
-        result.responseData.refreshToken != null &&
-        result.responseData.authorizationToken != null
-    ) {
-        setCookie(
-            name = CookieName.AUTHORIZATION_TOKEN_COOKIE,
-            value = result.responseData.authorizationToken,
-            expiresAt = 3600000
-        )
-        setCookie(
-            name = CookieName.REFRESH_TOKEN_COOKIE,
-            value = result.responseData.refreshToken,
-            expiresAt = 2629800000
-        )
-        if (result.responseData.payload != null) {
-            return sendResponse(
-                Result.Success(
-                    data = result.responseData.payload,
+suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookies(result: Result<Any, ErrorResponse>) {
+    result.onSuccess { data, httpStatusCode ->
+        if (data is SecurityToken) {
+            data.authorizationToken?.let {
+                setCookie(
+                    name = CookieName.AUTHORIZATION_TOKEN_COOKIE,
+                    value = it,
+                    expiresAt = 3600000
                 )
+            }
+            data.refreshToken?.let {
+                setCookie(
+                    name = CookieName.REFRESH_TOKEN_COOKIE,
+                    value = it,
+                    expiresAt = 2629800000
+                )
+            }
+            if (data.payload != null) {
+                return call.respond(
+                    status = httpStatusCode ?: HttpStatusCode.OK,
+                    message = data.payload
+                )
+            }
+        }
+        if (data is String) {
+            call.response.headers.append("Content-Type", "application/json")
+            return call.respond(
+                message = data.toString()
             )
         }
+
     }
+
     return sendResponse(result)
 }
 
@@ -116,9 +126,7 @@ suspend fun PipelineContext<Unit, ApplicationCall>.removeSecurityTokens() {
     )
     sendResponse(
         Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = hashMapOf("message" to "Logged out.")
+            hashMapOf("message" to "Logged out.")
         )
     )
 }

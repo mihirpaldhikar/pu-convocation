@@ -14,6 +14,7 @@
 package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.AuthenticationCredentials
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewAccount
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
@@ -65,9 +66,11 @@ fun Routing.accountsRoute(
             val authorizationToken = getSecurityTokens().authorizationToken
             val identifier = call.parameters["identifier"] ?: return@get sendResponse(
                 Result.Error(
-                    statusCode = HttpStatusCode.BadRequest,
-                    errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
-                    message = "Please provide a valid identifier."
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                        message = "Please provide a valid identifier."
+                    )
                 )
             )
             val result = accountController.accountDetails(authorizationToken, identifier)

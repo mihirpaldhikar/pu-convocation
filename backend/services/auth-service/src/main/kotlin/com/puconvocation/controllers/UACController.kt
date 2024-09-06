@@ -14,6 +14,7 @@
 package com.puconvocation.controllers
 
 import com.google.gson.Gson
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewUACRule
 import com.puconvocation.commons.dto.UpdateUACRuleRequest
 import com.puconvocation.constants.CachedKeys
@@ -36,7 +37,7 @@ class UACController(
     private val cacheService: CacheService
 
 ) {
-    suspend fun getRule(authorizationToken: String?, name: String): Result {
+    suspend fun getRule(authorizationToken: String?, name: String): Result<UACRule, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
@@ -45,9 +46,11 @@ class UACController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
+                )
 
             )
         }
@@ -58,27 +61,32 @@ class UACController(
             )
         ) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.NOT_PERMITTED,
-                message = "You don't have privilege to view rules."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view rules."
+                )
             )
         }
 
 
         val rule = uacRepository.getRule(name) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.RULE_NOT_FOUND,
-            message = "Rule $name not found",
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.RULE_NOT_FOUND,
+                message = "Rule $name not found",
+            )
         )
 
         return Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = rule
+            rule
         )
     }
 
-    suspend fun createRule(authorizationToken: String?, newUACRuleRequest: NewUACRule): Result {
+    suspend fun createRule(
+        authorizationToken: String?,
+        newUACRuleRequest: NewUACRule
+    ): Result<HashMap<String, Any>, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
@@ -87,9 +95,11 @@ class UACController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
+                )
 
             )
         }
@@ -100,26 +110,32 @@ class UACController(
             )
         ) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.NOT_PERMITTED,
-                message = "You don't have privilege to create new rules."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to create new rules."
+                )
             )
         }
 
         if (uacRepository.getRule(newUACRuleRequest.rule) != null) {
             return Result.Error(
-                statusCode = HttpStatusCode.Conflict,
-                errorCode = ResponseCode.RULE_EXISTS,
-                message = "Rule ${newUACRuleRequest.rule} already exists",
+                httpStatusCode = HttpStatusCode.Conflict,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.RULE_EXISTS,
+                    message = "Rule ${newUACRuleRequest.rule} already exists",
+                )
             )
         }
 
         for (account: String in newUACRuleRequest.accounts) {
             if (!accountRepository.accountExists(account)) {
                 return Result.Error(
-                    statusCode = HttpStatusCode.NotFound,
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                    message = "Account $account not found",
+                    httpStatusCode = HttpStatusCode.NotFound,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                        message = "Account $account not found",
+                    )
                 )
             }
 
@@ -138,16 +154,17 @@ class UACController(
 
         if (!isSuccess) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "Failed to create a rule",
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Failed to create a rule",
+                )
             )
         }
 
         return Result.Success(
-            statusCode = HttpStatusCode.Created,
-            code = ResponseCode.RULE_CREATED,
-            data = mapOf(
+            httpStatusCode = HttpStatusCode.Created,
+            data = hashMapOf(
                 "code" to ResponseCode.RULE_CREATED,
                 "message" to "Successfully created a rule",
             )
@@ -176,7 +193,7 @@ class UACController(
         authorizationToken: String?,
         ruleName: String,
         updateUACRuleRequest: UpdateUACRuleRequest
-    ): Result {
+    ): Result<HashMap<String, Any>, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
@@ -185,9 +202,11 @@ class UACController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
+                )
 
             )
         }
@@ -198,17 +217,21 @@ class UACController(
             )
         ) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.NOT_PERMITTED,
-                message = "You don't have privilege to update rules."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to update rules."
+                )
             )
         }
 
         var ruleSet = uacRepository.getRule(ruleName)
             ?: return Result.Error(
-                statusCode = HttpStatusCode.NotFound,
-                errorCode = ResponseCode.RULE_NOT_FOUND,
-                message = "Rule $ruleName not found",
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.RULE_NOT_FOUND,
+                    message = "Rule $ruleName not found",
+                )
             )
 
         if (updateUACRuleRequest.description != null) {
@@ -223,9 +246,11 @@ class UACController(
             for (account in updateUACRuleRequest.accounts) {
                 if (!accountRepository.accountExists(account.id)) {
                     return Result.Error(
-                        statusCode = HttpStatusCode.NotFound,
-                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                        message = "Account $account not found",
+                        httpStatusCode = HttpStatusCode.NotFound,
+                        error = ErrorResponse(
+                            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                            message = "Account $account not found",
+                        )
                     )
                 }
 
@@ -243,16 +268,16 @@ class UACController(
 
         if (!success) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "Failed to update rules."
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Failed to update rules."
+                )
             )
         }
 
         return Result.Success(
-            statusCode = HttpStatusCode.OK,
-            code = ResponseCode.OK,
-            data = mapOf(
+            hashMapOf(
                 "code" to ResponseCode.OK,
                 "message" to "Successfully updated rule.",
             )

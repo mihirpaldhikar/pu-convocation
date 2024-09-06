@@ -14,6 +14,7 @@
 package com.puconvocation.routes
 
 import com.puconvocation.Environment
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewUACRule
 import com.puconvocation.commons.dto.UpdateUACRuleRequest
 import com.puconvocation.controllers.UACController
@@ -41,9 +42,11 @@ fun Routing.uacRoute(
                     val authorizationToken = getSecurityTokens().authorizationToken
                     val rule = call.parameters["name"] ?: return@get sendResponse(
                         Result.Error(
-                            statusCode = HttpStatusCode.BadRequest,
-                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                            message = "Please provide a rule name."
+                            httpStatusCode = HttpStatusCode.BadRequest,
+                            error = ErrorResponse(
+                                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                                message = "Please provide a rule name."
+                            )
                         )
                     )
                     val result = uacController.getRule(authorizationToken, rule)
@@ -64,9 +67,11 @@ fun Routing.uacRoute(
                     val authorizationToken = getSecurityTokens().authorizationToken
                     val rule = call.parameters["name"] ?: return@patch sendResponse(
                         Result.Error(
-                            statusCode = HttpStatusCode.BadRequest,
-                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                            message = "Please provide a rule name."
+                            httpStatusCode = HttpStatusCode.BadRequest,
+                            error = ErrorResponse(
+                                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                                message = "Please provide a rule name."
+                            )
                         )
                     )
                     val updateUACRuleRequest = call.receive<UpdateUACRuleRequest>()

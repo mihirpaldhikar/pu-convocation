@@ -14,6 +14,7 @@
 package com.puconvocation.controllers
 
 import com.google.gson.Gson
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
@@ -37,18 +38,22 @@ class PasskeyController(
     private val gson: Gson,
     private val cacheService: CacheService,
 ) {
-    suspend fun startPasskeyRegistration(identifier: String): Result {
+    suspend fun startPasskeyRegistration(identifier: String): Result<String, ErrorResponse> {
         val account = getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
         )
 
         if (account.suspended) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
-                message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
+                )
             )
         }
 
@@ -56,12 +61,11 @@ class PasskeyController(
         cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), gson.toJson(pkcOptions))
 
         return Result.Success(
-            data = pkcOptions.toCredentialsCreateJson(),
-            encodeStringAsJSON = true
+            pkcOptions.toCredentialsCreateJson(),
         )
     }
 
-    suspend fun startPasskeyRegistrationWithSecurityToken(securityToken: SecurityToken): Result {
+    suspend fun startPasskeyRegistrationWithSecurityToken(securityToken: SecurityToken): Result<String, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = securityToken.authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN
@@ -69,9 +73,11 @@ class PasskeyController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.INVALID_TOKEN,
-                message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
+                )
 
             )
         }
@@ -80,26 +86,35 @@ class PasskeyController(
 
     }
 
-    suspend fun validatePasskeyRegistration(identifier: String, credentials: String): Result {
+    suspend fun validatePasskeyRegistration(
+        identifier: String,
+        credentials: String
+    ): Result<HashMap<String, Any>, ErrorResponse> {
         val account = getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
         )
 
         if (account.suspended) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
-                message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
+                )
             )
         }
 
         val pkcOptions = cacheService.get(CachedKeys.getPasskeyPKCKey(identifier))
             ?: return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "An internal error occurred."
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "An internal error occurred."
+                )
             )
 
         val pkc: PublicKeyCredential<AuthenticatorAttestationResponse, ClientRegistrationExtensionOutputs> =
@@ -122,9 +137,11 @@ class PasskeyController(
 
         if (!fidoCredentialAdded) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "Cannot register Passkey at the moment."
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Cannot register Passkey at the moment."
+                )
             )
         }
 
@@ -133,14 +150,13 @@ class PasskeyController(
         cacheService.remove(CachedKeys.getAccountKey(identifier))
 
         return Result.Success(
-            statusCode = HttpStatusCode.Created,
-            code = ResponseCode.OK,
+            httpStatusCode = HttpStatusCode.Created,
             data = hashMapOf("message" to "Passkey registered.")
         )
     }
 
 
-    fun startPasskeyChallenge(identifier: String): Result {
+    fun startPasskeyChallenge(identifier: String): Result<String, ErrorResponse> {
         val request = rp.startAssertion(
             StartAssertionOptions.builder()
                 .username(identifier)
@@ -149,32 +165,40 @@ class PasskeyController(
         cacheService.set(CachedKeys.getPasskeyAssertionKey(identifier), gson.toJson(request))
 
         return Result.Success(
-            data = request.toCredentialsGetJson(),
-            encodeStringAsJSON = true
+            request.toCredentialsGetJson(),
         )
     }
 
-    suspend fun validatePasskeyChallenge(identifier: String, credentials: String): Result {
+    suspend fun validatePasskeyChallenge(
+        identifier: String,
+        credentials: String
+    ): Result<SecurityToken, ErrorResponse> {
 
         val account = getAccount(identifier) ?: return Result.Error(
-            statusCode = HttpStatusCode.NotFound,
-            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-            message = "Account not found"
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found"
+            )
         )
 
         if (account.suspended) {
             return Result.Error(
-                statusCode = HttpStatusCode.Forbidden,
-                errorCode = ResponseCode.ACCOUNT_SUSPENDED,
-                message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
+                )
             )
         }
 
         val assertion = cacheService.get(CachedKeys.getPasskeyAssertionKey(identifier))
             ?: return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = "An internal error occurred."
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "An internal error occurred."
+                )
             )
 
         val pkc =
@@ -189,9 +213,11 @@ class PasskeyController(
 
             if (!result.isSuccess) {
                 return Result.Error(
-                    statusCode = HttpStatusCode.InternalServerError,
-                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                    message = "Passkey challenge failed."
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                        message = "Passkey challenge failed."
+                    )
                 )
             }
 
@@ -204,15 +230,15 @@ class PasskeyController(
                 refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
             )
             return Result.Success(
-                statusCode = HttpStatusCode.OK,
-                code = ResponseCode.OK,
-                data = securityTokens
+                securityTokens
             )
         } catch (error: AssertionFailedException) {
             return Result.Error(
-                statusCode = HttpStatusCode.InternalServerError,
-                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                message = error.message ?: "Passkey challenge failed."
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = error.message ?: "Passkey challenge failed."
+                )
             )
         }
     }
