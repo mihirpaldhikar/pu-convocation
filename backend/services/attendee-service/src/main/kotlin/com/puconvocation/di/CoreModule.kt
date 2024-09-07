@@ -14,20 +14,35 @@
 package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import com.puconvocation.Environment
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CacheService
+import com.puconvocation.services.InMemoryCache
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
+import redis.clients.jedis.JedisPool
+import java.util.concurrent.TimeUnit
 
 object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<JedisPool> {
+            JedisPool(
+                get<Environment>().redisURL
+            )
+        }
+
+        single<InMemoryCache> {
+            InMemoryCache(
+                expiryDuration = 1,
+                timeUnit = TimeUnit.MINUTES,
+            )
         }
 
         single<ObjectMapper> {
@@ -44,7 +59,8 @@ object CoreModule {
 
         single<CacheService> {
             CacheService(
-                environment = get<Environment>(),
+                pool = get<JedisPool>(),
+                inMemoryCache = get<InMemoryCache>()
             )
         }
 

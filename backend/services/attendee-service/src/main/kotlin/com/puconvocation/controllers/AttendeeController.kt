@@ -51,7 +51,7 @@ class AttendeeController(
 
         val cachedAttendee = cacheService.get(CachedKeys.getAttendeeKey(identifier))
         val attendee = if (cachedAttendee != null) {
-            json.readValue<Attendee>(cachedAttendee)
+            json.readValue<AttendeeWithEnclosureMetadata>(cachedAttendee)
         } else {
             val fetchedAttendee = attendeeRepository.getAttendee(identifier)
                 ?: return Result.Error(
@@ -63,24 +63,27 @@ class AttendeeController(
 
                 )
 
-            cacheService.set(CachedKeys.getAttendeeKey(identifier), json.writeValueAsString(fetchedAttendee))
+            val enclosure = json.readValue<Enclosure>(cacheService.get(CachedKeys.getWebsiteConfigKey())!!)
 
-            fetchedAttendee
-        }
-
-        val enclosure = json.readValue<Enclosure>(cacheService.get(CachedKeys.getWebsiteConfigKey())!!)
-
-
-        return Result.Success(
-            AttendeeWithEnclosureMetadata(
-                attendee = attendee,
+            val computedAttendee = AttendeeWithEnclosureMetadata(
+                attendee = fetchedAttendee,
                 enclosureMetadata = enclosure.enclosureMapping.first {
                     it.letter.equals(
-                        attendee.enclosure,
+                        fetchedAttendee.enclosure,
                         ignoreCase = true
                     )
                 }
             )
+
+            cacheService.set(CachedKeys.getAttendeeKey(identifier), json.writeValueAsString(computedAttendee))
+
+            computedAttendee
+        }
+
+
+
+        return Result.Success(
+            attendee
         )
     }
 
