@@ -61,7 +61,7 @@ class TransactionController(
 
 
 
-        if (!authService.isAllowed(claims[0], "verifyAttendeeDetails")) {
+        if (!authService.isAuthorized(claims[0], "read:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(

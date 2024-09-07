@@ -89,7 +89,7 @@ class AttendeeController(
         multiPart: MultiPartData
     ): Result<HashMap<String, Any>, ErrorResponse> {
 
-        if (!authService.isAllowed(authorizationToken, "uploadAttendeesDetails")) {
+        if (!authService.isAuthorized(authorizationToken, "write:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -153,7 +153,7 @@ class AttendeeController(
         authorizationToken: String?,
         token: String
     ): Result<Attendee, ErrorResponse> {
-        if (!authService.isAllowed(authorizationToken, "verifyAttendeeDetails")) {
+        if (!authService.isAuthorized(authorizationToken, "read:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -180,7 +180,7 @@ class AttendeeController(
 
 
     suspend fun lockAttendees(authorizationToken: String?): Result<HashMap<String, Any>, ErrorResponse> {
-        if (!authService.isAllowed(authorizationToken, "lockAttendeesDetails")) {
+        if (!authService.isAuthorized(authorizationToken, "write:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -226,7 +226,7 @@ class AttendeeController(
     }
 
     suspend fun unLockAttendees(authorizationToken: String?): Result<HashMap<String, Any>, ErrorResponse> {
-        if (!authService.isAllowed(authorizationToken, "unLockAttendeesDetails")) {
+        if (!authService.isAuthorized(authorizationToken, "write:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -277,7 +277,7 @@ class AttendeeController(
         page: Int,
         limit: Int
     ): Result<HashMap<String, Any>, ErrorResponse> {
-        if (!authService.isAllowed(authorizationToken, "viewAttendeesDetails")) {
+        if (!authService.isAuthorized(authorizationToken, "read:Attendee")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
