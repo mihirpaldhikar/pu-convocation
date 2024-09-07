@@ -299,8 +299,6 @@ class IAMController(
         val operation = separator[0]
         val iam = separator[1]
 
-        println("$operation , $iam")
-
         return if (operation == "read") {
             getRolesAssociatedWithAccount(identifier).contains("write:$iam") ||
                     getRolesAssociatedWithAccount(identifier).contains("read:$iam")
