@@ -56,9 +56,9 @@ class IAMController(
             )
         }
 
-        if (!isAllowed(
-                identifier = tokenClaims[0],
-                role = "read:IAMRoles"
+        if (!isAuthorized(
+                role = "read:IAMRoles",
+                principal = tokenClaims[0],
             )
         ) {
             return Result.Error(
@@ -105,9 +105,9 @@ class IAMController(
             )
         }
 
-        if (!isAllowed(
-                identifier = tokenClaims[0],
-                role = "write:IAMRoles"
+        if (!isAuthorized(
+                role = "write:IAMRoles",
+                principal = tokenClaims[0],
             )
         ) {
             return Result.Error(
@@ -171,24 +171,6 @@ class IAMController(
         )
     }
 
-    suspend fun isRuleAllowedForAccount(authorizationToken: String?, ruleName: String): Boolean {
-
-        val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenClaims.isEmpty()) {
-            return false
-        }
-
-        return isAllowed(
-            identifier = tokenClaims[0],
-            role = ruleName,
-        )
-    }
-
     suspend fun updateRule(
         authorizationToken: String?,
         ruleName: String,
@@ -211,9 +193,9 @@ class IAMController(
             )
         }
 
-        if (!isAllowed(
-                identifier = tokenClaims[0],
-                role = "write:IAMRoles"
+        if (!isAuthorized(
+                role = "write:IAMRoles",
+                principal = tokenClaims[0],
             )
         ) {
             return Result.Error(
@@ -294,16 +276,16 @@ class IAMController(
         }
     }
 
-    suspend fun isAllowed(identifier: String, role: String): Boolean {
+    suspend fun isAuthorized(role: String, principal: String): Boolean {
         val separator = role.split(":")
         val operation = separator[0]
         val iam = separator[1]
 
         return if (operation == "read") {
-            getRolesAssociatedWithAccount(identifier).contains("write:$iam") ||
-                    getRolesAssociatedWithAccount(identifier).contains("read:$iam")
+            getRolesAssociatedWithAccount(principal).contains("write:$iam") ||
+                    getRolesAssociatedWithAccount(principal).contains("read:$iam")
         } else {
-            getRolesAssociatedWithAccount(identifier).contains("write:$iam")
+            getRolesAssociatedWithAccount(principal).contains("write:$iam")
         }
     }
 

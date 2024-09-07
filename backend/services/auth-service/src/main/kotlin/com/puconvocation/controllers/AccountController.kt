@@ -183,9 +183,9 @@ class AccountController(
         }
 
 
-        if (!iamController.isAllowed(
-                identifier = tokenClaims[0],
-                role = "write:Account"
+        if (!iamController.isAuthorized(
+                role = "write:Account",
+                principal = tokenClaims[0],
             )
         ) {
             return Result.Error(
@@ -389,10 +389,11 @@ class AccountController(
         }
 
 
-        if (!iamController.isAllowed(
-                identifier = tokenClaims[0],
-                role = "read:Account"
-            )) {
+        if (!iamController.isAuthorized(
+                role = "read:Account",
+                principal = tokenClaims[0],
+            )
+        ) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(

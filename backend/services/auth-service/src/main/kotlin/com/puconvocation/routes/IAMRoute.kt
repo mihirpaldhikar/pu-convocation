@@ -34,6 +34,23 @@ fun Routing.iamRoute(
 ) {
     route("/iam") {
 
+        get("/authorized") {
+            val host = call.request.host()
+
+            if (!environment.servicesHosts.split(";;").contains(host)) {
+                return@get call.respond(false)
+            }
+            val iamHeader = call.request.headers["X-IAM-CHECK"]
+            if (iamHeader.isNullOrBlank()) {
+                return@get call.respond(false)
+            }
+
+            val split = iamHeader.split("@")
+            val role = split[0]
+            val principal = split[1]
+            call.respond(iamController.isAuthorized(role, principal))
+        }
+
         route("/{name}") {
 
             get("/") {
@@ -49,16 +66,6 @@ fun Routing.iamRoute(
                 )
                 val result = iamController.getRule(authorizationToken, rule)
                 sendResponse(result)
-            }
-
-            get("/allowed") {
-                val host = call.request.host()
-                if (environment.servicesHosts.split(";;").contains(host)) {
-                    return@get call.respond(false)
-                }
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@get call.respond(false)
-                call.respond(iamController.isRuleAllowedForAccount(authorizationToken, rule))
             }
 
             patch("/update") {
