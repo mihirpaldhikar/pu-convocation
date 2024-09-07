@@ -19,13 +19,29 @@ import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.security.passkeys.PasskeyRelyingParty
 import com.puconvocation.services.CacheService
+import com.puconvocation.services.InMemoryCache
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
+import redis.clients.jedis.JedisPool
+import java.util.concurrent.TimeUnit
 
 object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<JedisPool> {
+            JedisPool(
+                get<Environment>().redisURL
+            )
+        }
+
+        single<InMemoryCache> {
+            InMemoryCache(
+                expiryDuration = 1,
+                timeUnit = TimeUnit.MINUTES,
+            )
         }
 
         single<ObjectMapper> {
@@ -45,7 +61,8 @@ object CoreModule {
 
         single<CacheService> {
             CacheService(
-                environment = get<Environment>()
+                pool = get<JedisPool>(),
+                inMemoryCache = get<InMemoryCache>()
             )
         }
     }

@@ -67,8 +67,8 @@ dependencies {
     implementation("com.yubico:webauthn-server-attestation:$webauthnVersion")
     implementation("com.yubico:yubico-util:$webauthnVersion")
 
-    // Google Guava Cache
-    implementation("com.google.guava:guava:33.2.0-jre")
+    // Caffeine Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 
     // Redis
     implementation("redis.clients:jedis:5.1.5")
