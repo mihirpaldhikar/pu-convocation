@@ -13,18 +13,16 @@
 
 package com.puconvocation.services
 
-import com.puconvocation.Environment
 import redis.clients.jedis.JedisPool
 
 
 class CacheService(
-    environment: Environment,
+    private val pool: JedisPool,
+    private val inMemoryCache: InMemoryCache
 ) {
-    private val pool = JedisPool(
-        environment.redisURL
-    )
 
     fun set(key: String, value: String) {
+        inMemoryCache.set(key, value)
         pool.resource.use { jedis ->
             jedis.set(key, value)
         }
@@ -32,14 +30,26 @@ class CacheService(
     }
 
     fun get(key: String): String? {
+        val inMemoryValue = inMemoryCache.get(key)
+
+        if (inMemoryValue != null) {
+            return inMemoryValue
+        }
+
         val cache = pool.resource.use { jedis ->
             jedis.get(key)
         }
+
         pool.resource.close()
-        return cache?.toString()
+
+        if (cache != null) {
+            inMemoryCache.set(key, cache)
+        }
+        return cache
     }
 
     fun remove(key: String) {
+        inMemoryCache.remove(key)
         pool.resource.use { jedis ->
             jedis.del(key)
         }

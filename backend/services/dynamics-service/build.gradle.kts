@@ -61,6 +61,9 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-kotlin-coroutine:$mongoDBVersion")
     implementation("org.mongodb:bson-kotlinx:$mongoDBVersion")
 
+    // Caffeine Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
     // Redis
     implementation("redis.clients:jedis:5.1.5")
 
