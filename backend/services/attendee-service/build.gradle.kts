@@ -63,9 +63,10 @@ dependencies {
     // Apace CSV
     implementation("org.apache.commons:commons-csv:$apacheCSV")
 
-    // Google Guava Cache
-    implementation("com.google.guava:guava:33.2.0-jre")
-    implementation("io.ktor:ktor-client-cio-jvm:2.3.10")
+    // Caffeine Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
+    implementation("io.ktor:ktor-client-cio-jvm")
 
     // Redis
     implementation("redis.clients:jedis:5.1.5")

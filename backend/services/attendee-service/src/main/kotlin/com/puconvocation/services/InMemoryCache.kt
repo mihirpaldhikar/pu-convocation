@@ -13,15 +13,13 @@
 
 package com.puconvocation.services
 
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
+import com.github.benmanes.caffeine.cache.Caffeine
 import java.util.concurrent.TimeUnit
 
 class InMemoryCache(expiryDuration: Long, timeUnit: TimeUnit) {
-    private var cache: Cache<String, String> = CacheBuilder.newBuilder()
+    private val cache = Caffeine.newBuilder()
         .expireAfterWrite(expiryDuration, timeUnit)
-        .concurrencyLevel(Runtime.getRuntime().availableProcessors())
-        .build()
+        .build<String, String>()
 
     fun get(key: String): String? = cache.getIfPresent(key)
 
