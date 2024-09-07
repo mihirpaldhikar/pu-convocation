@@ -16,29 +16,29 @@ package com.puconvocation.controllers
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewUACRule
-import com.puconvocation.commons.dto.UpdateUACRuleRequest
+import com.puconvocation.commons.dto.NewIAMRole
+import com.puconvocation.commons.dto.UpdateIAMRole
 import com.puconvocation.constants.CachedKeys
-import com.puconvocation.database.mongodb.entities.UACRule
+import com.puconvocation.database.mongodb.entities.IAMRole
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.UACRepository
+import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.enums.PrincipalOperation
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
-import com.puconvocation.enums.UACAccountOperation
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 
-class UACController(
+class IAMController(
     private val accountRepository: AccountRepository,
-    private val uacRepository: UACRepository,
+    private val iamRepository: IAMRepository,
     private val jsonWebToken: JsonWebToken,
     private val json: ObjectMapper,
     private val cacheService: CacheService
 
 ) {
-    suspend fun getRule(authorizationToken: String?, name: String): Result<UACRule, ErrorResponse> {
+    suspend fun getRule(authorizationToken: String?, name: String): Result<IAMRole, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
@@ -58,7 +58,7 @@ class UACController(
 
         if (!isAllowed(
                 identifier = tokenClaims[0],
-                ruleName = "createNewRules"
+                role = "read:IAMRoles"
             )
         ) {
             return Result.Error(
@@ -71,7 +71,7 @@ class UACController(
         }
 
 
-        val rule = uacRepository.getRule(name) ?: return Result.Error(
+        val rule = iamRepository.getRule(name) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
                 errorCode = ResponseCode.RULE_NOT_FOUND,
@@ -86,7 +86,7 @@ class UACController(
 
     suspend fun createRule(
         authorizationToken: String?,
-        newUACRuleRequest: NewUACRule
+        newIAMRoleRequest: NewIAMRole
     ): Result<HashMap<String, Any>, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
@@ -107,7 +107,7 @@ class UACController(
 
         if (!isAllowed(
                 identifier = tokenClaims[0],
-                ruleName = "createNewRules"
+                role = "write:IAMRoles"
             )
         ) {
             return Result.Error(
@@ -119,17 +119,17 @@ class UACController(
             )
         }
 
-        if (uacRepository.getRule(newUACRuleRequest.rule) != null) {
+        if (iamRepository.getRule(newIAMRoleRequest.role) != null) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Conflict,
                 error = ErrorResponse(
                     errorCode = ResponseCode.RULE_EXISTS,
-                    message = "Rule ${newUACRuleRequest.rule} already exists",
+                    message = "Rule ${newIAMRoleRequest.role} already exists",
                 )
             )
         }
 
-        for (account: String in newUACRuleRequest.accounts) {
+        for (account: String in newIAMRoleRequest.principals) {
             if (!accountRepository.accountExists(account)) {
                 return Result.Error(
                     httpStatusCode = HttpStatusCode.NotFound,
@@ -144,14 +144,13 @@ class UACController(
 
         }
 
-        val rule = UACRule(
-            rule = newUACRuleRequest.rule,
-            description = newUACRuleRequest.description,
-            enabled = true,
-            accounts = newUACRuleRequest.accounts
+        val rule = IAMRole(
+            role = newIAMRoleRequest.role,
+            description = newIAMRoleRequest.description,
+            principals = newIAMRoleRequest.principals
         )
 
-        val isSuccess = uacRepository.createNewRule(rule)
+        val isSuccess = iamRepository.createNewRule(rule)
 
         if (!isSuccess) {
             return Result.Error(
@@ -186,14 +185,14 @@ class UACController(
 
         return isAllowed(
             identifier = tokenClaims[0],
-            ruleName = ruleName,
+            role = ruleName,
         )
     }
 
     suspend fun updateRule(
         authorizationToken: String?,
         ruleName: String,
-        updateUACRuleRequest: UpdateUACRuleRequest
+        updateIAMRole: UpdateIAMRole
     ): Result<HashMap<String, Any>, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
@@ -214,7 +213,7 @@ class UACController(
 
         if (!isAllowed(
                 identifier = tokenClaims[0],
-                ruleName = "updateRules"
+                role = "write:IAMRoles"
             )
         ) {
             return Result.Error(
@@ -226,7 +225,7 @@ class UACController(
             )
         }
 
-        var ruleSet = uacRepository.getRule(ruleName)
+        var ruleSet = iamRepository.getRule(ruleName)
             ?: return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -235,16 +234,12 @@ class UACController(
                 )
             )
 
-        if (updateUACRuleRequest.description != null) {
-            ruleSet = ruleSet.copy(description = updateUACRuleRequest.description)
+        if (updateIAMRole.description != null) {
+            ruleSet = ruleSet.copy(description = updateIAMRole.description)
         }
 
-        if (updateUACRuleRequest.enabled != null) {
-            ruleSet = ruleSet.copy(enabled = updateUACRuleRequest.enabled)
-        }
-
-        if (updateUACRuleRequest.accounts != null) {
-            for (account in updateUACRuleRequest.accounts) {
+        if (updateIAMRole.principals != null) {
+            for (account in updateIAMRole.principals) {
                 if (!accountRepository.accountExists(account.id)) {
                     return Result.Error(
                         httpStatusCode = HttpStatusCode.NotFound,
@@ -257,15 +252,15 @@ class UACController(
 
                 cacheService.remove(CachedKeys.getAllRulesAssociatedWithAccount(account.id))
 
-                if (account.operation == UACAccountOperation.ADD) {
-                    ruleSet.accounts.add(account.id)
-                } else if (account.operation == UACAccountOperation.REMOVE) {
-                    ruleSet.accounts.remove(account.id)
+                if (account.operation == PrincipalOperation.ADD) {
+                    ruleSet.principals.add(account.id)
+                } else if (account.operation == PrincipalOperation.REMOVE) {
+                    ruleSet.principals.remove(account.id)
                 }
             }
         }
 
-        val success = uacRepository.updateRule(ruleSet)
+        val success = iamRepository.updateRule(ruleSet)
 
         if (!success) {
             return Result.Error(
@@ -285,12 +280,12 @@ class UACController(
         )
     }
 
-    suspend fun getRulesAssociatedWithAccount(identifier: String): List<String> {
+    suspend fun getRolesAssociatedWithAccount(identifier: String): List<String> {
         val cachedRulesForAccount = cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(identifier))
         return if (cachedRulesForAccount != null) {
             json.readValue<List<String>>(cachedRulesForAccount)
         } else {
-            val fetchedAllRulesAssociatedWithAccount = uacRepository.listRulesForAccount(identifier)
+            val fetchedAllRulesAssociatedWithAccount = iamRepository.listRulesForAccount(identifier)
             cacheService.set(
                 CachedKeys.getAllRulesAssociatedWithAccount(identifier),
                 json.writeValueAsString(fetchedAllRulesAssociatedWithAccount)
@@ -299,8 +294,19 @@ class UACController(
         }
     }
 
-    suspend fun isAllowed(identifier: String, ruleName: String): Boolean {
-        return getRulesAssociatedWithAccount(identifier).contains(ruleName)
+    suspend fun isAllowed(identifier: String, role: String): Boolean {
+        val separator = role.split(":")
+        val operation = separator[0]
+        val iam = separator[1]
+
+        println("$operation , $iam")
+
+        return if (operation == "read") {
+            getRolesAssociatedWithAccount(identifier).contains("write:$iam") ||
+                    getRolesAssociatedWithAccount(identifier).contains("read:$iam")
+        } else {
+            getRolesAssociatedWithAccount(identifier).contains("write:$iam")
+        }
     }
 
 }

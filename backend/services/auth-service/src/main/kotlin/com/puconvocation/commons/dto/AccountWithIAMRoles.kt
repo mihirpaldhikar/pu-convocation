@@ -19,7 +19,7 @@ import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
-data class AccountWithUACRules(
+data class AccountWithIAMRoles(
     @JsonSerialize(using = ObjectIdSerializer::class)
     @BsonId
     @JsonProperty("uuid")
@@ -37,6 +37,6 @@ data class AccountWithUACRules(
     @JsonProperty("avatarURL")
     val avatarURL: String,
 
-    @JsonProperty("privileges")
-    val privileges: List<Any?>,
+    @JsonProperty("principals")
+    val principals: List<String>,
 )

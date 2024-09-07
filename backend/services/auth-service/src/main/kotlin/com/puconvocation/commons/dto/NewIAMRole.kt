@@ -11,22 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.entities
+package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.bson.codecs.pojo.annotations.BsonId
 
-data class UACRule(
-    @JsonProperty("rule")
-    @BsonId
-    val rule: String,
-
-    @JsonProperty("description")
-    val description: String,
-
-    @JsonProperty("enabled")
-    val enabled: Boolean,
-
-    @JsonProperty("accounts")
-    val accounts: MutableSet<String>
+data class NewIAMRole(
+    @JsonProperty("role") val role: String,
+    @JsonProperty("description") val description: String,
+    @JsonProperty("principals") val principals: MutableSet<String>,
 )

@@ -13,12 +13,12 @@
 
 package com.puconvocation.database.mongodb.datasources
 
-import com.puconvocation.database.mongodb.entities.UACRule
+import com.puconvocation.database.mongodb.entities.IAMRole
 
-interface UACDatasource {
-    suspend fun createNewRule(rule: UACRule): Boolean
+interface IAMDatasource {
+    suspend fun createNewRule(rule: IAMRole): Boolean
 
-    suspend fun getRule(name: String): UACRule?
+    suspend fun getRule(name: String): IAMRole?
 
     suspend fun getAccountsForRule(rule: String): List<String>
 
@@ -26,6 +26,6 @@ interface UACDatasource {
 
     suspend fun isRuleAllowedForAccount(ruleName: String, accountId: String): Boolean
 
-    suspend fun updateRule(rule: UACRule): Boolean
+    suspend fun updateRule(rule: IAMRole): Boolean
 
 }

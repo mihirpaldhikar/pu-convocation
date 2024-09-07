@@ -15,7 +15,7 @@ package com.puconvocation.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.puconvocation.commons.dto.AccountWithUACRules
+import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewAccount
@@ -37,7 +37,7 @@ class AccountController(
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
-    private val uacController: UACController,
+    private val iamController: IAMController,
     private val json: ObjectMapper,
     private val cacheService: CacheService,
 ) {
@@ -182,12 +182,12 @@ class AccountController(
             )
         }
 
-        val isAllowed = uacController.isAllowed(
-            identifier = tokenClaims[0],
-            ruleName = "createNewAccounts"
-        )
 
-        if (!isAllowed) {
+        if (!iamController.isAllowed(
+                identifier = tokenClaims[0],
+                role = "write:Account"
+            )
+        ) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -306,13 +306,13 @@ class AccountController(
                     SecurityToken(
                         authorizationToken = tokens.authorizationToken,
                         refreshToken = tokens.refreshToken,
-                        payload = json.readValue<AccountWithUACRules>(cachedAccountWithPrivileges),
+                        payload = json.readValue<AccountWithIAMRoles>(cachedAccountWithPrivileges),
                     )
                 )
             }
 
             return Result.Success(
-                json.readValue<AccountWithUACRules>(cachedAccountWithPrivileges)
+                json.readValue<AccountWithIAMRoles>(cachedAccountWithPrivileges)
             )
         }
 
@@ -370,7 +370,7 @@ class AccountController(
     suspend fun accountDetails(
         authorizationToken: String?,
         identifier: String
-    ): Result<AccountWithUACRules, ErrorResponse> {
+    ): Result<AccountWithIAMRoles, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
@@ -388,12 +388,11 @@ class AccountController(
             )
         }
 
-        val isAllowed = uacController.isAllowed(
-            identifier = tokenClaims[0],
-            ruleName = "viewAccounts"
-        )
 
-        if (!isAllowed) {
+        if (!iamController.isAllowed(
+                identifier = tokenClaims[0],
+                role = "read:Account"
+            )) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
@@ -432,24 +431,24 @@ class AccountController(
         )
     }
 
-    private suspend fun getAccountWithPrivileges(account: Account): AccountWithUACRules {
-        val accountPrivileges = uacController.getRulesAssociatedWithAccount(account.uuid.toHexString())
+    private suspend fun getAccountWithPrivileges(account: Account): AccountWithIAMRoles {
+        val accountPrivileges = iamController.getRolesAssociatedWithAccount(account.uuid.toHexString())
 
-        val accountWithUACRules = AccountWithUACRules(
+        val accountWithIAMRoles = AccountWithIAMRoles(
             uuid = account.uuid,
             email = account.email,
             username = account.username,
             avatarURL = account.avatarURL,
             displayName = account.displayName,
-            privileges = accountPrivileges
+            principals = accountPrivileges
         )
 
         cacheService.set(
             CachedKeys.getAccountWithPrivilegesKey(account.uuid.toHexString()),
-            json.writeValueAsString(accountWithUACRules)
+            json.writeValueAsString(accountWithIAMRoles)
         )
 
-        return accountWithUACRules
+        return accountWithIAMRoles
     }
 
 }

@@ -13,7 +13,7 @@
 
 package com.puconvocation.enums
 
-enum class UACAccountOperation {
+enum class PrincipalOperation {
     ADD,
     REMOVE
 }

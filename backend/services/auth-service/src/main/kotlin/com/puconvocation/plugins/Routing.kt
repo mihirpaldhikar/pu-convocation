@@ -16,9 +16,9 @@ package com.puconvocation.plugins
 import com.puconvocation.Environment
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
-import com.puconvocation.controllers.UACController
+import com.puconvocation.controllers.IAMController
 import com.puconvocation.routes.accountsRoute
-import com.puconvocation.routes.uacRoute
+import com.puconvocation.routes.iamRoute
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
@@ -26,12 +26,12 @@ import org.koin.java.KoinJavaComponent
 fun Application.configureRouting() {
     val accountController by KoinJavaComponent.inject<AccountController>(AccountController::class.java)
     val passkeyController by KoinJavaComponent.inject<PasskeyController>(PasskeyController::class.java)
-    val uacController by KoinJavaComponent.inject<UACController>(UACController::class.java)
+    val IAMController by KoinJavaComponent.inject<IAMController>(IAMController::class.java)
     val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
 
     routing {
-        uacRoute(
-            uacController = uacController,
+        iamRoute(
+            iamController = IAMController,
             environment = environment
         )
         accountsRoute(

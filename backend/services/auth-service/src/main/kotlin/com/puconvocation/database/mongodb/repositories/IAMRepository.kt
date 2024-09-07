@@ -18,28 +18,28 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import com.puconvocation.database.mongodb.datasources.UACDatasource
-import com.puconvocation.database.mongodb.entities.UACRule
+import com.puconvocation.database.mongodb.datasources.IAMDatasource
+import com.puconvocation.database.mongodb.entities.IAMRole
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
-class UACRepository(
+class IAMRepository(
     database: MongoDatabase,
-) : UACDatasource {
+) : IAMDatasource {
 
-    private val uacRulesCollection: MongoCollection<UACRule> =
-        database.getCollection<UACRule>("uac_rules")
+    private val iamRoleCollection: MongoCollection<IAMRole> =
+        database.getCollection<IAMRole>("iam")
 
-    override suspend fun createNewRule(rule: UACRule): Boolean {
-        return uacRulesCollection.withDocumentClass<UACRule>().insertOne(rule).wasAcknowledged()
+    override suspend fun createNewRule(rule: IAMRole): Boolean {
+        return iamRoleCollection.withDocumentClass<IAMRole>().insertOne(rule).wasAcknowledged()
     }
 
-    override suspend fun getRule(name: String): UACRule? {
-        return uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(eq("_id", name)).firstOrNull()
+    override suspend fun getRule(name: String): IAMRole? {
+        return iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>(eq("_id", name)).firstOrNull()
     }
 
     override suspend fun getAccountsForRule(rule: String): List<String> {
-        val ruleSet = uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(
+        val ruleSet = iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>(
             eq("_id", rule)
         ).firstOrNull()
 
@@ -47,23 +47,23 @@ class UACRepository(
             return emptyList()
         }
 
-        return ruleSet.accounts.toList()
+        return ruleSet.principals.toList()
     }
 
     override suspend fun listRulesForAccount(accountId: String): List<String> {
-        val matchedRules = uacRulesCollection.withDocumentClass<UACRule>()
-            .aggregate(listOf(Aggregates.match(eq(UACRule::accounts.name, accountId))))
+        val matchedRules = iamRoleCollection.withDocumentClass<IAMRole>()
+            .aggregate(listOf(Aggregates.match(eq(IAMRole::principals.name, accountId))))
         val rules = mutableListOf<String>()
 
         for (rule in matchedRules.toList()) {
-            rules.add(rule.rule)
+            rules.add(rule.role)
         }
 
         return rules
     }
 
     override suspend fun isRuleAllowedForAccount(ruleName: String, accountId: String): Boolean {
-        val rule = uacRulesCollection.withDocumentClass<UACRule>().find<UACRule>(
+        val rule = iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>(
             eq("_id", ruleName)
         ).firstOrNull()
 
@@ -71,15 +71,15 @@ class UACRepository(
             return false
         }
 
-        return rule.accounts.contains(accountId)
+        return rule.principals.contains(accountId)
     }
 
-    override suspend fun updateRule(rule: UACRule): Boolean {
-        return uacRulesCollection.withDocumentClass<UACRule>().updateOne(
-            eq("_id", rule.rule),
+    override suspend fun updateRule(rule: IAMRole): Boolean {
+        return iamRoleCollection.withDocumentClass<IAMRole>().updateOne(
+            eq("_id", rule.role),
             Updates.combine(
-                Updates.set(UACRule::description.name, rule.description),
-                Updates.set(UACRule::accounts.name, rule.accounts),
+                Updates.set(IAMRole::description.name, rule.description),
+                Updates.set(IAMRole::principals.name, rule.principals),
             )
         ).wasAcknowledged()
     }

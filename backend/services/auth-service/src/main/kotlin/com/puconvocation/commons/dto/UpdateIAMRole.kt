@@ -14,16 +14,15 @@
 package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.google.gson.annotations.Expose
-import com.puconvocation.enums.UACAccountOperation
+import com.puconvocation.enums.PrincipalOperation
 
-data class UpdateUACRuleRequest(
+data class UpdateIAMRole(
     @JsonProperty("description") val description: String?,
     @JsonProperty("enabled") val enabled: Boolean?,
-    @JsonProperty("accounts") val accounts: MutableSet<UACAccount>?
+    @JsonProperty("principals") val principals: MutableSet<Principal>?
 ) {
-    data class UACAccount(
+    data class Principal(
         @JsonProperty("id") val id: String,
-        @JsonProperty("operation") val operation: UACAccountOperation,
+        @JsonProperty("operation") val operation: PrincipalOperation,
     )
 }

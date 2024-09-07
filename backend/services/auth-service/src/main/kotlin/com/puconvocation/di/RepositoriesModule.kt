@@ -15,7 +15,7 @@ package com.puconvocation.di
 
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.UACRepository
+import com.puconvocation.database.mongodb.repositories.IAMRepository
 import org.koin.dsl.module
 
 object RepositoriesModule {
@@ -24,8 +24,8 @@ object RepositoriesModule {
             AccountRepository(database = get<MongoDatabase>())
         }
 
-        single<UACRepository> {
-            UACRepository(database = get<MongoDatabase>())
+        single<IAMRepository> {
+            IAMRepository(database = get<MongoDatabase>())
         }
     }
 }
