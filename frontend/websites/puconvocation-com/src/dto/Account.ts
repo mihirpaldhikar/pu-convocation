@@ -17,5 +17,5 @@ export default interface Account {
   displayName: string;
   email: string;
   avatarURL: string;
-  privileges: Array<string>;
+  iamRoles: Array<string>;
 }

@@ -25,7 +25,7 @@ export default class AuthService {
   private httpService = new HTTPService(this.BASE_URL);
 
   private ACCOUNT_ROUTE = this.BASE_URL.concat("/accounts");
-  private UAC_ROUTE = this.BASE_URL.concat("/uac");
+  private UAC_ROUTE = this.BASE_URL.concat("/iam");
 
   public async getCurrentAccount(): Promise<Response<Account | string>> {
     return await this.httpService.get<Account>(`${this.ACCOUNT_ROUTE}/`);
@@ -39,20 +39,12 @@ export default class AuthService {
     );
   }
 
-  public async getUACRulesForAccount(
-    identifier: string,
-  ): Promise<Response<Array<string> | string>> {
-    return this.httpService.get<Array<string>>(
-      `${this.UAC_ROUTE}/${identifier}/rules`,
-    );
-  }
-
   public async updateUACRule(
     ruleName: string,
     updateUACRuleRequest: UpdateUACRuleRequest,
   ): Promise<Response<Array<string> | string>> {
     return await this.httpService.patch<Array<string>>(
-      `${this.UAC_ROUTE}/rules/${ruleName}/update`,
+      `${this.UAC_ROUTE}/${ruleName}/update`,
       updateUACRuleRequest,
     );
   }

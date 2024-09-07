@@ -113,9 +113,7 @@ export default function NavbarMenu(): JSX.Element {
         <UserCircleIcon className={"mr-2 size-5"} />
         <span className="mr-2">Login</span>
       </Link>
-      <div
-        className={`${account !== null && account?.privileges.includes("createNewAccounts") ? "flex" : "hidden"} items-center space-x-2`}
-      >
+      <div className={`flex items-center space-x-2`}>
         <Popover
           open={isPopupOpen}
           defaultOpen={false}
