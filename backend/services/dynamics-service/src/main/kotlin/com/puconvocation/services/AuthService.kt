@@ -32,24 +32,28 @@ class AuthService(
     environment: Environment
 ) {
 
-    private val uacRoute = "${environment.authServiceURL}/uac"
+    private val iamRoute = "${environment.authServiceURL}/iam"
 
-    suspend fun isAllowed(string: String?, ruleName: String): Boolean {
+    suspend fun isAuthorized(role: String, principal: String?): Boolean {
 
-        if (string.isNullOrEmpty()) return false
+        val separator = role.split(":")
+        val operation = separator[0]
+        val iam = separator[1]
 
-        if (ObjectId.isValid(string)) {
+        if (principal.isNullOrEmpty()) return false
+
+        if (ObjectId.isValid(principal)) {
             val cachedRulesForAccount =
-                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(string))
+                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(principal))
 
             return if (cachedRulesForAccount != null) {
-                json.readValue<List<String>>(cachedRulesForAccount).contains(ruleName)
+                json.readValue<List<String>>(cachedRulesForAccount).contains(role)
             } else {
-                isOperationAllowed(string, ruleName)
+                isOperationAllowed(principal, role)
             }
         }
         val claims = jsonWebToken.getClaims(
-            token = string,
+            token = principal,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
@@ -60,15 +64,21 @@ class AuthService(
             cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
 
         return if (cachedRulesForAccount != null) {
-            json.readValue<List<String>>(cachedRulesForAccount).contains(ruleName)
+            val roles = json.readValue<List<String>>(cachedRulesForAccount)
+            if (operation == "read") {
+                roles.contains("write:$iam") ||
+                        roles.contains("read:$iam")
+            } else {
+                roles.contains("write:$iam")
+            }
         } else {
-            isOperationAllowed(claims[0], ruleName)
+            isOperationAllowed(claims[0], role)
         }
     }
 
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
-        val response = client.get("$uacRoute/rules/$rule/allowed") {
-            header("X-UAC-CHECK", uuid)
+        val response = client.get("$iamRoute/authorized") {
+            header("X-IAM-CHECK", "$rule@$uuid")
         }
 
         return response.bodyAsText().toBoolean()

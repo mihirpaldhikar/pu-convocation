@@ -2,7 +2,6 @@ package com.puconvocation.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.google.gson.Gson
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.UpdateWebsiteConfigRequest
 import com.puconvocation.constants.CachedKeys
@@ -63,7 +62,11 @@ class WebsiteController(
         updateWebsiteConfigRequest: UpdateWebsiteConfigRequest
     ): Result<HashMap<String, Any>, ErrorResponse> {
 
-        if (!authService.isAllowed(authorizationToken, "manageWebsite")) {
+        if (!authService.isAuthorized(
+                role = "write:WebsiteConfig",
+                principal = authorizationToken
+            )
+        ) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
