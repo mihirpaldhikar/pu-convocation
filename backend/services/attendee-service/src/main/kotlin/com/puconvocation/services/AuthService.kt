@@ -34,26 +34,26 @@ class AuthService(
 
     private val iamRoute = "${environment.authServiceURL}/iam"
 
-    suspend fun isAuthorized(string: String?, role: String): Boolean {
+    suspend fun isAuthorized(role: String, principal: String?): Boolean {
 
         val separator = role.split(":")
         val operation = separator[0]
         val iam = separator[1]
 
-        if (string.isNullOrEmpty()) return false
+        if (principal.isNullOrEmpty()) return false
 
-        if (ObjectId.isValid(string)) {
+        if (ObjectId.isValid(principal)) {
             val cachedRulesForAccount =
-                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(string))
+                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(principal))
 
             return if (cachedRulesForAccount != null) {
                 json.readValue<List<String>>(cachedRulesForAccount).contains(role)
             } else {
-                isOperationAllowed(string, role)
+                isOperationAllowed(principal, role)
             }
         }
         val claims = jsonWebToken.getClaims(
-            token = string,
+            token = principal,
             tokenType = TokenType.AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
