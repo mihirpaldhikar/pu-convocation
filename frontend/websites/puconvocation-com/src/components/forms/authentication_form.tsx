@@ -33,31 +33,48 @@ export default function AuthenticationForm({
   const router = useRouter();
   const { state, dispatch } = useAuth();
   const { toast } = useToast();
-  const [identifier, setIdentifier] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [authenticationStrategy, setAuthenticationStrategy] = useState<
-    "UNKNOWN" | "PASSWORD" | "PASSKEY"
-  >("UNKNOWN");
+
+  const [authenticationPayload, setAuthenticationPayload] = useState<{
+    identifier: string;
+    password: string;
+    authenticationStrategy: "UNKNOWN" | "PASSWORD" | "PASSKEY";
+    submitting: boolean;
+  }>({
+    identifier: "",
+    password: "",
+    authenticationStrategy: "UNKNOWN",
+    submitting: false,
+  });
 
   return (
     <form
       className={"w-full space-y-3"}
       onSubmit={async (event) => {
         event.preventDefault();
-        setSubmitting(true);
-        switch (authenticationStrategy) {
+        setAuthenticationPayload((prevState) => {
+          return {
+            ...prevState,
+            submitting: true,
+          };
+        });
+        switch (authenticationPayload.authenticationStrategy) {
           case "UNKNOWN": {
-            const response =
-              await state.authService.getAuthenticationStrategy(identifier);
+            const response = await state.authService.getAuthenticationStrategy(
+              authenticationPayload.identifier,
+            );
             if (
               response.statusCode === StatusCode.SUCCESS &&
               "payload" in response &&
               typeof response.payload === "object"
             ) {
-              setAuthenticationStrategy(
-                response.payload.authenticationStrategy,
-              );
+              const authenticationStrategy =
+                response.payload.authenticationStrategy;
+              setAuthenticationPayload((prevState) => {
+                return {
+                  ...prevState,
+                  authenticationStrategy: authenticationStrategy,
+                };
+              });
             } else if ("message" in response) {
               toast({
                 title: "Authentication Failed",
@@ -69,8 +86,8 @@ export default function AuthenticationForm({
           }
           case "PASSKEY": {
             const response = await state.authService.authenticate(
-              authenticationStrategy,
-              identifier,
+              authenticationPayload.authenticationStrategy,
+              authenticationPayload.identifier,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
               state.authService.getCurrentAccount().then((res) => {
@@ -105,9 +122,9 @@ export default function AuthenticationForm({
           }
           case "PASSWORD": {
             const response = await state.authService.authenticate(
-              authenticationStrategy,
-              identifier,
-              password,
+              authenticationPayload.authenticationStrategy,
+              authenticationPayload.identifier,
+              authenticationPayload.password,
             );
             if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
               state.authService.getCurrentAccount().then((res) => {
@@ -137,34 +154,48 @@ export default function AuthenticationForm({
           default:
             break;
         }
-        setSubmitting(false);
+        setAuthenticationPayload((prevState) => {
+          return {
+            ...prevState,
+            submitting: false,
+          };
+        });
       }}
     >
       <Input
-        disabled={submitting}
+        disabled={authenticationPayload.submitting}
         type={"text"}
-        value={identifier}
+        value={authenticationPayload.identifier}
         placeholder={formTranslations("inputs.identifier")}
         onChange={(event) => {
-          setIdentifier(event.target.value.trim());
+          setAuthenticationPayload({
+            ...authenticationPayload,
+            identifier: event.target.value.trim().replace(/\s/g, ""),
+          });
         }}
       />
       <Input
-        className={`${authenticationStrategy === "PASSWORD" ? "flex" : "hidden"} w-full rounded-md border px-3 py-2`}
-        disabled={submitting}
+        className={`${authenticationPayload.authenticationStrategy === "PASSWORD" ? "flex" : "hidden"} w-full rounded-md border px-3 py-2`}
+        disabled={authenticationPayload.submitting}
         type={"password"}
-        value={password}
+        value={authenticationPayload.password}
         placeholder={formTranslations("inputs.password")}
         onChange={(event) => {
-          setPassword(event.target.value.trim());
+          setAuthenticationPayload({
+            ...authenticationPayload,
+            password: event.target.value.trim().replace(/\s/g, ""),
+          });
         }}
       />
       <Button
-        disabled={submitting || identifier.length === 0}
+        disabled={
+          authenticationPayload.submitting ||
+          authenticationPayload.identifier.length === 0
+        }
         type={"submit"}
         className={`flex w-full space-x-3`}
       >
-        {authenticationStrategy === "PASSKEY" ? (
+        {authenticationPayload.authenticationStrategy === "PASSKEY" ? (
           <Fragment>
             <PasskeyIcon color={"#ffffff"} />{" "}
             <h2>{formTranslations("buttons.passkey")}</h2>
