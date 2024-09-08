@@ -42,24 +42,41 @@ class AccountController(
     private val cacheService: CacheService,
 ) {
     suspend fun getAuthenticationStrategy(identifier: String): Result<HashMap<String, Any>, ErrorResponse> {
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            httpStatusCode = HttpStatusCode.NotFound, error = ErrorResponse(
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND, message = "Account not found."
+        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+
+        val account = if (cachedAccount != null) {
+            json.readValue<Account>(cachedAccount)
+        } else {
+            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
+                )
             )
-        )
+
+            cacheService.set(CachedKeys.getAccountKey(identifier), json.writeValueAsString(fetchedAccount))
+
+            fetchedAccount
+        }
 
         if (account.suspended) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_SUSPENDED, message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
                 )
             )
         }
 
+        val authenticationStrategy = if (account.fidoCredential.isEmpty()) AuthenticationStrategy.PASSWORD
+        else AuthenticationStrategy.PASSKEY
+
         return Result.Success(
             hashMapOf(
-                "authenticationStrategy" to if (account.fidoCredential.isEmpty()) AuthenticationStrategy.PASSWORD
-                else AuthenticationStrategy.PASSKEY
+                "authenticationStrategy" to
+                        authenticationStrategy
             )
         )
     }
@@ -71,8 +88,10 @@ class AccountController(
             json.readValue<Account>(cachedAccount)
         } else {
             val fetchedAccount = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND, message = "Account not found."
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
                 )
             )
 
@@ -83,8 +102,10 @@ class AccountController(
 
         if (account.suspended) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_SUSPENDED, message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
                 )
             )
         }
@@ -96,8 +117,10 @@ class AccountController(
 
         if (credentials.password == null || account.password == null) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.BadRequest, error = ErrorResponse(
-                    errorCode = ResponseCode.NULL_PASSWORD, message = "Please provide password."
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NULL_PASSWORD,
+                    message = "Please provide password."
                 )
             )
         }
@@ -106,7 +129,8 @@ class AccountController(
 
         if (!passwordMatched) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.NotAcceptable, error = ErrorResponse(
+                httpStatusCode = HttpStatusCode.NotAcceptable,
+                error = ErrorResponse(
                     errorCode = ResponseCode.INVALID_PASSWORD,
                     message = "Password is invalid. Please check your password."
                 )
@@ -126,7 +150,8 @@ class AccountController(
     }
 
     suspend fun createNewAccount(
-        newAccount: NewAccount, securityToken: SecurityToken
+        newAccount: NewAccount,
+        securityToken: SecurityToken
     ): Result<Any, ErrorResponse> {
 
         val tokenClaims = jsonWebToken.getClaims(
@@ -137,8 +162,10 @@ class AccountController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.BadRequest, error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN, message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
                 )
             )
         }
@@ -150,16 +177,20 @@ class AccountController(
             )
         ) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED, message = "You don't have privilege to create new accounts."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to create new accounts."
                 )
             )
         }
 
         if (accountRepository.accountExists(newAccount.email) || accountRepository.accountExists(newAccount.username)) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_EXISTS, message = "Account already exists. Please login instead."
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_EXISTS,
+                    message = "Account already exists. Please login instead."
                 )
             )
         }
@@ -178,7 +209,8 @@ class AccountController(
         val response = accountRepository.createAccount(account)
         if (!response) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.InternalServerError, error = ErrorResponse(
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
                     errorCode = ResponseCode.ACCOUNT_CREATION_ERROR,
                     message = "Account creation failed. Please try again."
                 )
@@ -211,30 +243,38 @@ class AccountController(
 
         if (tokens.refreshToken == null && tokens.authorizationToken == null) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Unauthorized, error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN, message = "Authorization token is invalid or expired."
+                httpStatusCode = HttpStatusCode.Unauthorized,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid or expired."
                 )
             )
         }
 
         if (tokens.refreshToken != null && tokens.authorizationToken == null) {
-            val newTokens = jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.Unauthorized, error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN, message = "Authorization token is invalid or expired."
+            val newTokens =
+                jsonWebToken.generateSecurityTokenFromRefreshToken(securityToken) ?: return Result.Error(
+                    httpStatusCode = HttpStatusCode.Unauthorized,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.INVALID_TOKEN,
+                        message = "Authorization token is invalid or expired."
+                    )
                 )
-            )
 
 
             tokens = newTokens
             newTokenGenerated = true
         }
 
-        val tokenClaims = jsonWebToken.getClaims(tokens.authorizationToken!!, TokenType.AUTHORIZATION_TOKEN)
+        val tokenClaims =
+            jsonWebToken.getClaims(tokens.authorizationToken!!, TokenType.AUTHORIZATION_TOKEN)
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN, message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
                 )
             )
         }
@@ -242,7 +282,8 @@ class AccountController(
         val cachedAccountWithPrivileges = cacheService.get(
             CachedKeys.getAccountWithPrivilegesKey(
                 tokenClaims[0].replace(
-                    "\"", ""
+                    "\"",
+                    ""
                 )
             )
         )
@@ -263,20 +304,25 @@ class AccountController(
             )
         }
 
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(tokenClaims[0].replace("\"", "")))
+        val cachedAccount =
+            cacheService.get(CachedKeys.getAccountKey(tokenClaims[0].replace("\"", "")))
 
 
         val account = if (cachedAccount != null) {
             json.readValue<Account>(cachedAccount)
         } else {
-            val fetchedAccount = accountRepository.getAccount(tokenClaims[0].replace("\"", "")) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND, message = "Account not found."
+            val fetchedAccount = accountRepository.getAccount(tokenClaims[0].replace("\"", ""))
+                ?: return Result.Error(
+                    httpStatusCode = HttpStatusCode.NotFound,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                        message = "Account not found."
+                    )
                 )
-            )
 
             cacheService.set(
-                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()), json.writeValueAsString(fetchedAccount)
+                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
+                json.writeValueAsString(fetchedAccount)
             )
 
             fetchedAccount
@@ -284,8 +330,10 @@ class AccountController(
 
         if (account.suspended) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_SUSPENDED, message = "Your account has been suspended."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
+                    message = "Your account has been suspended."
                 )
             )
         }
@@ -308,7 +356,8 @@ class AccountController(
     }
 
     suspend fun accountDetails(
-        authorizationToken: String?, identifier: String
+        authorizationToken: String?,
+        identifier: String
     ): Result<AccountWithIAMRoles, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
@@ -318,8 +367,10 @@ class AccountController(
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN, message = "Authorization token is invalid."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
                 )
 
             )
@@ -332,26 +383,33 @@ class AccountController(
             )
         ) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden, error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED, message = "You don't have privilege to view accounts."
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view accounts."
                 )
             )
         }
 
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
+        val cachedAccount =
+            cacheService.get(CachedKeys.getAccountKey(identifier))
 
 
         val account = if (cachedAccount != null) {
             json.readValue<Account>(cachedAccount)
         } else {
-            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound, error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND, message = "Account not found."
+            val fetchedAccount = accountRepository.getAccount(identifier)
+                ?: return Result.Error(
+                    httpStatusCode = HttpStatusCode.NotFound,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                        message = "Account not found."
+                    )
                 )
-            )
 
             cacheService.set(
-                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()), json.writeValueAsString(fetchedAccount)
+                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
+                json.writeValueAsString(fetchedAccount)
             )
 
             fetchedAccount
