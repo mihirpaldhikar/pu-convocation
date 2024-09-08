@@ -231,6 +231,11 @@ class PasskeyController(
                 ),
                 refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
             )
+
+            cacheService.remove(CachedKeys.getPasskeyPKCKey(identifier))
+            cacheService.remove(CachedKeys.getPasskeyAssertionKey(identifier))
+            cacheService.remove(CachedKeys.getAccountKey(identifier))
+
             return Result.Success(
                 securityTokens
             )
