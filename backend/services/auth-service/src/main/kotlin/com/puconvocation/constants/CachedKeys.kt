@@ -14,10 +14,6 @@
 package com.puconvocation.constants
 
 object CachedKeys {
-    fun getAccountStrategyKey(identifier: String): String {
-        return "accountStrategy:$identifier"
-    }
-
     fun getAccountKey(identifier: String): String {
         return "account:$identifier"
     }
@@ -32,10 +28,6 @@ object CachedKeys {
 
     fun getPasskeyAssertionKey(identifier: String): String {
         return "passkeyAssertionKey:$identifier"
-    }
-
-    fun getIsAccountAllowedForRuleKey(identifier: String, ruleName: String): String {
-        return "$identifier:$ruleName"
     }
 
     fun getAllRulesAssociatedWithAccount(identifier: String): String {
