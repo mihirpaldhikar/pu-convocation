@@ -25,23 +25,37 @@ export default function NewAccountForm(): JSX.Element {
 
   const { toast } = useToast();
 
-  const [identifier, setIdentifier] = useState<string>("");
-  const [displayName, setDisplayName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [authenticationStrategy] = useState<"PASSKEY" | "PASSWORD">("PASSKEY");
+  const [credentials, setCredentials] = useState<{
+    identifier: string;
+    displayName: string;
+    email: string;
+    authenticationStrategy: "PASSKEY" | "PASSWORD";
+    submitting: boolean;
+  }>({
+    identifier: "",
+    displayName: "",
+    email: "",
+    authenticationStrategy: "PASSKEY",
+    submitting: false,
+  });
 
   return (
     <form
       className={"w-full space-y-3"}
       onSubmit={async (event) => {
         event.preventDefault();
-        setSubmitting(true);
+        setCredentials((prevState) => {
+          return {
+            ...prevState,
+            submitting: true,
+          };
+        });
+
         const response = await authService.createAccount(
-          authenticationStrategy,
-          displayName,
-          identifier,
-          email,
+          credentials.authenticationStrategy,
+          credentials.displayName,
+          credentials.identifier,
+          credentials.email,
         );
         if (
           response.statusCode === StatusCode.PASSKEY_REGISTERED ||
@@ -55,46 +69,60 @@ export default function NewAccountForm(): JSX.Element {
             duration: 5000,
           });
         }
-        setSubmitting(false);
+        setCredentials((prevState) => {
+          return {
+            ...prevState,
+            submitting: false,
+          };
+        });
       }}
     >
       <Input
-        disabled={submitting}
+        disabled={credentials.submitting}
         type={"text"}
-        value={identifier}
+        value={credentials.identifier}
         placeholder={"Username..."}
         onChange={(event) => {
-          setIdentifier(event.target.value.trim());
+          setCredentials({
+            ...credentials,
+            identifier: event.target.value.trim().replace(/\s/g, ""),
+          });
         }}
       />
 
       <Input
-        disabled={submitting}
+        disabled={credentials.submitting}
         type={"text"}
-        value={displayName}
+        value={credentials.displayName}
         placeholder={"Name..."}
         onChange={(event) => {
-          setDisplayName(event.target.value.trim());
+          setCredentials({
+            ...credentials,
+            displayName: event.target.value.trim().replace(/\s/g, ""),
+          });
         }}
       />
 
       <Input
-        disabled={submitting}
+        disabled={credentials.submitting}
         type={"email"}
-        value={email}
+        value={credentials.email}
         placeholder={"Email..."}
         onChange={(event) => {
-          setEmail(event.target.value.trim());
+          setCredentials({
+            ...credentials,
+            email: event.target.value.trim().replace(/\s/g, ""),
+          });
         }}
       />
 
       <div className={"flex justify-end"}>
         <Button
           disabled={
-            identifier.length === 0 ||
-            displayName.length === 0 ||
-            email.length === 0 ||
-            submitting
+            credentials.identifier.length === 0 ||
+            credentials.displayName.length === 0 ||
+            credentials.email.length === 0 ||
+            credentials.submitting
           }
           type={"submit"}
         >
