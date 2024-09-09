@@ -26,7 +26,6 @@ class CacheService(
         pool.resource.use { jedis ->
             jedis.set(key, value)
         }
-        pool.resource.close()
     }
 
     fun get(key: String): String? {
@@ -40,8 +39,6 @@ class CacheService(
             jedis.get(key)
         }
 
-        pool.resource.close()
-
         if (cache != null) {
             inMemoryCache.set(key, cache)
         }
@@ -53,6 +50,5 @@ class CacheService(
         pool.resource.use { jedis ->
             jedis.del(key)
         }
-        pool.resource.close()
     }
 }
