@@ -19,8 +19,8 @@ val mongoDBVersion: String by project
 val apacheCSV: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.24"
-    id("io.ktor.plugin") version "2.3.10"
+    kotlin("jvm") version "2.0.20"
+    id("io.ktor.plugin") version "2.3.12"
 }
 
 group = "com.puconvocation"
