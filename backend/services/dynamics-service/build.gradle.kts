@@ -18,8 +18,8 @@ val koinVersion: String by project
 val mongoDBVersion: String by project
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    id("io.ktor.plugin") version "2.3.11"
+    kotlin("jvm") version "2.0.20"
+    id("io.ktor.plugin") version "2.3.12"
 }
 
 group = "com.puconvocation"
