@@ -24,7 +24,6 @@ import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.PasskeyUtils
 import com.puconvocation.utils.Result
 import com.yubico.webauthn.*
@@ -36,11 +35,10 @@ class PasskeyController(
     private val rp: RelyingParty,
     private val accountRepository: AccountRepository,
     private val jsonWebToken: JsonWebToken,
-    private val json: ObjectMapper,
-    private val cacheService: CacheService,
+    private val cacheController: CacheController,
 ) {
     suspend fun startPasskeyRegistration(identifier: String): Result<String, ErrorResponse> {
-        val account = getAccount(identifier) ?: return Result.Error(
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
                 errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
@@ -59,7 +57,7 @@ class PasskeyController(
         }
 
         val pkcOptions = createPublicKeyCredentialCreationOptions(account)
-        cacheService.set(CachedKeys.getPasskeyPKCKey(identifier), pkcOptions.toJson())
+        cacheController.set(CachedKeys.passkeyPKCKey(identifier), pkcOptions.toJson())
 
         return Result.Success(
             pkcOptions.toCredentialsCreateJson()
@@ -91,7 +89,7 @@ class PasskeyController(
         identifier: String,
         credentials: String
     ): Result<HashMap<String, Any>, ErrorResponse> {
-        val account = getAccount(identifier) ?: return Result.Error(
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
                 errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
@@ -109,7 +107,7 @@ class PasskeyController(
             )
         }
 
-        val pkcOptions = cacheService.get(CachedKeys.getPasskeyPKCKey(identifier))
+        val pkcOptions = cacheController.get(CachedKeys.passkeyPKCKey(identifier))
             ?: return Result.Error(
                 httpStatusCode = HttpStatusCode.InternalServerError,
                 error = ErrorResponse(
@@ -146,9 +144,9 @@ class PasskeyController(
             )
         }
 
-        cacheService.invalidate(CachedKeys.getPasskeyPKCKey(identifier))
-        cacheService.invalidate(CachedKeys.getPasskeyAssertionKey(identifier))
-        cacheService.invalidate(CachedKeys.getAccountKey(identifier))
+        cacheController.invalidate(CachedKeys.passkeyPKCKey(identifier))
+        cacheController.invalidate(CachedKeys.passkeyAssertionKey(identifier))
+        cacheController.invalidate(CachedKeys.accountKey(identifier))
 
         return Result.Success(
             httpStatusCode = HttpStatusCode.Created,
@@ -163,7 +161,7 @@ class PasskeyController(
                 .username(identifier)
                 .build()
         )
-        cacheService.set(CachedKeys.getPasskeyAssertionKey(identifier), request.toJson())
+        cacheController.set(CachedKeys.passkeyAssertionKey(identifier), request.toJson())
 
         return Result.Success(
             request.toCredentialsGetJson()
@@ -175,7 +173,7 @@ class PasskeyController(
         credentials: String
     ): Result<SecurityToken, ErrorResponse> {
 
-        val account = getAccount(identifier) ?: return Result.Error(
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
                 errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
@@ -193,7 +191,7 @@ class PasskeyController(
             )
         }
 
-        val assertion = cacheService.get(CachedKeys.getPasskeyAssertionKey(identifier))
+        val assertion = cacheController.get(CachedKeys.passkeyAssertionKey(identifier))
             ?: return Result.Error(
                 httpStatusCode = HttpStatusCode.InternalServerError,
                 error = ErrorResponse(
@@ -232,9 +230,9 @@ class PasskeyController(
                 refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
             )
 
-            cacheService.invalidate(CachedKeys.getPasskeyPKCKey(identifier))
-            cacheService.invalidate(CachedKeys.getPasskeyAssertionKey(identifier))
-            cacheService.invalidate(CachedKeys.getAccountKey(identifier))
+            cacheController.invalidate(CachedKeys.passkeyPKCKey(identifier))
+            cacheController.invalidate(CachedKeys.passkeyAssertionKey(identifier))
+            cacheController.invalidate(CachedKeys.accountKey(identifier))
 
             return Result.Success(
                 securityTokens
@@ -278,19 +276,4 @@ class PasskeyController(
         return options
     }
 
-    private suspend fun getAccount(identifier: String): Account? {
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
-
-        return if (cachedAccount != null) {
-            json.readValue<Account>(cachedAccount)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier)
-
-            if (fetchedAccount != null) {
-                cacheService.set(CachedKeys.getAccountKey(identifier), json.writeValueAsString(fetchedAccount))
-
-            }
-            fetchedAccount
-        }
-    }
 }

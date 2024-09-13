@@ -13,14 +13,13 @@
 
 package com.puconvocation.di
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.controllers.AccountController
-import com.puconvocation.controllers.PasskeyController
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.controllers.IAMController
+import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
 import com.puconvocation.security.jwt.JsonWebToken
-import com.puconvocation.services.CacheService
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
@@ -31,8 +30,7 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 iamRepository = get<IAMRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
-                json = get<ObjectMapper>(),
-                cacheService = get<CacheService>()
+                cacheController = get<CacheController>()
             )
         }
 
@@ -42,8 +40,6 @@ object ControllerModule {
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
                 iamController = get<IAMController>(),
-                json = get<ObjectMapper>(),
-                cacheService = get<CacheService>(),
             )
         }
 
@@ -52,8 +48,7 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 rp = get<RelyingParty>(),
-                json = get<ObjectMapper>(),
-                cacheService = get<CacheService>(),
+                cacheController = get<CacheController>(),
             )
         }
     }

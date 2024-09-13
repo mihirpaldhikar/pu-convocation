@@ -14,23 +14,20 @@
 package com.puconvocation.constants
 
 object CachedKeys {
-    fun getAccountKey(identifier: String): String {
+    fun accountKey(identifier: String): String {
         return "account:$identifier"
     }
 
-    fun getAccountWithPrivilegesKey(identifier: String): String {
-        return "accountWithPrivileges:$identifier"
+    fun accountWithIAMRolesKey(identifier: String): String {
+        return "accountWithIAMRoles:$identifier"
     }
 
-    fun getPasskeyPKCKey(identifier: String): String {
-        return "passkeyPKCKey:$identifier"
+    fun passkeyPKCKey(identifier: String): String {
+        return "passkeyPKC:$identifier"
     }
 
-    fun getPasskeyAssertionKey(identifier: String): String {
-        return "passkeyAssertionKey:$identifier"
+    fun passkeyAssertionKey(identifier: String): String {
+        return "passkeyAssertion:$identifier"
     }
 
-    fun getAllRulesAssociatedWithAccount(identifier: String): String {
-        return "allAssociatedRules:$identifier"
-    }
 }

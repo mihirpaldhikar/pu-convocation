@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.services
+package com.puconvocation.controllers
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import redis.clients.jedis.JedisPool
@@ -19,7 +19,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 
-class CacheService(
+class CacheController(
     private val pool: JedisPool
 ) {
 

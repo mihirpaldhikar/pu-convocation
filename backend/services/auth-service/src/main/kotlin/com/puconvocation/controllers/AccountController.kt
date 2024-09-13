@@ -13,13 +13,10 @@
 
 package com.puconvocation.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewAccount
-import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.enums.AuthenticationStrategy
@@ -28,7 +25,6 @@ import com.puconvocation.enums.TokenType
 import com.puconvocation.security.core.Hash
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -38,27 +34,15 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
     private val iamController: IAMController,
-    private val json: ObjectMapper,
-    private val cacheService: CacheService,
 ) {
     suspend fun getAuthenticationStrategy(identifier: String): Result<HashMap<String, Any>, ErrorResponse> {
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(identifier))
-
-        val account = if (cachedAccount != null) {
-            json.readValue<Account>(cachedAccount)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                    message = "Account not found."
-                )
+        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found."
             )
-
-            cacheService.set(CachedKeys.getAccountKey(identifier), json.writeValueAsString(fetchedAccount))
-
-            fetchedAccount
-        }
+        )
 
         if (account.suspended) {
             return Result.Error(
@@ -82,23 +66,13 @@ class AccountController(
     }
 
     suspend fun authenticate(credentials: AuthenticationCredentials): Result<Any, ErrorResponse> {
-        val cachedAccount = cacheService.get(CachedKeys.getAccountKey(credentials.identifier))
-
-        val account = if (cachedAccount != null) {
-            json.readValue<Account>(cachedAccount)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                    message = "Account not found."
-                )
+        val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                message = "Account not found."
             )
-
-            cacheService.set(CachedKeys.getAccountKey(credentials.identifier), json.writeValueAsString(fetchedAccount))
-
-            fetchedAccount
-        }
+        )
 
         if (account.suspended) {
             return Result.Error(
@@ -279,79 +253,27 @@ class AccountController(
             )
         }
 
-        val cachedAccountWithPrivileges = cacheService.get(
-            CachedKeys.getAccountWithPrivilegesKey(
-                tokenClaims[0].replace(
-                    "\"",
-                    ""
-                )
-            )
-        )
-
-        if (cachedAccountWithPrivileges != null) {
-            if (newTokenGenerated) {
-                return Result.Success(
-                    SecurityToken(
-                        authorizationToken = tokens.authorizationToken,
-                        refreshToken = tokens.refreshToken,
-                        payload = json.readValue<AccountWithIAMRoles>(cachedAccountWithPrivileges),
-                    )
-                )
-            }
-
-            return Result.Success(
-                json.readValue<AccountWithIAMRoles>(cachedAccountWithPrivileges)
-            )
-        }
-
-        val cachedAccount =
-            cacheService.get(CachedKeys.getAccountKey(tokenClaims[0].replace("\"", "")))
-
-
-        val account = if (cachedAccount != null) {
-            json.readValue<Account>(cachedAccount)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(tokenClaims[0].replace("\"", ""))
-                ?: return Result.Error(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    error = ErrorResponse(
-                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                        message = "Account not found."
-                    )
-                )
-
-            cacheService.set(
-                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
-                json.writeValueAsString(fetchedAccount)
-            )
-
-            fetchedAccount
-        }
-
-        if (account.suspended) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
+        val account = accountRepository.getAccountWithIAMRoles(tokenClaims[0].replace("\"", ""))
+            ?: return Result.Error(
+                httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
-                    message = "Your account has been suspended."
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
                 )
             )
-        }
-
-        val accountWithUACRules = getAccountWithPrivileges(account)
 
         if (newTokenGenerated) {
             return Result.Success(
                 SecurityToken(
                     authorizationToken = tokens.authorizationToken,
                     refreshToken = tokens.refreshToken,
-                    payload = accountWithUACRules
+                    payload = account
                 )
             )
         }
 
         return Result.Success(
-            accountWithUACRules
+            account
         )
     }
 
@@ -391,53 +313,17 @@ class AccountController(
             )
         }
 
-        val cachedAccount =
-            cacheService.get(CachedKeys.getAccountKey(identifier))
-
-
-        val account = if (cachedAccount != null) {
-            json.readValue<Account>(cachedAccount)
-        } else {
-            val fetchedAccount = accountRepository.getAccount(identifier)
-                ?: return Result.Error(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    error = ErrorResponse(
-                        errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                        message = "Account not found."
-                    )
+        val account = accountRepository.getAccountWithIAMRoles(identifier)
+            ?: return Result.Error(
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
                 )
-
-            cacheService.set(
-                CachedKeys.getAccountKey(fetchedAccount.uuid.toHexString()),
-                json.writeValueAsString(fetchedAccount)
             )
 
-            fetchedAccount
-        }
-
         return Result.Success(
-            getAccountWithPrivileges(account)
+            account
         )
     }
-
-    private suspend fun getAccountWithPrivileges(account: Account): AccountWithIAMRoles {
-        val accountPrivileges = iamController.getRolesAssociatedWithAccount(account.uuid.toHexString())
-
-        val accountWithIAMRoles = AccountWithIAMRoles(
-            uuid = account.uuid,
-            email = account.email,
-            username = account.username,
-            avatarURL = account.avatarURL,
-            displayName = account.displayName,
-            principals = accountPrivileges
-        )
-
-        cacheService.set(
-            CachedKeys.getAccountWithPrivilegesKey(account.uuid.toHexString()),
-            json.writeValueAsString(accountWithIAMRoles)
-        )
-
-        return accountWithIAMRoles
-    }
-
 }

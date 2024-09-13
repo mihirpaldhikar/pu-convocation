@@ -13,8 +13,6 @@
 
 package com.puconvocation.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
 import com.puconvocation.commons.dto.UpdateIAMRole
@@ -26,7 +24,6 @@ import com.puconvocation.enums.PrincipalOperation
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 
@@ -34,8 +31,7 @@ class IAMController(
     private val accountRepository: AccountRepository,
     private val iamRepository: IAMRepository,
     private val jsonWebToken: JsonWebToken,
-    private val json: ObjectMapper,
-    private val cacheService: CacheService
+    private val cacheController: CacheController
 
 ) {
     suspend fun getRule(authorizationToken: String?, name: String): Result<IAMRole, ErrorResponse> {
@@ -140,7 +136,8 @@ class IAMController(
                 )
             }
 
-            cacheService.invalidate(CachedKeys.getAllRulesAssociatedWithAccount(account))
+            cacheController.invalidate(CachedKeys.accountKey(account))
+            cacheController.invalidate(CachedKeys.accountWithIAMRolesKey(account))
 
         }
 
@@ -232,7 +229,8 @@ class IAMController(
                     )
                 }
 
-                cacheService.invalidate(CachedKeys.getAllRulesAssociatedWithAccount(account.id))
+                cacheController.invalidate(CachedKeys.accountKey(account.id))
+                cacheController.invalidate(CachedKeys.accountWithIAMRolesKey(account.id))
 
                 if (account.operation == PrincipalOperation.ADD) {
                     ruleSet.principals.add(account.id)
@@ -262,30 +260,18 @@ class IAMController(
         )
     }
 
-    suspend fun getRolesAssociatedWithAccount(identifier: String): List<String> {
-        val cachedRulesForAccount = cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(identifier))
-        return if (cachedRulesForAccount != null) {
-            json.readValue<List<String>>(cachedRulesForAccount)
-        } else {
-            val fetchedAllRulesAssociatedWithAccount = iamRepository.listRulesForAccount(identifier)
-            cacheService.set(
-                CachedKeys.getAllRulesAssociatedWithAccount(identifier),
-                json.writeValueAsString(fetchedAllRulesAssociatedWithAccount)
-            )
-            fetchedAllRulesAssociatedWithAccount
-        }
-    }
-
     suspend fun isAuthorized(role: String, principal: String): Boolean {
         val separator = role.split(":")
         val operation = separator[0]
         val iam = separator[1]
 
+        val account = accountRepository.getAccountWithIAMRoles(principal) ?: return false
+
         return if (operation == "read") {
-            getRolesAssociatedWithAccount(principal).contains("write:$iam") ||
-                    getRolesAssociatedWithAccount(principal).contains("read:$iam")
+            account.principals.contains("write:$iam") ||
+                    account.principals.contains("read:$iam")
         } else {
-            getRolesAssociatedWithAccount(principal).contains("write:$iam")
+            account.principals.contains("write:$iam")
         }
     }
 

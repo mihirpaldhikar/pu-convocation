@@ -18,7 +18,7 @@ import com.puconvocation.Environment
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.security.passkeys.PasskeyRelyingParty
-import com.puconvocation.services.CacheService
+import com.puconvocation.controllers.CacheController
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
@@ -50,8 +50,8 @@ object CoreModule {
             ).getRelyingParty()
         }
 
-        single<CacheService> {
-            CacheService(
+        single<CacheController> {
+            CacheController(
                 pool = get<JedisPool>(),
             )
         }

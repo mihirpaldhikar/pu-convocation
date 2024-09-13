@@ -13,15 +13,22 @@
 
 package com.puconvocation.di
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.controllers.CacheController
 import org.koin.dsl.module
 
 object RepositoriesModule {
     val init = module {
         single<AccountRepository> {
-            AccountRepository(database = get<MongoDatabase>())
+            AccountRepository(
+                database = get<MongoDatabase>(),
+                cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
+                iamRepository = get<IAMRepository>()
+            )
         }
 
         single<IAMRepository> {
