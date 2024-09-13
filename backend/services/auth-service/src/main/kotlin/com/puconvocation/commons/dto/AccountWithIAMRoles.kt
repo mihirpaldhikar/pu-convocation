@@ -37,6 +37,6 @@ data class AccountWithIAMRoles(
     @JsonProperty("avatarURL")
     val avatarURL: String,
 
-    @JsonProperty("principals")
-    val principals: List<String>,
+    @JsonProperty("iamRoles")
+    val iamRoles: List<String>,
 )

@@ -105,7 +105,7 @@ class AccountRepository(
             username = account.username,
             avatarURL = account.avatarURL,
             displayName = account.displayName,
-            principals = iamRoles
+            iamRoles = iamRoles
         )
 
         cache.set(

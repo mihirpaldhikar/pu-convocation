@@ -268,10 +268,10 @@ class IAMController(
         val account = accountRepository.getAccountWithIAMRoles(principal) ?: return false
 
         return if (operation == "read") {
-            account.principals.contains("write:$iam") ||
-                    account.principals.contains("read:$iam")
+            account.iamRoles.contains("write:$iam") ||
+                    account.iamRoles.contains("read:$iam")
         } else {
-            account.principals.contains("write:$iam")
+            account.iamRoles.contains("write:$iam")
         }
     }
 
