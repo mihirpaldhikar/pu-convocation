@@ -140,7 +140,7 @@ class IAMController(
                 )
             }
 
-            cacheService.remove(CachedKeys.getAllRulesAssociatedWithAccount(account))
+            cacheService.invalidate(CachedKeys.getAllRulesAssociatedWithAccount(account))
 
         }
 
@@ -232,7 +232,7 @@ class IAMController(
                     )
                 }
 
-                cacheService.remove(CachedKeys.getAllRulesAssociatedWithAccount(account.id))
+                cacheService.invalidate(CachedKeys.getAllRulesAssociatedWithAccount(account.id))
 
                 if (account.operation == PrincipalOperation.ADD) {
                     ruleSet.principals.add(account.id)

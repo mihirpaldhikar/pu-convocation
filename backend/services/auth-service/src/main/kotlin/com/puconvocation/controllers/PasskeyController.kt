@@ -146,9 +146,9 @@ class PasskeyController(
             )
         }
 
-        cacheService.remove(CachedKeys.getPasskeyPKCKey(identifier))
-        cacheService.remove(CachedKeys.getPasskeyAssertionKey(identifier))
-        cacheService.remove(CachedKeys.getAccountKey(identifier))
+        cacheService.invalidate(CachedKeys.getPasskeyPKCKey(identifier))
+        cacheService.invalidate(CachedKeys.getPasskeyAssertionKey(identifier))
+        cacheService.invalidate(CachedKeys.getAccountKey(identifier))
 
         return Result.Success(
             httpStatusCode = HttpStatusCode.Created,
@@ -232,9 +232,9 @@ class PasskeyController(
                 refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
             )
 
-            cacheService.remove(CachedKeys.getPasskeyPKCKey(identifier))
-            cacheService.remove(CachedKeys.getPasskeyAssertionKey(identifier))
-            cacheService.remove(CachedKeys.getAccountKey(identifier))
+            cacheService.invalidate(CachedKeys.getPasskeyPKCKey(identifier))
+            cacheService.invalidate(CachedKeys.getPasskeyAssertionKey(identifier))
+            cacheService.invalidate(CachedKeys.getAccountKey(identifier))
 
             return Result.Success(
                 securityTokens

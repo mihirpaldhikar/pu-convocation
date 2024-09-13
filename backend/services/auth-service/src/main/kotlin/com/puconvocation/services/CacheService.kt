@@ -13,42 +13,42 @@
 
 package com.puconvocation.services
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import redis.clients.jedis.JedisPool
+import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 
 class CacheService(
-    private val pool: JedisPool,
-    private val inMemoryCache: InMemoryCache
+    private val pool: JedisPool
 ) {
 
-    fun set(key: String, value: String) {
-        inMemoryCache.set(key, value)
+    private val localCache = Caffeine.newBuilder()
+        .expireAfterWrite(5, TimeUnit.MINUTES)
+        .build<String, String>()
+
+    fun set(key: String, value: String, expiryDuration: Duration? = null) {
+        localCache.put(key, value)
         pool.resource.use { jedis ->
-            jedis.set(key, value)
+            jedis.setex(key, expiryDuration?.seconds ?: TimeUnit.MINUTES.toSeconds(5), value)
         }
     }
 
     fun get(key: String): String? {
-        val inMemoryValue = inMemoryCache.get(key)
-
-        if (inMemoryValue != null) {
-            return inMemoryValue
+        return localCache.getIfPresent(key) ?: pool.resource.use { jedis ->
+            val distributedCache = jedis.get(key)
+            if (distributedCache != null) {
+                localCache.put(key, distributedCache)
+            }
+            distributedCache
         }
-
-        val cache = pool.resource.use { jedis ->
-            jedis.get(key)
-        }
-
-        if (cache != null) {
-            inMemoryCache.set(key, cache)
-        }
-        return cache
     }
 
-    fun remove(key: String) {
-        inMemoryCache.remove(key)
+    fun invalidate(key: String) {
+        localCache.invalidate(key)
         pool.resource.use { jedis ->
             jedis.del(key)
         }
     }
+
 }
