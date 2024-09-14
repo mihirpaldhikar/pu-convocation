@@ -5,8 +5,12 @@
   "description": "Job responsible for sending transactional emails.",
   "main": "index.js",
   "type": "module",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -22,6 +26,16 @@
   },
   "homepage": "https://github.com/mihirpaldhikar/pu-convocation#readme",
   "devDependencies": {
-    "typescript": "^5.6.2"
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^22.5.5",
+    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "rollup": "^4.21.3",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.5.0"
   }
 }
