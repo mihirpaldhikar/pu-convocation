@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declarationDir": "types",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strictFunctionTypes": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "emitDeclarationOnly": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "pretty": true
+  },
+  "include": ["src/**/*", "eslint.config.js"],
+  "exclude": ["node_modules"]
+}
