@@ -15,7 +15,6 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import pluginPeerDepsExternalModule from "rollup-plugin-peer-deps-external";
 import terser from "@rollup/plugin-terser";
-import eslint from "@rollup/plugin-eslint";
 
 const rollupConfiguration = [
     {
@@ -24,13 +23,8 @@ const rollupConfiguration = [
             dir: "dist",
             format: "esm",
         },
+        external: ["@aws-sdk/client-ses"],
         plugins: [
-            eslint({
-                throwOnError: true,
-                throwOnWarning: true,
-                include: ["eslint.config.js"],
-                exclude: ["node_modules/**"],
-            }),
             commonjs({
                 transformMixedEsModules: true,
                 include: [],

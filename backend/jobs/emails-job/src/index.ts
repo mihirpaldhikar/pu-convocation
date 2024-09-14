@@ -11,4 +11,24 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-console.log("HELLO WORLD!")
+import { SQSEvent, SQSHandler } from "aws-lambda";
+import { EmailRequest } from "./dto/index.js";
+import { SendTemplatedEmailRequest, SES } from "@aws-sdk/client-ses";
+
+export const handler: SQSHandler = async (event: SQSEvent) => {
+  const emailClient = new SES();
+
+  for (const record of event.Records) {
+    const emailRequest: EmailRequest = JSON.parse(record.body);
+    const template: SendTemplatedEmailRequest = {
+      Destination: {
+        ToAddresses: [emailRequest.receiver],
+      },
+      Source: emailRequest.sender,
+      ReplyToAddresses: [emailRequest.replyTo],
+      Template: emailRequest.templateId,
+      TemplateData: JSON.stringify(emailRequest.payload),
+    };
+    await emailClient.sendTemplatedEmail(template);
+  }
+};
