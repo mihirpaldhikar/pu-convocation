@@ -75,7 +75,7 @@ export default function VerificationPasscodeEmail(): JSX.Element {
               </Text>
             </Section>
             <Section className={"my-5 flex flex-col items-center justify-center"}>
-              <Button href={`__passURL__`}
+              <Button href={`{{passURL}}`}
                       className={"bg-yellow-300 text-black font-bold px-5 py-3 rounded-xl"}>
                 View Your Pass
               </Button>
