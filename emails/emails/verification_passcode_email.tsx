@@ -44,12 +44,12 @@ export default function VerificationPasscodeEmail(): JSX.Element {
             <Section className={"flex flex-col items-center justify-center"}>
               <Img src={"https://assets.puconvocation.com/logos/university_logo.png"} className={"w-full"} />
               <Heading className={"text-red-600 text-center font-bold"}>
-                __convocationNumber__<sup>th</sup> Convocation
+                {"{{convocationNumber}}"}<sup>th</sup> Convocation
               </Heading>
             </Section>
             <Section>
               <Text className={"text-xl font-bold"}>
-                Hello __studentName__!
+                Hello {"{{studentName}}"}!
               </Text>
             </Section>
             <Section>
@@ -71,7 +71,7 @@ export default function VerificationPasscodeEmail(): JSX.Element {
             </Section>
             <Section className={"flex flex-col items-center justify-center w-full tracking-wider"}>
               <Text className={"text-2xl bg-red-100 w-fit px-5 py-3 rounded-xl text-red-600 font-mono font-bold"}>
-                __verificationCode__
+                {"{{verificationCode}}"}
               </Text>
             </Section>
             <Section className={"my-5 flex flex-col items-center justify-center"}>
@@ -142,7 +142,7 @@ export default function VerificationPasscodeEmail(): JSX.Element {
                 This mail is machine generated. Please do not reply.
               </Text>
               <Text className={"text-center text-xs"}>
-                &copy; __year__ Parul University
+                &copy; {"{{year}}"} Parul University
               </Text>
             </Section>
             <Section>
