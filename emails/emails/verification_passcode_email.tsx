@@ -66,7 +66,7 @@ export default function VerificationPasscodeEmail(): JSX.Element {
                 Below is the verification code that you will need to share with your
                 Faculty/Coordinator
                 after scanning your
-                Unique QR Code displayed on your Profile after which you will receive you Degree.
+                Unique QR Code displayed on your Profile after which you will receive your Degree.
               </Text>
             </Section>
             <Section className={"flex flex-col items-center justify-center w-full tracking-wider"}>
