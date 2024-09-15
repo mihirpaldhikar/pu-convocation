@@ -1,5 +1,5 @@
 {
-  "name": "emails-job",
+  "name": "email-job",
   "version": "1.0.0",
   "private": true,
   "description": "Job responsible for sending transactional emails.",
