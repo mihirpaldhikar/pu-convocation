@@ -23,7 +23,6 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -35,7 +34,7 @@ class TransactionController(
     private val attendeeRepository: AttendeeRepository,
     private val jsonWebToken: JsonWebToken,
     private val authService: AuthService,
-    private val cacheService: CacheService,
+    private val cache: CacheController,
 ) {
     suspend fun insertTransaction(
         authorizationToken: String?,
@@ -106,7 +105,7 @@ class TransactionController(
         }
 
         attendeeRepository.setDegreeReceivedStatus(transactionRequest.studentEnrollmentNumber, true);
-        cacheService.remove(CachedKeys.getAttendeeKey(transactionRequest.studentEnrollmentNumber))
+        cache.invalidate(CachedKeys.attendeeKey(transactionRequest.studentEnrollmentNumber))
 
         return Result.Success(
             hashMapOf(

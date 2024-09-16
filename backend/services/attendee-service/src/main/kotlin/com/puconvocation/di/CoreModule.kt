@@ -15,11 +15,10 @@ package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
-import com.puconvocation.services.InMemoryCache
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
@@ -37,14 +36,7 @@ object CoreModule {
                 get<Environment>().redisURL
             )
         }
-
-        single<InMemoryCache> {
-            InMemoryCache(
-                expiryDuration = 1,
-                timeUnit = TimeUnit.MINUTES,
-            )
-        }
-
+        
         single<ObjectMapper> {
             ObjectMapper()
         }
@@ -57,10 +49,9 @@ object CoreModule {
             CSVSerializer()
         }
 
-        single<CacheService> {
-            CacheService(
+        single<CacheController> {
+            CacheController(
                 pool = get<JedisPool>(),
-                inMemoryCache = get<InMemoryCache>()
             )
         }
 
@@ -68,7 +59,7 @@ object CoreModule {
             AuthService(
                 environment = get<Environment>(),
                 client = get<HttpClient>(),
-                cacheService = get<CacheService>(),
+                cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
             )

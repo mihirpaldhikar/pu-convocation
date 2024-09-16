@@ -14,19 +14,19 @@
 package com.puconvocation.constants
 
 object CachedKeys {
-    fun getAllRulesAssociatedWithAccount(identifier: String): String {
+    fun allRulesAssociatedWithAccount(identifier: String): String {
         return "allAssociatedRules:$identifier"
     }
 
-    fun getAttendeeKey(identifier: String): String {
+    fun attendeeKey(identifier: String): String {
         return "attendee:$identifier"
     }
 
-    fun getAttendeeConfigKey(): String {
+    fun attendeeConfigKey(): String {
         return "config:attendeeConfig"
     }
 
-    fun getWebsiteConfigKey(): String {
+    fun websiteConfigKey(): String {
         return "config:Website"
     }
 }

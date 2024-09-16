@@ -25,7 +25,6 @@ import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -33,7 +32,7 @@ import io.ktor.http.content.*
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
-    private val cacheService: CacheService,
+    private val cache: CacheController,
     private val authService: AuthService,
     private val json: ObjectMapper,
 ) {
@@ -49,7 +48,7 @@ class AttendeeController(
             )
         }
 
-        val cachedAttendee = cacheService.get(CachedKeys.getAttendeeKey(identifier))
+        val cachedAttendee = cache.get(CachedKeys.attendeeKey(identifier))
         val attendee = if (cachedAttendee != null) {
             json.readValue<AttendeeWithEnclosureMetadata>(cachedAttendee)
         } else {
@@ -63,7 +62,7 @@ class AttendeeController(
 
                 )
 
-            val enclosure = json.readValue<Enclosure>(cacheService.get(CachedKeys.getWebsiteConfigKey())!!)
+            val enclosure = json.readValue<Enclosure>(cache.get(CachedKeys.websiteConfigKey())!!)
 
             val computedAttendee = AttendeeWithEnclosureMetadata(
                 attendee = fetchedAttendee,
@@ -75,7 +74,7 @@ class AttendeeController(
                 }
             )
 
-            cacheService.set(CachedKeys.getAttendeeKey(identifier), json.writeValueAsString(computedAttendee))
+            cache.set(CachedKeys.attendeeKey(identifier), json.writeValueAsString(computedAttendee))
 
             computedAttendee
         }
@@ -230,7 +229,7 @@ class AttendeeController(
             )
         }
 
-        cacheService.remove(CachedKeys.getAttendeeConfigKey())
+        cache.invalidate(CachedKeys.attendeeConfigKey())
 
         return Result.Success(
             hashMapOf(
@@ -281,7 +280,7 @@ class AttendeeController(
             )
         }
 
-        cacheService.remove(CachedKeys.getAttendeeConfigKey())
+        cache.invalidate(CachedKeys.attendeeConfigKey())
 
         return Result.Success(
             hashMapOf(
@@ -323,13 +322,13 @@ class AttendeeController(
     }
 
     private suspend fun getAttendeeConfig(): AttendeeConfig {
-        val cachedAttendeeConfig = cacheService.get(CachedKeys.getAttendeeConfigKey())
+        val cachedAttendeeConfig = cache.get(CachedKeys.attendeeConfigKey())
         return if (cachedAttendeeConfig != null) {
             json.readValue<AttendeeConfig>(cachedAttendeeConfig.toString())
         } else {
             val fetchedAttendeeConfig = attendeeRepository.getAttendeeConfig()
 
-            cacheService.set(CachedKeys.getAttendeeConfigKey(), json.writeValueAsString(fetchedAttendeeConfig))
+            cache.set(CachedKeys.attendeeConfigKey(), json.writeValueAsString(fetchedAttendeeConfig))
 
             fetchedAttendeeConfig
         }

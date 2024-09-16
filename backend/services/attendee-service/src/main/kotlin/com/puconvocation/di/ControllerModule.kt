@@ -14,15 +14,14 @@
 package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
 import com.puconvocation.controllers.AttendeeController
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.controllers.TransactionController
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -31,7 +30,7 @@ object ControllerModule {
             AttendeeController(
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
-                cacheService = get<CacheService>(),
+                cache = get<CacheController>(),
                 authService = get<AuthService>(),
                 json = get<ObjectMapper>(),
             )
@@ -43,7 +42,7 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
-                cacheService = get<CacheService>(),
+                cache = get<CacheController>(),
             )
         }
     }
