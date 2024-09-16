@@ -27,6 +27,10 @@ class Environment {
 
     val redisURL = System.getenv("REDIS_URL").toString()
 
+    val messageQueueRegion = System.getenv("MESSAGE_QUEUE_REGION").toString()
+    val emailQueue = System.getenv("EMAIL_QUEUE").toString()
+    val transactionQueue = System.getenv("TRANSACTION_QUEUE").toString()
+
     val jwtMetadata: JWTMetadata = JWTMetadata(
         authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY"),
         refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY"),

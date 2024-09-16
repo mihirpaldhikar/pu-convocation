@@ -13,12 +13,14 @@
 
 package com.puconvocation.di
 
+import aws.sdk.kotlin.services.sqs.SqsClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.MessageQueue
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
@@ -33,6 +35,19 @@ object CoreModule {
         single<JedisPool> {
             JedisPool(
                 get<Environment>().redisURL
+            )
+        }
+
+        single<SqsClient> {
+            SqsClient {
+                region = get<Environment>().messageQueueRegion
+            }
+        }
+
+        single<MessageQueue> {
+            MessageQueue(
+                sqsClient = get<SqsClient>(),
+                environment = get<Environment>()
             )
         }
 

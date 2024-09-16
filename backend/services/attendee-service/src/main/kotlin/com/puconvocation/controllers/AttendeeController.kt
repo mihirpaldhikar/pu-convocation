@@ -13,6 +13,7 @@
 
 package com.puconvocation.controllers
 
+import aws.sdk.kotlin.services.sqs.model.SendMessageBatchRequestEntry
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.database.mongodb.entities.Attendee
@@ -21,14 +22,17 @@ import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.MessageQueue
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
+import java.util.*
 
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
     private val authService: AuthService,
+    private val messageQueue: MessageQueue,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
         if (!attendeeConfig().locked) {
@@ -180,14 +184,13 @@ class AttendeeController(
 
         if (lock == attendeeConfig().locked) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.NotModified,
+                httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
                     errorCode = if (lock) ResponseCode.ALREADY_LOCKED else ResponseCode.ALREADY_UNLOCKED,
                     message = "Attendees List is already ${if (lock) "locked" else "unlocked"}."
                 )
             )
         }
-
 
         val acknowledge = attendeeRepository.updateAttendeeConfig(
             attendeeConfig().copy(
@@ -202,6 +205,31 @@ class AttendeeController(
                     message = "The Attendees List couldn't be ${if (lock) "locked" else "unlocked"}. Please try again later."
                 )
             )
+        }
+
+        if (lock) {
+            var page = 0;
+            val limit = 10
+            val totalAttendees = attendeeRepository.getTotalAttendees()
+            val batchMessage: MutableList<SendMessageBatchRequestEntry> = mutableListOf()
+            val year = Calendar.getInstance().get(Calendar.YEAR)
+
+            while (page * limit < totalAttendees) {
+                val attendees = attendeeRepository.getAttendees(page, limit)
+                for (attendee in attendees) {
+                    batchMessage.add(
+                        SendMessageBatchRequestEntry {
+                            id = attendee.enrollmentNumber
+                            messageGroupId = "passcodeEmail"
+                            messageBody =
+                                "{\"sender\":\"PU Convocation <no-reply@puconvocation.com>\",\"receiver\":\"${attendee.enrollmentNumber}@paruluniversity.ac.in\",\"replyTo\":\"support@puconvocation.com\",\"templateId\":\"VerificationPasscodeTemplate\",\"payload\":{\"convocationNumber\":\"8\",\"verificationCode\":\"${attendee.verificationCode}\",\"year\":\"${year}\",\"studentName\":\"${attendee.studentName}\",\"passURL\":\"https://puconvocation.com/attendee/${attendee.enrollmentNumber}\"}}"
+                        }
+                    )
+                }
+                messageQueue.sendBatchMessages(batchMessage, MessageQueue.QueueType.EMAIL)
+                batchMessage.clear()
+                ++page
+            }
         }
 
         return Result.Success(

@@ -74,6 +74,9 @@ dependencies {
     // Redis
     implementation("redis.clients:jedis:5.1.5")
 
+    // AWS SQS
+    implementation("aws.sdk.kotlin:sqs:1.3.32")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

@@ -20,6 +20,7 @@ import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.MessageQueue
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -29,6 +30,7 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 csvSerializer = get<CSVSerializer>(),
                 authService = get<AuthService>(),
+                messageQueue = get<MessageQueue>(),
             )
         }
 
