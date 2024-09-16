@@ -105,8 +105,8 @@ export default class HTTPService {
     let errorResponse = JSON.parse(errorResponseString);
 
     return {
-      statusCode: StatusCode.FAILURE,
+      statusCode: StatusCode[errorResponse["errorCode"]] ?? StatusCode.FAILURE,
       message: errorResponse["message"],
-    } as Response<string>;
+    } as unknown as Response<string>;
   }
 }
