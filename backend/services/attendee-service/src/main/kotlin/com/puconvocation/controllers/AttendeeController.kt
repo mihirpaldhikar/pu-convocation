@@ -13,12 +13,8 @@
 
 package com.puconvocation.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
-import com.puconvocation.commons.dto.Enclosure
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
@@ -32,12 +28,10 @@ import io.ktor.http.content.*
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
-    private val cache: CacheController,
     private val authService: AuthService,
-    private val json: ObjectMapper,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
-        if (!getAttendeeConfig().locked) {
+        if (!attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -48,38 +42,15 @@ class AttendeeController(
             )
         }
 
-        val cachedAttendee = cache.get(CachedKeys.attendeeKey(identifier))
-        val attendee = if (cachedAttendee != null) {
-            json.readValue<AttendeeWithEnclosureMetadata>(cachedAttendee)
-        } else {
-            val fetchedAttendee = attendeeRepository.getAttendee(identifier)
-                ?: return Result.Error(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    error = ErrorResponse(
-                        errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
-                        message = "Could not find attendee for identifier $identifier"
-                    )
-
+        val attendee = attendeeRepository.getAttendeeWithEnclosureMetadata(identifier)
+            ?: return Result.Error(
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ATTENDEE_NOT_FOUND,
+                    message = "Could not find attendee for identifier $identifier"
                 )
 
-            val enclosure = json.readValue<Enclosure>(cache.get(CachedKeys.websiteConfigKey())!!)
-
-            val computedAttendee = AttendeeWithEnclosureMetadata(
-                attendee = fetchedAttendee,
-                enclosureMetadata = enclosure.enclosureMapping.first {
-                    it.letter.equals(
-                        fetchedAttendee.enclosure,
-                        ignoreCase = true
-                    )
-                }
             )
-
-            cache.set(CachedKeys.attendeeKey(identifier), json.writeValueAsString(computedAttendee))
-
-            computedAttendee
-        }
-
-
 
         return Result.Success(
             attendee
@@ -106,7 +77,7 @@ class AttendeeController(
             )
         }
 
-        if (getAttendeeConfig().locked) {
+        if (attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
@@ -204,7 +175,7 @@ class AttendeeController(
             )
         }
 
-        if (getAttendeeConfig().locked) {
+        if (attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
                 error = ErrorResponse(
@@ -215,7 +186,7 @@ class AttendeeController(
         }
 
         val locked = attendeeRepository.updateAttendeeConfig(
-            getAttendeeConfig().copy(
+            attendeeConfig().copy(
                 locked = true,
             )
         )
@@ -228,8 +199,6 @@ class AttendeeController(
                 )
             )
         }
-
-        cache.invalidate(CachedKeys.attendeeConfigKey())
 
         return Result.Success(
             hashMapOf(
@@ -254,7 +223,7 @@ class AttendeeController(
             )
         }
 
-        if (!getAttendeeConfig().locked) {
+        if (!attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
                 error = ErrorResponse(
@@ -265,7 +234,7 @@ class AttendeeController(
         }
 
         val unlocked = attendeeRepository.updateAttendeeConfig(
-            getAttendeeConfig().copy(
+            attendeeConfig().copy(
                 locked = false,
             )
         )
@@ -279,8 +248,6 @@ class AttendeeController(
                 )
             )
         }
-
-        cache.invalidate(CachedKeys.attendeeConfigKey())
 
         return Result.Success(
             hashMapOf(
@@ -321,16 +288,7 @@ class AttendeeController(
         )
     }
 
-    private suspend fun getAttendeeConfig(): AttendeeConfig {
-        val cachedAttendeeConfig = cache.get(CachedKeys.attendeeConfigKey())
-        return if (cachedAttendeeConfig != null) {
-            json.readValue<AttendeeConfig>(cachedAttendeeConfig.toString())
-        } else {
-            val fetchedAttendeeConfig = attendeeRepository.getAttendeeConfig()
-
-            cache.set(CachedKeys.attendeeConfigKey(), json.writeValueAsString(fetchedAttendeeConfig))
-
-            fetchedAttendeeConfig
-        }
+    private suspend fun attendeeConfig(): AttendeeConfig {
+        return attendeeRepository.getAttendeeConfig()
     }
 }

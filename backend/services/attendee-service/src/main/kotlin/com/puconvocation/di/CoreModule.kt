@@ -23,7 +23,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
-import java.util.concurrent.TimeUnit
 
 object CoreModule {
     val init = module {
@@ -36,7 +35,7 @@ object CoreModule {
                 get<Environment>().redisURL
             )
         }
-        
+
         single<ObjectMapper> {
             ObjectMapper()
         }

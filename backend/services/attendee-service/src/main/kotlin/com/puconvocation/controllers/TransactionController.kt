@@ -15,7 +15,6 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.TransactionRequest
-import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Transaction
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
@@ -34,7 +33,6 @@ class TransactionController(
     private val attendeeRepository: AttendeeRepository,
     private val jsonWebToken: JsonWebToken,
     private val authService: AuthService,
-    private val cache: CacheController,
 ) {
     suspend fun insertTransaction(
         authorizationToken: String?,
@@ -105,7 +103,6 @@ class TransactionController(
         }
 
         attendeeRepository.setDegreeReceivedStatus(transactionRequest.studentEnrollmentNumber, true);
-        cache.invalidate(CachedKeys.attendeeKey(transactionRequest.studentEnrollmentNumber))
 
         return Result.Success(
             hashMapOf(

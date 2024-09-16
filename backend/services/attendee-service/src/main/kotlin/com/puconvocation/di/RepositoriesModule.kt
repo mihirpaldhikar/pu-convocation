@@ -13,7 +13,9 @@
 
 package com.puconvocation.di
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import org.koin.dsl.module
@@ -21,11 +23,18 @@ import org.koin.dsl.module
 object RepositoriesModule {
     val init = module {
         single<AttendeeRepository> {
-            AttendeeRepository(database = get<MongoDatabase>())
+            AttendeeRepository(
+                database = get<MongoDatabase>(),
+                cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
+            )
         }
 
         single<TransactionRepository> {
-            TransactionRepository(database = get<MongoDatabase>())
+            TransactionRepository(
+                database = get<MongoDatabase>(), cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
+            )
         }
     }
 }

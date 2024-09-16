@@ -13,11 +13,14 @@
 
 package com.puconvocation.database.mongodb.datasource
 
+import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.AttendeeConfig
 
 interface AttendeeDatasource {
     suspend fun getAttendee(identifier: String): Attendee?
+
+    suspend fun getAttendeeWithEnclosureMetadata(identifier: String): AttendeeWithEnclosureMetadata?
 
     suspend fun getAttendeeFromVerificationToken(token: String): Attendee?
 

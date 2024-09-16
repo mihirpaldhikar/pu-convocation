@@ -13,16 +13,22 @@
 
 package com.puconvocation.database.mongodb.repositories
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.constants.CachedKeys
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasource.TransactionDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.Transaction
 import kotlinx.coroutines.flow.firstOrNull
 
 class TransactionRepository(
-    database: MongoDatabase
+    database: MongoDatabase,
+    private val mapper: ObjectMapper,
+    private val cache: CacheController
 ) : TransactionDatasource {
 
     private val transactionCollection: MongoCollection<Attendee> =
@@ -33,11 +39,21 @@ class TransactionRepository(
     }
 
     override suspend fun getTransaction(transactionId: String): Transaction? {
-        return transactionCollection.withDocumentClass<Transaction>().find(
+        val cachedTransaction = cache.get(CachedKeys.transactionKey(transactionId))
+        if (cachedTransaction != null) {
+            return mapper.readValue<Transaction>(cachedTransaction)
+        }
+        val fetchedTransaction = transactionCollection.withDocumentClass<Transaction>().find(
             eq(
                 "_id", transactionId
             )
         ).firstOrNull()
+
+        if (fetchedTransaction != null) {
+            cache.set(CachedKeys.transactionKey(transactionId), mapper.writeValueAsString(fetchedTransaction))
+        }
+
+        return fetchedTransaction
     }
 
     override suspend fun transactionExists(enrollmentNumber: String): Boolean {

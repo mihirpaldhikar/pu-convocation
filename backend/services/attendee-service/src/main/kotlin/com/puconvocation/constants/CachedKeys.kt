@@ -22,11 +22,23 @@ object CachedKeys {
         return "attendee:$identifier"
     }
 
+    fun attendeeWithEnclosureMetadataKey(identifier: String): String {
+        return "attendeeWithEnclosureMetadataKey:$identifier"
+    }
+
     fun attendeeConfigKey(): String {
         return "config:attendeeConfig"
     }
 
     fun websiteConfigKey(): String {
         return "config:Website"
+    }
+
+    fun attendeesWithPaginationKey(page: Int, limit: Int): String {
+        return "attendeesWithPagination:$page:$limit"
+    }
+
+    fun transactionKey(identifier: String): String {
+        return "transaction:$identifier"
     }
 }
