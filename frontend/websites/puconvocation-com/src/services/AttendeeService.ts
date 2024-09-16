@@ -17,12 +17,12 @@ import {
   AttendeeWithPagination,
   Response,
 } from "@dto/index";
-import { HTTPService } from "@services/index";
+import { HttpService } from "@services/index";
 
 export default class AuthService {
   private BASE_URL = process.env.NEXT_PUBLIC_ATTENDEE_SERVICE_URL as string;
 
-  private httpService = new HTTPService(this.BASE_URL);
+  private httpService = new HttpService(this.BASE_URL);
 
   private ATTENDEE_ROUTES = this.BASE_URL.concat("/attendees");
 

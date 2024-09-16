@@ -13,12 +13,12 @@
 
 import { Response } from "@dto/Response";
 import { WebsiteConfig } from "@dto/index";
-import { HTTPService } from "@services/index";
+import { HttpService } from "@services/index";
 
 export default class DynamicsService {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
-  private httpService = new HTTPService(this.BASE_URL);
+  private httpService = new HttpService(this.BASE_URL);
 
   private CONFIG_ROUTE = this.BASE_URL.concat("/websiteConfig");
 

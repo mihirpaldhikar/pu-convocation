@@ -17,12 +17,12 @@ import {
 } from "@github/webauthn-json";
 import { Account, Response, UpdateUACRuleRequest } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
-import { HTTPService } from "@services/index";
+import { HttpService } from "@services/index";
 
 export default class AuthService {
   private BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string;
 
-  private httpService = new HTTPService(this.BASE_URL);
+  private httpService = new HttpService(this.BASE_URL);
 
   private ACCOUNT_ROUTE = this.BASE_URL.concat("/accounts");
   private UAC_ROUTE = this.BASE_URL.concat("/iam");

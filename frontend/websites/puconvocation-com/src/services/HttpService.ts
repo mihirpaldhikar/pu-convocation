@@ -15,7 +15,7 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { Response } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 
-export default class HTTPService {
+export default class HttpService {
   private httpClient: AxiosInstance;
 
   private REQUEST_TIMEOUT = 1000 * 10;
