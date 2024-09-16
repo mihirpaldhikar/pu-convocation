@@ -22,10 +22,14 @@ import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.MessageQueue
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
+import kotlinx.coroutines.delay
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class AttendeeController(
@@ -33,6 +37,7 @@ class AttendeeController(
     private val csvSerializer: CSVSerializer,
     private val authService: AuthService,
     private val messageQueue: MessageQueue,
+    private val distributedLock: DistributedLock
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
         if (!attendeeConfig().locked) {
@@ -182,6 +187,20 @@ class AttendeeController(
             )
         }
 
+        val lockAcquired = distributedLock.acquire("attendeeLock", Duration.of(5, ChronoUnit.MINUTES))
+
+        if (!lockAcquired) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ALREADY_LOCKED,
+                    message = "The Attendees List couldn't be ${if (lock) "locked" else "unlocked"}. Please try again later."
+                )
+            )
+        }
+
+        delay(20000)
+
         if (lock == attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -200,7 +219,8 @@ class AttendeeController(
 
         if (!acknowledge) {
             return Result.Error(
-                ErrorResponse(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
                     errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
                     message = "The Attendees List couldn't be ${if (lock) "locked" else "unlocked"}. Please try again later."
                 )
@@ -231,6 +251,8 @@ class AttendeeController(
                 ++page
             }
         }
+
+        distributedLock.release("attendeeLock")
 
         return Result.Success(
             hashMapOf(

@@ -20,6 +20,7 @@ import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.MessageQueue
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -35,6 +36,12 @@ object CoreModule {
         single<JedisPool> {
             JedisPool(
                 get<Environment>().redisURL
+            )
+        }
+
+        single<DistributedLock> {
+            DistributedLock(
+                jedisPool = get<JedisPool>(),
             )
         }
 
