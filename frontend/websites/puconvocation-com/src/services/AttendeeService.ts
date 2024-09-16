@@ -72,4 +72,12 @@ export default class AuthService {
       201,
     );
   }
+
+  public async mutateAttendeeLock(
+    locked: boolean,
+  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+    return this.httpService.post(
+      `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
+    );
+  }
 }
