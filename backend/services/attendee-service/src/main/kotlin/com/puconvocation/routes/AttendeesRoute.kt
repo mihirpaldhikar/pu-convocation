@@ -13,9 +13,9 @@
 
 package com.puconvocation.routes
 
+import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.enums.ResponseCode
-import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
@@ -76,15 +76,17 @@ fun Routing.attendeesRoute(
             sendResponse(result)
         }
 
-        post("/lockAttendees") {
+        post("/mutateAttendeeLock") {
             val authorizationToken = getSecurityTokens().authorizationToken
-            val result = attendeeController.lockAttendees(authorizationToken)
-            sendResponse(result)
-        }
-
-        post("/unLockAttendees") {
-            val authorizationToken = getSecurityTokens().authorizationToken
-            val result = attendeeController.unLockAttendees(authorizationToken)
+            val locked = call.request.queryParameters["locked"]?.toBooleanStrictOrNull() ?: return@post sendResponse(
+                Result.Error(
+                    ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide locked value as true or false as query parameter."
+                    )
+                )
+            )
+            val result = attendeeController.mutateAttendeeLock(authorizationToken, locked)
             sendResponse(result)
         }
     }

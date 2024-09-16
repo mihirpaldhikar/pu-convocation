@@ -160,7 +160,10 @@ class AttendeeController(
     }
 
 
-    suspend fun lockAttendees(authorizationToken: String?): Result<HashMap<String, Any>, ErrorResponse> {
+    suspend fun mutateAttendeeLock(
+        authorizationToken: String?,
+        lock: Boolean
+    ): Result<HashMap<String, Any>, ErrorResponse> {
         if (!authService.isAuthorized(
                 role = "write:Attendee",
                 principal = authorizationToken
@@ -170,32 +173,33 @@ class AttendeeController(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
                     errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to Lock attendee details."
+                    message = "You don't have privilege change attendee lock state."
                 )
             )
         }
 
-        if (attendeeConfig().locked) {
+        if (lock == attendeeConfig().locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.ALREADY_LOCKED,
-                    message = "Attendees List is already locked."
+                    errorCode = if (lock) ResponseCode.ALREADY_LOCKED else ResponseCode.ALREADY_UNLOCKED,
+                    message = "Attendees List is already ${if (lock) "locked" else "unlocked"}."
                 )
             )
         }
 
-        val locked = attendeeRepository.updateAttendeeConfig(
+
+        val acknowledge = attendeeRepository.updateAttendeeConfig(
             attendeeConfig().copy(
-                locked = true,
+                locked = lock,
             )
         )
 
-        if (!locked) {
+        if (!acknowledge) {
             return Result.Error(
                 ErrorResponse(
                     errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
-                    message = "The Attendees List couldn't be locked. Please try again later."
+                    message = "The Attendees List couldn't be ${if (lock) "locked" else "unlocked"}. Please try again later."
                 )
             )
         }
@@ -203,56 +207,7 @@ class AttendeeController(
         return Result.Success(
             hashMapOf(
                 "code" to ResponseCode.OK,
-                "message" to "Attendees List is now Locked."
-            )
-        )
-    }
-
-    suspend fun unLockAttendees(authorizationToken: String?): Result<HashMap<String, Any>, ErrorResponse> {
-        if (!authService.isAuthorized(
-                role = "write:Attendee",
-                principal = authorizationToken
-            )
-        ) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to unlock attendee details."
-                )
-            )
-        }
-
-        if (!attendeeConfig().locked) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.NotModified,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.ALREADY_UNLOCKED,
-                    message = "Attendees List is already unlocked."
-                )
-            )
-        }
-
-        val unlocked = attendeeRepository.updateAttendeeConfig(
-            attendeeConfig().copy(
-                locked = false,
-            )
-        )
-
-        if (!unlocked) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.NotModified,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
-                    message = "The Attendees List couldn't be unlocked. Please try again later."
-                )
-            )
-        }
-
-        return Result.Success(
-            hashMapOf(
-                "code" to ResponseCode.OK,
-                "message" to "Attendees List is now UnLocked."
+                "message" to "Attendees List is ${if (lock) "locked" else "unlocked"}."
             )
         )
     }

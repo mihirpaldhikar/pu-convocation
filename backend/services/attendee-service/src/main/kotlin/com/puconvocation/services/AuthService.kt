@@ -83,6 +83,6 @@ class AuthService(
             header("X-IAM-CHECK", "$rule@$uuid")
         }
 
-        return response.bodyAsText().toBoolean()
+        return response.bodyAsText().toBooleanStrictOrNull() ?: false
     }
 }
