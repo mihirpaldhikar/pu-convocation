@@ -16,6 +16,7 @@ package com.puconvocation.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
+import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.enums.TokenType
@@ -45,10 +46,10 @@ class AuthService(
 
         if (ObjectId.isValid(principal)) {
             val cachedRulesForAccount =
-                cache.get(CachedKeys.allRulesAssociatedWithAccount(principal))
+                cache.get(CachedKeys.accountWithIAMRolesKey(principal))
 
             return if (cachedRulesForAccount != null) {
-                json.readValue<List<String>>(cachedRulesForAccount).contains(role)
+                json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles.contains(role)
             } else {
                 isOperationAllowed(principal, role)
             }
@@ -62,10 +63,10 @@ class AuthService(
         if (claims.isEmpty()) return false
 
         val cachedRulesForAccount =
-            cache.get(CachedKeys.allRulesAssociatedWithAccount(claims[0]))
+            cache.get(CachedKeys.accountWithIAMRolesKey(claims[0]))
 
         return if (cachedRulesForAccount != null) {
-            val roles = json.readValue<List<String>>(cachedRulesForAccount)
+            val roles = json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles
             if (operation == "read") {
                 roles.contains("write:$iam") ||
                         roles.contains("read:$iam")

@@ -14,8 +14,8 @@
 package com.puconvocation.constants
 
 object CachedKeys {
-    fun allRulesAssociatedWithAccount(identifier: String): String {
-        return "allAssociatedRules:$identifier"
+    fun accountWithIAMRolesKey(identifier: String): String {
+        return "accountWithIAMRoles:$identifier"
     }
 
     fun attendeeKey(identifier: String): String {
