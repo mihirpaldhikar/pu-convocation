@@ -65,6 +65,12 @@ dependencies {
     // Redis
     implementation("redis.clients:jedis:5.1.5")
 
+    // Apache Kafka
+    implementation("org.apache.kafka:kafka-clients:3.8.0")
+
+    // AWS MSK IAM Auth
+    implementation("software.amazon.msk:aws-msk-iam-auth:2.2.0")
+
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }

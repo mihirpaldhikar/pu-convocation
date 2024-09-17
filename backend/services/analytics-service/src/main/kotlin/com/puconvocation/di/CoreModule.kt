@@ -19,6 +19,7 @@ import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.KafkaService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
@@ -44,6 +45,12 @@ object CoreModule {
 
         single<ObjectMapper> {
             ObjectMapper()
+        }
+
+        single<KafkaService> {
+            KafkaService(
+                brokers = get<Environment>().kafkaBrokers
+            )
         }
 
         single<HttpClient> {
