@@ -91,8 +91,10 @@ export default class AuthService {
             identifier: username,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
           },
-          201,
-          StatusCode.AUTHENTICATION_SUCCESSFUL,
+          {
+            expectedStatusCode: 201,
+            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+          },
         );
       }
 
@@ -148,8 +150,10 @@ export default class AuthService {
             identifier: identifier,
             passkeyCredentials: JSON.stringify(passkeyCredentials),
           },
-          200,
-          StatusCode.AUTHENTICATION_SUCCESSFUL,
+          {
+            expectedStatusCode: 200,
+            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+          },
         );
       }
 
@@ -179,8 +183,10 @@ export default class AuthService {
           identifier: identifier,
           passkeyCredentials: JSON.stringify(passkeyCredentials),
         },
-        201,
-        StatusCode.PASSKEY_REGISTERED,
+        {
+          expectedStatusCode: 201,
+          expectedResponseCode: StatusCode.PASSKEY_REGISTERED,
+        },
       );
     }
 
