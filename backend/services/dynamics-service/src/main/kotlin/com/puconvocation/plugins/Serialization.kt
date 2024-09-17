@@ -13,12 +13,21 @@
 
 package com.puconvocation.plugins
 
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.puconvocation.serializers.ObjectIdDeserializer
+import com.puconvocation.serializers.ObjectIdSerializer
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
+import org.bson.types.ObjectId
 
 fun Application.configureSerialization() {
+    val module = SimpleModule()
+    module.addSerializer(ObjectId::class.java, ObjectIdSerializer())
+    module.addDeserializer(ObjectId::class.java, ObjectIdDeserializer())
     install(ContentNegotiation) {
-        jackson()
+        jackson {
+            registerModule(module)
+        }
     }
 }
