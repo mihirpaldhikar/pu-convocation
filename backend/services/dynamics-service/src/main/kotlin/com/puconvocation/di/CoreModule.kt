@@ -15,9 +15,9 @@ package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
 import com.puconvocation.services.InMemoryCache
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -60,16 +60,15 @@ object CoreModule {
             AuthService(
                 environment = get<Environment>(),
                 client = get<HttpClient>(),
-                cacheService = get<CacheService>(),
+                cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>()
             )
         }
 
-        single<CacheService> {
-            CacheService(
+        single<CacheController> {
+            CacheController(
                 pool = get<JedisPool>(),
-                inMemoryCache = get<InMemoryCache>()
             )
         }
     }

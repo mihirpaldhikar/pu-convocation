@@ -14,12 +14,12 @@
 package com.puconvocation.constants
 
 object CachedKeys {
-    fun getAllRulesAssociatedWithAccount(identifier: String): String {
-        return "allAssociatedRules:$identifier"
+    fun accountWithIAMRolesKey(identifier: String): String {
+        return "accountWithIAMRoles:$identifier"
     }
 
-    fun getWebsiteConfigKey(): String {
-        return "config:Website"
+    fun websiteConfigKey(): String {
+        return "config:website"
     }
 
 }

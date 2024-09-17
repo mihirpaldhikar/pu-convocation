@@ -9,14 +9,11 @@ import com.puconvocation.database.mongodb.entities.WebsiteConfig
 import com.puconvocation.database.mongodb.repositories.WebsiteConfigRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.CacheService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 
 class WebsiteController(
     private val websiteConfigRepository: WebsiteConfigRepository,
-    private val json: ObjectMapper,
-    private val cacheService: CacheService,
     private val authService: AuthService
 ) {
     suspend fun setWebsiteConfig(websiteConfig: WebsiteConfig): Result<HashMap<String, Any>, ErrorResponse> {
@@ -42,17 +39,7 @@ class WebsiteController(
     }
 
     suspend fun getWebsiteConfig(): Result<WebsiteConfig, ErrorResponse> {
-        val cachedConfig = cacheService.get(CachedKeys.getWebsiteConfigKey())
-
-        val config = if (cachedConfig != null) {
-            json.readValue<WebsiteConfig>(cachedConfig)
-        } else {
-            val fetchedConfig = websiteConfigRepository.getWebsiteConfig()
-
-            cacheService.set(CachedKeys.getWebsiteConfigKey(), json.writeValueAsString(fetchedConfig))
-
-            fetchedConfig
-        }
+        val config = websiteConfigRepository.getWebsiteConfig()
 
         return Result.Success(config)
     }
@@ -102,8 +89,6 @@ class WebsiteController(
                 )
             )
         }
-
-        cacheService.set(CachedKeys.getWebsiteConfigKey(), json.writeValueAsString(config))
 
         return Result.Success(
             hashMapOf(

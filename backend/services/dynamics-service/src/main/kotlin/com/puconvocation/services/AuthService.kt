@@ -16,7 +16,9 @@ package com.puconvocation.services
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
+import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.constants.CachedKeys
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import io.ktor.client.*
@@ -26,7 +28,7 @@ import org.bson.types.ObjectId
 
 class AuthService(
     private val client: HttpClient,
-    private val cacheService: CacheService,
+    private val cache: CacheController,
     private val jsonWebToken: JsonWebToken,
     private val json: ObjectMapper,
     environment: Environment
@@ -44,10 +46,10 @@ class AuthService(
 
         if (ObjectId.isValid(principal)) {
             val cachedRulesForAccount =
-                cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(principal))
+                cache.get(CachedKeys.accountWithIAMRolesKey(principal))
 
             return if (cachedRulesForAccount != null) {
-                json.readValue<List<String>>(cachedRulesForAccount).contains(role)
+                json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles.contains(role)
             } else {
                 isOperationAllowed(principal, role)
             }
@@ -61,10 +63,10 @@ class AuthService(
         if (claims.isEmpty()) return false
 
         val cachedRulesForAccount =
-            cacheService.get(CachedKeys.getAllRulesAssociatedWithAccount(claims[0]))
+            cache.get(CachedKeys.accountWithIAMRolesKey(claims[0]))
 
         return if (cachedRulesForAccount != null) {
-            val roles = json.readValue<List<String>>(cachedRulesForAccount)
+            val roles = json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles
             if (operation == "read") {
                 roles.contains("write:$iam") ||
                         roles.contains("read:$iam")
@@ -81,6 +83,6 @@ class AuthService(
             header("X-IAM-CHECK", "$rule@$uuid")
         }
 
-        return response.bodyAsText().toBoolean()
+        return response.bodyAsText().toBooleanStrictOrNull() ?: false
     }
 }
