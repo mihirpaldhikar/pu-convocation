@@ -202,6 +202,7 @@ class AttendeeController(
         delay(20000)
 
         if (lock == attendeeConfig().locked) {
+            distributedLock.release("attendeeLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
@@ -218,6 +219,7 @@ class AttendeeController(
         )
 
         if (!acknowledge) {
+            distributedLock.release("attendeeLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
