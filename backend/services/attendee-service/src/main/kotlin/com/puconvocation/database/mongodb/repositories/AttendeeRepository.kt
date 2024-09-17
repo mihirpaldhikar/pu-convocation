@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 class AttendeeRepository(
     database: MongoDatabase,
@@ -128,7 +129,11 @@ class AttendeeRepository(
         }
         val fetchedConfig =
             attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config")).first()
-        cache.set(CachedKeys.attendeeConfigKey(), mapper.writeValueAsString(fetchedConfig))
+        cache.set(
+            CachedKeys.attendeeConfigKey(),
+            mapper.writeValueAsString(fetchedConfig),
+            expiryDuration = Duration.of(1, ChronoUnit.HOURS)
+        )
         return fetchedConfig
     }
 
