@@ -86,7 +86,20 @@ class AttendeeController(
             )
         }
 
+        val lockAcquired = distributedLock.acquire("attendeeUploadLock", Duration.of(5, ChronoUnit.MINUTES))
+
+        if (!lockAcquired) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
+                    message = "Couldn't upload attendees list."
+                )
+            )
+        }
+
         if (attendeeConfig().locked) {
+            distributedLock.release("attendeeUploadLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
@@ -99,17 +112,21 @@ class AttendeeController(
         val part = multiPart.readAllParts().first()
         if (part !is PartData.FileItem ||
             !part.originalFileName?.lowercase()?.contains(".csv")!!
-        ) return Result.Error(
-            httpStatusCode = HttpStatusCode.BadRequest,
-            error = ErrorResponse(
-                errorCode = ResponseCode.INVALID_FILE_FORMAT,
-                message = "Invalid file format. The file must of type CSV"
+        ) {
+            distributedLock.release("attendeeUploadLock")
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_FILE_FORMAT,
+                    message = "Invalid file format. The file must of type CSV"
+                )
             )
-        )
+        }
 
         val attendees: List<Attendee> = csvSerializer.serializeAttendeesCSV(part.streamProvider().reader())
         val response = attendeeRepository.uploadAttendees(attendees)
         if (!response) {
+            distributedLock.release("attendeeUploadLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotModified,
                 error = ErrorResponse(
@@ -119,6 +136,8 @@ class AttendeeController(
 
             )
         }
+
+        distributedLock.release("attendeeUploadLock")
 
         return Result.Success(
             hashMapOf(
