@@ -17,11 +17,12 @@ export default interface Attendee {
   studentName: string;
   department: string;
   institute: string;
-  enclosure: string;
-  row: string;
-  seat: string;
-  enterFrom: "LEFT" | "RIGHT" | "NONE";
   verificationToken: string;
   verificationCode: string;
   degreeReceived: boolean;
+  allocation: {
+    enclosure: string;
+    row: string;
+    seat: string;
+  };
 }

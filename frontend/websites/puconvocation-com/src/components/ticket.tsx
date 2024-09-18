@@ -54,15 +54,17 @@ export default function Ticket({ attendee }: TicketProps): JSX.Element {
       <div className={"flex items-center justify-center py-4"}>
         <div className={"flex w-fit space-x-10"}>
           <div className={"text-center"}>
-            <h5 className={"text-lg font-bold"}>{attendee.enclosure}</h5>
+            <h5 className={"text-lg font-bold"}>
+              {attendee.allocation.enclosure}
+            </h5>
             <h6 className={"font-semibold"}>Enclosure</h6>
           </div>
           <div className={"px-3 text-center"}>
-            <h5 className={"text-lg font-bold"}>{attendee.row}</h5>
+            <h5 className={"text-lg font-bold"}>{attendee.allocation.row}</h5>
             <h6 className={"font-semibold"}>Row</h6>
           </div>
           <div className={"px-3 text-center"}>
-            <h5 className={"text-lg font-bold"}>{attendee.seat}</h5>
+            <h5 className={"text-lg font-bold"}>{attendee.allocation.seat}</h5>
             <h6 className={"font-semibold"}>Seat</h6>
           </div>
         </div>

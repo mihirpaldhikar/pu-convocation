@@ -73,7 +73,7 @@ export default async function AttendeePage({
               "flex h-full flex-col items-center justify-center space-y-6"
             }
           >
-            <VenueMap activeEnclosure={payload.attendee.enclosure} />
+            <VenueMap activeEnclosure={payload.attendee.allocation.enclosure} />
             <div className={"flex flex-col space-y-5"}>
               <div className={"flex flex-col space-y-2"}>
                 <div className={"flex w-full items-center space-x-2"}>
@@ -82,19 +82,19 @@ export default async function AttendeePage({
                 </div>
                 <h6
                   className={"pl-9 text-xs font-medium"}
-                  hidden={payload.attendee.enterFrom === "NONE"}
+                  hidden={payload.enclosureMetadata.entryDirection === "NONE"}
                 >
                   Enter from{" "}
                   <span className={"font-bold text-primary"}>
-                    {payload.attendee.enterFrom}
+                    {payload.enclosureMetadata.entryDirection}
                   </span>
                 </h6>
               </div>
               <SeatMap
                 enclosure={payload.enclosureMetadata}
                 activeArrangement={{
-                  row: payload.attendee.row,
-                  seat: payload.attendee.seat,
+                  row: payload.attendee.allocation.row,
+                  seat: payload.attendee.allocation.seat,
                 }}
               />
             </div>

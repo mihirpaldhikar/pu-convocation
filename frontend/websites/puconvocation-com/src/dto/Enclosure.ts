@@ -13,9 +13,11 @@
 
 export default interface Enclosure {
   letter: string;
+  entryDirection: "LEFT" | "RIGHT" | "NONE";
   rows: Array<{
     letter: string;
     start: number;
     end: number;
+    reserved: Array<number>;
   }>;
 }
