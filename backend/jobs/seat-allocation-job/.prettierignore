@@ -1,0 +1,17 @@
+### IDEs Artifacts ###
+.idea
+.vscode
+*.iml
+
+### NodeJS Artifacts ###
+node_modules
+
+### Build Artifacts ###
+dist
+.rollup-cache
+.rollup.cache
+tsconfig.tsbuildinfo
+
+### Config Files ###
+*.config.js
+*.config.cjs
