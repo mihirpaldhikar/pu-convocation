@@ -10,7 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "installForProduction": "cp package.json ./dist && cp package-lock.json ./dist && cd ./dist && npm install --omit=dev",
+    "build": "rollup -c && npm run installForProduction",
     "execute": "rollup -c && node ./dist/index.js"
   },
   "repository": {
@@ -42,6 +43,7 @@
     "typescript-eslint": "^8.5.0"
   },
   "dependencies": {
+    "aws-lambda": "^1.0.7",
     "mongodb": "^6.9.0"
   }
 }

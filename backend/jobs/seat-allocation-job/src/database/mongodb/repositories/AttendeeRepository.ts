@@ -27,12 +27,8 @@ export default class AttendeeRepository implements AttendeeDatasource {
     return await this.attendeeCollection.countDocuments();
   }
 
-  async getAttendees(page: number, limit: number): Promise<Attendee[]> {
-    return await this.attendeeCollection
-      .find()
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .toArray();
+  async getAttendees(): Promise<Attendee[]> {
+    return await this.attendeeCollection.find().toArray();
   }
 
   async updateAttendee(attendee: Attendee): Promise<void> {

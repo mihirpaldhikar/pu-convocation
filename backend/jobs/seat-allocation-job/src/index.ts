@@ -11,4 +11,69 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-console.log("Hello World!");
+import {
+  AttendeeRepository,
+  SystemConfigRepository,
+} from "./database/index.js";
+import { totalEnclosureSeats } from "./utils/index.js";
+import { Handler } from "aws-lambda";
+
+const attendeeRepository = new AttendeeRepository();
+const systemConfigRepository = new SystemConfigRepository();
+
+const attendees = await attendeeRepository.getAttendees();
+
+let totalAttendees = attendees.length;
+
+const enclosureMapping = await systemConfigRepository.enclosureMapping();
+let totalSeats = 0;
+for (let enclosure of enclosureMapping) {
+  totalSeats += totalEnclosureSeats(enclosure);
+}
+
+export const handler: Handler = async (event, context) => {
+  if (totalAttendees > totalSeats) {
+    return;
+  }
+
+  let allocatedSeats = 0;
+
+  for (let enclosure of enclosureMapping) {
+    if (totalAttendees === 0) {
+      break;
+    }
+
+    for (let row of enclosure.rows) {
+      const seats = row.end - row.start - row.reserved.length + 1;
+      const attendeesForCurrentRow = attendees.slice(
+        allocatedSeats,
+        allocatedSeats + seats,
+      );
+
+      totalAttendees -= attendeesForCurrentRow.length;
+
+      if (attendeesForCurrentRow.length === 0) {
+        break;
+      }
+
+      let i = 0;
+      for (let seat of Array.from(
+        { length: row.end - row.start + 1 },
+        (_, k) => k + row.start,
+      ).reverse()) {
+        if (row.reserved.includes(seat)) continue;
+
+        await attendeeRepository.updateAttendee({
+          ...attendeesForCurrentRow[i],
+          allocation: {
+            enclosure: enclosure.letter,
+            seat: seat.toString(),
+            row: row.letter,
+          },
+        });
+        ++i;
+      }
+      allocatedSeats += seats;
+    }
+  }
+};
