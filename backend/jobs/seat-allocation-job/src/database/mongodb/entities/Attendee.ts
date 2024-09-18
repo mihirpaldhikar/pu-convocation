@@ -12,7 +12,7 @@
  */
 
 export default interface Attendee {
-  enrollmentNumber: string;
+  _id: string;
   convocationId: string;
   studentName: string;
   department: string;

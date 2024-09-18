@@ -63,7 +63,7 @@ export const handler: Handler = async (event, context) => {
       ).reverse()) {
         if (row.reserved.includes(seat)) continue;
 
-        await attendeeRepository.updateAttendee({
+        await attendeeRepository.updateAttendeeAllocation({
           ...attendeesForCurrentRow[i],
           allocation: {
             enclosure: enclosure.letter,

@@ -18,5 +18,5 @@ export default interface AttendeeDatasource {
 
   getAttendees(page: number, limit: number): Promise<Array<Attendee>>;
 
-  updateAttendee(attendee: Attendee): Promise<void>;
+  updateAttendeeAllocation(attendee: Attendee): Promise<void>;
 }

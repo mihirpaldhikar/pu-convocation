@@ -31,14 +31,14 @@ export default class AttendeeRepository implements AttendeeDatasource {
     return await this.attendeeCollection.find().toArray();
   }
 
-  async updateAttendee(attendee: Attendee): Promise<void> {
-    await this.attendeeCollection.updateOne(
+  async updateAttendeeAllocation(attendee: Attendee): Promise<void> {
+    const x = await this.attendeeCollection.updateOne(
       {
-        enrollmentNumber: attendee.enrollmentNumber,
+        _id: attendee._id,
       },
       {
         $set: {
-          ...attendee,
+          allocation: attendee.allocation,
         },
       },
     );
