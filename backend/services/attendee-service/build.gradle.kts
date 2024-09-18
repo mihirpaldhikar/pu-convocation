@@ -77,6 +77,9 @@ dependencies {
     // AWS SQS
     implementation("aws.sdk.kotlin:sqs:1.3.32")
 
+    // AWS Lambda
+    implementation("software.amazon.awssdk:lambda:2.28.2")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

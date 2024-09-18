@@ -21,6 +21,7 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.LambdaService
 import com.puconvocation.services.MessageQueue
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -84,6 +85,10 @@ object CoreModule {
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
             )
+        }
+
+        single<LambdaService> {
+            LambdaService()
         }
 
         single<JsonWebToken> {

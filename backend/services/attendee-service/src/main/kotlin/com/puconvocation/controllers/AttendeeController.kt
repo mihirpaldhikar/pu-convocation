@@ -13,7 +13,6 @@
 
 package com.puconvocation.controllers
 
-import aws.sdk.kotlin.services.sqs.model.SendMessageBatchRequestEntry
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.database.mongodb.entities.Attendee
@@ -23,21 +22,19 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
-import com.puconvocation.services.MessageQueue
+import com.puconvocation.services.LambdaService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
-import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 class AttendeeController(
     private val attendeeRepository: AttendeeRepository,
     private val csvSerializer: CSVSerializer,
     private val authService: AuthService,
-    private val messageQueue: MessageQueue,
-    private val distributedLock: DistributedLock
+    private val distributedLock: DistributedLock,
+    private val lambdaService: LambdaService
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
         if (!attendeeConfig().locked) {
@@ -218,8 +215,6 @@ class AttendeeController(
             )
         }
 
-        delay(20000)
-
         if (lock == attendeeConfig().locked) {
             distributedLock.release("attendeeLock")
             return Result.Error(
@@ -249,28 +244,7 @@ class AttendeeController(
         }
 
         if (lock) {
-            var page = 0;
-            val limit = 10
-            val totalAttendees = attendeeRepository.getTotalAttendees()
-            val batchMessage: MutableList<SendMessageBatchRequestEntry> = mutableListOf()
-            val year = Calendar.getInstance().get(Calendar.YEAR)
-
-            while (page * limit < totalAttendees) {
-                val attendees = attendeeRepository.getAttendees(page, limit)
-                for (attendee in attendees) {
-                    batchMessage.add(
-                        SendMessageBatchRequestEntry {
-                            id = attendee.enrollmentNumber
-                            messageGroupId = "passcodeEmail"
-                            messageBody =
-                                "{\"sender\":\"PU Convocation <no-reply@puconvocation.com>\",\"receiver\":\"${attendee.enrollmentNumber}@paruluniversity.ac.in\",\"replyTo\":\"support@puconvocation.com\",\"templateId\":\"VerificationPasscodeTemplate\",\"payload\":{\"convocationNumber\":\"8\",\"verificationCode\":\"${attendee.verificationCode}\",\"year\":\"${year}\",\"studentName\":\"${attendee.studentName}\",\"passURL\":\"https://puconvocation.com/attendee/${attendee.enrollmentNumber}\"}}"
-                        }
-                    )
-                }
-                messageQueue.sendBatchMessages(batchMessage, MessageQueue.QueueType.EMAIL)
-                batchMessage.clear()
-                ++page
-            }
+            lambdaService.invoke("seatAllocationJob")
         }
 
         distributedLock.release("attendeeLock")
