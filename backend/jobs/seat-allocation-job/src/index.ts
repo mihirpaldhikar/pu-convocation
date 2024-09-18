@@ -18,20 +18,20 @@ import {
 import { totalEnclosureSeats } from "./utils/index.js";
 import { Handler } from "aws-lambda";
 
-const attendeeRepository = new AttendeeRepository();
-const systemConfigRepository = new SystemConfigRepository();
-
-const attendees = await attendeeRepository.getAttendees();
-
-let totalAttendees = attendees.length;
-
-const enclosureMapping = await systemConfigRepository.enclosureMapping();
-let totalSeats = 0;
-for (let enclosure of enclosureMapping) {
-  totalSeats += totalEnclosureSeats(enclosure);
-}
-
 export const handler: Handler = async (event, context) => {
+  const attendeeRepository = new AttendeeRepository();
+  const systemConfigRepository = new SystemConfigRepository();
+
+  const attendees = await attendeeRepository.getAttendees();
+
+  let totalAttendees = attendees.length;
+
+  const enclosureMapping = await systemConfigRepository.enclosureMapping();
+  let totalSeats = 0;
+  for (let enclosure of enclosureMapping) {
+    totalSeats += totalEnclosureSeats(enclosure);
+  }
+
   if (totalAttendees > totalSeats) {
     return;
   }
