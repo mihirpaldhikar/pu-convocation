@@ -14,7 +14,6 @@
 package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.puconvocation.enums.Direction
 import org.bson.codecs.pojo.annotations.BsonId
 
 data class Attendee(
@@ -23,11 +22,14 @@ data class Attendee(
     @JsonProperty("studentName") val studentName: String,
     @JsonProperty("department") val department: String,
     @JsonProperty("institute") val institute: String,
-    @JsonProperty("enclosure") val enclosure: String,
-    @JsonProperty("row") val row: String,
-    @JsonProperty("seat") val seat: String,
-    @JsonProperty("enterFrom") val enterFrom: Direction,
     @JsonProperty("verificationToken") val verificationToken: String,
     @JsonProperty("verificationCode") val verificationCode: String,
     @JsonProperty("degreeReceived") val degreeReceived: Boolean,
-)
+    @JsonProperty("allocation") val allocation: Allocation,
+) {
+    data class Allocation(
+        @JsonProperty("enclosure") val enclosure: String,
+        @JsonProperty("row") val row: String,
+        @JsonProperty("seat") val seat: String,
+    )
+}

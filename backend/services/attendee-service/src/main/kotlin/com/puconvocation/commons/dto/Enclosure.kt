@@ -15,6 +15,7 @@ package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.puconvocation.enums.Direction
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Enclosure(
@@ -22,6 +23,7 @@ data class Enclosure(
 ) {
     data class EnclosureMapping(
         @JsonProperty("letter") val letter: String,
+        @JsonProperty("entryDirection") val entryDirection: Direction,
         @JsonProperty("rows") val rows: MutableList<Row>,
     ) {
         data class Row(

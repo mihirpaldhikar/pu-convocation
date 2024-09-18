@@ -81,7 +81,7 @@ class AttendeeRepository(
             attendee = fetchedAttendee,
             enclosureMetadata = enclosure.enclosureMapping.first {
                 it.letter.equals(
-                    fetchedAttendee.enclosure,
+                    fetchedAttendee.allocation.enclosure,
                     ignoreCase = true
                 )
             }

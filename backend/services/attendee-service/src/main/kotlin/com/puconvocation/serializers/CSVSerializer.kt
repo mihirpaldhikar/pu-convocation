@@ -14,7 +14,6 @@
 package com.puconvocation.serializers
 
 import com.puconvocation.database.mongodb.entities.Attendee
-import com.puconvocation.enums.Direction
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.InputStreamReader
@@ -32,10 +31,6 @@ class CSVSerializer {
                 "studentName",
                 "department",
                 "institute",
-                "enclosure",
-                "row",
-                "seat",
-                "enterFrom"
             )
             .setIgnoreHeaderCase(true)
             .setIgnoreEmptyLines(true)
@@ -51,10 +46,6 @@ class CSVSerializer {
                     studentName = attendee.get("studentName").toString(),
                     department = attendee.get("department").toString(),
                     institute = attendee.get("institute").toString(),
-                    enclosure = attendee.get("enclosure").toString(),
-                    row = attendee.get("row").toString(),
-                    seat = attendee.get("seat").toString(),
-                    enterFrom = Direction.valueOf(attendee.get("enterFrom").uppercase()),
                     degreeReceived = false,
                     verificationToken = UUID.randomUUID().toString().replace("-", ""),
                     verificationCode = "${Random.nextInt(0, 9)}${
@@ -67,7 +58,12 @@ class CSVSerializer {
                             0,
                             9
                         )
-                    }${Random.nextInt(0, 9)}${Random.nextInt(0, 9)}"
+                    }${Random.nextInt(0, 9)}${Random.nextInt(0, 9)}",
+                    allocation = Attendee.Allocation(
+                        enclosure = "NULL",
+                        row = "NULL",
+                        seat = "NULL",
+                    )
                 )
             )
         }
