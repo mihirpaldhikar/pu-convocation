@@ -23,7 +23,7 @@ const rollupConfiguration = [
             dir: "dist",
             format: "esm",
         },
-        external: ["@aws-sdk/client-ses"],
+        external: ["@aws-sdk/client-ses", "mongodb"],
         plugins: [
             commonjs({
                 transformMixedEsModules: true,
