@@ -28,7 +28,7 @@ fun Routing.attendeesRoute(
 ) {
     route("/attendees") {
         get("/{identifier}") {
-            val identifier = call.parameters["identifier"] ?: return@get sendResponse(
+            val identifier = call.parameters["identifier"] ?: return@get call.sendResponse(
                 Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
@@ -39,32 +39,32 @@ fun Routing.attendeesRoute(
             )
 
             val result = attendeeController.getAttendee(identifier)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         get("/all") {
-            val authorizationToken = getSecurityTokens().authorizationToken
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val page = call.request.queryParameters["page"]?.toInt() ?: 1
             val limit = call.request.queryParameters["limit"]?.toInt() ?: 10
             val result = attendeeController.getAttendees(authorizationToken, page, limit)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         post("/upload") {
-            val authorizationToken = getSecurityTokens().authorizationToken
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val multipartData = call.receiveMultipart()
             val result = attendeeController.uploadAttendees(authorizationToken, multipartData)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         get("/totalCount") {
             val result = attendeeController.getTotalAttendees()
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         get("/verificationToken/{verificationToken}") {
-            val authorizationToken = getSecurityTokens().authorizationToken
-            val token = call.parameters["verificationToken"] ?: return@get sendResponse(
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val token = call.parameters["verificationToken"] ?: return@get call.sendResponse(
                 Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
@@ -73,12 +73,12 @@ fun Routing.attendeesRoute(
                 )
             )
             val result = attendeeController.getAttendeeFromVerificationToken(authorizationToken, token)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         post("/mutateAttendeeLock") {
-            val authorizationToken = getSecurityTokens().authorizationToken
-            val locked = call.request.queryParameters["locked"]?.toBooleanStrictOrNull() ?: return@post sendResponse(
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val locked = call.request.queryParameters["locked"]?.toBooleanStrictOrNull() ?: return@post call.sendResponse(
                 Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.BAD_REQUEST,
@@ -87,7 +87,7 @@ fun Routing.attendeesRoute(
                 )
             )
             val result = attendeeController.mutateAttendeeLock(authorizationToken, locked)
-            sendResponse(result)
+            call.sendResponse(result)
         }
     }
 }

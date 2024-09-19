@@ -29,7 +29,7 @@ fun Routing.transactionsRoute(
 ) {
     route("/transactions") {
         get("/{transactionId}") {
-            val transactionId = call.parameters["transactionId"] ?: return@get sendResponse(
+            val transactionId = call.parameters["transactionId"] ?: return@get call.sendResponse(
                 Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
@@ -39,15 +39,15 @@ fun Routing.transactionsRoute(
             )
 
             val result = transactionController.getTransaction(transactionId)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         post("/new") {
-            val authorizationToken = getSecurityTokens().authorizationToken
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val transactionRequest = call.receive<TransactionRequest>()
 
             val result = transactionController.insertTransaction(authorizationToken, transactionRequest)
-            sendResponse(result)
+            call.sendResponse(result)
         }
     }
 }
