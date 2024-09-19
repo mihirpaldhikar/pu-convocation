@@ -54,8 +54,8 @@ fun Routing.iamRoute(
         route("/{name}") {
 
             get("/") {
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@get sendResponse(
+                val authorizationToken = call.getSecurityTokens().authorizationToken
+                val rule = call.parameters["name"] ?: return@get call.sendResponse(
                     Result.Error(
                         httpStatusCode = HttpStatusCode.BadRequest,
                         error = ErrorResponse(
@@ -65,12 +65,12 @@ fun Routing.iamRoute(
                     )
                 )
                 val result = iamController.getRule(authorizationToken, rule)
-                sendResponse(result)
+                call.sendResponse(result)
             }
 
             patch("/update") {
-                val authorizationToken = getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@patch sendResponse(
+                val authorizationToken = call.getSecurityTokens().authorizationToken
+                val rule = call.parameters["name"] ?: return@patch call.sendResponse(
                     Result.Error(
                         httpStatusCode = HttpStatusCode.BadRequest,
                         error = ErrorResponse(
@@ -81,16 +81,16 @@ fun Routing.iamRoute(
                 )
                 val updateIAMRole = call.receive<UpdateIAMRole>()
                 val result = iamController.updateRule(authorizationToken, rule, updateIAMRole)
-                sendResponse(result)
+                call.sendResponse(result)
 
             }
         }
 
         post("/create") {
-            val authorizationToken = getSecurityTokens().authorizationToken
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val rule = call.receive<NewIAMRole>()
             val result = iamController.createRule(authorizationToken, rule)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
 

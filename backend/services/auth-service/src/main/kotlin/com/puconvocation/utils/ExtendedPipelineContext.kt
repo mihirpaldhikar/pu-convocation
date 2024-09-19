@@ -19,6 +19,7 @@ import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import io.ktor.util.date.*
 import io.ktor.util.pipeline.*
 import org.koin.java.KoinJavaComponent
@@ -30,30 +31,30 @@ object CookieName {
 
 val environment: Environment by KoinJavaComponent.inject(Environment::class.java)
 
-suspend fun PipelineContext<Unit, ApplicationCall>.sendResponse(
+suspend fun RoutingCall.sendResponse(
     result: Result<Any, Error>
 ) {
     result.onSuccess { payload, httpStatusCode ->
-        call.respond(
+        respond(
             status = httpStatusCode ?: HttpStatusCode.OK,
             message = payload
         )
     }
     result.onError { error, httpStatusCode ->
-        call.respond(
+        respond(
             status = httpStatusCode ?: HttpStatusCode.InternalServerError,
             message = error
         )
     }
 }
 
-fun PipelineContext<Unit, ApplicationCall>.setCookie(
+fun RoutingCall.setCookie(
     name: String,
     value: String,
     expiresAt: Long,
     httpOnly: Boolean = true,
 ) {
-    call.response.cookies.append(
+    response.cookies.append(
         Cookie(
             name = name,
             value = value,
@@ -67,7 +68,7 @@ fun PipelineContext<Unit, ApplicationCall>.setCookie(
     )
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookies(result: Result<Any, ErrorResponse>) {
+suspend fun RoutingCall.sendResponseWithAccountCookies(result: Result<Any, ErrorResponse>) {
     result.onSuccess { data, httpStatusCode ->
         if (data is SecurityToken) {
             data.authorizationToken?.let {
@@ -85,15 +86,15 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookie
                 )
             }
             if (data.payload != null) {
-                return call.respond(
+                return respond(
                     status = httpStatusCode ?: HttpStatusCode.OK,
                     message = data.payload
                 )
             }
         }
         if (data is String) {
-            call.response.headers.append("Content-Type", "application/json")
-            return call.respond(
+            response.headers.append("Content-Type", "application/json")
+            return respond(
                 message = data.toString()
             )
         }
@@ -103,9 +104,9 @@ suspend fun PipelineContext<Unit, ApplicationCall>.sendResponseWithAccountCookie
     return sendResponse(result)
 }
 
-fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {
-    val authorizationToken = call.request.cookies[CookieName.AUTHORIZATION_TOKEN_COOKIE]
-    val refreshToken = call.request.cookies[CookieName.REFRESH_TOKEN_COOKIE]
+fun RoutingCall.getSecurityTokens(): SecurityToken {
+    val authorizationToken = request.cookies[CookieName.AUTHORIZATION_TOKEN_COOKIE]
+    val refreshToken = request.cookies[CookieName.REFRESH_TOKEN_COOKIE]
 
     return SecurityToken(
         authorizationToken = authorizationToken,
@@ -113,7 +114,7 @@ fun PipelineContext<Unit, ApplicationCall>.getSecurityTokens(): SecurityToken {
     )
 }
 
-suspend fun PipelineContext<Unit, ApplicationCall>.removeSecurityTokens() {
+suspend fun RoutingCall.removeSecurityTokens() {
     setCookie(
         name = CookieName.AUTHORIZATION_TOKEN_COOKIE,
         value = "null",

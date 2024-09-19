@@ -21,9 +21,7 @@ import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.*
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.accountsRoute(
@@ -36,35 +34,35 @@ fun Routing.accountsRoute(
             val credentials = call.receive<AuthenticationCredentials>()
 
             val result = accountController.getAuthenticationStrategy(credentials.identifier)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         post("/authenticate") {
             val credentials: AuthenticationCredentials = call.receive<AuthenticationCredentials>()
             val result = accountController.authenticate(credentials)
-            sendResponseWithAccountCookies(result)
+            call.sendResponseWithAccountCookies(result)
         }
 
         post("/new") {
-            val securityToken = getSecurityTokens()
+            val securityToken = call.getSecurityTokens()
             val newAccount: NewAccount = call.receive<NewAccount>()
             val result = accountController.createNewAccount(newAccount, securityToken)
-            sendResponseWithAccountCookies(result)
+            call.sendResponseWithAccountCookies(result)
         }
 
         post("/signout") {
-            removeSecurityTokens()
+            call.removeSecurityTokens()
         }
 
         get("/") {
-            val securityToken = getSecurityTokens()
+            val securityToken = call.getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
-            sendResponseWithAccountCookies(result)
+            call.sendResponseWithAccountCookies(result)
         }
 
         get("/{identifier}") {
-            val authorizationToken = getSecurityTokens().authorizationToken
-            val identifier = call.parameters["identifier"] ?: return@get sendResponse(
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val identifier = call.parameters["identifier"] ?: return@get call.sendResponse(
                 Result.Error(
                     httpStatusCode = HttpStatusCode.BadRequest,
                     error = ErrorResponse(
@@ -74,17 +72,17 @@ fun Routing.accountsRoute(
                 )
             )
             val result = accountController.accountDetails(authorizationToken, identifier)
-            sendResponse(result)
+            call.sendResponse(result)
         }
 
         route("/passkeys") {
 
             post("/register") {
-                val securityToken = getSecurityTokens()
+                val securityToken = call.getSecurityTokens()
                 val result = passkeyController.startPasskeyRegistrationWithSecurityToken(
                     securityToken
                 )
-                sendResponse(result)
+                call.sendResponse(result)
             }
 
             post("/validateRegistrationChallenge") {
@@ -95,7 +93,7 @@ fun Routing.accountsRoute(
                         credentials = credentials.passkeyCredentials!!
                     )
 
-                sendResponse(result)
+                call.sendResponse(result)
             }
 
             post("/validatePasskeyChallenge") {
@@ -105,7 +103,7 @@ fun Routing.accountsRoute(
                     credentials = credentials.passkeyCredentials!!
                 )
 
-                sendResponseWithAccountCookies(result)
+                call.sendResponseWithAccountCookies(result)
             }
         }
 
