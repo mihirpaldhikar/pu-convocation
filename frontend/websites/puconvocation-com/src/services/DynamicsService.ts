@@ -22,7 +22,13 @@ export default class DynamicsService {
 
   private CONFIG_ROUTE = this.BASE_URL.concat("/websiteConfig");
 
-  public async getWebsiteConfig(): Promise<Response<WebsiteConfig | string>> {
-    return await this.httpService.get(`${this.CONFIG_ROUTE}/`);
+  public async getWebsiteConfig(
+    tracker: string,
+  ): Promise<Response<WebsiteConfig | string>> {
+    return await this.httpService.get(`${this.CONFIG_ROUTE}/`, {
+      header: {
+        "x-analytics": tracker,
+      },
+    });
   }
 }

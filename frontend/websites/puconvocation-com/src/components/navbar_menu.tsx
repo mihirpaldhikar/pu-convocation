@@ -25,12 +25,14 @@ import {
   PopoverTrigger,
 } from "@components/ui";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter } from "@i18n/routing";
+import { useLocale } from "next-intl";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
   const path = usePathname();
+  const currentLocale = useLocale();
   const { toast } = useToast();
 
   const {
@@ -49,7 +51,9 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["websiteConfig"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await dynamicsService.getWebsiteConfig();
+      const response = await dynamicsService.getWebsiteConfig(
+        `${Date.now()};${currentLocale};${path}`,
+      );
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&

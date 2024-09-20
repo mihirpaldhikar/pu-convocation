@@ -33,6 +33,7 @@ export default class HttpService {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
+      header?: object;
     },
   ): Promise<Response<T | string>> {
     try {
@@ -41,10 +42,12 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.get(`${route}`, {
         timeout: givenOptions.requestTimeout,
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
@@ -66,6 +69,7 @@ export default class HttpService {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
+      header?: object;
     },
   ): Promise<Response<T | string>> {
     try {
@@ -74,10 +78,12 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.post(`${route}`, body, {
         timeout: givenOptions.requestTimeout,
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
@@ -99,6 +105,7 @@ export default class HttpService {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
+      header?: object;
     },
   ): Promise<Response<T | string>> {
     try {
@@ -107,10 +114,12 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.patch(`${route}`, body, {
         timeout: givenOptions.requestTimeout,
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
