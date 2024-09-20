@@ -29,24 +29,27 @@ export default class HttpService {
 
   public async get<T>(
     route: string,
-    options: {
+    options?: {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
-    } = {
-      requestTimeout: this.REQUEST_TIMEOUT,
-      expectedStatusCode: 200,
-      expectedResponseCode: StatusCode.SUCCESS,
     },
   ): Promise<Response<T | string>> {
     try {
+      const givenOptions: typeof options = {
+        requestTimeout: options?.requestTimeout ?? this.REQUEST_TIMEOUT,
+        expectedStatusCode: options?.expectedStatusCode ?? 200,
+        expectedResponseCode:
+          options?.expectedResponseCode ?? StatusCode.SUCCESS,
+      };
+
       const response = await this.httpClient.get(`${route}`, {
-        timeout: options.requestTimeout,
+        timeout: givenOptions.requestTimeout,
       });
 
-      if (response.status === options.expectedStatusCode) {
+      if (response.status === givenOptions.expectedStatusCode) {
         return {
-          statusCode: options.expectedResponseCode,
+          statusCode: givenOptions.expectedResponseCode,
           payload: await response.data,
         } as Response<T>;
       }
@@ -59,24 +62,27 @@ export default class HttpService {
   public async post<T>(
     route: string,
     body?: any,
-    options: {
+    options?: {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
-    } = {
-      requestTimeout: this.REQUEST_TIMEOUT,
-      expectedStatusCode: 200,
-      expectedResponseCode: StatusCode.SUCCESS,
     },
   ): Promise<Response<T | string>> {
     try {
+      const givenOptions: typeof options = {
+        requestTimeout: options?.requestTimeout ?? this.REQUEST_TIMEOUT,
+        expectedStatusCode: options?.expectedStatusCode ?? 200,
+        expectedResponseCode:
+          options?.expectedResponseCode ?? StatusCode.SUCCESS,
+      };
+
       const response = await this.httpClient.post(`${route}`, body, {
-        timeout: options.requestTimeout,
+        timeout: givenOptions.requestTimeout,
       });
 
-      if (response.status === options.expectedStatusCode) {
+      if (response.status === givenOptions.expectedStatusCode) {
         return {
-          statusCode: options.expectedResponseCode,
+          statusCode: givenOptions.expectedResponseCode,
           payload: await response.data,
         } as Response<T>;
       }
@@ -89,24 +95,27 @@ export default class HttpService {
   public async patch<T>(
     route: string,
     body: any,
-    options: {
+    options?: {
       requestTimeout?: number;
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
-    } = {
-      requestTimeout: this.REQUEST_TIMEOUT,
-      expectedStatusCode: 200,
-      expectedResponseCode: StatusCode.SUCCESS,
     },
   ): Promise<Response<T | string>> {
     try {
+      const givenOptions: typeof options = {
+        requestTimeout: options?.requestTimeout ?? this.REQUEST_TIMEOUT,
+        expectedStatusCode: options?.expectedStatusCode ?? 200,
+        expectedResponseCode:
+          options?.expectedResponseCode ?? StatusCode.SUCCESS,
+      };
+
       const response = await this.httpClient.patch(`${route}`, body, {
-        timeout: options.requestTimeout,
+        timeout: givenOptions.requestTimeout,
       });
 
-      if (response.status === options.expectedStatusCode) {
+      if (response.status === givenOptions.expectedStatusCode) {
         return {
-          statusCode: options.expectedResponseCode,
+          statusCode: givenOptions.expectedResponseCode,
           payload: await response.data,
         } as Response<T>;
       }
