@@ -52,7 +52,7 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.AccessControlAllowOrigin)
         allowHeader(HttpHeaders.AccessControlAllowHeaders)
         allowHeader(HttpHeaders.AccessControlAllowCredentials)
-
+        allowHeader("x-analytics")
 
         if (environment.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
