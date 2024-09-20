@@ -23,4 +23,7 @@
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="org.mongodb.driver" level="OFF"/>
+    <logger name="org.apache.kafka" level="OFF"/>
+    <logger name="org.apache.kafka.clients.NetworkClient" level="OFF"/>
+    <logger name="software.amazon" level="OFF"/>
 </configuration>

@@ -19,6 +19,7 @@ import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.InMemoryCache
+import com.puconvocation.services.KafkaService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
@@ -29,6 +30,12 @@ object CoreModule {
     val init = module {
         single<Environment> {
             Environment()
+        }
+
+        single<KafkaService> {
+            KafkaService(
+                brokers = get<Environment>().kafkaBrokers
+            )
         }
 
         single<JedisPool> {

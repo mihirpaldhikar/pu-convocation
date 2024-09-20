@@ -15,16 +15,25 @@ package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.UpdateWebsiteConfigRequest
 import com.puconvocation.controllers.WebsiteController
+import com.puconvocation.services.KafkaService
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
+import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
 fun Routing.websiteConfigRoute(
-    websiteController: WebsiteController
+    websiteController: WebsiteController,
+    kafkaService: KafkaService
 ) {
     route("/websiteConfig") {
         get("/") {
+            val analyticsHeader = call.request.headers["x-analytics"]
+
+            if (analyticsHeader != null) {
+                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
+            }
+
             val result = websiteController.getWebsiteConfig()
             call.sendResponse(result)
         }

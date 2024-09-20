@@ -27,6 +27,8 @@ class Environment {
 
     val authServiceURL = System.getenv("AUTH_SERVICE_URL").toString()
 
+    val kafkaBrokers = System.getenv("KAFKA_BROKERS").toString()
+
     val jwtMetadata: JWTMetadata = JWTMetadata(
         authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY"),
         refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY"),

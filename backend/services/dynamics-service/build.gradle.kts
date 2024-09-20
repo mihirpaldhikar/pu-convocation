@@ -11,7 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
@@ -66,6 +65,12 @@ dependencies {
 
     // Redis
     implementation("redis.clients:jedis:5.1.5")
+
+    // Apache Kafka
+    implementation("org.apache.kafka:kafka-clients:3.8.0")
+
+    // AWS MSK IAM Auth
+    implementation("software.amazon.msk:aws-msk-iam-auth:2.2.0")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

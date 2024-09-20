@@ -15,6 +15,7 @@ package com.puconvocation.plugins
 
 import com.puconvocation.controllers.WebsiteController
 import com.puconvocation.routes.websiteConfigRoute
+import com.puconvocation.services.KafkaService
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
@@ -22,10 +23,12 @@ import org.koin.java.KoinJavaComponent
 fun Application.configureRouting() {
 
     val websiteController by KoinJavaComponent.inject<WebsiteController>(WebsiteController::class.java)
+    val kafkaService by KoinJavaComponent.inject<KafkaService>(KafkaService::class.java)
 
     routing {
         websiteConfigRoute(
             websiteController = websiteController,
+            kafkaService = kafkaService
         )
     }
 }
