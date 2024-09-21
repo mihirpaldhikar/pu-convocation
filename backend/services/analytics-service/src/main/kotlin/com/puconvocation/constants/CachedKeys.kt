@@ -29,4 +29,8 @@ object CachedKeys {
     fun popularCountriesKey(): String {
         return "analytics:popularCountries"
     }
+
+    fun popularStatesOfCountryKey(countryCode: String): String {
+        return "analytics:popularStatesOf:$countryCode"
+    }
 }

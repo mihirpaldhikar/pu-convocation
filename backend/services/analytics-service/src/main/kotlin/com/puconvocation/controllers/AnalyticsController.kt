@@ -63,4 +63,10 @@ class AnalyticsController(
             analyticsRepository.popularCountries()
         )
     }
+
+    suspend fun popularStatesOfCounty(countryCode: String): Result<List<Popular>, ErrorResponse> {
+        return Result.Success(
+            analyticsRepository.popularStatesOfCountry(countryCode)
+        )
+    }
 }

@@ -48,5 +48,19 @@ fun Route.analyticsRoute(
             val result = analyticsController.popularCountries()
             call.sendResponse(result)
         }
+
+        get("/popularStatesOfCountry") {
+            val country = call.request.queryParameters["country"] ?: return@get call.sendResponse(
+                Result.Error(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide country as query parameter."
+                    )
+                )
+            )
+            val result = analyticsController.popularStatesOfCounty(country)
+            call.sendResponse(result)
+        }
     }
 }

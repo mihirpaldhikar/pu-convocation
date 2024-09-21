@@ -23,4 +23,6 @@ interface AnalyticsDatasource {
     suspend fun popularLangs(): List<Popular>
 
     suspend fun popularCountries(): List<Popular>
+
+    suspend fun popularStatesOfCountry(countryCode: String): List<Popular>
 }

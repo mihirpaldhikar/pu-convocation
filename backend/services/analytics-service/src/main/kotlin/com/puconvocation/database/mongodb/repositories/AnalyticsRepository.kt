@@ -192,6 +192,45 @@ class AnalyticsRepository(
         return countries
     }
 
+    override suspend fun popularStatesOfCountry(countryCode: String): List<Popular> {
+        val popularStates = cache.get(CachedKeys.popularStatesOfCountryKey(countryCode))
+
+        if (popularStates != null) {
+            return mapper.readValue<List<Popular>>(popularStates)
+        }
+
+        val aggregationPipeline = listOf(
+            match(eq("region.countryCode", countryCode)),
+            group(
+                "\$region.state",
+                sum("count", 1)
+            ),
+            sort(descending("count")),
+            limit(5)
+        )
+        val popularCountries = analytics.aggregate(
+            aggregationPipeline
+        ).toList()
+
+        var states = mutableListOf<Popular>()
+
+        popularCountries.forEach { document ->
+            states.add(
+                Popular(
+                    key = document["_id"].toString(),
+                    count = document["count"].toString().toLong()
+                )
+            )
+        }
+
+        cache.set(
+            CachedKeys.popularStatesOfCountryKey(countryCode), mapper.writeValueAsString(states),
+            expiryDuration = Duration.ofMinutes(10)
+        )
+
+        return states
+    }
+
     private fun weeklyTrafficAggregationPipeline(startDate: LocalDateTime): List<Bson> {
         return listOf(
             match(and(gte("timestamp", startDate), lt("timestamp", startDate.plusDays(7)))),
