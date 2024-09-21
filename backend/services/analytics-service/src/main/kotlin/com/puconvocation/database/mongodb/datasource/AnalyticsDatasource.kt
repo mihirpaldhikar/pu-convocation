@@ -17,5 +17,7 @@ import com.puconvocation.commons.dto.WeeklyTraffic
 import java.time.LocalDateTime
 
 interface AnalyticsDatasource {
-    suspend fun weeklyTrafficAnalytics(timestamp: LocalDateTime): WeeklyTraffic
+    suspend fun weeklyTraffic(timestamp: LocalDateTime): WeeklyTraffic
+
+    suspend fun popularLangs(): HashMap<String, Long>
 }

@@ -51,14 +51,14 @@ class AnalyticsRepository(
         "Saturday",
     )
 
-    override suspend fun weeklyTrafficAnalytics(
+    override suspend fun weeklyTraffic(
         timestamp: LocalDateTime,
     ): WeeklyTraffic {
+        popularLangs()
+        val cachedWeeklyTraffic = cache.get(CachedKeys.weeklyTrafficKey())
 
-        val cachedValue = cache.get(CachedKeys.weeklyTrafficAnalyticsKey())
-
-        if (cachedValue != null) {
-            return mapper.readValue<WeeklyTraffic>(cachedValue)
+        if (cachedWeeklyTraffic != null) {
+            return mapper.readValue<WeeklyTraffic>(cachedWeeklyTraffic)
         }
 
         val currentWeekStart = timestamp
@@ -83,20 +83,20 @@ class AnalyticsRepository(
         var currentWeekTotalRequests = 0L
         var previousWeekTotalRequests = 0L
 
-        for (i in currentWeekAggregatedData.indices) {
-            currentWeekTotalRequests += currentWeekAggregatedData[i]["requests"].toString().toLong()
+        currentWeekAggregatedData.forEach {
+            currentWeekTotalRequests += it["requests"].toString().toLong()
 
             traffic.add(
                 WeeklyTraffic.Traffic(
-                    day = weekdays["${currentWeekAggregatedData[i].get("_id")}".toInt() - 1 % 7],
-                    requests = currentWeekAggregatedData[i]["requests"].toString().toLong()
+                    day = weekdays["${it.get("_id")}".toInt() - 1 % 7],
+                    requests = it["requests"].toString().toLong()
                 )
 
             )
         }
 
-        for (i in previousWeekAggregatedData.indices) {
-            previousWeekTotalRequests += previousWeekAggregatedData[i]["requests"].toString().toLong()
+        previousWeekAggregatedData.forEach {
+            previousWeekTotalRequests += it["requests"].toString().toLong()
         }
 
         val computedTraffic = WeeklyTraffic(
@@ -105,11 +105,45 @@ class AnalyticsRepository(
         ).sortTrafficByWeekdaysAndFillMissing()
 
         cache.set(
-            CachedKeys.weeklyTrafficAnalyticsKey(), mapper.writeValueAsString(computedTraffic),
+            CachedKeys.weeklyTrafficKey(), mapper.writeValueAsString(computedTraffic),
             expiryDuration = Duration.ofMinutes(10)
         )
 
         return computedTraffic
+    }
+
+    override suspend fun popularLangs(): HashMap<String, Long> {
+        val cachedPopularLangs = cache.get(CachedKeys.popularLangsKey())
+
+        if (cachedPopularLangs != null) {
+            return mapper.readValue<HashMap<String, Long>>(cachedPopularLangs)
+        }
+
+        val aggregationPipeline = listOf(
+            group(
+                "\$lang",
+                sum("count", 1)
+            ),
+            sort(descending("count"))
+        )
+        val popularLanguages = analytics.aggregate(
+            aggregationPipeline
+        ).toList()
+
+        var langs = hashMapOf<String, Long>()
+
+        popularLanguages.forEach { document ->
+            langs[document["_id"].toString()] = document["count"].toString().toLong()
+        }
+
+        langs = sortLangAndFillMissing(langs)
+
+        cache.set(
+            CachedKeys.popularLangsKey(), mapper.writeValueAsString(langs),
+            expiryDuration = Duration.ofMinutes(10)
+        )
+
+        return langs
     }
 
     private fun weeklyTrafficAggregationPipeline(startDate: LocalDateTime): List<Bson> {
@@ -121,5 +155,16 @@ class AnalyticsRepository(
             ),
             sort(descending("timestamp"))
         )
+    }
+
+    fun sortLangAndFillMissing(inputMap: HashMap<String, Long>): LinkedHashMap<String, Long> {
+        val requiredKeys = listOf("en", "hi", "gu", "mr")
+        val result = LinkedHashMap<String, Long>()
+
+        for (key in requiredKeys) {
+            result[key] = inputMap[key] ?: 0L
+        }
+
+        return result
     }
 }

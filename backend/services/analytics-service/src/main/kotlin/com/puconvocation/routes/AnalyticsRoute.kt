@@ -25,7 +25,7 @@ fun Route.analyticsRoute(
     analyticsController: AnalyticsController
 ) {
     route("/analytics") {
-        get("/weeklyTrafficAnalytics") {
+        get("/weeklyTraffic") {
             val date = call.request.queryParameters["date"] ?: return@get call.sendResponse(
                 Result.Error(
                     httpStatusCode = HttpStatusCode.BadRequest,
@@ -35,7 +35,12 @@ fun Route.analyticsRoute(
                     )
                 )
             )
-            val result = analyticsController.weeklyTrafficAnalytics(date)
+            val result = analyticsController.weeklyTraffic(date)
+            call.sendResponse(result)
+        }
+
+        get("/popularLangs") {
+            val result = analyticsController.popularLang()
             call.sendResponse(result)
         }
     }

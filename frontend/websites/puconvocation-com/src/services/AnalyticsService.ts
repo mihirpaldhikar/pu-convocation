@@ -23,11 +23,15 @@ export default class AnalyticsService {
 
   private ANALYTICS_ROUTE = this.BASE_URL.concat("/analytics");
 
-  public async weeklyTrafficAnalytics(): Promise<
-    Response<WeeklyTraffic | string>
-  > {
+  public async weeklyTraffic(): Promise<Response<WeeklyTraffic | string>> {
     return await this.httpService.get<WeeklyTraffic>(
-      `${this.ANALYTICS_ROUTE}/weeklyTrafficAnalytics?date=${this.getStartOfWeekDate(new Date())}`,
+      `${this.ANALYTICS_ROUTE}/weeklyTraffic?date=${this.getStartOfWeekDate(new Date())}`,
+    );
+  }
+
+  public async popularLangs(): Promise<Response<WeeklyTraffic | string>> {
+    return await this.httpService.get<WeeklyTraffic>(
+      `${this.ANALYTICS_ROUTE}/popularLangs`,
     );
   }
 

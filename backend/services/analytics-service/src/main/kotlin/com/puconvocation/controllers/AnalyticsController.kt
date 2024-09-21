@@ -25,7 +25,7 @@ class AnalyticsController(
     private val analyticsRepository: AnalyticsRepository
 ) {
 
-    suspend fun weeklyTrafficAnalytics(
+    suspend fun weeklyTraffic(
         weekStartDate: String
     ): Result<WeeklyTraffic, ErrorResponse> {
         val formattedDate = weekStartDate.split("-")
@@ -39,7 +39,7 @@ class AnalyticsController(
             )
         }
         return Result.Success(
-            analyticsRepository.weeklyTrafficAnalytics(
+            analyticsRepository.weeklyTraffic(
                 LocalDateTime.of(
                     formattedDate[0].toInt(),
                     formattedDate[1].toInt(),
@@ -48,6 +48,12 @@ class AnalyticsController(
                     0
                 )
             )
+        )
+    }
+
+    suspend fun popularLang(): Result<HashMap<String, Long>, ErrorResponse> {
+        return Result.Success(
+            analyticsRepository.popularLangs()
         )
     }
 }

@@ -18,7 +18,11 @@ object CachedKeys {
         return "accountWithIAMRoles:$identifier"
     }
 
-    fun weeklyTrafficAnalyticsKey(): String {
-        return "weeklyTrafficAnalytics"
+    fun weeklyTrafficKey(): String {
+        return "analytics:weeklyTraffic"
+    }
+
+    fun popularLangsKey(): String {
+        return "analytics:popularLangs"
     }
 }
