@@ -11,14 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.constants
+package com.puconvocation.commons.dto
 
-object CachedKeys {
-    fun accountWithIAMRolesKey(identifier: String): String {
-        return "accountWithIAMRoles:$identifier"
-    }
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.puconvocation.commons.dto.WeeklyTraffic.Traffic
 
-    fun weeklyTrafficAnalyticsKey(): String {
-        return "weeklyTrafficAnalytics"
-    }
+data class WeeklyTraffic(
+    @JsonProperty("traffic") val traffic: List<Traffic>,
+    @JsonProperty("surge") val surge: Float,
+) {
+    data class Traffic(
+        @JsonProperty("day") val day: String,
+        @JsonProperty("requests") val requests: Long,
+    )
 }

@@ -13,7 +13,9 @@
 
 package com.puconvocation.di
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
 import org.koin.dsl.module
 
@@ -22,6 +24,8 @@ object RepositoryModule {
         single<AnalyticsRepository> {
             AnalyticsRepository(
                 database = get<MongoDatabase>(),
+                cache = get<CacheController>(),
+                mapper = get<ObjectMapper>()
             )
         }
     }

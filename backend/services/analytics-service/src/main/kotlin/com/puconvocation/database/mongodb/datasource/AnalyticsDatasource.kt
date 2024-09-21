@@ -13,8 +13,9 @@
 
 package com.puconvocation.database.mongodb.datasource
 
+import com.puconvocation.commons.dto.WeeklyTraffic
 import java.time.LocalDateTime
 
 interface AnalyticsDatasource {
-    suspend fun generateRequestsTimeline(timestamp: LocalDateTime, days: Long): List<HashMap<String, String>>
+    suspend fun weeklyTrafficAnalytics(timestamp: LocalDateTime): WeeklyTraffic
 }

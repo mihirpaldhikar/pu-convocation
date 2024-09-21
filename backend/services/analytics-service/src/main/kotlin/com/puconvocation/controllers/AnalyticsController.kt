@@ -14,25 +14,39 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.commons.dto.WeeklyTraffic
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
-import java.time.Instant
+import io.ktor.http.HttpStatusCode
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 class AnalyticsController(
     private val analyticsRepository: AnalyticsRepository
 ) {
 
-    suspend fun requestTimeLineAnalytics(
-        timestamp: Long, days: Long
-    ): Result<List<HashMap<String, String>>, ErrorResponse> {
+    suspend fun weeklyTrafficAnalytics(
+        weekStartDate: String
+    ): Result<WeeklyTraffic, ErrorResponse> {
+        val formattedDate = weekStartDate.split("-")
+        if (formattedDate.size != 3) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.BAD_REQUEST,
+                    message = "The date is not properly formatted."
+                )
+            )
+        }
         return Result.Success(
-            analyticsRepository.generateRequestsTimeline(
-                LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(timestamp),
-                    ZoneOffset.UTC
-                ), days
+            analyticsRepository.weeklyTrafficAnalytics(
+                LocalDateTime.of(
+                    formattedDate[0].toInt(),
+                    formattedDate[1].toInt(),
+                    formattedDate[2].toInt(),
+                    0,
+                    0
+                )
             )
         )
     }
