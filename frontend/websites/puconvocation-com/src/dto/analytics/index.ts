@@ -11,8 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as HttpService } from "./HttpService";
-export { default as AuthService } from "./AuthService";
-export { default as AttendeeService } from "./AttendeeService";
-export { default as DynamicsService } from "./DynamicsService";
-export { default as AnalyticsService } from "./AnalyticsService";
+export type { default as WeeklyTraffic } from "./WeeklyTraffic";
