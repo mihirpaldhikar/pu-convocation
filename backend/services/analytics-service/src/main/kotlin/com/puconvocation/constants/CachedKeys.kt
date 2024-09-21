@@ -31,6 +31,10 @@ object CachedKeys {
     }
 
     fun popularStatesOfCountryKey(countryCode: String): String {
-        return "analytics:popularStatesOf:$countryCode"
+        return "analytics:popularStates:$countryCode"
+    }
+
+    fun popularDistrictsWithInStatesOfCountryKey(countryCode: String, state: String): String {
+        return "analytics:popularDistricts:$countryCode:${state.replace(" ", "_").lowercase()}"
     }
 }

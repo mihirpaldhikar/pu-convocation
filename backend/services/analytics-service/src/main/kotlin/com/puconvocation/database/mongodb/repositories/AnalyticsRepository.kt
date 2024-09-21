@@ -231,6 +231,54 @@ class AnalyticsRepository(
         return states
     }
 
+    override suspend fun popularDistrictsWithInStateOfCountry(
+        countryCode: String,
+        state: String
+    ): List<Popular> {
+        val cachedDistricts = cache.get(CachedKeys.popularDistrictsWithInStatesOfCountryKey(countryCode, state))
+
+        if (cachedDistricts != null) {
+            return mapper.readValue<List<Popular>>(cachedDistricts)
+        }
+
+        val aggregationPipeline = listOf(
+            match(
+                and(
+                    eq("region.countryCode", countryCode),
+                    eq("region.state", state)
+                )
+            ),
+            group(
+                "\$region.district",
+                sum("count", 1)
+            ),
+            sort(descending("count")),
+            limit(5)
+        )
+        val popularDistricts = analytics.aggregate(
+            aggregationPipeline
+        ).toList()
+
+        var districts = mutableListOf<Popular>()
+
+        popularDistricts.forEach { document ->
+            districts.add(
+                Popular(
+                    key = document["_id"].toString(),
+                    count = document["count"].toString().toLong()
+                )
+            )
+        }
+
+        cache.set(
+            CachedKeys.popularDistrictsWithInStatesOfCountryKey(countryCode, state),
+            mapper.writeValueAsString(districts),
+            expiryDuration = Duration.ofMinutes(10)
+        )
+
+        return districts
+    }
+
     private fun weeklyTrafficAggregationPipeline(startDate: LocalDateTime): List<Bson> {
         return listOf(
             match(and(gte("timestamp", startDate), lt("timestamp", startDate.plusDays(7)))),

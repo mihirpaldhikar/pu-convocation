@@ -25,4 +25,6 @@ interface AnalyticsDatasource {
     suspend fun popularCountries(): List<Popular>
 
     suspend fun popularStatesOfCountry(countryCode: String): List<Popular>
+
+    suspend fun popularDistrictsWithInStateOfCountry(countryCode: String, state: String): List<Popular>
 }
