@@ -11,20 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.di
 
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoryModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import org.koin.dsl.module
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoryModule.init,
-        )
+object RepositoryModule {
+    val init = module {
+        single<AnalyticsRepository> {
+            AnalyticsRepository(
+                database = get<MongoDatabase>(),
+            )
+        }
     }
 }

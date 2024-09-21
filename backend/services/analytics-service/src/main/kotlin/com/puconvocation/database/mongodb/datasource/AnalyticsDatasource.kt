@@ -11,20 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.plugins
+package com.puconvocation.database.mongodb.datasource
 
-import com.puconvocation.di.CoreModule
-import com.puconvocation.di.DatabaseModule
-import com.puconvocation.di.RepositoryModule
-import io.ktor.server.application.*
-import org.koin.ktor.plugin.Koin
+import java.time.LocalDateTime
 
-fun Application.configureDependencyInjection() {
-    install(Koin) {
-        modules(
-            CoreModule.init,
-            DatabaseModule.init,
-            RepositoryModule.init,
-        )
-    }
+interface AnalyticsDatasource {
+    suspend fun generateRequestsTimeline(timestamp: LocalDateTime, days: Long): List<Pair<String, String>>
 }
