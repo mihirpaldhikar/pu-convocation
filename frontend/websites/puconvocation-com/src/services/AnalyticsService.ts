@@ -35,6 +35,12 @@ export default class AnalyticsService {
     );
   }
 
+  public async popularCountries(): Promise<Response<WeeklyTraffic | string>> {
+    return await this.httpService.get<WeeklyTraffic>(
+      `${this.ANALYTICS_ROUTE}/popularCountries`,
+    );
+  }
+
   private getStartOfWeekDate(date: Date): string {
     const startOfWeekDate = startOfWeek(date);
     return format(startOfWeekDate, "yyyy-MM-dd");
