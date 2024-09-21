@@ -49,6 +49,15 @@ export default class AnalyticsService {
     );
   }
 
+  public async popularDistrictsWithInStateOfCountry(
+    country: string,
+    state: string,
+  ): Promise<Response<Array<Popular> | string>> {
+    return await this.httpService.get<Array<Popular>>(
+      `${this.ANALYTICS_ROUTE}/popularDistrictsWithInStateOfCountry?country=${country}&state=${state}`,
+    );
+  }
+
   private getStartOfWeekDate(date: Date): string {
     const startOfWeekDate = startOfWeek(date);
     return format(startOfWeekDate, "yyyy-MM-dd");
