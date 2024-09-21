@@ -26,7 +26,7 @@ import com.puconvocation.commons.dto.WeeklyTraffic
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasource.AnalyticsDatasource
-import com.puconvocation.utils.sortTrafficByWeekdaysAndFillMissing
+import com.puconvocation.utils.sortByWeekdays
 import kotlinx.coroutines.flow.toList
 import org.bson.Document
 import org.bson.conversions.Bson
@@ -79,7 +79,8 @@ class AnalyticsRepository(
             previousWeekAggregationPipeline
         ).toList()
 
-        val traffic = mutableListOf<WeeklyTraffic.Traffic>()
+        val currentTraffic = mutableListOf<WeeklyTraffic.Traffic>()
+        val previousTraffic = mutableListOf<WeeklyTraffic.Traffic>()
 
         var currentWeekTotalRequests = 0L
         var previousWeekTotalRequests = 0L
@@ -87,7 +88,7 @@ class AnalyticsRepository(
         currentWeekAggregatedData.forEach {
             currentWeekTotalRequests += it["requests"].toString().toLong()
 
-            traffic.add(
+            currentTraffic.add(
                 WeeklyTraffic.Traffic(
                     day = weekdays["${it.get("_id")}".toInt() - 1 % 7],
                     requests = it["requests"].toString().toLong()
@@ -98,12 +99,20 @@ class AnalyticsRepository(
 
         previousWeekAggregatedData.forEach {
             previousWeekTotalRequests += it["requests"].toString().toLong()
+            previousTraffic.add(
+                WeeklyTraffic.Traffic(
+                    day = weekdays["${it.get("_id")}".toInt() - 1 % 7],
+                    requests = it["requests"].toString().toLong()
+                )
+
+            )
         }
 
         val computedTraffic = WeeklyTraffic(
-            traffic = traffic,
+            currentWeek = currentTraffic.sortByWeekdays(),
+            previousWeek = previousTraffic.sortByWeekdays(),
             surge = ((currentWeekTotalRequests - previousWeekTotalRequests) / (previousWeekTotalRequests) * 100).toFloat(),
-        ).sortTrafficByWeekdaysAndFillMissing()
+        )
 
         cache.set(
             CachedKeys.weeklyTrafficKey(), mapper.writeValueAsString(computedTraffic),

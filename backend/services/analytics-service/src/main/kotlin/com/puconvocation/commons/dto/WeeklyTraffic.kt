@@ -17,7 +17,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.commons.dto.WeeklyTraffic.Traffic
 
 data class WeeklyTraffic(
-    @JsonProperty("traffic") val traffic: List<Traffic>,
+    @JsonProperty("currentWeek") val currentWeek: List<Traffic>,
+    @JsonProperty("previousWeek") val previousWeek: List<Traffic>,
     @JsonProperty("surge") val surge: Float,
 ) {
     data class Traffic(
