@@ -13,11 +13,14 @@
 
 package com.puconvocation.database.mongodb.datasource
 
+import com.puconvocation.commons.dto.Popular
 import com.puconvocation.commons.dto.WeeklyTraffic
 import java.time.LocalDateTime
 
 interface AnalyticsDatasource {
     suspend fun weeklyTraffic(timestamp: LocalDateTime): WeeklyTraffic
 
-    suspend fun popularLangs(): HashMap<String, Long>
+    suspend fun popularLangs(): List<Popular>
+
+    suspend fun popularCountries(): List<Popular>
 }

@@ -14,6 +14,7 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.commons.dto.Popular
 import com.puconvocation.commons.dto.WeeklyTraffic
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
 import com.puconvocation.enums.ResponseCode
@@ -51,9 +52,15 @@ class AnalyticsController(
         )
     }
 
-    suspend fun popularLang(): Result<HashMap<String, Long>, ErrorResponse> {
+    suspend fun popularLang(): Result<List<Popular>, ErrorResponse> {
         return Result.Success(
             analyticsRepository.popularLangs()
+        )
+    }
+
+    suspend fun popularCountries(): Result<List<Popular>, ErrorResponse> {
+        return Result.Success(
+            analyticsRepository.popularCountries()
         )
     }
 }

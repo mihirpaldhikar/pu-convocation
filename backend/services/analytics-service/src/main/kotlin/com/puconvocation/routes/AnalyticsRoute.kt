@@ -43,5 +43,10 @@ fun Route.analyticsRoute(
             val result = analyticsController.popularLang()
             call.sendResponse(result)
         }
+
+        get("/popularCountries") {
+            val result = analyticsController.popularCountries()
+            call.sendResponse(result)
+        }
     }
 }

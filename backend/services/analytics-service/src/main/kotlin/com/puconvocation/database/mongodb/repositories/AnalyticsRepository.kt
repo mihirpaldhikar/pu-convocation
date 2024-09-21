@@ -21,6 +21,7 @@ import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Indexes.descending
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.commons.dto.Popular
 import com.puconvocation.commons.dto.WeeklyTraffic
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
@@ -112,11 +113,11 @@ class AnalyticsRepository(
         return computedTraffic
     }
 
-    override suspend fun popularLangs(): HashMap<String, Long> {
+    override suspend fun popularLangs(): List<Popular> {
         val cachedPopularLangs = cache.get(CachedKeys.popularLangsKey())
 
         if (cachedPopularLangs != null) {
-            return mapper.readValue<HashMap<String, Long>>(cachedPopularLangs)
+            return mapper.readValue<List<Popular>>(cachedPopularLangs)
         }
 
         val aggregationPipeline = listOf(
@@ -130,13 +131,18 @@ class AnalyticsRepository(
             aggregationPipeline
         ).toList()
 
-        var langs = hashMapOf<String, Long>()
+        var langs = mutableListOf<Popular>()
 
         popularLanguages.forEach { document ->
-            langs[document["_id"].toString()] = document["count"].toString().toLong()
+            langs.add(
+                Popular(
+                    key = document["_id"].toString(),
+                    count = document["count"].toString().toLong()
+                )
+            )
         }
 
-        langs = sortLangAndFillMissing(langs)
+        langs = fillMissing(langs, listOf("en", "hi", "gu", "mr"))
 
         cache.set(
             CachedKeys.popularLangsKey(), mapper.writeValueAsString(langs),
@@ -144,6 +150,46 @@ class AnalyticsRepository(
         )
 
         return langs
+    }
+
+    override suspend fun popularCountries(): List<Popular> {
+        val cachedPopularCountries = cache.get(CachedKeys.popularCountriesKey())
+
+        if (cachedPopularCountries != null) {
+            return mapper.readValue<List<Popular>>(cachedPopularCountries)
+        }
+
+        val aggregationPipeline = listOf(
+            group(
+                "\$region.countryCode",
+                sum("count", 1)
+            ),
+            sort(descending("count")),
+            limit(5)
+        )
+        val popularCountries = analytics.aggregate(
+            aggregationPipeline
+        ).toList()
+
+        var countries = mutableListOf<Popular>()
+
+        popularCountries.forEach { document ->
+            countries.add(
+                Popular(
+                    key = document["_id"].toString(),
+                    count = document["count"].toString().toLong()
+                )
+            )
+        }
+
+        countries = fillMissing(countries, listOf("US", "IN", "UK", "FR", "JP"))
+
+        cache.set(
+            CachedKeys.popularCountriesKey(), mapper.writeValueAsString(countries),
+            expiryDuration = Duration.ofMinutes(10)
+        )
+
+        return countries
     }
 
     private fun weeklyTrafficAggregationPipeline(startDate: LocalDateTime): List<Bson> {
@@ -157,14 +203,19 @@ class AnalyticsRepository(
         )
     }
 
-    fun sortLangAndFillMissing(inputMap: HashMap<String, Long>): LinkedHashMap<String, Long> {
-        val requiredKeys = listOf("en", "hi", "gu", "mr")
-        val result = LinkedHashMap<String, Long>()
-
-        for (key in requiredKeys) {
-            result[key] = inputMap[key] ?: 0L
+    fun fillMissing(input: MutableList<Popular>, required: List<String>): MutableList<Popular> {
+        val currentKeys = input.map { it.key.lowercase() }
+        for (key in required) {
+            if (!currentKeys.contains(key.lowercase())) {
+                input.add(
+                    Popular(
+                        key = key,
+                        count = 0L
+                    )
+                )
+            }
         }
 
-        return result
+        return input
     }
 }

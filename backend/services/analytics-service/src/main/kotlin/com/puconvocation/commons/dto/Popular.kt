@@ -11,22 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.constants
+package com.puconvocation.commons.dto
 
-object CachedKeys {
-    fun accountWithIAMRolesKey(identifier: String): String {
-        return "accountWithIAMRoles:$identifier"
-    }
+import com.fasterxml.jackson.annotation.JsonProperty
 
-    fun weeklyTrafficKey(): String {
-        return "analytics:weeklyTraffic"
-    }
-
-    fun popularLangsKey(): String {
-        return "analytics:popularLangs"
-    }
-
-    fun popularCountriesKey(): String {
-        return "analytics:popularCountries"
-    }
-}
+data class Popular(
+    @JsonProperty("key") val key: String,
+    @JsonProperty("count") val count: Long,
+)
