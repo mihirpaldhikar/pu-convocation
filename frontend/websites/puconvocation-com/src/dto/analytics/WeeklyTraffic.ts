@@ -12,8 +12,13 @@
  */
 
 export default interface WeeklyTraffic {
-  traffic: Array<{
+  thisWeek: Array<{
     day: string;
     requests: number;
   }>;
+  previousWeek: Array<{
+    day: string;
+    requests: number;
+  }>;
+  surge: number;
 }
