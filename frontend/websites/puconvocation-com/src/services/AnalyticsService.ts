@@ -13,7 +13,7 @@
 
 import { HttpService } from "@services/index";
 import { Response } from "@dto/Response";
-import { WeeklyTraffic } from "@dto/index";
+import { Popular, WeeklyTraffic } from "@dto/index";
 import { format, startOfWeek } from "date-fns";
 
 export default class AnalyticsService {
@@ -29,15 +29,23 @@ export default class AnalyticsService {
     );
   }
 
-  public async popularLangs(): Promise<Response<WeeklyTraffic | string>> {
-    return await this.httpService.get<WeeklyTraffic>(
+  public async popularLangs(): Promise<Response<Array<Popular> | string>> {
+    return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularLangs`,
     );
   }
 
-  public async popularCountries(): Promise<Response<WeeklyTraffic | string>> {
-    return await this.httpService.get<WeeklyTraffic>(
+  public async popularCountries(): Promise<Response<Array<Popular> | string>> {
+    return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularCountries`,
+    );
+  }
+
+  public async popularStatesOfCountry(
+    country: string,
+  ): Promise<Response<Array<Popular> | string>> {
+    return await this.httpService.get<Array<Popular>>(
+      `${this.ANALYTICS_ROUTE}/popularStatesOfCountry?country=${country}`,
     );
   }
 

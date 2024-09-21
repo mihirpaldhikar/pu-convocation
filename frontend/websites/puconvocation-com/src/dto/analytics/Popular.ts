@@ -11,5 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export type { default as WeeklyTraffic } from "./WeeklyTraffic";
-export type { default as Popular } from "./Popular";
+export default interface Popular {
+  key: string;
+  count: number;
+}
