@@ -11,10 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.datasource
+package com.puconvocation.di
 
-import java.time.LocalDateTime
+import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import org.koin.dsl.module
 
-interface AnalyticsDatasource {
-    suspend fun generateRequestsTimeline(timestamp: LocalDateTime, days: Long): List<HashMap<String, String>>
+object ControllerModule {
+    val init = module {
+        single<AnalyticsController> {
+            AnalyticsController(
+                analyticsRepository = get<AnalyticsRepository>()
+            )
+        }
+    }
 }

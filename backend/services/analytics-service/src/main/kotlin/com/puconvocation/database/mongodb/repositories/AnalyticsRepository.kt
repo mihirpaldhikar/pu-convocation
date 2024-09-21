@@ -44,7 +44,7 @@ class AnalyticsRepository(
     override suspend fun generateRequestsTimeline(
         timestamp: LocalDateTime,
         days: Long
-    ): List<Pair<String, String>> {
+    ): List<HashMap<String, String>> {
 
         val startDate = timestamp
         val endDate = timestamp.plusDays(days)
@@ -63,13 +63,13 @@ class AnalyticsRepository(
             pipeline
         ).toList()
 
-        val timeLine = mutableListOf<Pair<String, String>>()
+        val timeLine = mutableListOf<HashMap<String, String>>()
 
         for (data in aggregatedData) {
             timeLine.add(
-                Pair(
-                    weekdays["${data.get("_id")}".toInt() - 1 % 7],
-                    "${data["requests"]}"
+                hashMapOf(
+                    "day" to weekdays["${data.get("_id")}".toInt() - 1 % 7],
+                    "requests" to "${data["requests"]}"
                 )
             )
         }

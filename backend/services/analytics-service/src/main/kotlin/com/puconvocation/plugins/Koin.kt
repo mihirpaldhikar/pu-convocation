@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.di.ControllerModule
 import com.puconvocation.di.CoreModule
 import com.puconvocation.di.DatabaseModule
 import com.puconvocation.di.RepositoryModule
@@ -25,6 +26,7 @@ fun Application.configureDependencyInjection() {
             CoreModule.init,
             DatabaseModule.init,
             RepositoryModule.init,
+            ControllerModule.init
         )
     }
 }

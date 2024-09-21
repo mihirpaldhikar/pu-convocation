@@ -11,10 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.datasource
+package com.puconvocation.commons.dto
 
-import java.time.LocalDateTime
+import com.puconvocation.enums.ResponseCode
+import com.puconvocation.utils.Error
 
-interface AnalyticsDatasource {
-    suspend fun generateRequestsTimeline(timestamp: LocalDateTime, days: Long): List<HashMap<String, String>>
-}
+data class ErrorResponse(
+    val errorCode: ResponseCode,
+    val message: String,
+) : Error

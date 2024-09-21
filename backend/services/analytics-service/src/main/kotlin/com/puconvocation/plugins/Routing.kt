@@ -13,13 +13,19 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.routes.analyticsRoute
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import org.koin.java.KoinJavaComponent
 
 fun Application.configureRouting() {
 
+    val analyticsController by KoinJavaComponent.inject<AnalyticsController>(AnalyticsController::class.java)
+
     routing {
-        analyticsRoute()
+        analyticsRoute(
+            analyticsController = analyticsController
+        )
     }
 }

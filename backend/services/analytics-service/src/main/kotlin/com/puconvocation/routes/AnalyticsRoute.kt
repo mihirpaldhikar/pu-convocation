@@ -13,13 +13,40 @@
 
 package com.puconvocation.routes
 
+import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.enums.ResponseCode
+import com.puconvocation.utils.Result
+import com.puconvocation.utils.sendResponse
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.analyticsRoute() {
+fun Route.analyticsRoute(
+    analyticsController: AnalyticsController
+) {
     route("/analytics") {
-        get("/") {
-            call.respondText("Hello World!")
+        get("/requestTimeline") {
+            val timestamp = call.request.queryParameters["timestamp"]?.toLong() ?: return@get call.sendResponse(
+                Result.Error(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide timestamp as query parameter."
+                    )
+                )
+            )
+            val days = call.request.queryParameters["days"]?.toLong() ?: return@get call.sendResponse(
+                Result.Error(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide days as query parameter."
+                    )
+                )
+            )
+            val result = analyticsController.requestTimeLineAnalytics(timestamp, days)
+            call.sendResponse(result)
         }
     }
 }
