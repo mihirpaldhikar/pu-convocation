@@ -17,14 +17,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.types.ObjectId
+import java.time.LocalDateTime
+import java.util.Date
 
 data class AnalyticsLog(
     @JsonSerialize(using = ObjectIdSerializer::class)
     @BsonId
-    @JsonProperty("id")
-    val id: String,
+    @JsonProperty("logId")
+    val logId: ObjectId,
 
-    @JsonProperty("timestamp") val timestamp: Long,
+    @JsonProperty("timestamp") val timestamp: LocalDateTime,
     @JsonProperty("lang") val lang: String,
     @JsonProperty("path") val path: String,
     @JsonProperty("region") val region: Region,

@@ -27,6 +27,9 @@ import org.bson.types.ObjectId
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent
 import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.ConcurrentLinkedQueue
 
 fun main(): Unit = runBlocking {
@@ -74,8 +77,8 @@ fun main(): Unit = runBlocking {
                     val ipDetails = ipTable.getDetails(ip)
                     if (ipDetails != null) {
                         val analyticsLog = AnalyticsLog(
-                            id = ObjectId().toHexString(),
-                            timestamp = data[0].toLong(),
+                            logId = ObjectId(),
+                            timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(data[0].toLong()), ZoneOffset.UTC),
                             lang = data[1],
                             path = data[2],
                             region = AnalyticsLog.Region(
