@@ -41,6 +41,21 @@ fun Route.analyticsRoute(
             call.sendResponse(result)
         }
 
+        get("/trafficOnDate") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val date = call.request.queryParameters["date"] ?: return@get call.sendResponse(
+                Result.Error(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide timestamp as query parameter."
+                    )
+                )
+            )
+            val result = analyticsController.trafficOnDate(authorizationToken, date)
+            call.sendResponse(result)
+        }
+
         get("/popularLangs") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val result = analyticsController.popularLang(authorizationToken)

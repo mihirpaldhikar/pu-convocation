@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.toList
 import org.bson.Document
 import org.bson.conversions.Bson
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AnalyticsRepository(
@@ -51,6 +52,65 @@ class AnalyticsRepository(
         "Friday",
         "Saturday",
     )
+
+    override suspend fun trafficOnDate(date: LocalDate): List<Popular> {
+
+        val cachedTraffic = cache.get(CachedKeys.trafficOnDateKey(date.toString()))
+
+        if (cachedTraffic != null) {
+            return mapper.readValue<List<Popular>>(cachedTraffic)
+        }
+
+        val specificDate = date
+        val totalEntriesBy2HourInterval = analytics.aggregate(
+            listOf(
+                match(
+                    and(
+                        gte("timestamp", specificDate),
+                        lt("timestamp", specificDate.plusDays(1))
+
+                    )
+                ),
+                project(
+                    Document(
+                        "hourInterval",
+                        Document(
+                            "\$subtract", listOf(
+                                Document("\$hour", "\$timestamp"),
+                                Document("\$mod", listOf(Document("\$hour", "\$timestamp"), 2))
+                            )
+                        )
+                    ),
+                ),
+                group("\$hourInterval", sum("count", 1)),
+            )
+        ).toList()
+
+        var computedTraffic = mutableListOf<Popular>()
+
+        totalEntriesBy2HourInterval.forEach {
+            computedTraffic.add(
+                Popular(
+                    key = it["_id"].toString(),
+                    count = it["count"].toString().toLong()
+                )
+            )
+        }
+
+        computedTraffic =
+            fillMissing(computedTraffic, listOf("0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22"))
+
+        computedTraffic.sortWith(compareBy {
+            it.key.toLongOrNull() ?: Long.MAX_VALUE
+        })
+
+        cache.set(
+            CachedKeys.trafficOnDateKey(date.toString()), mapper.writeValueAsString(computedTraffic),
+            expiryDuration = Duration.ofMinutes(10)
+        )
+
+        return computedTraffic
+    }
 
     override suspend fun weeklyTraffic(
         timestamp: LocalDateTime,

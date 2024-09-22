@@ -22,6 +22,10 @@ object CachedKeys {
         return "analytics:weeklyTraffic"
     }
 
+    fun trafficOnDateKey(date: String): String {
+        return "analytics:trafficOn:${date.replace("-", "_")}"
+    }
+
     fun popularLangsKey(): String {
         return "analytics:popularLangs"
     }

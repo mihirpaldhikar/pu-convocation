@@ -21,6 +21,7 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.services.AuthService
 import com.puconvocation.utils.Result
 import io.ktor.http.HttpStatusCode
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class AnalyticsController(
@@ -64,6 +65,45 @@ class AnalyticsController(
                     formattedDate[2].toInt(),
                     0,
                     0
+                )
+            )
+        )
+    }
+
+    suspend fun trafficOnDate(
+        authorizationToken: String?,
+        date: String
+    ): Result<List<Popular>, ErrorResponse> {
+        if (!authService.isAuthorized(
+                role = "read:Analytics",
+                principal = authorizationToken
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view analytics."
+                )
+            )
+        }
+
+        val formattedDate = date.split("-")
+        if (formattedDate.size != 3) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.BAD_REQUEST,
+                    message = "The date is not properly formatted."
+                )
+            )
+        }
+        return Result.Success(
+            analyticsRepository.trafficOnDate(
+                LocalDate.of(
+                    formattedDate[0].toInt(),
+                    formattedDate[1].toInt(),
+                    formattedDate[2].toInt(),
                 )
             )
         )
