@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
+import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.*
@@ -26,6 +27,7 @@ fun Route.analyticsRoute(
 ) {
     route("/analytics") {
         get("/weeklyTraffic") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val date = call.request.queryParameters["date"] ?: return@get call.sendResponse(
                 Result.Error(
                     httpStatusCode = HttpStatusCode.BadRequest,
@@ -35,21 +37,24 @@ fun Route.analyticsRoute(
                     )
                 )
             )
-            val result = analyticsController.weeklyTraffic(date)
+            val result = analyticsController.weeklyTraffic(authorizationToken, date)
             call.sendResponse(result)
         }
 
         get("/popularLangs") {
-            val result = analyticsController.popularLang()
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val result = analyticsController.popularLang(authorizationToken)
             call.sendResponse(result)
         }
 
         get("/popularCountries") {
-            val result = analyticsController.popularCountries()
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val result = analyticsController.popularCountries(authorizationToken)
             call.sendResponse(result)
         }
 
         get("/popularStatesOfCountry") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val country = call.request.queryParameters["country"] ?: return@get call.sendResponse(
                 Result.Error(
                     httpStatusCode = HttpStatusCode.BadRequest,
@@ -59,11 +64,12 @@ fun Route.analyticsRoute(
                     )
                 )
             )
-            val result = analyticsController.popularStatesOfCountry(country)
+            val result = analyticsController.popularStatesOfCountry(authorizationToken, country)
             call.sendResponse(result)
         }
 
         get("/popularDistrictsWithInStateOfCountry") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
             val country = call.request.queryParameters["country"] ?: return@get call.sendResponse(
                 Result.Error(
                     httpStatusCode = HttpStatusCode.BadRequest,
@@ -83,7 +89,7 @@ fun Route.analyticsRoute(
                 )
             )
 
-            val result = analyticsController.popularDistrictsWithInStateOfCountry(country, state)
+            val result = analyticsController.popularDistrictsWithInStateOfCountry(authorizationToken, country, state)
             call.sendResponse(result)
         }
     }

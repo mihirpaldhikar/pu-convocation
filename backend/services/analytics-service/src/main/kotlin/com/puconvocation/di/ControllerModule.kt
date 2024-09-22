@@ -15,13 +15,15 @@ package com.puconvocation.di
 
 import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import com.puconvocation.services.AuthService
 import org.koin.dsl.module
 
 object ControllerModule {
     val init = module {
         single<AnalyticsController> {
             AnalyticsController(
-                analyticsRepository = get<AnalyticsRepository>()
+                analyticsRepository = get<AnalyticsRepository>(),
+                authService = get<AuthService>()
             )
         }
     }
