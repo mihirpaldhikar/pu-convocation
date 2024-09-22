@@ -29,6 +29,16 @@ export default class AnalyticsService {
     );
   }
 
+  public async trafficOnDate(
+    year: number,
+    month: number,
+    day: number,
+  ): Promise<Response<WeeklyTraffic | string>> {
+    return await this.httpService.get<WeeklyTraffic>(
+      `${this.ANALYTICS_ROUTE}/trafficOnDate?date=${year}-${month}-${day}`,
+    );
+  }
+
   public async popularLangs(): Promise<Response<Array<Popular> | string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularLangs`,
