@@ -131,7 +131,6 @@ export default function Carousel({
               key={image.url}
               className={`size-3 rounded-full ${index === imageIndex ? "bg-red-600" : "border border-black"}`}
               onClick={() => {
-                console.log("kkk");
                 setImageIndex(index);
               }}
             />
