@@ -12,7 +12,7 @@
  */
 
 export default interface WeeklyTraffic {
-  thisWeek: Array<{
+  currentWeek: Array<{
     day: string;
     requests: number;
   }>;
