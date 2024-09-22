@@ -28,7 +28,7 @@
   "components": {
     "forms": {
       "identifierForm": {
-        "identifierInputHint": "तुमची नावनोंदणी किंवा दीक्षांत समारंभ क्रमांक प्रविष्ट करा.",
+        "identifierInputHint": "तुमची नावनोंदणी क्रमांक प्रविष्ट करा...",
         "submitButton": "तुमची जागा शोधा"
       },
       "authenticationForm": {

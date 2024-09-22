@@ -73,7 +73,7 @@ export default async function Footer(): Promise<JSX.Element> {
           >
             {coreTranslations.rich("styledUniversityName", {
               highlight: (chunks) => (
-                <span className={"text-primary"}>{chunks}</span>
+                <span className={"text-red-800"}>{chunks}</span>
               ),
             })}
           </Link>

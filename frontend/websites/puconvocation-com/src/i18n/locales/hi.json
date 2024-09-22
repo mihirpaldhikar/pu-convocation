@@ -28,7 +28,7 @@
   "components": {
     "forms": {
       "identifierForm": {
-        "identifierInputHint": "अपना नामांकन या दीक्षांत समारोह संख्या दर्ज करें.",
+        "identifierInputHint": "अपना नामांकन संख्या दर्ज करें...",
         "submitButton": "अपनी सीट खोजें"
       },
       "authenticationForm": {

@@ -28,7 +28,7 @@
   "components": {
     "forms": {
       "identifierForm": {
-        "identifierInputHint": "Enter your Enrollment or Convocation No.",
+        "identifierInputHint": "Enter your Enrollment Number...",
         "submitButton": "Find Your Seat"
       },
       "authenticationForm": {

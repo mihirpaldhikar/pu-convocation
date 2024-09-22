@@ -28,7 +28,7 @@
   "components": {
     "forms": {
       "identifierForm": {
-        "identifierInputHint": "તમારું એનરોલમેન્ટ અથવા કોન્વોકેશન નંબર દાખલ કરો.",
+        "identifierInputHint": "તમારું એનરોલમેન્ટ નંબર દાખલ કરો...",
         "submitButton": "તમારી બેઠક શોધો"
       },
       "authenticationForm": {

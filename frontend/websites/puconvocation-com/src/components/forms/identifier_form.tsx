@@ -34,7 +34,9 @@ export default function IdentifierForm(): JSX.Element {
       }}
     >
       <Input
-        className={"w-full bg-white font-medium text-black md:w-1/5"}
+        className={
+          "w-full rounded-full bg-white px-5 py-5 font-medium text-black md:w-1/5"
+        }
         name={"identifier"}
         type={"text"}
         value={identifier}
@@ -43,7 +45,12 @@ export default function IdentifierForm(): JSX.Element {
           setIdentifier(event.target.value.trim());
         }}
       />
-      <Button type={"submit"} className={"space-x-3 rounded-full"}>
+      <Button
+        type={"submit"}
+        className={
+          "space-x-3 rounded-full bg-red-800 px-5 py-5 hover:bg-red-900"
+        }
+      >
         <p className={"text-lg font-bold"}>
           {formTranslations("submitButton")}
         </p>
