@@ -19,6 +19,7 @@ import { GlobeAltIcon } from "@heroicons/react/24/outline";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@i18n/routing";
 import { useTranslations } from "use-intl";
+import { Button } from "@components/ui";
 
 export default function LanguageSelector(): JSX.Element {
   const translations = useTranslations("components.footer.languageSelector");
@@ -36,10 +37,10 @@ export default function LanguageSelector(): JSX.Element {
       <div className={"flex space-x-4"}>
         {i18nConfig.map((lang) => {
           return (
-            <button
+            <Button
               hidden={!lang.enabled}
               key={lang.code}
-              className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border"} rounded-full px-2 py-1 text-xs`}
+              className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border bg-transparent text-black hover:text-white"} rounded-full text-xs`}
               onClick={() => {
                 router.replace(pathName, {
                   locale: lang.code,
@@ -47,7 +48,7 @@ export default function LanguageSelector(): JSX.Element {
               }}
             >
               {lang.localName}
-            </button>
+            </Button>
           );
         })}
       </div>

@@ -26,6 +26,7 @@ import {
 import { useWebsiteConfig } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import { Link } from "@i18n/routing";
+import { Button } from "@components/ui";
 
 export default function Home() {
   const { state: website } = useWebsiteConfig();
@@ -148,15 +149,11 @@ export default function Home() {
             </div>
             <div className={"flex flex-col space-y-5 px-10 py-5"}>
               <p>{pageTranslations("aboutUs.description")}</p>
-              <Link
-                className={
-                  "w-fit rounded-full bg-primary px-5 py-2 font-bold text-white"
-                }
-                href={"https://paruluniversity.ac.in"}
-                target={"_blank"}
-              >
-                {pageTranslations("aboutUs.knowMore")}
-              </Link>
+              <Button asChild={true} className={"w-fit rounded-full"}>
+                <Link href={"https://paruluniversity.ac.in"} target={"_blank"}>
+                  {pageTranslations("aboutUs.knowMore")}
+                </Link>
+              </Button>
             </div>
           </div>
           <div className={"flex flex-1 justify-end px-3 py-3"}>

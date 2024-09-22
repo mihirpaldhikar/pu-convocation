@@ -30,3 +30,22 @@ export {
 } from "./popover";
 export { default as Logo } from "./logo";
 export { default as Pattern } from "./pattern";
+export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
+export {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetPortal,
+  SheetTitle,
+  SheetTrigger,
+} from "./sheet";

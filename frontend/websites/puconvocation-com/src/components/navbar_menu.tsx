@@ -13,27 +13,28 @@
 
 "use client";
 
-import { JSX, useState } from "react";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import { useAuth, useToast, useWebsiteConfig } from "@hooks/index";
+import { Fragment, JSX, useState } from "react";
+import { useAuth, useWebsiteConfig } from "@hooks/index";
 import { StatusCode } from "@enums/StatusCode";
+import { useQuery } from "@tanstack/react-query";
+import { Link, usePathname, useRouter } from "@i18n/routing";
+import { useLocale } from "next-intl";
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Button,
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@components/ui";
+import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import { usePathname, useRouter } from "@i18n/routing";
-import { useLocale } from "next-intl";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
   const path = usePathname();
   const currentLocale = useLocale();
-  const { toast } = useToast();
 
   const {
     state: { account, authService },
@@ -107,101 +108,115 @@ export default function NavbarMenu(): JSX.Element {
   }
 
   return (
-    <nav
-      className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
-    >
-      <Link
-        href={"/authenticate"}
-        className={`${!path.includes("/authenticate") && !path.includes("/console") && account === null ? "flex" : "hidden"} items-center rounded-2xl bg-black px-4 py-2 text-white`}
-      >
-        <UserCircleIcon className={"mr-2 size-5"} />
-        <span className="mr-2">Login</span>
-      </Link>
-      <div
-        className={`${account !== null ? "flex" : "hidden"} items-center space-x-2`}
-      >
-        <Popover
-          open={isPopupOpen}
-          defaultOpen={false}
-          onOpenChange={openPopup}
-        >
-          <PopoverTrigger className={"flex items-center space-x-3"}>
-            <h4 className={"hidden font-medium md:block"}>
-              {account?.username}
-            </h4>
-            <Image
-              src={
-                account?.avatarURL ??
-                "https://assets.puconvocation.com/avatars/default.png"
-              }
-              alt={account?.displayName ?? "Loading.."}
-              width={40}
-              height={40}
-              draggable={false}
-              priority={true}
-              fetchPriority={"high"}
-              className={"rounded-full border border-border"}
-            />
-          </PopoverTrigger>
-          <PopoverContent
-            className={"flex flex-col items-center space-y-3 rounded-md"}
-          >
-            <h5 className={"text-xs text-primary"}>{account?.email}</h5>
-            <div className={"flex flex-col items-center space-y-2"}>
-              <Image
-                src={
-                  account?.avatarURL ??
-                  "https://assets.puconvocation.com/avatars/default.png"
-                }
-                alt={account?.displayName ?? "Loading.."}
-                width={80}
-                height={80}
-                draggable={false}
-                priority={true}
-                fetchPriority={"high"}
-                className={"rounded-full border border-border"}
-              />
-              <h5 className={"text-lg font-semibold"}>
-                Hi, {account?.displayName.split(" ")[0]}
-              </h5>
-            </div>
-            <div className={"flex items-center space-x-3"}>
-              <Link
-                href={"/console/account"}
-                onClick={() => {
-                  openPopup(false);
-                }}
-              >
-                <Button variant={"outline"}>Manage Account</Button>
+    <nav className={"flex items-center justify-center space-x-5"}>
+      {account == null && !path.includes("authenticate") ? (
+        <Fragment>
+          <Button asChild={true} size={"lg"}>
+            <Link href={"/authenticate"}>
+              <UserCircleIcon className={"mr-3 size-5"} /> Login
+            </Link>
+          </Button>
+        </Fragment>
+      ) : (
+        account !== null && (
+          <Fragment>
+            <Button
+              asChild={true}
+              className={`${!account.iamRoles.includes("write:Transaction") ? "hidden" : ""} rounded-full`}
+            >
+              <Link href={"/console/scan"}>
+                <QrCodeIcon className={"mr-3 size-5"} />
+                <span>Scan</span>
               </Link>
-              <Button
-                variant={"outline"}
-                onClick={async () => {
-                  openPopup(false);
-                  const response = await authService.signOut();
-                  if (response.statusCode === StatusCode.SUCCESS) {
-                    dispatchAccountMutation({
-                      type: "SIGN_OUT",
-                      payload: {
-                        account: null,
-                      },
-                    });
-                    router.replace("/authenticate");
-                  } else {
-                    toast({
-                      title: "Error",
-                      description: "An error occurred.",
-                      duration: 5000,
-                    });
-                  }
-                }}
+            </Button>
+            <Popover
+              open={isPopupOpen}
+              onOpenChange={(open) => {
+                openPopup(open);
+              }}
+            >
+              <PopoverTrigger>
+                <Avatar>
+                  <AvatarImage src={account.avatarURL} />
+                  <AvatarFallback>
+                    {account.displayName.substring(0, 1)}
+                  </AvatarFallback>
+                </Avatar>
+              </PopoverTrigger>
+              <PopoverContent
+                sideOffset={5}
+                className={"mr-5 space-y-5 rounded-xl shadow-sm md:mr-10"}
               >
-                Sign Out
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
+                <div
+                  className={
+                    "flex flex-col items-center justify-center space-y-3"
+                  }
+                >
+                  <Image
+                    src={account.avatarURL}
+                    alt={account.displayName}
+                    height={50}
+                    width={50}
+                    fetchPriority={"high"}
+                    className={"h-auto w-auto rounded-full"}
+                  />
+                  <h5 className={"font-semibold"}>
+                    Hello, {account.displayName.split(" ")[0]}
+                  </h5>
+                  <span
+                    className={
+                      "block rounded-full bg-secondary px-2 py-1 text-xs"
+                    }
+                  >
+                    {account.email}
+                  </span>
+                </div>
+                <div
+                  className={"flex flex-col space-y-3"}
+                  onClick={() => {
+                    openPopup(false);
+                  }}
+                >
+                  <div
+                    className={
+                      "flex flex-row items-center justify-evenly gap-4"
+                    }
+                  >
+                    <Button
+                      asChild={true}
+                      variant={"outline"}
+                      className={"flex-grow"}
+                    >
+                      <Link href={"/console/account"}>Account</Link>
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      className={"flex-grow"}
+                      onClick={async () => {
+                        await authService.signOut();
+                        dispatchAccountMutation({
+                          type: "SIGN_OUT",
+                        });
+                        router.replace(
+                          path.includes("console") ? "/authenticate" : path,
+                        );
+                      }}
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
+                  <Button
+                    asChild={true}
+                    className={`${path.includes("console") ? "hidden" : ""}`}
+                  >
+                    <Link href={"/console"}>Console</Link>
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </Fragment>
+        )
+      )}
     </nav>
   );
 }

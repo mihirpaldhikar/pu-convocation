@@ -30,9 +30,6 @@ export type AuthAction =
     }
   | {
       type: "SIGN_OUT";
-      payload: {
-        account: null;
-      };
     };
 
 export type AuthState = {

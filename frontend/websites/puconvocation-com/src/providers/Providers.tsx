@@ -18,6 +18,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WebsiteConfigProvider from "@providers/WebsiteConfig";
 import AuthProvider from "@providers/AuthProvider";
 import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
+import { TooltipProvider } from "@components/ui";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -39,7 +40,9 @@ export default function Providers({
     >
       <QueryClientProvider client={queryClient}>
         <WebsiteConfigProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </AuthProvider>
         </WebsiteConfigProvider>
       </QueryClientProvider>
     </NextIntlClientProvider>

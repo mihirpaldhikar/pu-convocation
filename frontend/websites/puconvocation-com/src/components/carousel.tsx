@@ -16,6 +16,7 @@
 import { JSX, useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Button } from "@components/ui";
 
 interface CarouselProps {
   autoPlay?: boolean;
@@ -80,10 +81,11 @@ export default function Carousel({
           "absolute bottom-0 left-0 top-0 flex items-center justify-center p-2"
         }
       >
-        <button
+        <Button
           aria-label="Previous Slide"
+          size={"icon"}
           className={
-            "cursor-pointer rounded-full bg-red-100/80 p-1 backdrop-blur-lg"
+            "rounded-full bg-red-100/80 text-black backdrop-blur-lg hover:bg-red-100"
           }
           onClick={() => {
             if (imageIndex == 0) {
@@ -93,8 +95,8 @@ export default function Carousel({
             }
           }}
         >
-          <ChevronLeftIcon className={"size-7 text-black"} />
-        </button>
+          <ChevronLeftIcon className={"size-7"} />
+        </Button>
       </div>
 
       <div
@@ -102,17 +104,18 @@ export default function Carousel({
           "absolute bottom-0 right-0 top-0 flex items-center justify-center p-2"
         }
       >
-        <button
+        <Button
           aria-label="Next Slide"
+          size={"icon"}
           className={
-            "cursor-pointer rounded-full bg-red-100/80 p-1 backdrop-blur-lg"
+            "rounded-full bg-red-100/80 text-black backdrop-blur-lg hover:bg-red-100"
           }
           onClick={() => {
             setImageIndex((currentIndex) => (currentIndex + 1) % images.length);
           }}
         >
-          <ChevronRightIcon className={"size-7 text-black"} />
-        </button>
+          <ChevronRightIcon className={"size-7"} />
+        </Button>
       </div>
       <div
         className={
@@ -126,10 +129,11 @@ export default function Carousel({
       >
         {images.map((image, index) => {
           return (
-            <button
+            <Button
               aria-label={`Slide ${index + 1}`}
               key={image.url}
-              className={`size-3 rounded-full ${index === imageIndex ? "bg-red-600" : "border border-black"}`}
+              size={"icon"}
+              className={`size-3 rounded-full ${index === imageIndex ? "bg-red-600" : "bg-gray-400/70"}`}
               onClick={() => {
                 setImageIndex(index);
               }}

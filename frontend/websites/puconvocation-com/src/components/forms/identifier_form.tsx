@@ -47,9 +47,8 @@ export default function IdentifierForm(): JSX.Element {
       />
       <Button
         type={"submit"}
-        className={
-          "space-x-3 rounded-full bg-red-800 px-5 py-5 hover:bg-red-900"
-        }
+        size={"lg"}
+        className={"space-x-3 rounded-full bg-red-800 hover:bg-red-900"}
       >
         <p className={"text-lg font-bold"}>
           {formTranslations("submitButton")}
