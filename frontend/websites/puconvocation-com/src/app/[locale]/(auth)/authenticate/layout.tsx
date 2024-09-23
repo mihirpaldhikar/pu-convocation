@@ -23,7 +23,7 @@ import { getMessages } from "next-intl/server";
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Console | PU Convocation",
+  title: "Authenticate | PU Convocation",
   description:
     "Portal to manage everything related to convocation ceremonies at Parul University Convocation.",
 };
