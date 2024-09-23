@@ -70,7 +70,7 @@ export default class AuthService {
         studentEnrollmentNumber: studentEnrollmentNumber,
       },
       {
-        expectedStatusCode: 201,
+        expectedStatusCode: 200,
       },
     );
   }
