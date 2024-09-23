@@ -48,7 +48,7 @@ export default async function AttendeePage({
             to find your seat.
           </p>
           <Link
-            href={"/"}
+            href={"/public"}
             className={"rounded-full bg-gray-900 px-5 py-2 text-white"}
           >
             Go Home

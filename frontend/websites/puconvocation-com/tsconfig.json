@@ -22,7 +22,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
+      "@root/*": [
+        "./src/app/[locale]/*"
+      ],
       "@public/*": [
         "./public/*"
       ],

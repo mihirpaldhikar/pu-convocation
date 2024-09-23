@@ -13,17 +13,17 @@
 
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
-import "./globals.css";
+import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
-import { Footer, Navbar } from "@components/index";
+import { Navbar } from "@components/index";
 import { getMessages } from "next-intl/server";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "PU Convocation",
+  title: "Console | PU Convocation",
   description:
     "Portal to manage everything related to convocation ceremonies at Parul University Convocation.",
 };
@@ -41,19 +41,17 @@ export default async function RootLayout({
     locale: locale,
   });
 
-  console.log(locale);
   return (
     <html lang={locale}>
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
         <Providers locale={locale} translations={translations}>
-          <div className={"flex min-h-dvh flex-col"}>
+          <div className={"flex h-screen flex-col"}>
             <Navbar />
-            <main className={`flex-1 pt-20`}>{children}</main>
+            <main className={`flex-1`}>{children}</main>
             <Toaster />
           </div>
-          <Footer />
         </Providers>
       </body>
     </html>
