@@ -17,8 +17,9 @@ import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
-import { Navbar } from "@components/index";
+import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
 import { getMessages } from "next-intl/server";
+import * as Icons from "@heroicons/react/24/solid";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,6 +33,33 @@ interface RootLayout {
   children: ReactNode;
   params: { locale: string };
 }
+
+const navMenu: Array<{
+  name: string;
+  route: string;
+  icon: keyof typeof Icons;
+}> = [
+  {
+    name: "Home",
+    route: "",
+    icon: "HomeIcon",
+  },
+  {
+    name: "Analytics",
+    route: "/analytics",
+    icon: "ChartBarIcon",
+  },
+  {
+    name: "Attendees",
+    route: "/attendees",
+    icon: "UsersIcon",
+  },
+  {
+    name: "Settings",
+    route: "/settings",
+    icon: "Cog6ToothIcon",
+  },
+];
 
 export default async function RootLayout({
   children,
@@ -49,7 +77,8 @@ export default async function RootLayout({
         <Providers locale={locale} translations={translations}>
           <div className={"flex h-screen flex-col"}>
             <Navbar />
-            <main className={`flex-1`}>{children}</main>
+            <ConsoleDesktop navMenu={navMenu}>{children}</ConsoleDesktop>
+            <ConsoleMobile navMenu={navMenu}>{children}</ConsoleMobile>
             <Toaster />
           </div>
         </Providers>

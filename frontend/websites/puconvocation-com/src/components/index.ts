@@ -30,3 +30,6 @@ export { default as Carousel } from "./carousel";
 export { default as CountDown } from "./countdown";
 export { default as Convocation } from "./convocation";
 export { default as LanguageSelector } from "./language_selector";
+export { default as DynamicIcon } from "./dynamic_icon";
+export { default as ConsoleDesktop } from "./console_desktop";
+export { default as ConsoleMobile } from "./console_mobile";
