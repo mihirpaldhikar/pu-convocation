@@ -19,7 +19,7 @@ import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
 import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
 import { getMessages } from "next-intl/server";
-import * as Icons from "@heroicons/react/24/solid";
+import { NavMenu } from "@dto/index";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -34,30 +34,30 @@ interface RootLayout {
   params: { locale: string };
 }
 
-const navMenu: Array<{
-  name: string;
-  route: string;
-  icon: keyof typeof Icons;
-}> = [
+const navMenu: Array<NavMenu> = [
   {
     name: "Home",
     route: "",
     icon: "HomeIcon",
+    requiredIAMRoles: new Set<string>([]),
   },
   {
     name: "Analytics",
     route: "/analytics",
     icon: "ChartBarIcon",
+    requiredIAMRoles: new Set<string>(["read:Analytics"]),
   },
   {
     name: "Attendees",
     route: "/attendees",
     icon: "UsersIcon",
+    requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
   },
   {
     name: "Settings",
     route: "/settings",
     icon: "Cog6ToothIcon",
+    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
   },
 ];
 

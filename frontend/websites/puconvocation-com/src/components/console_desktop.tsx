@@ -12,20 +12,17 @@
  */
 
 "use client";
-import { JSX, ReactNode, useState } from "react";
+import { Fragment, JSX, ReactNode, useState } from "react";
 import { Button } from "@components/ui";
-import * as Icons from "@heroicons/react/24/solid";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Link, usePathname } from "@i18n/routing";
 import { DynamicIcon } from "@components/index";
+import { NavMenu } from "@dto/index";
+import { useAuth } from "@hooks/index";
 
 interface ConsoleDesktopProps {
   children: ReactNode;
-  navMenu: Array<{
-    name: string;
-    route: string;
-    icon: keyof typeof Icons;
-  }>;
+  navMenu: Array<NavMenu>;
 }
 
 export default function ConsoleDesktop({
@@ -34,6 +31,13 @@ export default function ConsoleDesktop({
 }: ConsoleDesktopProps): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const path = usePathname();
+  const { state } = useAuth();
+
+  if (state.loading) {
+    return <Fragment />;
+  }
+
+  const accountIamRoles = new Set<string>(state.account!!.iamRoles);
 
   return (
     <div className={`hidden flex-1 pt-20 lg:flex`}>
@@ -51,7 +55,7 @@ export default function ConsoleDesktop({
                 path === `/console${menu.route}`
                   ? "bg-red-200"
                   : "bg-transparent hover:bg-gray-100"
-              } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} flex space-x-4 transition-all duration-150 ease-in-out`}
+              } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
             >
               <DynamicIcon
                 icon={menu.icon}

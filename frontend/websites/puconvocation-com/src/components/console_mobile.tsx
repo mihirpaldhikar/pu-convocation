@@ -13,17 +13,13 @@
 
 "use client";
 import { JSX, ReactNode } from "react";
-import * as Icons from "@heroicons/react/24/solid";
 import { Link, usePathname } from "@i18n/routing";
 import { DynamicIcon } from "@components/index";
+import { NavMenu } from "@dto/index";
 
 interface ConsoleDesktopProps {
   children: ReactNode;
-  navMenu: Array<{
-    name: string;
-    route: string;
-    icon: keyof typeof Icons;
-  }>;
+  navMenu: Array<NavMenu>;
 }
 
 export default function ConsoleMobile({

@@ -20,4 +20,5 @@ export type { default as Enclosure } from "./Enclosure";
 export type { default as UpdateUACRuleRequest } from "./UpdateUACRuleRequest";
 export type { default as AttendeeWithPagination } from "./AttendeeWithPagination";
 export type { default as WebsiteConfig } from "./WebsiteConfig";
+export type { default as NavMenu } from "./NavMenu";
 export * from "./analytics/index";
