@@ -19,6 +19,7 @@ import com.puconvocation.enums.AuthenticationStrategy
 data class NewAccount(
     @JsonProperty("username") val username: String,
     @JsonProperty("displayName") val displayName: String,
+    @JsonProperty("designation") val designation: String,
     @JsonProperty("email") val email: String,
     @JsonProperty("password") val password: String? = null,
     @JsonProperty("authenticationStrategy") val authenticationStrategy: AuthenticationStrategy

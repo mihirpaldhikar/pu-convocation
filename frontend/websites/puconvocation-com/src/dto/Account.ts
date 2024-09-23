@@ -15,6 +15,7 @@ export default interface Account {
   uuid: string;
   username: string;
   displayName: string;
+  designation: string;
   email: string;
   avatarURL: string;
   iamRoles: Array<string>;

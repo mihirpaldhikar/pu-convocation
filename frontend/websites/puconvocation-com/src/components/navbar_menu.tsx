@@ -30,6 +30,7 @@ import {
 } from "@components/ui";
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
@@ -161,7 +162,8 @@ export default function NavbarMenu(): JSX.Element {
                     className={"h-auto w-auto rounded-full"}
                   />
                   <h5 className={"font-semibold"}>
-                    Hello, {account.displayName.split(" ")[0]}
+                    Hello, {account.designation}{" "}
+                    {account.displayName.split(" ")[0]}
                   </h5>
                   <span
                     className={
@@ -171,46 +173,47 @@ export default function NavbarMenu(): JSX.Element {
                     {account.email}
                   </span>
                 </div>
-                <div
-                  className={"flex flex-col space-y-3"}
-                  onClick={() => {
-                    openPopup(false);
-                  }}
-                >
+                <div className={"flex flex-col space-y-3"}>
                   <div
                     className={
                       "flex flex-row items-center justify-evenly gap-4"
                     }
                   >
+                    <PopoverClose asChild={true}>
+                      <Button
+                        asChild={true}
+                        variant={"outline"}
+                        className={"flex-grow"}
+                      >
+                        <Link href={"/console/account"}>Account</Link>
+                      </Button>
+                    </PopoverClose>
+                    <PopoverClose asChild={true}>
+                      <Button
+                        variant={"outline"}
+                        className={"flex-grow"}
+                        onClick={async () => {
+                          await authService.signOut();
+                          dispatchAccountMutation({
+                            type: "SIGN_OUT",
+                          });
+                          router.replace(
+                            path.includes("console") ? "/authenticate" : path,
+                          );
+                        }}
+                      >
+                        Sign Out
+                      </Button>
+                    </PopoverClose>
+                  </div>
+                  <PopoverClose asChild={true}>
                     <Button
                       asChild={true}
-                      variant={"outline"}
-                      className={"flex-grow"}
+                      className={`${path.includes("console") ? "hidden" : ""}`}
                     >
-                      <Link href={"/console/account"}>Account</Link>
+                      <Link href={"/console"}>Console</Link>
                     </Button>
-                    <Button
-                      variant={"outline"}
-                      className={"flex-grow"}
-                      onClick={async () => {
-                        await authService.signOut();
-                        dispatchAccountMutation({
-                          type: "SIGN_OUT",
-                        });
-                        router.replace(
-                          path.includes("console") ? "/authenticate" : path,
-                        );
-                      }}
-                    >
-                      Sign Out
-                    </Button>
-                  </div>
-                  <Button
-                    asChild={true}
-                    className={`${path.includes("console") ? "hidden" : ""}`}
-                  >
-                    <Link href={"/console"}>Console</Link>
-                  </Button>
+                  </PopoverClose>
                 </div>
               </PopoverContent>
             </Popover>

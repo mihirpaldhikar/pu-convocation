@@ -31,6 +31,9 @@ data class AccountWithIAMRoles(
     @JsonProperty("displayName")
     val displayName: String,
 
+    @JsonProperty("designation")
+    val designation: String,
+
     @JsonProperty("email")
     val email: String,
 

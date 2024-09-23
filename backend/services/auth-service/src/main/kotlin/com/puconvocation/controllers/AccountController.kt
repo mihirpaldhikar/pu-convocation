@@ -176,6 +176,7 @@ class AccountController(
             username = newAccount.username,
             avatarURL = "https://assets.puconvocation.com/avatars/default.png",
             displayName = newAccount.displayName,
+            designation = newAccount.designation,
             suspended = false,
             password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
             fidoCredential = mutableSetOf()

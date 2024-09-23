@@ -14,11 +14,8 @@
 package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonIncludeProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.security.dao.SaltedHash
 import com.puconvocation.serializers.ObjectIdSerializer
@@ -36,6 +33,9 @@ data class Account(
 
     @JsonProperty("displayName")
     val displayName: String,
+
+    @JsonProperty("designation")
+    val designation: String,
 
     @JsonProperty("email")
     val email: String,

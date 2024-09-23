@@ -21,10 +21,10 @@ import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.constants.CachedKeys
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasources.AccountDatasource
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.security.dao.FidoCredential
-import com.puconvocation.controllers.CacheController
 import com.puconvocation.utils.RegexValidator
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
@@ -105,7 +105,8 @@ class AccountRepository(
             username = account.username,
             avatarURL = account.avatarURL,
             displayName = account.displayName,
-            iamRoles = iamRoles
+            iamRoles = iamRoles,
+            designation = account.designation,
         )
 
         cache.set(
