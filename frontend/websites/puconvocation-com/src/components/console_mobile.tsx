@@ -12,10 +12,11 @@
  */
 
 "use client";
-import { JSX, ReactNode } from "react";
+import { Fragment, JSX, ReactNode } from "react";
 import { Link, usePathname } from "@i18n/routing";
 import { DynamicIcon } from "@components/index";
 import { NavMenu } from "@dto/index";
+import { useAuth } from "@hooks/index";
 
 interface ConsoleDesktopProps {
   children: ReactNode;
@@ -27,6 +28,13 @@ export default function ConsoleMobile({
   navMenu,
 }: ConsoleDesktopProps): JSX.Element {
   const path = usePathname();
+  const { state } = useAuth();
+
+  if (state.loading || state.account === null) {
+    return <Fragment />;
+  }
+
+  const accountIamRoles = new Set<string>(state.account!!.iamRoles);
 
   return (
     <div className={`flex flex-1 flex-col pt-20 lg:hidden`}>
@@ -48,7 +56,7 @@ export default function ConsoleMobile({
               path === `/console${menu.route}`
                 ? "bg-red-200"
                 : "bg-transparent hover:bg-gray-100"
-            } flex space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
+            } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
           >
             <DynamicIcon
               icon={menu.icon}

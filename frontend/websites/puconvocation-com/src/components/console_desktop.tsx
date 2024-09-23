@@ -33,7 +33,7 @@ export default function ConsoleDesktop({
   const path = usePathname();
   const { state } = useAuth();
 
-  if (state.loading) {
+  if (state.loading || state.account === null) {
     return <Fragment />;
   }
 
