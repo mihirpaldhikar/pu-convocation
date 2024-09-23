@@ -54,7 +54,7 @@ export default function ConsoleMobile({
             href={`/console${menu.route}`}
             className={`cursor-pointer rounded-tr-full ${
               path === `/console${menu.route}`
-                ? "bg-red-200"
+                ? "bg-red-100"
                 : "bg-transparent hover:bg-gray-100"
             } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
           >
