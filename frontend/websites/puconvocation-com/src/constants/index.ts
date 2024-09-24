@@ -11,9 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export { WorldMapData } from "./maps";

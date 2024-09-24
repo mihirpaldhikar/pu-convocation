@@ -61,7 +61,7 @@ export default function TrafficOnDateChart(): JSX.Element {
     isError,
   } = useQuery({
     queryKey: ["trafficOnDateAnalytics"],
-    refetchOnWindowFocus: "always",
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await analyticsService.trafficOnDate(year, month, day);
       if (

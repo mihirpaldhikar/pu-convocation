@@ -33,4 +33,5 @@ export { default as LanguageSelector } from "./language_selector";
 export { default as DynamicIcon } from "./dynamic_icon";
 export { default as ConsoleDesktop } from "./console_desktop";
 export { default as ConsoleMobile } from "./console_mobile";
+export { default as GeographicalMap } from "./geographical_map";
 export * from "./charts/index";

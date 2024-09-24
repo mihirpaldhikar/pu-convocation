@@ -49,3 +49,4 @@ export {
   SheetTitle,
   SheetTrigger,
 } from "./sheet";
+export { AlertTitle, AlertDescription, Alert } from "./alert";

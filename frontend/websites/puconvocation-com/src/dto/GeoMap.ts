@@ -11,6 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as TrafficOnDateChart } from "./traffic_on_date_chart";
-export { default as WeeklyTrafficChart } from "./weekly_traffic_chart";
-export { default as PopularCountriesChart } from "./popular_countries_chart";
+export default interface GeoMap {
+  id: string;
+  path: string | Array<string>;
+}
