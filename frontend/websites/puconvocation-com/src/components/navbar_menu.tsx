@@ -31,6 +31,7 @@ import {
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { formatISO } from "date-fns";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
@@ -54,7 +55,7 @@ export default function NavbarMenu(): JSX.Element {
     refetchOnWindowFocus: "always",
     queryFn: async () => {
       const response = await dynamicsService.getWebsiteConfig(
-        `${Date.now()};${currentLocale};${path}`,
+        `${formatISO(new Date())};${currentLocale};${path}`,
       );
       if (
         response.statusCode === StatusCode.SUCCESS &&

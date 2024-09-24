@@ -33,8 +33,8 @@ export default class AnalyticsService {
     year: number,
     month: number,
     day: number,
-  ): Promise<Response<WeeklyTraffic | string>> {
-    return await this.httpService.get<WeeklyTraffic>(
+  ): Promise<Response<Array<Popular> | string>> {
+    return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/trafficOnDate?date=${year}-${month}-${day}`,
     );
   }

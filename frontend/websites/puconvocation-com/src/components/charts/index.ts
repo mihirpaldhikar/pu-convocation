@@ -11,13 +11,4 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { JSX } from "react";
-import { TrafficOnDateChart } from "@components/charts";
-
-export default function AnalyticsPage(): JSX.Element {
-  return (
-    <div className={"flex min-h-screen p-3 md:p-10"}>
-      <TrafficOnDateChart />
-    </div>
-  );
-}
+export { default as TrafficOnDateChart } from "./traffic_on_date_chart";
