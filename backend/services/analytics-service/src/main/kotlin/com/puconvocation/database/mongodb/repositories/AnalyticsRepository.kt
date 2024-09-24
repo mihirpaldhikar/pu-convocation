@@ -171,7 +171,11 @@ class AnalyticsRepository(
         val computedTraffic = WeeklyTraffic(
             currentWeek = currentTraffic.sortByWeekdays(),
             previousWeek = previousTraffic.sortByWeekdays(),
-            surge = ((currentWeekTotalRequests - previousWeekTotalRequests) / (previousWeekTotalRequests) * 100).toFloat(),
+            surge = if (previousWeekTotalRequests == 0L) {
+                (currentWeekTotalRequests).toFloat()
+            } else {
+                ((currentWeekTotalRequests - previousWeekTotalRequests) / (previousWeekTotalRequests) * 100).toFloat()
+            },
         )
 
         cache.set(
