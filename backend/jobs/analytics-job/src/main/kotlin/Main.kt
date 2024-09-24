@@ -27,9 +27,8 @@ import org.bson.types.ObjectId
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent
 import java.time.Duration
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentLinkedQueue
 
 fun main(): Unit = runBlocking {
@@ -52,6 +51,8 @@ fun main(): Unit = runBlocking {
 
     val analyticsRepository by KoinJavaComponent.inject<AnalyticsRepository>(AnalyticsRepository::class.java)
     val ipTable by KoinJavaComponent.inject<IpTableRepository>(IpTableRepository::class.java)
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     launch {
         while (true) {
@@ -78,7 +79,7 @@ fun main(): Unit = runBlocking {
                     if (ipDetails != null) {
                         val analyticsLog = AnalyticsLog(
                             logId = ObjectId(),
-                            timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(data[0].toLong()), ZoneOffset.UTC),
+                            timestamp = OffsetDateTime.parse(data[0], formatter).toLocalDateTime(),
                             lang = data[1],
                             path = data[2],
                             region = AnalyticsLog.Region(
