@@ -13,9 +13,10 @@
 
 package com.puconvocation.routes
 
+import com.puconvocation.commons.dto.AccountInvitations
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewAccount
+import com.puconvocation.commons.dto.NewAccountFromInvitation
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.enums.ResponseCode
@@ -44,10 +45,25 @@ fun Routing.accountsRoute(
         }
 
         post("/new") {
-            val securityToken = call.getSecurityTokens()
-            val newAccount: NewAccount = call.receive<NewAccount>()
-            val result = accountController.createNewAccount(newAccount, securityToken)
+            val invitationToken = call.request.queryParameters["invitationToken"] ?: return@post call.sendResponse(
+                Result.Error(
+                    httpStatusCode = HttpStatusCode.BadRequest,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                        message = "Invitation token is missing"
+                    )
+                )
+            )
+            val account: NewAccountFromInvitation = call.receive<NewAccountFromInvitation>()
+            val result = accountController.createNewAccount(invitationToken, account)
             call.sendResponseWithAccountCookies(result)
+        }
+
+        post("/sendInvitations") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val invitations: AccountInvitations = call.receive<AccountInvitations>()
+            val result = accountController.createInvitations(authorizationToken, invitations)
+            call.sendResponse(result)
         }
 
         post("/signout") {
@@ -93,7 +109,7 @@ fun Routing.accountsRoute(
                         credentials = credentials.passkeyCredentials!!
                     )
 
-                call.sendResponse(result)
+                call.sendResponseWithAccountCookies(result)
             }
 
             post("/validatePasskeyChallenge") {

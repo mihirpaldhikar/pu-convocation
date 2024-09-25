@@ -24,6 +24,7 @@ import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasources.AccountDatasource
 import com.puconvocation.database.mongodb.entities.Account
+import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.security.dao.FidoCredential
 import com.puconvocation.utils.RegexValidator
 import kotlinx.coroutines.flow.firstOrNull
@@ -40,6 +41,9 @@ class AccountRepository(
 ) : AccountDatasource {
     private val accountCollection: MongoCollection<Account> =
         database.getCollection<Account>("accounts")
+
+    private val invitationCollection: MongoCollection<Invitation> =
+        database.getCollection<Invitation>("invitations")
 
     override suspend fun accountExists(identifier: String): Boolean {
         return if (RegexValidator.isValidEmail(identifier)) {
@@ -170,5 +174,29 @@ class AccountRepository(
         }
 
         return acknowledged
+    }
+
+    override suspend fun createInvitation(
+        invitation: Invitation,
+    ): Boolean {
+        return invitationCollection.withDocumentClass<Invitation>().insertOne(
+            invitation
+        ).wasAcknowledged()
+    }
+
+    override suspend fun findInvitation(identifier: String): Invitation? {
+        return if (RegexValidator.isValidEmail(identifier)) {
+            invitationCollection.withDocumentClass<Invitation>().find(eq(Invitation::email.name, identifier))
+                .firstOrNull()
+        } else {
+            invitationCollection.withDocumentClass<Invitation>().find(eq("_id", ObjectId(identifier)))
+                .firstOrNull()
+        }
+    }
+
+    override suspend fun deleteInvitation(invitationId: String): Boolean {
+        return invitationCollection.withDocumentClass<Invitation>().deleteOne(eq("_id", ObjectId(invitationId)))
+            .wasAcknowledged()
+
     }
 }

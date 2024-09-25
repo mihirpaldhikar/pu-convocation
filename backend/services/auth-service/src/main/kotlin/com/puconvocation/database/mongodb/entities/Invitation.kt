@@ -11,16 +11,23 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.commons.dto
+package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.puconvocation.enums.AuthenticationStrategy
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.puconvocation.serializers.ObjectIdSerializer
+import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.types.ObjectId
 
-data class NewAccount(
-    @JsonProperty("username") val username: String,
-    @JsonProperty("displayName") val displayName: String,
-    @JsonProperty("designation") val designation: String,
-    @JsonProperty("email") val email: String,
-    @JsonProperty("password") val password: String? = null,
-    @JsonProperty("authenticationStrategy") val authenticationStrategy: AuthenticationStrategy
+data class Invitation(
+    @JsonSerialize(using = ObjectIdSerializer::class)
+    @JsonProperty("id")
+    @BsonId
+    val id: ObjectId,
+
+    @JsonProperty("email")
+    val email: String,
+
+    @JsonProperty("iamRoles")
+    val roles: List<String>,
 )

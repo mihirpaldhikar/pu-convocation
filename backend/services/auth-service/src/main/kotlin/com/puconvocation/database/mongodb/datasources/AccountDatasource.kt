@@ -15,6 +15,7 @@ package com.puconvocation.database.mongodb.datasources
 
 import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.database.mongodb.entities.Account
+import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.security.dao.FidoCredential
 
 interface AccountDatasource {
@@ -31,5 +32,11 @@ interface AccountDatasource {
     suspend fun deleteAccount(uuid: String): Boolean
 
     suspend fun addFidoCredentials(uuid: String, fidoCredential: FidoCredential): Boolean
+
+    suspend fun createInvitation(invitation: Invitation): Boolean
+
+    suspend fun findInvitation(invitationId: String): Invitation?
+
+    suspend fun deleteInvitation(invitationId: String): Boolean
 
 }

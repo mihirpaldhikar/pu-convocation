@@ -59,6 +59,11 @@ class JsonWebToken(
     }
 
     private fun jwtVerifier(tokenType: TokenType): JWTVerifier {
+        if (tokenType === TokenType.INVITATION_TOKEN) {
+            return JWT.require(
+                Algorithm.HMAC512(jwtMetadata.invitationsSecret)
+            ).withIssuer(jwtMetadata.issuer).build()
+        }
         val keys = keys()
         return JWT.require(
             Algorithm.RSA256(
@@ -153,8 +158,24 @@ class JsonWebToken(
         }
     }
 
+    fun generateInvitationToken(invitationId: String): String {
+        val currentTime = System.currentTimeMillis()
+        val tokenCreatedAt = Date(currentTime)
+        val tokenExpiresAt = Date(currentTime + 259200000)
+
+        return JWT.create()
+            .withAudience(jwtMetadata.audience)
+            .withIssuer(jwtMetadata.issuer)
+            .withClaim(INVITATION_ID_CLAIM, invitationId)
+            .withIssuedAt(tokenCreatedAt)
+            .withExpiresAt(tokenExpiresAt)
+            .withSubject(API_AUTHORIZATION_SUBJECT)
+            .sign(Algorithm.HMAC512(jwtMetadata.invitationsSecret))
+    }
+
     companion object {
         const val UUID_CLAIM = "uuid"
+        const val INVITATION_ID_CLAIM = "invitation_id"
         const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
         const val SESSION_ID_CLAIM = "session"
     }

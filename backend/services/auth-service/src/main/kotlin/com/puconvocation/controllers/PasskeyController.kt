@@ -13,8 +13,6 @@
 
 package com.puconvocation.controllers
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
@@ -88,7 +86,7 @@ class PasskeyController(
     suspend fun validatePasskeyRegistration(
         identifier: String,
         credentials: String
-    ): Result<HashMap<String, Any>, ErrorResponse> {
+    ): Result<Any, ErrorResponse> {
         val account = accountRepository.getAccount(identifier) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
@@ -148,9 +146,20 @@ class PasskeyController(
         cacheController.invalidate(CachedKeys.passkeyAssertionKey(identifier))
         cacheController.invalidate(CachedKeys.accountKey(identifier))
 
+        val securityTokens = SecurityToken(
+            payload = hashMapOf(
+                "code" to ResponseCode.AUTHENTICATION_SUCCESSFUL,
+                "message" to "Authenticated Successfully."
+            ),
+            authorizationToken = jsonWebToken.generateAuthorizationToken(
+                account.uuid.toHexString(),
+                "null",
+            ),
+            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
+        )
         return Result.Success(
             httpStatusCode = HttpStatusCode.Created,
-            data = hashMapOf("message" to "Passkey registered.")
+            data = securityTokens
         )
     }
 

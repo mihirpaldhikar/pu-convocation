@@ -27,14 +27,15 @@ class Environment {
     val redisURL = System.getenv("REDIS_URL").toString()
 
     val jwtMetadata: JWTMetadata = JWTMetadata(
-        authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY"),
-        refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY"),
-        authorizationTokenKeyId = System.getenv("AUTHORIZATION_TOKEN_KEY_ID"),
-        refreshTokenKeyId = System.getenv("REFRESH_TOKEN_KEY_ID"),
-        audience = System.getenv("API_AUDIENCE"),
-        issuer = System.getenv("CREDENTIALS_AUTHORITY"),
-        realm = System.getenv("CREDENTIALS_REALM"),
-        provider = JwkProviderBuilder(System.getenv("CREDENTIALS_AUTHORITY")).cached(10, 24, TimeUnit.HOURS)
+        authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY").toString(),
+        refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY").toString(),
+        authorizationTokenKeyId = System.getenv("AUTHORIZATION_TOKEN_KEY_ID").toString(),
+        refreshTokenKeyId = System.getenv("REFRESH_TOKEN_KEY_ID").toString(),
+        audience = System.getenv("API_AUDIENCE").toString(),
+        issuer = System.getenv("CREDENTIALS_AUTHORITY").toString(),
+        realm = System.getenv("CREDENTIALS_REALM").toString(),
+        provider = JwkProviderBuilder(System.getenv("CREDENTIALS_AUTHORITY").toString()).cached(10, 24, TimeUnit.HOURS)
             .rateLimited(10, 1, TimeUnit.MINUTES).build(),
+        invitationsSecret = System.getenv("INVITATIONS_SECRET").toString()
     )
 }

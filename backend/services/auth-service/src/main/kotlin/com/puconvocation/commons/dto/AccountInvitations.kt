@@ -11,18 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.security.dao
+package com.puconvocation.commons.dto
 
-import com.auth0.jwk.JwkProvider
+import com.fasterxml.jackson.annotation.JsonProperty
 
-data class JWTMetadata(
-    val provider: JwkProvider,
-    val authorizationTokenPrivateKey: String,
-    val refreshTokenPrivateKey: String,
-    val audience: String,
-    val issuer: String,
-    val authorizationTokenKeyId: String,
-    val refreshTokenKeyId: String,
-    val realm: String,
-    val invitationsSecret: String
-)
+data class AccountInvitations(
+    @JsonProperty("invites") val invites: List<Invite>,
+) {
+    data class Invite(
+        @JsonProperty("email") val email: String,
+        @JsonProperty("iamRoles") val iamRoles: List<String>,
+    )
+}

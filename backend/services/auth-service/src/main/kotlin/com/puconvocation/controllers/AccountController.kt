@@ -13,12 +13,15 @@
 
 package com.puconvocation.controllers
 
+import com.puconvocation.commons.dto.AccountInvitations
 import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewAccount
+import com.puconvocation.commons.dto.NewAccountFromInvitation
 import com.puconvocation.database.mongodb.entities.Account
+import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.database.mongodb.repositories.AccountRepository
+import com.puconvocation.database.mongodb.repositories.IAMRepository
 import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -31,6 +34,7 @@ import org.bson.types.ObjectId
 
 class AccountController(
     private val accountRepository: AccountRepository,
+    private val iamRepository: IAMRepository,
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
     private val iamController: IAMController,
@@ -124,42 +128,38 @@ class AccountController(
     }
 
     suspend fun createNewAccount(
-        newAccount: NewAccount,
-        securityToken: SecurityToken
+        invitationToken: String,
+        newAccountFromInvitation: NewAccountFromInvitation
     ): Result<Any, ErrorResponse> {
 
         val tokenClaims = jsonWebToken.getClaims(
-            token = securityToken.authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
+            token = invitationToken,
+            tokenType = TokenType.INVITATION_TOKEN,
+            claims = listOf(JsonWebToken.INVITATION_ID_CLAIM)
         )
 
         if (tokenClaims.isEmpty()) {
             return Result.Error(
-                httpStatusCode = HttpStatusCode.BadRequest,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN,
-                    message = "Authorization token is invalid."
-                )
-            )
-        }
-
-
-        if (!iamController.isAuthorized(
-                role = "write:Account",
-                principal = tokenClaims[0],
-            )
-        ) {
-            return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to create new accounts."
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Invitation is invalid or expired."
                 )
             )
         }
 
-        if (accountRepository.accountExists(newAccount.email) || accountRepository.accountExists(newAccount.username)) {
+        val invitation = accountRepository.findInvitation(tokenClaims[0]) ?: return Result.Error(
+            httpStatusCode = HttpStatusCode.NotFound,
+            error = ErrorResponse(
+                errorCode = ResponseCode.INVITATION_NOT_FOUND,
+                message = "Invitation not found."
+            )
+        )
+
+        if (accountRepository.accountExists(invitation.email) || accountRepository.accountExists(
+                newAccountFromInvitation.username
+            )
+        ) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -172,13 +172,13 @@ class AccountController(
         val uuid = ObjectId()
         val account = Account(
             uuid = uuid,
-            email = newAccount.email,
-            username = newAccount.username,
+            email = invitation.email,
+            username = newAccountFromInvitation.username,
             avatarURL = "https://assets.puconvocation.com/avatars/default.png",
-            displayName = newAccount.displayName,
-            designation = newAccount.designation,
+            displayName = newAccountFromInvitation.displayName,
+            designation = newAccountFromInvitation.designation,
             suspended = false,
-            password = if (newAccount.password == null) null else Hash().generateSaltedHash(newAccount.password),
+            password = null,
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)
@@ -192,23 +192,21 @@ class AccountController(
             )
         }
 
-        if (newAccount.authenticationStrategy === AuthenticationStrategy.PASSKEY) {
-            val result = passkeyController.startPasskeyRegistration(account.username)
-            return result;
+        for (iamRoles in invitation.roles) {
+            var rule = iamRepository.getRule(iamRoles)
+
+            if (rule != null) {
+                val principals = rule.principals
+                principals.add(uuid.toHexString())
+                rule = rule.copy(
+                    principals = principals
+                )
+                iamRepository.updateRule(rule)
+            }
         }
-
-        val securityTokens = SecurityToken(
-            payload = "Account Created.",
-            authorizationToken = jsonWebToken.generateAuthorizationToken(
-                account.uuid.toHexString(),
-                "null",
-            ),
-            refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
-        )
-
-        return Result.Success(
-            securityTokens
-        )
+        val result = passkeyController.startPasskeyRegistration(account.username)
+        accountRepository.deleteInvitation(invitation.id.toHexString())
+        return result
     }
 
     suspend fun accountDetails(securityToken: SecurityToken): Result<Any, ErrorResponse> {
@@ -325,6 +323,112 @@ class AccountController(
 
         return Result.Success(
             account
+        )
+    }
+
+    suspend fun createInvitations(
+        authorizationToken: String?,
+        accountInvitations: AccountInvitations
+    ): Result<HashMap<String, Any>, ErrorResponse> {
+        val tokenClaims = jsonWebToken.getClaims(
+            token = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (tokenClaims.isEmpty()) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.INVALID_TOKEN,
+                    message = "Authorization token is invalid."
+                )
+            )
+        }
+
+
+        if (!iamController.isAuthorized(
+                role = "write:Account",
+                principal = tokenClaims[0],
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to create invitations."
+                )
+            )
+        }
+
+        val allIAMRules = iamRepository.getAllRules()
+
+        val allIAMRoleNames = allIAMRules.map { it.role }
+
+        for (invite: AccountInvitations.Invite in accountInvitations.invites) {
+            if (accountRepository.findInvitation(invite.email) != null) {
+                return Result.Error(
+                    httpStatusCode = HttpStatusCode.Conflict,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.ACCOUNT_EXISTS,
+                        message = "Invitation already sent for email ${invite.email}."
+                    )
+                )
+            }
+            if (accountRepository.accountExists(invite.email)) {
+                return Result.Error(
+                    httpStatusCode = HttpStatusCode.Conflict,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.ACCOUNT_EXISTS,
+                        message = "Account already exists with email ${invite.email}."
+                    )
+                )
+
+                for (iamRole: String in invite.iamRoles) {
+                    if (!allIAMRoleNames.contains(iamRole)) {
+                        return Result.Error(
+                            httpStatusCode = HttpStatusCode.NotFound,
+                            error = ErrorResponse(
+                                errorCode = ResponseCode.RULE_NOT_FOUND,
+                                message = "$iamRole does not exist."
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        for (invite: AccountInvitations.Invite in accountInvitations.invites) {
+            val invitationId = ObjectId()
+            val acknowledge = accountRepository.createInvitation(
+                Invitation(
+                    id = invitationId,
+                    email = invite.email,
+                    roles = invite.iamRoles,
+                )
+            )
+
+            if (!acknowledge) {
+                return Result.Error(
+                    httpStatusCode = HttpStatusCode.InternalServerError,
+                    error = ErrorResponse(
+                        errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                        message = "Cannot send invitation to ${invite.email}."
+                    )
+                )
+            }
+
+            val invitationToken = jsonWebToken.generateInvitationToken(invitationId.toHexString())
+
+            println("INVITATION: $invitationToken")
+        }
+
+        return Result.Success(
+            httpStatusCode = HttpStatusCode.Created,
+            data = hashMapOf<String, Any>(
+                "code" to ResponseCode.INVITATIONS_SENT,
+                "message" to "Invitations sent successfully."
+            )
         )
     }
 }
