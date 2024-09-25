@@ -14,7 +14,6 @@
 package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.puconvocation.security.dao.FidoCredential
@@ -23,7 +22,6 @@ import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 data class Account(
     @JsonSerialize(using = ObjectIdSerializer::class)
     @JsonProperty("uuid")
