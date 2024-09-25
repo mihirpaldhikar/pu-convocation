@@ -15,7 +15,7 @@
 
 import { JSX, ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import WebsiteConfigProvider from "@providers/WebsiteConfig";
+import RemoteConfigProvider from "@providers/WebsiteConfig";
 import AuthProvider from "@providers/AuthProvider";
 import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 import { TooltipProvider } from "@components/ui";
@@ -39,11 +39,11 @@ export default function Providers({
       timeZone={"Asia/Kolkata"}
     >
       <QueryClientProvider client={queryClient}>
-        <WebsiteConfigProvider>
+        <RemoteConfigProvider>
           <AuthProvider>
             <TooltipProvider>{children}</TooltipProvider>
           </AuthProvider>
-        </WebsiteConfigProvider>
+        </RemoteConfigProvider>
       </QueryClientProvider>
     </NextIntlClientProvider>
   );

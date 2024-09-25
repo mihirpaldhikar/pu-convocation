@@ -12,10 +12,10 @@
  */
 
 import { useContext } from "react";
-import { WebsiteConfigContext } from "@providers/WebsiteConfig";
+import { RemoteConfigContext } from "@providers/WebsiteConfig";
 
 const useWebsiteConfig = () => {
-  const context = useContext(WebsiteConfigContext);
+  const context = useContext(RemoteConfigContext);
   if (!context) {
     throw new Error(
       "useWebsiteConfig Hook must be used within the WebsiteConfig Provider",

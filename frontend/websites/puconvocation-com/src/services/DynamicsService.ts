@@ -12,7 +12,7 @@
  */
 
 import { Response } from "@dto/Response";
-import { WebsiteConfig } from "@dto/index";
+import { RemoteConfig } from "@dto/index";
 import { HttpService } from "@services/index";
 
 export default class DynamicsService {
@@ -20,11 +20,11 @@ export default class DynamicsService {
 
   private httpService = new HttpService(this.BASE_URL);
 
-  private CONFIG_ROUTE = this.BASE_URL.concat("/websiteConfig");
+  private CONFIG_ROUTE = this.BASE_URL.concat("/config");
 
   public async getWebsiteConfig(
     tracker: string,
-  ): Promise<Response<WebsiteConfig | string>> {
+  ): Promise<Response<RemoteConfig | string>> {
     return await this.httpService.get(`${this.CONFIG_ROUTE}/`, {
       header: {
         "x-analytics": tracker,

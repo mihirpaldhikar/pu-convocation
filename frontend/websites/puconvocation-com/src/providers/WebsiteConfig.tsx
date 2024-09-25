@@ -12,14 +12,14 @@
  */
 
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
-import { WebsiteConfig } from "@dto/index";
+import { RemoteConfig } from "@dto/index";
 import { DynamicsService } from "@services/index";
 
-export type WebsiteConfigAction =
+export type RemoteConfigAction =
   | {
       type: "SET_CONFIG";
       payload: {
-        config: WebsiteConfig | null;
+        config: RemoteConfig | null;
       };
     }
   | {
@@ -29,22 +29,22 @@ export type WebsiteConfigAction =
       };
     };
 
-export type WebsiteConfigState = {
-  config: WebsiteConfig | null;
+export type RemoteConfigState = {
+  config: RemoteConfig | null;
   loading: boolean;
   dynamicsService: DynamicsService;
 };
 
-const initialWebsiteConfigState: WebsiteConfigState = {
+const initialConfig: RemoteConfigState = {
   config: null,
   loading: true,
   dynamicsService: new DynamicsService(),
 };
 
 const configReducer = (
-  state: WebsiteConfigState = initialWebsiteConfigState,
-  action: WebsiteConfigAction,
-): WebsiteConfigState => {
+  state: RemoteConfigState = initialConfig,
+  action: RemoteConfigAction,
+): RemoteConfigState => {
   switch (action.type) {
     case "SET_CONFIG": {
       return {
@@ -65,34 +65,31 @@ const configReducer = (
   }
 };
 
-export const WebsiteConfigContext = createContext<{
-  state: WebsiteConfigState;
-  dispatch: Dispatch<WebsiteConfigAction>;
+export const RemoteConfigContext = createContext<{
+  state: RemoteConfigState;
+  dispatch: Dispatch<RemoteConfigAction>;
 }>({
-  state: initialWebsiteConfigState,
+  state: initialConfig,
   dispatch: () => undefined,
 });
 
-export interface WebsiteConfigProviderProps {
+export interface RemoteConfigProviderProps {
   children: ReactNode;
 }
 
-const WebsiteConfigProvider = ({ children }: WebsiteConfigProviderProps) => {
-  const [state, dispatch] = useReducer(
-    configReducer,
-    initialWebsiteConfigState,
-  );
+const RemoteConfigProvider = ({ children }: RemoteConfigProviderProps) => {
+  const [state, dispatch] = useReducer(configReducer, initialConfig);
 
   return (
-    <WebsiteConfigContext.Provider
+    <RemoteConfigContext.Provider
       value={{
         state: state,
         dispatch: dispatch,
       }}
     >
       {children}
-    </WebsiteConfigContext.Provider>
+    </RemoteConfigContext.Provider>
   );
 };
 
-export default WebsiteConfigProvider;
+export default RemoteConfigProvider;

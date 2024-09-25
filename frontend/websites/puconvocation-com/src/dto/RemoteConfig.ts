@@ -11,8 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export default interface WebsiteConfig {
+export default interface RemoteConfig {
   id: string;
+  active: boolean;
   heroTitle: string;
   gallery: Array<{
     url: string;
