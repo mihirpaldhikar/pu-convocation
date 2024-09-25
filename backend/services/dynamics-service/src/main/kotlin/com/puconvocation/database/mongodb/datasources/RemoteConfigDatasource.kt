@@ -11,14 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.enums
+package com.puconvocation.database.mongodb.datasources
 
-enum class ResponseCode {
-    OK,
-    INVALID_OR_NULL_TOKEN,
-    REQUEST_NOT_COMPLETED,
-    TOKEN_EXPIRED,
-    INVALID_TOKEN,
-    NOT_PERMITTED,
-    INVALID_OR_NULL_IDENTIFIER,
+import com.puconvocation.database.mongodb.entities.RemoteConfig
+import org.bson.types.ObjectId
+
+interface RemoteConfigDatasource {
+    suspend fun getConfig(): RemoteConfig
+
+    suspend fun changeConfig(remoteConfig: RemoteConfig, oldConfigId: ObjectId): Boolean
+
 }

@@ -14,11 +14,20 @@
 package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.puconvocation.enums.Direction
+import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.types.ObjectId
 
-data class WebsiteConfig(
-    @BsonId @JsonProperty("id") val id: String = "website_config",
+data class RemoteConfig(
+    @JsonSerialize(using = ObjectIdSerializer::class)
+    @JsonProperty("id")
+    @BsonId
+    val id: ObjectId,
+
+    @JsonProperty("active") val active: Boolean,
+
     @JsonProperty("heroTitle") val heroTitle: String,
     @JsonProperty("gallery") val gallery: MutableList<Gallery>,
     @JsonProperty("showInstructionsBanner") val showInstructionsBanner: Boolean,

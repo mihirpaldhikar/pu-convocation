@@ -18,8 +18,8 @@ object CachedKeys {
         return "accountWithIAMRoles:$identifier"
     }
 
-    fun websiteConfigKey(): String {
-        return "config:website"
+    fun remoteConfigKey(): String {
+        return "remoteConfig"
     }
 
 }

@@ -13,8 +13,8 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.commons.dto.UpdateWebsiteConfigRequest
-import com.puconvocation.controllers.WebsiteController
+import com.puconvocation.commons.dto.ChangeRemoteConfigRequest
+import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.services.KafkaService
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
@@ -22,11 +22,11 @@ import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
-fun Routing.websiteConfigRoute(
-    websiteController: WebsiteController,
+fun Routing.remoteConfigRoute(
+    remoteConfigController: RemoteConfigController,
     kafkaService: KafkaService
 ) {
-    route("/websiteConfig") {
+    route("/config") {
         get("/") {
             val analyticsHeader = call.request.headers["x-analytics"]
 
@@ -34,14 +34,14 @@ fun Routing.websiteConfigRoute(
                 kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
             }
 
-            val result = websiteController.getWebsiteConfig()
+            val result = remoteConfigController.getConfig()
             call.sendResponse(result)
         }
 
-        patch("/update") {
+        patch("/change") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
-            val updateWebsiteConfigRequest = call.receive<UpdateWebsiteConfigRequest>()
-            val result = websiteController.updateWebsiteConfig(authorizationToken, updateWebsiteConfigRequest)
+            val changeRemoteConfigRequest = call.receive<ChangeRemoteConfigRequest>()
+            val result = remoteConfigController.changeConfig(authorizationToken, changeRemoteConfigRequest)
             call.sendResponse(result)
         }
     }
