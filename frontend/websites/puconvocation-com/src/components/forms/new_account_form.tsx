@@ -52,11 +52,10 @@ export default function NewAccountForm(): JSX.Element {
         });
 
         const response = await authService.createAccount(
-          credentials.authenticationStrategy,
+          "__NULL__",
           credentials.displayName,
           credentials.identifier,
           credentials.email,
-          "",
         );
         if (
           response.statusCode === StatusCode.PASSKEY_REGISTERED ||
