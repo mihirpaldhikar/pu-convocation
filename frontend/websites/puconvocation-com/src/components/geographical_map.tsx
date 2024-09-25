@@ -37,40 +37,36 @@ export default function GeographicalMap({
       xmlns="http://www.w3.org/2000/svg"
       className={cn("h-72 w-full", className)}
     >
-      <g id={"World"}>
-        <g id={"Group"}>
-          {geoMap.map((map) => {
-            if (typeof map.path === "string") {
-              return (
-                <path
-                  key={map.id}
-                  id={map.id}
-                  d={map.path}
-                  stroke="white"
-                  strokeWidth="0.5"
-                  className={`${highlight?.includes(map.id) ? `fill-[${highlightColor?.replaceAll('"', "")}]` : "fill-neutral-300"}`}
-                />
-              );
-            } else {
-              return (
-                <g key={map.id} id={map.id}>
-                  {map.path.map((subPath, index) => {
-                    return (
-                      <path
-                        key={`map.id${index}`}
-                        d={subPath}
-                        stroke="white"
-                        strokeWidth="0.5"
-                        className={`${highlight?.includes(map.id) ? `fill-[${highlightColor?.replaceAll('"', "")}]` : "fill-neutral-300"}`}
-                      />
-                    );
-                  })}
-                </g>
-              );
-            }
-          })}
-        </g>
-      </g>
+      {geoMap.map((map) => {
+        if (typeof map.path === "string") {
+          return (
+            <path
+              key={map.id}
+              id={map.id}
+              d={map.path}
+              stroke="white"
+              strokeWidth="0.5"
+              fill={`${highlight?.includes(map.id) ? highlightColor : "#d4d4d4"}`}
+            />
+          );
+        } else {
+          return (
+            <g key={map.id} id={map.id}>
+              {map.path.map((subPath, index) => {
+                return (
+                  <path
+                    key={`map.id${index}`}
+                    d={subPath}
+                    stroke="white"
+                    strokeWidth="0.5"
+                    fill={`${highlight?.includes(map.id) ? highlightColor : "#d4d4d4"}`}
+                  />
+                );
+              })}
+            </g>
+          );
+        }
+      })}
     </svg>
   );
 }
