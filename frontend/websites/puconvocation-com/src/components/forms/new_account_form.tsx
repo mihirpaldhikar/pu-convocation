@@ -56,6 +56,7 @@ export default function NewAccountForm(): JSX.Element {
           credentials.displayName,
           credentials.identifier,
           credentials.email,
+          "",
         );
         if (
           response.statusCode === StatusCode.PASSKEY_REGISTERED ||

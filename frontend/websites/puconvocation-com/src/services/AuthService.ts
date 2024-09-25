@@ -54,6 +54,7 @@ export default class AuthService {
     displayName: string,
     username: string,
     email: string,
+    designation: string,
     password?: string,
   ): Promise<Response<string>> {
     const handshakeResponse = await this.httpService.post<string>(
@@ -64,6 +65,7 @@ export default class AuthService {
             displayName: displayName,
             email: email,
             authenticationStrategy: authenticationStrategy,
+            designation: designation,
           }
         : {
             username: username,
@@ -71,6 +73,7 @@ export default class AuthService {
             email: email,
             password: password,
             authenticationStrategy: authenticationStrategy,
+            designation: designation,
           },
     );
 
