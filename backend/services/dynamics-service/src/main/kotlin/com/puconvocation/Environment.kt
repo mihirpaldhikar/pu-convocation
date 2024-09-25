@@ -26,6 +26,7 @@ class Environment {
     val redisURL = System.getenv("REDIS_URL").toString()
 
     val authServiceURL = System.getenv("AUTH_SERVICE_URL").toString()
+    val servicesHosts = System.getenv("SERVICES_HOSTS").toString()
 
     val kafkaBrokers = System.getenv("KAFKA_BROKERS").toString()
 

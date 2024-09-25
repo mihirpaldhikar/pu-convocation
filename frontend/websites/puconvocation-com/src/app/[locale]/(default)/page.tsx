@@ -23,13 +23,13 @@ import {
   IdentifierForm,
   ProgressBar,
 } from "@components/index";
-import { useWebsiteConfig } from "@hooks/index";
+import { useRemoteConfig } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import { Link } from "@i18n/routing";
 import { Button } from "@components/ui";
 
 export default function Home() {
-  const { state: website } = useWebsiteConfig();
+  const { state: website } = useRemoteConfig();
   const pageTranslations = useTranslations("pages.landingPage");
   const coreTranslations = useTranslations("core");
 

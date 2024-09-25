@@ -21,6 +21,7 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.DynamicsService
 import com.puconvocation.services.LambdaService
 import com.puconvocation.services.MessageQueue
 import io.ktor.client.*
@@ -84,6 +85,15 @@ object CoreModule {
                 cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
+            )
+        }
+
+        single<DynamicsService> {
+            DynamicsService(
+                environment = get<Environment>(),
+                client = get<HttpClient>(),
+                cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
             )
         }
 

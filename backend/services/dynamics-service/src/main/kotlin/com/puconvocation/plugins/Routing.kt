@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.routes.remoteConfigRoute
 import com.puconvocation.services.KafkaService
@@ -24,11 +25,12 @@ fun Application.configureRouting() {
 
     val remoteConfigController by KoinJavaComponent.inject<RemoteConfigController>(RemoteConfigController::class.java)
     val kafkaService by KoinJavaComponent.inject<KafkaService>(KafkaService::class.java)
+    val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
 
     routing {
         remoteConfigRoute(
             remoteConfigController = remoteConfigController,
-            kafkaService = kafkaService
+            kafkaService = kafkaService, environment = environment,
         )
     }
 }

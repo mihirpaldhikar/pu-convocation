@@ -14,6 +14,7 @@
 export default interface RemoteConfig {
   id: string;
   active: boolean;
+  attendeeLocked: boolean;
   heroTitle: string;
   gallery: Array<{
     url: string;

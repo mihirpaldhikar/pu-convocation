@@ -14,7 +14,7 @@
 "use client";
 
 import { Fragment, JSX, useState } from "react";
-import { useAuth, useWebsiteConfig } from "@hooks/index";
+import { useAuth, useRemoteConfig } from "@hooks/index";
 import { StatusCode } from "@enums/StatusCode";
 import { useQuery } from "@tanstack/react-query";
 import { Link, usePathname, useRouter } from "@i18n/routing";
@@ -46,7 +46,7 @@ export default function NavbarMenu(): JSX.Element {
   const {
     state: { dynamicsService },
     dispatch: dispatchConfigMutation,
-  } = useWebsiteConfig();
+  } = useRemoteConfig();
 
   const [isPopupOpen, openPopup] = useState<boolean>(false);
 

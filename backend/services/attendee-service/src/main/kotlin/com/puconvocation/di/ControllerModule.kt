@@ -21,6 +21,7 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.DynamicsService
 import com.puconvocation.services.LambdaService
 import org.koin.dsl.module
 
@@ -33,6 +34,7 @@ object ControllerModule {
                 authService = get<AuthService>(),
                 distributedLock = get<DistributedLock>(),
                 lambdaService = get<LambdaService>(),
+                dynamicsService = get<DynamicsService>()
             )
         }
 

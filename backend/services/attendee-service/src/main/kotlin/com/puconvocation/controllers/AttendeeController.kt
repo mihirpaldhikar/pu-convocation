@@ -16,12 +16,12 @@ package com.puconvocation.controllers
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.database.mongodb.entities.Attendee
-import com.puconvocation.database.mongodb.entities.AttendeeConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.DynamicsService
 import com.puconvocation.services.LambdaService
 import com.puconvocation.utils.Result
 import io.ktor.http.*
@@ -34,10 +34,11 @@ class AttendeeController(
     private val csvSerializer: CSVSerializer,
     private val authService: AuthService,
     private val distributedLock: DistributedLock,
-    private val lambdaService: LambdaService
+    private val lambdaService: LambdaService,
+    private val dynamicsService: DynamicsService,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
-        if (!attendeeConfig().locked) {
+        if (!dynamicsService.getRemoteConfig().attendeeLocked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -95,7 +96,7 @@ class AttendeeController(
             )
         }
 
-        if (attendeeConfig().locked) {
+        if (dynamicsService.getRemoteConfig().attendeeLocked) {
             distributedLock.release("attendeeUploadLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -215,7 +216,7 @@ class AttendeeController(
             )
         }
 
-        if (lock == attendeeConfig().locked) {
+        if (lock == dynamicsService.getRemoteConfig().attendeeLocked) {
             distributedLock.release("attendeeLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -226,11 +227,7 @@ class AttendeeController(
             )
         }
 
-        val acknowledge = attendeeRepository.updateAttendeeConfig(
-            attendeeConfig().copy(
-                locked = lock,
-            )
-        )
+        val acknowledge = dynamicsService.mutateAttendeeLock(lock)
 
         if (!acknowledge) {
             distributedLock.release("attendeeLock")
@@ -288,7 +285,4 @@ class AttendeeController(
         )
     }
 
-    private suspend fun attendeeConfig(): AttendeeConfig {
-        return attendeeRepository.getAttendeeConfig()
-    }
 }

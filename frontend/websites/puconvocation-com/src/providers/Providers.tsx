@@ -15,7 +15,7 @@
 
 import { JSX, ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import RemoteConfigProvider from "@providers/WebsiteConfig";
+import RemoteConfigProvider from "@providers/RemoteConfigProvider";
 import AuthProvider from "@providers/AuthProvider";
 import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 import { TooltipProvider } from "@components/ui";

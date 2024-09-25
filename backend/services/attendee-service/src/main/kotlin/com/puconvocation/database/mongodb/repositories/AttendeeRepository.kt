@@ -25,12 +25,9 @@ import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasource.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
-import com.puconvocation.database.mongodb.entities.AttendeeConfig
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import java.time.Duration
-import java.time.temporal.ChronoUnit
 
 class AttendeeRepository(
     database: MongoDatabase,
@@ -40,9 +37,6 @@ class AttendeeRepository(
 
     private val attendeesCollection: MongoCollection<Attendee> =
         database.getCollection<Attendee>("attendees")
-
-    private val attendeesConfigCollection: MongoCollection<Attendee> =
-        database.getCollection<Attendee>("attendee_config")
 
     override suspend fun getAttendee(identifier: String): Attendee? {
         val cachedAttendee = cache.get(CachedKeys.attendeeKey(identifier))
@@ -75,7 +69,7 @@ class AttendeeRepository(
 
         val fetchedAttendee = getAttendee(identifier) ?: return null
 
-        val enclosure = mapper.readValue<Enclosure>(cache.get(CachedKeys.websiteConfigKey())!!)
+        val enclosure = mapper.readValue<Enclosure>(cache.get(CachedKeys.remoteConfigKey())!!)
 
         val computedAttendee = AttendeeWithEnclosureMetadata(
             attendee = fetchedAttendee,
@@ -120,35 +114,6 @@ class AttendeeRepository(
 
     override suspend fun getTotalAttendees(): Int {
         return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
-    }
-
-    override suspend fun getAttendeeConfig(): AttendeeConfig {
-        val cachedConfig = cache.get(CachedKeys.attendeeConfigKey())
-        if (cachedConfig != null) {
-            return mapper.readValue<AttendeeConfig>(cachedConfig)
-        }
-        val fetchedConfig =
-            attendeesConfigCollection.withDocumentClass<AttendeeConfig>().find(eq("_id", "attendee_config")).first()
-        cache.set(
-            CachedKeys.attendeeConfigKey(),
-            mapper.writeValueAsString(fetchedConfig),
-            expiryDuration = Duration.of(1, ChronoUnit.HOURS)
-        )
-        return fetchedConfig
-    }
-
-    override suspend fun updateAttendeeConfig(attendeeConfig: AttendeeConfig): Boolean {
-        val acknowledge = attendeesConfigCollection.withDocumentClass<AttendeeConfig>().updateOne(
-            eq("_id", "attendee_config"), Updates.combine(
-                Updates.set(AttendeeConfig::locked.name, attendeeConfig.locked),
-            )
-        ).wasAcknowledged()
-
-        if (acknowledge) {
-            cache.invalidate(CachedKeys.attendeeConfigKey())
-        }
-
-        return acknowledge
     }
 
     override suspend fun getAttendees(page: Int, limit: Int): List<Attendee> {

@@ -15,7 +15,6 @@ package com.puconvocation.database.mongodb.datasource
 
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.database.mongodb.entities.Attendee
-import com.puconvocation.database.mongodb.entities.AttendeeConfig
 
 interface AttendeeDatasource {
     suspend fun getAttendee(identifier: String): Attendee?
@@ -29,10 +28,6 @@ interface AttendeeDatasource {
     suspend fun setDegreeReceivedStatus(enrollmentNumber: String, status: Boolean): Boolean
 
     suspend fun getTotalAttendees(): Int
-
-    suspend fun getAttendeeConfig(): AttendeeConfig
-
-    suspend fun updateAttendeeConfig(attendeeConfig: AttendeeConfig): Boolean
 
     suspend fun getAttendees(page: Int, limit: Int): List<Attendee>
 }

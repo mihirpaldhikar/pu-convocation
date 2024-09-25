@@ -30,8 +30,8 @@ object CachedKeys {
         return "config:attendee"
     }
 
-    fun websiteConfigKey(): String {
-        return "config:website"
+    fun remoteConfigKey(): String {
+        return "remoteConfig"
     }
 
     fun attendeesWithPaginationKey(page: Int, limit: Int): String {

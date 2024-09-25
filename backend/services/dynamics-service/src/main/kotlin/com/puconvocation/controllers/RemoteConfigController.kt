@@ -70,6 +70,7 @@ class RemoteConfigController(
             showCountDown = changeRemoteConfigRequest.showCountDown ?: currentConfig.showCountDown,
             countDownEndTime = changeRemoteConfigRequest.countDownEndTime ?: currentConfig.countDownEndTime,
             enclosureMapping = changeRemoteConfigRequest.enclosureMapping ?: currentConfig.enclosureMapping,
+            attendeeLocked = currentConfig.attendeeLocked
         )
 
         val success = remoteConfigRepository.changeConfig(newConfig, currentConfig.id)
@@ -89,6 +90,10 @@ class RemoteConfigController(
                 "message" to "Configuration updated."
             )
         )
+    }
+
+    suspend fun mutateAttendeeLock(lock: Boolean): Boolean {
+        return remoteConfigRepository.mutateAttendeeLock(lock)
     }
 
 }

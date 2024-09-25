@@ -11,13 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.entities
+import { useContext } from "react";
+import { RemoteConfigContext } from "@providers/RemoteConfigProvider";
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import org.bson.codecs.pojo.annotations.BsonId
+const useRemoteConfig = () => {
+  const context = useContext(RemoteConfigContext);
+  if (!context) {
+    throw new Error(
+      "useRemoteConfig Hook must be used within the RemoteConfig Provider",
+    );
+  }
+  return context;
+};
 
-
-data class AttendeeConfig(
-    @BsonId @JsonProperty("configId") val configId: String = "attendee_config",
-    @JsonProperty("locked") val locked: Boolean,
-)
+export default useRemoteConfig;

@@ -24,6 +24,7 @@ class Environment {
     val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
 
     val authServiceURL = System.getenv("AUTH_SERVICE_URL").toString()
+    val dynamicsServiceURL = System.getenv("DYNAMICS_SERVICE_URL").toString()
 
     val redisURL = System.getenv("REDIS_URL").toString()
 

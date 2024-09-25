@@ -21,4 +21,6 @@ interface RemoteConfigDatasource {
 
     suspend fun changeConfig(remoteConfig: RemoteConfig, oldConfigId: ObjectId): Boolean
 
+    suspend fun mutateAttendeeLock(lock:Boolean): Boolean
+
 }

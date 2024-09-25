@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.entities
+package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
