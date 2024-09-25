@@ -22,4 +22,5 @@ export type { default as AttendeeWithPagination } from "./AttendeeWithPagination
 export type { default as WebsiteConfig } from "./WebsiteConfig";
 export type { default as NavMenu } from "./NavMenu";
 export type { default as GeoMap } from "./GeoMap";
+export type { default as AccountInvitation } from "./AccountInvitation";
 export * from "./analytics/index";

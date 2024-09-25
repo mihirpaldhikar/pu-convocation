@@ -15,7 +15,12 @@ import {
   create as createPasskeyCredentials,
   get as getPublicCredentials,
 } from "@github/webauthn-json";
-import { Account, Response, UpdateUACRuleRequest } from "@dto/index";
+import {
+  Account,
+  AccountInvitation,
+  Response,
+  UpdateUACRuleRequest,
+} from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import { HttpService } from "@services/index";
 
@@ -50,31 +55,18 @@ export default class AuthService {
   }
 
   public async createAccount(
-    authenticationStrategy: "PASSWORD" | "PASSKEY",
+    invitationToken: string,
     displayName: string,
     username: string,
-    email: string,
     designation: string,
-    password?: string,
   ): Promise<Response<string>> {
     const handshakeResponse = await this.httpService.post<string>(
-      `${this.ACCOUNT_ROUTE}/new`,
-      password === undefined && authenticationStrategy === "PASSKEY"
-        ? {
-            username: username,
-            displayName: displayName,
-            email: email,
-            authenticationStrategy: authenticationStrategy,
-            designation: designation,
-          }
-        : {
-            username: username,
-            displayName: displayName,
-            email: email,
-            password: password,
-            authenticationStrategy: authenticationStrategy,
-            designation: designation,
-          },
+      `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
+      {
+        username: username,
+        displayName: displayName,
+        designation: designation,
+      },
     );
 
     if (
@@ -82,26 +74,22 @@ export default class AuthService {
       "payload" in handshakeResponse &&
       typeof handshakeResponse.payload === "object"
     ) {
-      if (authenticationStrategy === "PASSKEY") {
-        const passkeyChallenge = handshakeResponse.payload;
+      const passkeyChallenge = handshakeResponse.payload;
 
-        const passkeyCredentials =
-          await createPasskeyCredentials(passkeyChallenge);
+      const passkeyCredentials =
+        await createPasskeyCredentials(passkeyChallenge);
 
-        return await this.httpService.post(
-          `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
-          {
-            identifier: username,
-            passkeyCredentials: JSON.stringify(passkeyCredentials),
-          },
-          {
-            expectedStatusCode: 201,
-            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
-          },
-        );
-      }
-
-      return handshakeResponse;
+      return await this.httpService.post(
+        `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
+        {
+          identifier: username,
+          passkeyCredentials: JSON.stringify(passkeyCredentials),
+        },
+        {
+          expectedStatusCode: 201,
+          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+        },
+      );
     }
 
     return handshakeResponse;
@@ -194,6 +182,20 @@ export default class AuthService {
     }
 
     return handshakeRequest;
+  }
+
+  public async sendAccountInvitations(
+    invitations: Array<AccountInvitation>,
+  ): Promise<Response<any | string>> {
+    return await this.httpService.post<any>(
+      `${this.ACCOUNT_ROUTE}/sendInvitations`,
+      {
+        invites: invitations,
+      },
+      {
+        expectedStatusCode: 201,
+      },
+    );
   }
 
   public async signOut(): Promise<Response<string>> {
