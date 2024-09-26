@@ -19,7 +19,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.puconvocation.enums.TokenType
-import com.puconvocation.security.dao.JWTMetadata
+import com.puconvocation.security.dao.JWTConfig
 import com.puconvocation.security.dao.SecurityToken
 import java.security.KeyFactory
 import java.security.PrivateKey
@@ -30,7 +30,7 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
 
 class JsonWebToken(
-    private val jwtMetadata: JWTMetadata
+    private val jwtConfig: JWTConfig
 ) {
     private data class Keys(
         val authorizationTokenPublicKey: PublicKey,
@@ -40,14 +40,14 @@ class JsonWebToken(
     )
 
     private fun keys(): Keys {
-        val authorizationTokenPublicKey = jwtMetadata.provider.get(jwtMetadata.authorizationTokenKeyId).publicKey
+        val authorizationTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
         val authorizationTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtMetadata.authorizationTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.authorizationTokenPrivateKey))
         val authorizationTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(authorizationTokenKeySpec)
 
-        val refreshTokenPublicKey = jwtMetadata.provider.get(jwtMetadata.authorizationTokenKeyId).publicKey
+        val refreshTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
         val refreshTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtMetadata.refreshTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.refreshTokenPrivateKey))
         val refreshTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(refreshTokenKeySpec)
 
         return Keys(
@@ -61,8 +61,8 @@ class JsonWebToken(
     private fun jwtVerifier(tokenType: TokenType): JWTVerifier {
         if (tokenType === TokenType.INVITATION_TOKEN) {
             return JWT.require(
-                Algorithm.HMAC512(jwtMetadata.invitationsSecret)
-            ).withIssuer(jwtMetadata.issuer).build()
+                Algorithm.HMAC512(jwtConfig.invitationsSecret)
+            ).withIssuer(jwtConfig.issuer).build()
         }
         val keys = keys()
         return JWT.require(
@@ -72,7 +72,7 @@ class JsonWebToken(
                 if (tokenType == TokenType.REFRESH_TOKEN) keys.refreshTokenPrivateKey as RSAPrivateKey
                 else keys.authorizationTokenPrivateKey as RSAPrivateKey
             )
-        ).withIssuer(jwtMetadata.issuer).build()
+        ).withIssuer(jwtConfig.issuer).build()
     }
 
     fun generateAuthorizationToken(uuid: String, sessionId: String): String {
@@ -81,8 +81,8 @@ class JsonWebToken(
         val tokenCreatedAt = Date(currentTime)
         val tokenExpiresAt = Date(currentTime + 3600000)
         val keys = keys()
-        return JWT.create().withAudience(jwtMetadata.audience).withIssuer(
-            jwtMetadata.issuer
+        return JWT.create().withAudience(jwtConfig.audience).withIssuer(
+            jwtConfig.issuer
         ).withClaim(UUID_CLAIM, uuid).withClaim(
             SESSION_ID_CLAIM, sessionId
         ).withIssuedAt(tokenCreatedAt).withExpiresAt(tokenExpiresAt)
@@ -99,8 +99,8 @@ class JsonWebToken(
         val tokenCreatedAt = Date(currentTime)
         val tokenExpiresAt = Date(currentTime + 31556952000)
         val keys = keys()
-        return JWT.create().withAudience(jwtMetadata.audience).withIssuer(
-            jwtMetadata.issuer
+        return JWT.create().withAudience(jwtConfig.audience).withIssuer(
+            jwtConfig.issuer
         ).withClaim(
             SESSION_ID_CLAIM, sessionId
         ).withClaim(
@@ -164,13 +164,13 @@ class JsonWebToken(
         val tokenExpiresAt = Date(currentTime + 259200000)
 
         return JWT.create()
-            .withAudience(jwtMetadata.audience)
-            .withIssuer(jwtMetadata.issuer)
+            .withAudience(jwtConfig.audience)
+            .withIssuer(jwtConfig.issuer)
             .withClaim(INVITATION_ID_CLAIM, invitationId)
             .withIssuedAt(tokenCreatedAt)
             .withExpiresAt(tokenExpiresAt)
             .withSubject(API_AUTHORIZATION_SUBJECT)
-            .sign(Algorithm.HMAC512(jwtMetadata.invitationsSecret))
+            .sign(Algorithm.HMAC512(jwtConfig.invitationsSecret))
     }
 
     companion object {

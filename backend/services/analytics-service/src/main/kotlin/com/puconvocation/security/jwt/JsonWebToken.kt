@@ -18,7 +18,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.puconvocation.enums.TokenType
-import com.puconvocation.security.dao.JWTMetadata
+import com.puconvocation.security.dao.JWTConfig
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -28,7 +28,7 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
 
 class JsonWebToken(
-    private val jwtMetadata: JWTMetadata
+    private val jwtConfig: JWTConfig
 ) {
     private data class Keys(
         val authorizationTokenPublicKey: PublicKey,
@@ -38,14 +38,14 @@ class JsonWebToken(
     )
 
     private fun keys(): Keys {
-        val authorizationTokenPublicKey = jwtMetadata.provider.get(jwtMetadata.authorizationTokenKeyId).publicKey
+        val authorizationTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
         val authorizationTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtMetadata.authorizationTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.authorizationTokenPrivateKey))
         val authorizationTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(authorizationTokenKeySpec)
 
-        val refreshTokenPublicKey = jwtMetadata.provider.get(jwtMetadata.authorizationTokenKeyId).publicKey
+        val refreshTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
         val refreshTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtMetadata.refreshTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.refreshTokenPrivateKey))
         val refreshTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(refreshTokenKeySpec)
 
         return Keys(
@@ -65,7 +65,7 @@ class JsonWebToken(
                 if (tokenType == TokenType.REFRESH_TOKEN) keys.refreshTokenPrivateKey as RSAPrivateKey
                 else keys.authorizationTokenPrivateKey as RSAPrivateKey
             )
-        ).withIssuer(jwtMetadata.issuer).build()
+        ).withIssuer(jwtConfig.issuer).build()
     }
 
     fun getClaims(

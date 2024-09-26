@@ -15,10 +15,10 @@ package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.puconvocation.Environment
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.security.passkeys.PasskeyRelyingParty
-import com.puconvocation.controllers.CacheController
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
@@ -40,7 +40,7 @@ object CoreModule {
         }
 
         single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
+            JsonWebToken(jwtConfig = get<Environment>().jwtConfig)
         }
 
         single<RelyingParty> {

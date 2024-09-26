@@ -60,7 +60,7 @@ object CoreModule {
         }
 
         single<JsonWebToken> {
-            JsonWebToken(jwtMetadata = get<Environment>().jwtMetadata)
+            JsonWebToken(jwtConfig = get<Environment>().jwtConfig)
         }
 
         single<AuthService> {

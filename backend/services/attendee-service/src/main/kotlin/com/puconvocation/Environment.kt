@@ -14,7 +14,7 @@
 package com.puconvocation
 
 import com.auth0.jwk.JwkProviderBuilder
-import com.puconvocation.security.dao.JWTMetadata
+import com.puconvocation.security.dao.JWTConfig
 import java.util.concurrent.TimeUnit
 
 class Environment {
@@ -32,7 +32,7 @@ class Environment {
     val emailQueue = System.getenv("EMAIL_QUEUE").toString()
     val transactionQueue = System.getenv("TRANSACTION_QUEUE").toString()
 
-    val jwtMetadata: JWTMetadata = JWTMetadata(
+    val jwtConfig: JWTConfig = JWTConfig(
         authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY"),
         refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY"),
         authorizationTokenKeyId = System.getenv("AUTHORIZATION_TOKEN_KEY_ID"),

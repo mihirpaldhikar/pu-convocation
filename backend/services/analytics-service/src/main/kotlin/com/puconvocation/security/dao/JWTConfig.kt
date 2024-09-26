@@ -15,7 +15,7 @@ package com.puconvocation.security.dao
 
 import com.auth0.jwk.JwkProvider
 
-data class JWTMetadata(
+data class JWTConfig(
     val provider: JwkProvider,
     val authorizationTokenPrivateKey: String,
     val refreshTokenPrivateKey: String,

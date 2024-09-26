@@ -103,7 +103,7 @@ object CoreModule {
 
         single<JsonWebToken> {
             JsonWebToken(
-                jwtMetadata = get<Environment>().jwtMetadata
+                jwtConfig = get<Environment>().jwtConfig
             )
         }
     }
