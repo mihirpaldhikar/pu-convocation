@@ -36,3 +36,7 @@ yarn-error.log*
 next-env.d.ts
 
 .well-known
+
+# scripts
+run-attendee-service.ps1
+run-auth-service.ps1
