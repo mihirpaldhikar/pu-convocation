@@ -31,20 +31,12 @@ export default function ConsolePage(): JSX.Element {
     );
   }
 
-  const handleViewAllAnalytics = () => {
-    router.push("/en/console/analytics");
-  };
-
-  const handleViewAllAttendees = () => {
-    router.push("/en/console/attendees");
-  };
-
   return (
     <div className="bg-white-300 flex min-h-screen flex-col p-24">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Analytics</h2>
         <button
-          onClick={handleViewAllAnalytics}
+          onClick={() => router.push("/en/console/analytics")}
           className="rounded-lg bg-red-600 px-5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
         >
           View All
@@ -53,11 +45,9 @@ export default function ConsolePage(): JSX.Element {
 
       <div className="mb-4 grid grid-cols-2 gap-6">
         <div className="h-32 rounded-xl border border-gray-300 bg-white p-6 font-semibold text-red-600">
-          {" "}
           Demographics
         </div>
         <div className="h-32 rounded-xl border border-gray-300 bg-white p-6 font-semibold text-red-600">
-          {" "}
           Traffic
         </div>
       </div>
@@ -65,7 +55,7 @@ export default function ConsolePage(): JSX.Element {
       <div className="mb-6 flex items-center justify-between mt-10">
         <h2 className="text-xl font-bold">Attendees</h2>
         <button
-          onClick={handleViewAllAttendees}
+          onClick={() => router.push("/en/console/attendees")}
           className="rounded-lg bg-red-600 px-5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
         >
           View All
