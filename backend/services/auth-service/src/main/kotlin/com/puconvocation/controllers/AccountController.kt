@@ -22,10 +22,8 @@ import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
-import com.puconvocation.enums.AuthenticationStrategy
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
-import com.puconvocation.security.core.Hash
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.utils.Result
@@ -39,36 +37,6 @@ class AccountController(
     private val passkeyController: PasskeyController,
     private val iamController: IAMController,
 ) {
-    suspend fun getAuthenticationStrategy(identifier: String): Result<HashMap<String, Any>, ErrorResponse> {
-        val account = accountRepository.getAccount(identifier) ?: return Result.Error(
-            httpStatusCode = HttpStatusCode.NotFound,
-            error = ErrorResponse(
-                errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                message = "Account not found."
-            )
-        )
-
-        if (account.suspended) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.ACCOUNT_SUSPENDED,
-                    message = "Your account has been suspended."
-                )
-            )
-        }
-
-        val authenticationStrategy = if (account.fidoCredential.isEmpty()) AuthenticationStrategy.PASSWORD
-        else AuthenticationStrategy.PASSKEY
-
-        return Result.Success(
-            hashMapOf(
-                "authenticationStrategy" to
-                        authenticationStrategy
-            )
-        )
-    }
-
     suspend fun authenticate(credentials: AuthenticationCredentials): Result<Any, ErrorResponse> {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
@@ -88,43 +56,18 @@ class AccountController(
             )
         }
 
-        if (account.fidoCredential.isNotEmpty()) {
-            val result = passkeyController.startPasskeyChallenge(credentials.identifier)
-            return result
-        }
-
-        if (credentials.password == null || account.password == null) {
+        if (account.fidoCredential.isEmpty()) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.NULL_PASSWORD,
-                    message = "Please provide password."
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "No FIDO credentials are associated with this account."
                 )
             )
         }
 
-        val passwordMatched = Hash().verify(credentials.password, account.password)
-
-        if (!passwordMatched) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.NotAcceptable,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_PASSWORD,
-                    message = "Password is invalid. Please check your password."
-                )
-            )
-        }
-
-        return Result.Success(
-            SecurityToken(
-                payload = "Authenticated Successfully",
-                authorizationToken = jsonWebToken.generateAuthorizationToken(
-                    account.uuid.toHexString(),
-                    "null",
-                ),
-                refreshToken = jsonWebToken.generateRefreshToken(account.uuid.toHexString(), "null"),
-            )
-        )
+        val result = passkeyController.startPasskeyChallenge(credentials.identifier)
+        return result
     }
 
     suspend fun createNewAccount(
@@ -178,7 +121,6 @@ class AccountController(
             displayName = newAccountFromInvitation.displayName,
             designation = newAccountFromInvitation.designation,
             suspended = false,
-            password = null,
             fidoCredential = mutableSetOf()
         )
         val response = accountRepository.createAccount(account)

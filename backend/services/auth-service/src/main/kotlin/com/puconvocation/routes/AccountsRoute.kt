@@ -30,14 +30,6 @@ fun Routing.accountsRoute(
     passkeyController: PasskeyController
 ) {
     route("/accounts") {
-
-        post("/authenticationStrategy") {
-            val credentials = call.receive<AuthenticationCredentials>()
-
-            val result = accountController.getAuthenticationStrategy(credentials.identifier)
-            call.sendResponse(result)
-        }
-
         post("/authenticate") {
             val credentials: AuthenticationCredentials = call.receive<AuthenticationCredentials>()
             val result = accountController.authenticate(credentials)

@@ -130,7 +130,6 @@ class AccountRepository(
                 Updates.set(Account::displayName.name, account.displayName),
                 Updates.set(Account::email.name, account.email),
                 Updates.set(Account::avatarURL.name, account.avatarURL),
-                Updates.set(Account::password.name, account.password),
             )
         ).wasAcknowledged()
 

@@ -95,36 +95,12 @@ export default class AuthService {
     return handshakeResponse;
   }
 
-  public async getAuthenticationStrategy(identifier: string): Promise<
-    Response<
-      | {
-          authenticationStrategy: "UNKNOWN" | "PASSWORD" | "PASSKEY";
-        }
-      | string
-    >
-  > {
-    return await this.httpService.post<{
-      authenticationStrategy: "UNKNOWN" | "PASSWORD" | "PASSKEY";
-    }>(`${this.ACCOUNT_ROUTE}/authenticationStrategy`, {
-      identifier: identifier,
-    });
-  }
-
-  public async authenticate(
-    authenticationStrategy: "PASSWORD" | "PASSKEY",
-    identifier: string,
-    password?: string,
-  ): Promise<Response<string>> {
+  public async authenticate(identifier: string): Promise<Response<string>> {
     const authenticationHandshake = await this.httpService.post<string>(
       `${this.ACCOUNT_ROUTE}/authenticate`,
-      password === undefined
-        ? {
-            identifier: identifier,
-          }
-        : {
-            identifier: identifier,
-            password: password,
-          },
+      {
+        identifier: identifier,
+      },
     );
 
     if (
@@ -132,23 +108,19 @@ export default class AuthService {
       "payload" in authenticationHandshake &&
       typeof authenticationHandshake.payload === "object"
     ) {
-      if (authenticationStrategy === "PASSKEY") {
-        const passkeyChallenge = authenticationHandshake.payload;
-        const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
-        return await this.httpService.post<string>(
-          `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
-          {
-            identifier: identifier,
-            passkeyCredentials: JSON.stringify(passkeyCredentials),
-          },
-          {
-            expectedStatusCode: 200,
-            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
-          },
-        );
-      }
-
-      return authenticationHandshake;
+      const passkeyChallenge = authenticationHandshake.payload;
+      const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
+      return await this.httpService.post<string>(
+        `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
+        {
+          identifier: identifier,
+          passkeyCredentials: JSON.stringify(passkeyCredentials),
+        },
+        {
+          expectedStatusCode: 200,
+          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+        },
+      );
     }
 
     return authenticationHandshake;

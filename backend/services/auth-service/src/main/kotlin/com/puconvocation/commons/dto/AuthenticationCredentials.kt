@@ -17,6 +17,5 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AuthenticationCredentials(
     @JsonProperty("identifier") val identifier: String,
-    @JsonProperty("password") val password: String? = null,
     @JsonProperty("passkeyCredentials") val passkeyCredentials: String? = null,
 )

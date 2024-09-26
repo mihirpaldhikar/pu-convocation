@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX, useState } from "react";
+import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
@@ -37,12 +37,10 @@ export default function AuthenticationForm({
   const [authenticationPayload, setAuthenticationPayload] = useState<{
     identifier: string;
     password: string;
-    authenticationStrategy: "UNKNOWN" | "PASSWORD" | "PASSKEY";
     submitting: boolean;
   }>({
     identifier: "",
     password: "",
-    authenticationStrategy: "UNKNOWN",
     submitting: false,
   });
 
@@ -57,102 +55,37 @@ export default function AuthenticationForm({
             submitting: true,
           };
         });
-        switch (authenticationPayload.authenticationStrategy) {
-          case "UNKNOWN": {
-            const response = await state.authService.getAuthenticationStrategy(
-              authenticationPayload.identifier,
-            );
+        const response = await state.authService.authenticate(
+          authenticationPayload.identifier,
+        );
+        if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
+          state.authService.getCurrentAccount().then((res) => {
+            dispatch({
+              type: "LOADING",
+              payload: {
+                loading: true,
+              },
+            });
             if (
-              response.statusCode === StatusCode.SUCCESS &&
-              "payload" in response &&
-              typeof response.payload === "object"
+              res.statusCode === StatusCode.SUCCESS &&
+              "payload" in res &&
+              typeof res.payload === "object"
             ) {
-              const authenticationStrategy =
-                response.payload.authenticationStrategy;
-              setAuthenticationPayload((prevState) => {
-                return {
-                  ...prevState,
-                  authenticationStrategy: authenticationStrategy,
-                };
-              });
-            } else if ("message" in response) {
-              toast({
-                title: "Authentication Failed",
-                description: response.message,
-                duration: 5000,
+              dispatch({
+                type: "SET_ACCOUNT",
+                payload: {
+                  account: res.payload,
+                },
               });
             }
-            break;
-          }
-          case "PASSKEY": {
-            const response = await state.authService.authenticate(
-              authenticationPayload.authenticationStrategy,
-              authenticationPayload.identifier,
-            );
-            if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              state.authService.getCurrentAccount().then((res) => {
-                dispatch({
-                  type: "LOADING",
-                  payload: {
-                    loading: true,
-                  },
-                });
-                if (
-                  res.statusCode === StatusCode.SUCCESS &&
-                  "payload" in res &&
-                  typeof res.payload === "object"
-                ) {
-                  dispatch({
-                    type: "SET_ACCOUNT",
-                    payload: {
-                      account: res.payload,
-                    },
-                  });
-                }
-                router.replace(redirect ?? "/console");
-              });
-            } else if ("message" in response) {
-              toast({
-                title: "Authentication Failed",
-                description: response.message,
-                duration: 5000,
-              });
-            }
-            break;
-          }
-          case "PASSWORD": {
-            const response = await state.authService.authenticate(
-              authenticationPayload.authenticationStrategy,
-              authenticationPayload.identifier,
-              authenticationPayload.password,
-            );
-            if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-              state.authService.getCurrentAccount().then((res) => {
-                if (
-                  res.statusCode === StatusCode.SUCCESS &&
-                  "payload" in res &&
-                  typeof res.payload === "object"
-                ) {
-                  dispatch({
-                    type: "SET_ACCOUNT",
-                    payload: {
-                      account: res.payload,
-                    },
-                  });
-                }
-                router.replace(redirect ?? "/console");
-              });
-            } else if ("message" in response) {
-              toast({
-                title: "Authentication Failed",
-                description: response.message,
-                duration: 5000,
-              });
-            }
-            break;
-          }
-          default:
-            break;
+            router.replace(redirect ?? "/console");
+          });
+        } else if ("message" in response) {
+          toast({
+            title: "Authentication Failed",
+            description: response.message,
+            duration: 5000,
+          });
         }
         setAuthenticationPayload((prevState) => {
           return {
@@ -174,19 +107,6 @@ export default function AuthenticationForm({
           });
         }}
       />
-      <Input
-        className={`${authenticationPayload.authenticationStrategy === "PASSWORD" ? "flex" : "hidden"} w-full rounded-md border px-3 py-2`}
-        disabled={authenticationPayload.submitting}
-        type={"password"}
-        value={authenticationPayload.password}
-        placeholder={formTranslations("inputs.password")}
-        onChange={(event) => {
-          setAuthenticationPayload({
-            ...authenticationPayload,
-            password: event.target.value.trim().replace(/\s/g, ""),
-          });
-        }}
-      />
       <Button
         disabled={
           authenticationPayload.submitting ||
@@ -195,14 +115,8 @@ export default function AuthenticationForm({
         type={"submit"}
         className={`flex w-full space-x-3`}
       >
-        {authenticationPayload.authenticationStrategy === "PASSKEY" ? (
-          <Fragment>
-            <PasskeyIcon color={"#ffffff"} />{" "}
-            <h2>{formTranslations("buttons.passkey")}</h2>
-          </Fragment>
-        ) : (
-          <span>{formTranslations("buttons.continue")}</span>
-        )}
+        <PasskeyIcon color={"#ffffff"} />{" "}
+        <h2>{formTranslations("buttons.passkey")}</h2>
       </Button>
     </form>
   );

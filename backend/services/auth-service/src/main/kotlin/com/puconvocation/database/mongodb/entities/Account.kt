@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.puconvocation.security.dao.FidoCredential
-import com.puconvocation.security.dao.SaltedHash
 import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -45,9 +44,6 @@ data class Account(
 
     @JsonIgnore @JsonProperty("suspended")
     val suspended: Boolean,
-
-    @JsonIgnore @JsonProperty("password")
-    val password: SaltedHash? = null,
 
     @JsonIgnore @JsonProperty("fidoCredential")
     val fidoCredential: MutableSet<FidoCredential>
