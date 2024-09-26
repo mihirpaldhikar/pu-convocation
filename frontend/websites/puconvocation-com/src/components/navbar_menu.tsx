@@ -54,7 +54,7 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["websiteConfig"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await dynamicsService.getWebsiteConfig(
+      const response = await dynamicsService.getRemoteConfig(
         `${formatISO(new Date())};${currentLocale};${path}`,
       );
       if (

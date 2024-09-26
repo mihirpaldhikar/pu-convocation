@@ -22,7 +22,7 @@ export default class DynamicsService {
 
   private CONFIG_ROUTE = this.BASE_URL.concat("/config");
 
-  public async getWebsiteConfig(
+  public async getRemoteConfig(
     tracker: string,
   ): Promise<Response<RemoteConfig | string>> {
     return await this.httpService.get(`${this.CONFIG_ROUTE}/`, {
@@ -30,5 +30,14 @@ export default class DynamicsService {
         "x-analytics": tracker,
       },
     });
+  }
+
+  public async changeRemoteConfig(
+    remoteConfig: RemoteConfig,
+  ): Promise<Response<RemoteConfig | string>> {
+    return await this.httpService.patch(
+      `${this.CONFIG_ROUTE}/change`,
+      remoteConfig,
+    );
   }
 }
