@@ -11,9 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
-import pluginPeerDepsExternalModule from "rollup-plugin-peer-deps-external";
 import terser from "@rollup/plugin-terser";
 
 const rollupConfiguration = [
@@ -25,11 +23,6 @@ const rollupConfiguration = [
         },
         external: ["@aws-sdk/client-ses", "mongodb"],
         plugins: [
-            commonjs({
-                transformMixedEsModules: true,
-                include: [],
-            }),
-            pluginPeerDepsExternalModule(),
             typescript({
                 tsconfig: "./tsconfig.json",
                 declarationDir: "dist",
