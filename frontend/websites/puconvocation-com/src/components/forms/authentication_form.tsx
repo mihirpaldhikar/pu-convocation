@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useState } from "react";
+import { Fragment, JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
@@ -36,11 +36,9 @@ export default function AuthenticationForm({
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
     identifier: string;
-    password: string;
     submitting: boolean;
   }>({
     identifier: "",
-    password: "",
     submitting: false,
   });
 
@@ -60,12 +58,6 @@ export default function AuthenticationForm({
         );
         if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
           state.authService.getCurrentAccount().then((res) => {
-            dispatch({
-              type: "LOADING",
-              payload: {
-                loading: true,
-              },
-            });
             if (
               res.statusCode === StatusCode.SUCCESS &&
               "payload" in res &&
@@ -86,13 +78,13 @@ export default function AuthenticationForm({
             description: response.message,
             duration: 5000,
           });
+          setAuthenticationPayload((prevState) => {
+            return {
+              ...prevState,
+              submitting: false,
+            };
+          });
         }
-        setAuthenticationPayload((prevState) => {
-          return {
-            ...prevState,
-            submitting: false,
-          };
-        });
       }}
     >
       <Input
@@ -115,8 +107,16 @@ export default function AuthenticationForm({
         type={"submit"}
         className={`flex w-full space-x-3`}
       >
-        <PasskeyIcon color={"#ffffff"} />{" "}
-        <h2>{formTranslations("buttons.passkey")}</h2>
+        {authenticationPayload.submitting ? (
+          <Fragment>
+            <h2>Authenticating...</h2>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <PasskeyIcon color={"#ffffff"} />{" "}
+            <h2>{formTranslations("buttons.passkey")}</h2>
+          </Fragment>
+        )}
       </Button>
     </form>
   );
