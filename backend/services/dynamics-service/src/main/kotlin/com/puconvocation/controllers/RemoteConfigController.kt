@@ -69,7 +69,7 @@ class RemoteConfigController(
                 ?: currentConfig.showInstructionsBanner,
             showCountDown = changeRemoteConfigRequest.showCountDown ?: currentConfig.showCountDown,
             countDownEndTime = changeRemoteConfigRequest.countDownEndTime ?: currentConfig.countDownEndTime,
-            enclosureMapping = changeRemoteConfigRequest.enclosureMapping ?: currentConfig.enclosureMapping,
+            groundMappings = changeRemoteConfigRequest.groundMappings ?: currentConfig.groundMappings,
             attendeeLocked = currentConfig.attendeeLocked
         )
 

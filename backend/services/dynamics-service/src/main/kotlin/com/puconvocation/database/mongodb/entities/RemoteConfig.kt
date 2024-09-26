@@ -38,7 +38,7 @@ data class RemoteConfig(
     @JsonProperty("showCountDown") val showCountDown: Boolean,
     @JsonProperty("countDownEndTime") val countDownEndTime: Long,
     @JsonProperty("attendeeLocked") val attendeeLocked: Boolean,
-    @JsonProperty("enclosureMapping") val enclosureMapping: MutableList<Enclosure>,
+    @JsonProperty("groundMappings") val groundMappings: MutableList<Enclosure>,
 ) {
     data class Gallery(
         @JsonProperty("title") val title: String,
