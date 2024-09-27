@@ -18,5 +18,5 @@ import com.puconvocation.database.mongodb.entities.Attendee
 
 data class AttendeeWithEnclosureMetadata(
     @JsonProperty("attendee") val attendee: Attendee,
-    @JsonProperty("enclosureMetadata") val enclosureMetadata: Enclosure.EnclosureMapping,
+    @JsonProperty("enclosureMetadata") val enclosureMetadata: RemoteConfig.Enclosure,
 )

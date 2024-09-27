@@ -20,11 +20,11 @@ import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
-import com.puconvocation.commons.dto.Enclosure
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasource.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.services.DynamicsService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import java.time.Duration
@@ -32,7 +32,8 @@ import java.time.Duration
 class AttendeeRepository(
     database: MongoDatabase,
     private val mapper: ObjectMapper,
-    private val cache: CacheController
+    private val cache: CacheController,
+    private val dynamicsService: DynamicsService
 ) : AttendeeDatasource {
 
     private val attendeesCollection: MongoCollection<Attendee> =
@@ -69,11 +70,11 @@ class AttendeeRepository(
 
         val fetchedAttendee = getAttendee(identifier) ?: return null
 
-        val enclosure = mapper.readValue<Enclosure>(cache.get(CachedKeys.remoteConfigKey())!!)
+        val remoteConfig = dynamicsService.getRemoteConfig()
 
         val computedAttendee = AttendeeWithEnclosureMetadata(
             attendee = fetchedAttendee,
-            enclosureMetadata = enclosure.enclosureMapping.first {
+            enclosureMetadata = remoteConfig.groundMappings.first {
                 it.letter.equals(
                     fetchedAttendee.allocation.enclosure,
                     ignoreCase = true

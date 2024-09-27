@@ -18,6 +18,7 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
+import com.puconvocation.services.DynamicsService
 import org.koin.dsl.module
 
 object RepositoriesModule {
@@ -27,6 +28,7 @@ object RepositoriesModule {
                 database = get<MongoDatabase>(),
                 cache = get<CacheController>(),
                 mapper = get<ObjectMapper>(),
+                dynamicsService = get<DynamicsService>()
             )
         }
 

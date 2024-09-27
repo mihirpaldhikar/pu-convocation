@@ -23,11 +23,7 @@ object CachedKeys {
     }
 
     fun attendeeWithEnclosureMetadataKey(identifier: String): String {
-        return "attendeeWithEnclosureMetadataKey:$identifier"
-    }
-
-    fun attendeeConfigKey(): String {
-        return "config:attendee"
+        return "attendeeWithEnclosureMetadata:$identifier"
     }
 
     fun remoteConfigKey(): String {
