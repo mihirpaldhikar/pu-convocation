@@ -23,7 +23,6 @@ import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -35,11 +34,6 @@ fun Routing.iamRoute(
     route("/iam") {
 
         get("/authorized") {
-            val host = call.request.host()
-
-            if (!environment.servicesHosts.split(";;").contains(host)) {
-                return@get call.respond(false)
-            }
             val iamHeader = call.request.headers["X-IAM-CHECK"]
             if (iamHeader.isNullOrBlank()) {
                 return@get call.respond(false)

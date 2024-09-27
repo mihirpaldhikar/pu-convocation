@@ -31,7 +31,7 @@ class DynamicsService(
     private val mapper: ObjectMapper,
     environment: Environment
 ) {
-    private val configRoute = "${environment.dynamicsServiceURL}/config"
+    private val configRoute = "/config"
 
     suspend fun getRemoteConfig(): RemoteConfig {
         val cachedConfig = cache.get(CachedKeys.remoteConfigKey())

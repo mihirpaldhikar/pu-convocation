@@ -14,6 +14,7 @@
 package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
@@ -25,22 +26,23 @@ import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 import java.util.concurrent.TimeUnit
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
+@OptIn(ExperimentalEncodingApi::class)
 object CoreModule {
     val init = module {
+        single<ObjectMapper> {
+            ObjectMapper()
+        }
+
         single<Environment> {
-            Environment()
+            get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
         }
 
         single<KafkaService> {
             KafkaService(
-                brokers = get<Environment>().kafkaBrokers
-            )
-        }
-
-        single<JedisPool> {
-            JedisPool(
-                get<Environment>().redisURL
+                brokers = get<Environment>().cloud.aws.analyticsMSK.brokers
             )
         }
 
@@ -51,21 +53,18 @@ object CoreModule {
             )
         }
 
-        single<ObjectMapper> {
-            ObjectMapper()
-        }
-
         single<HttpClient> {
             HttpClient(CIO)
         }
 
         single<JsonWebToken> {
-            JsonWebToken(jwtConfig = get<Environment>().jwtConfig)
+            JsonWebToken(
+                config = get<Environment>().security.jwt
+            )
         }
 
         single<AuthService> {
             AuthService(
-                environment = get<Environment>(),
                 client = get<HttpClient>(),
                 cache = get<CacheController>(),
                 json = get<ObjectMapper>(),

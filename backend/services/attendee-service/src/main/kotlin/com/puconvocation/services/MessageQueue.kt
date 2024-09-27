@@ -21,13 +21,13 @@ import com.puconvocation.Environment
 
 class MessageQueue(
     private val sqsClient: SqsClient,
-    private val environment: Environment
+    private val awsConfig: Environment.Cloud.AWS
 ) {
     suspend fun sendMessage(message: String, groupId: String, queueType: QueueType) {
         val messageRequest = SendMessageRequest {
             messageBody = message
             messageGroupId = groupId
-            queueUrl = if (queueType == QueueType.EMAIL) environment.emailQueue else environment.transactionQueue
+            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.emailSQS.url else awsConfig.transactionSQS.url
         }
 
         sqsClient.sendMessage(messageRequest)
@@ -39,7 +39,7 @@ class MessageQueue(
     ) {
         val batchMessages = SendMessageBatchRequest {
             entries = messages
-            queueUrl = if (queueType == QueueType.EMAIL) environment.emailQueue else environment.transactionQueue
+            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.emailSQS.url else awsConfig.transactionSQS.url
         }
 
         sqsClient.sendMessageBatch(batchMessages)

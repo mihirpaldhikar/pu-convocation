@@ -13,29 +13,72 @@
 
 package com.puconvocation
 
-import com.auth0.jwk.JwkProviderBuilder
-import com.puconvocation.security.dao.JWTConfig
-import java.util.concurrent.TimeUnit
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
-class Environment {
-    val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
-    val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
-    val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class Environment(
+    @JsonProperty("serviceName") val serviceName: String,
+    @JsonProperty("developmentMode") val developmentMode: Boolean,
+    @JsonProperty("database") val database: Database,
+    @JsonProperty("security") val security: Security,
+    @JsonProperty("cloud") val cloud: Cloud
+) {
 
-    val servicesHosts = System.getenv("SERVICES_HOSTS").toString()
+    data class Database(
+        @JsonProperty("mongoDb") val mongoDb: GenericDatabase,
+        @JsonProperty("redis") val redis: GenericDatabase
+    ) {
+        data class GenericDatabase(
+            @JsonProperty("url") val url: String,
+            @JsonProperty("name") val name: String,
+        )
+    }
 
-    val redisURL = System.getenv("REDIS_URL").toString()
+    data class Security(
+        @JsonProperty("jwt") val jwt: JWT
+    ) {
+        data class JWT(
+            @JsonProperty("audience") val audience: String,
+            @JsonProperty("credentialsAuthority") val credentialsAuthority: String,
+            @JsonProperty("credentialsRealm") val credentialsRealm: String,
+            @JsonProperty("tokens") val tokens: Tokens
+        ) {
+            data class Tokens(
+                @JsonProperty("refresh") val refresh: RSABased,
+                @JsonProperty("authorization") val authorization: RSABased,
+                @JsonProperty("invitation") val invitation: HMACBased
+            ) {
+                data class RSABased(
+                    @JsonProperty("keyId") val keyId: String,
+                    @JsonProperty("privateKey") val privateKey: String
+                )
 
-    val jwtConfig: JWTConfig = JWTConfig(
-        authorizationTokenPrivateKey = System.getenv("AUTHORIZATION_TOKEN_PRIVATE_KEY").toString(),
-        refreshTokenPrivateKey = System.getenv("REFRESH_TOKEN_PRIVATE_KEY").toString(),
-        authorizationTokenKeyId = System.getenv("AUTHORIZATION_TOKEN_KEY_ID").toString(),
-        refreshTokenKeyId = System.getenv("REFRESH_TOKEN_KEY_ID").toString(),
-        audience = System.getenv("API_AUDIENCE").toString(),
-        issuer = System.getenv("CREDENTIALS_AUTHORITY").toString(),
-        realm = System.getenv("CREDENTIALS_REALM").toString(),
-        provider = JwkProviderBuilder(System.getenv("CREDENTIALS_AUTHORITY").toString()).cached(10, 24, TimeUnit.HOURS)
-            .rateLimited(10, 1, TimeUnit.MINUTES).build(),
-        invitationsSecret = System.getenv("INVITATIONS_SECRET").toString()
-    )
+                data class HMACBased(
+                    @JsonProperty("secret") val secret: String,
+                )
+            }
+        }
+    }
+
+    data class Cloud(
+        @JsonProperty("aws") val aws: AWS
+    ) {
+        data class AWS(
+            @JsonProperty("accessKeyId") val accessKeyId: String,
+            @JsonProperty("secretAccessKey") val secretAccessKey: String,
+            @JsonProperty("region") val region: String,
+            @JsonProperty("emailSQS") val emailSQS: SQS,
+            @JsonProperty("transactionSQS") val transactionSQS: SQS,
+            @JsonProperty("analyticsMSK") val analyticsMSK: MSK
+        ) {
+            data class SQS(
+                @JsonProperty("url") val url: String,
+            )
+
+            data class MSK(
+                @JsonProperty("brokers") val brokers: String,
+            )
+        }
+    }
 }

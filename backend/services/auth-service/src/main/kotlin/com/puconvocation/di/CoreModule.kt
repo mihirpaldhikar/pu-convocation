@@ -14,6 +14,7 @@
 package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
@@ -22,25 +23,22 @@ import com.puconvocation.security.passkeys.PasskeyRelyingParty
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 object CoreModule {
+    @OptIn(ExperimentalEncodingApi::class)
     val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JedisPool> {
-            JedisPool(
-                get<Environment>().redisURL
-            )
-        }
-
         single<ObjectMapper> {
             ObjectMapper()
         }
 
+        single<Environment> {
+            get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
+        }
+
         single<JsonWebToken> {
-            JsonWebToken(jwtConfig = get<Environment>().jwtConfig)
+            JsonWebToken(config = get<Environment>().security.jwt)
         }
 
         single<RelyingParty> {

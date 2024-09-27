@@ -34,7 +34,7 @@ class AuthService(
     environment: Environment
 ) {
 
-    private val iamRoute = "${environment.authServiceURL}/iam"
+    private val iamRoute = "/iam"
 
     suspend fun isAuthorized(role: String, principal: String?): Boolean {
 

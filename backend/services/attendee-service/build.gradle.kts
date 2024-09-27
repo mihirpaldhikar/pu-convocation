@@ -11,7 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project

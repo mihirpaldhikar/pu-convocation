@@ -15,6 +15,7 @@ package com.puconvocation.di
 
 import aws.sdk.kotlin.services.sqs.SqsClient
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
@@ -28,17 +29,18 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
+@OptIn(ExperimentalEncodingApi::class)
 object CoreModule {
     val init = module {
-        single<Environment> {
-            Environment()
+        single<ObjectMapper> {
+            ObjectMapper()
         }
 
-        single<JedisPool> {
-            JedisPool(
-                get<Environment>().redisURL
-            )
+        single<Environment> {
+            get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
         }
 
         single<DistributedLock> {
@@ -49,19 +51,15 @@ object CoreModule {
 
         single<SqsClient> {
             SqsClient {
-                region = get<Environment>().messageQueueRegion
+                region = get<Environment>().cloud.aws.region
             }
         }
 
         single<MessageQueue> {
             MessageQueue(
                 sqsClient = get<SqsClient>(),
-                environment = get<Environment>()
+                awsConfig = get<Environment>().cloud.aws
             )
-        }
-
-        single<ObjectMapper> {
-            ObjectMapper()
         }
 
         single<HttpClient> {
@@ -103,7 +101,7 @@ object CoreModule {
 
         single<JsonWebToken> {
             JsonWebToken(
-                jwtConfig = get<Environment>().jwtConfig
+                config = get<Environment>().security.jwt
             )
         }
     }
