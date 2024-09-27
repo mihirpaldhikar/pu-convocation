@@ -11,17 +11,39 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX } from "react";
+import { Fragment, JSX } from "react";
 import { useAuth } from "@hooks/index";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter, Link } from "@i18n/routing";
+import { Button } from "@components/ui";
 import { ProgressBar } from "@components/index";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { Card, CardHeader, CardTitle } from "@components/ui/card";
+import { StatusCode } from "@enums/StatusCode";
 
 export default function ConsolePage(): JSX.Element {
-  const { state } = useAuth();
   const router = useRouter();
+  const { state: { account, authService }, dispatch: dispatchAccountMutation } = useAuth();
 
-  if (state.loading) {
+  const { isLoading: isAccountLoading, isError: isAccountError } = useQuery({
+    queryKey: ["currentAccount"],
+    refetchOnWindowFocus: "always",
+    queryFn: async () => {
+      const response = await authService.getCurrentAccount();
+      if (response.statusCode === StatusCode.SUCCESS && "payload" in response && typeof response.payload === "object") {
+        dispatchAccountMutation({
+          type: "SET_ACCOUNT",
+          payload: {
+            account: response.payload,
+          },
+        });
+        return response.payload;
+      }
+      return null;
+    },
+  });
+
+  if (isAccountLoading || isAccountError) {
     return (
       <div className="flex min-h-screen">
         <div className="m-auto">
@@ -33,35 +55,39 @@ export default function ConsolePage(): JSX.Element {
 
   return (
     <div className="bg-white-300 flex min-h-screen flex-col p-24">
+      {/* Analytics Section */}
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-bold">Analytics</h2>
-        <button
-          onClick={() => router.push("/en/console/analytics")}
-          className="rounded-lg bg-red-600 px-5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
-        >
-          View All
-        </button>
+        <Button variant="red" size="custom" asChild>
+          <Link href={`/console/analytics`}>
+            View All
+          </Link>
+        </Button>
       </div>
-
+  
       <div className="mb-4 grid grid-cols-2 gap-6">
-        <div className="h-32 rounded-xl border border-gray-300 bg-white p-6 font-semibold text-red-600">
-          Demographics
-        </div>
-        <div className="h-32 rounded-xl border border-gray-300 bg-white p-6 font-semibold text-red-600">
-          Traffic
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-600">Demographics</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-red-600">Traffic</CardTitle>
+          </CardHeader>
+        </Card>
       </div>
-
+  
+      {/* Attendees Section */}
       <div className="mb-6 flex items-center justify-between mt-10">
         <h2 className="text-xl font-bold">Attendees</h2>
-        <button
-          onClick={() => router.push("/en/console/attendees")}
-          className="rounded-lg bg-red-600 px-5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
-        >
-          View All
-        </button>
+        <Button variant="red" size="custom" asChild>
+          <Link href={`/console/attendees`}>
+            View All
+          </Link>
+        </Button>
       </div>
-
+  
       <div className="mb-4 rounded-t-2xl border border-gray-300 bg-white p-4">
         <div className="relative mb-4 flex items-center">
           <MagnifyingGlassIcon className="absolute left-3 h-5 w-5 text-gray-500" />
@@ -77,4 +103,5 @@ export default function ConsolePage(): JSX.Element {
       </div>
     </div>
   );
+  
 }
