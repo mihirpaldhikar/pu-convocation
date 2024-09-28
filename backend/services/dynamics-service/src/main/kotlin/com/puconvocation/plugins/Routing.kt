@@ -17,7 +17,10 @@ import com.puconvocation.Environment
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.routes.remoteConfigRoute
 import com.puconvocation.services.KafkaService
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
 
@@ -28,6 +31,14 @@ fun Application.configureRouting() {
     val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
 
     routing {
+        get("/health") {
+            call.respondText(
+                "Dynamics Service is Healthy.",
+                contentType = ContentType.Text.Plain,
+                status = HttpStatusCode.OK,
+            )
+        }
+
         remoteConfigRoute(
             remoteConfigController = remoteConfigController,
             kafkaService = kafkaService, environment = environment,

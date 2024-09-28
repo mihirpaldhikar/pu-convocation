@@ -72,6 +72,9 @@ dependencies {
     // AWS MSK IAM Auth
     implementation("software.amazon.msk:aws-msk-iam-auth:2.2.0")
 
+    // Service Discovery
+    implementation("com.ecwid.consul:consul-api:1.4.5")
+
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
 }
