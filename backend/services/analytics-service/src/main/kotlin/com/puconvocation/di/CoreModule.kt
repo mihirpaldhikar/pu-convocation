@@ -16,15 +16,21 @@ package com.puconvocation.di
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.serializers.ObjectIdDeserializer
+import com.puconvocation.serializers.ObjectIdSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.KafkaService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.jackson.jackson
+import org.bson.types.ObjectId
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 import java.util.UUID
@@ -74,7 +80,16 @@ object CoreModule {
         }
 
         single<HttpClient> {
-            HttpClient(CIO)
+            HttpClient(CIO) {
+                val module = SimpleModule()
+                module.addSerializer(ObjectId::class.java, ObjectIdSerializer())
+                module.addDeserializer(ObjectId::class.java, ObjectIdDeserializer())
+                install(ContentNegotiation) {
+                    jackson {
+                        registerModule(module)
+                    }
+                }
+            }
         }
 
         single<CacheController> {
@@ -89,6 +104,7 @@ object CoreModule {
                 cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
+                serviceDiscovery = get<ConsulClient>()
             )
         }
 

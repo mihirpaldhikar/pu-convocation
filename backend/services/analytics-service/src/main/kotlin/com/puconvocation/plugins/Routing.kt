@@ -29,7 +29,7 @@ fun Application.configureRouting() {
     routing {
         get("/health") {
             call.respondText(
-                "Dynamics Service is Healthy.",
+                "Analytics Service is Healthy.",
                 contentType = ContentType.Text.Plain,
                 status = HttpStatusCode.OK,
             )

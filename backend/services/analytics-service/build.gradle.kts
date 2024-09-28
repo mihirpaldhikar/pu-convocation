@@ -11,7 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
@@ -47,6 +46,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-jackson-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-client-content-negotiation")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Koin Dependencies
