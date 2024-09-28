@@ -79,6 +79,9 @@ dependencies {
     // AWS Lambda
     implementation("software.amazon.awssdk:lambda:2.28.2")
 
+    // Service Discovery
+    implementation("com.ecwid.consul:consul-api:1.4.5")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

@@ -17,7 +17,10 @@ import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.TransactionController
 import com.puconvocation.routes.attendeesRoute
 import com.puconvocation.routes.transactionsRoute
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
 
@@ -26,6 +29,14 @@ fun Application.configureRouting() {
     val transactionController by KoinJavaComponent.inject<TransactionController>(TransactionController::class.java)
 
     routing {
+        get("/health") {
+            call.respondText(
+                "Attendee Service is Healthy.",
+                contentType = ContentType.Text.Plain,
+                status = HttpStatusCode.OK,
+            )
+        }
+
         attendeesRoute(attendeeController = attendeeController)
         transactionsRoute(transactionController = transactionController)
     }

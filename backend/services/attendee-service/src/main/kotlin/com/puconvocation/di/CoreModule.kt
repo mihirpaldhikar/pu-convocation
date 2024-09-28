@@ -14,6 +14,8 @@
 package com.puconvocation.di
 
 import aws.sdk.kotlin.services.sqs.SqsClient
+import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.agent.model.NewService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
@@ -29,6 +31,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
+import java.util.UUID
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -41,6 +44,25 @@ object CoreModule {
 
         single<Environment> {
             get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
+        }
+
+        single<ConsulClient> {
+            ConsulClient()
+        }
+
+        single<NewService> {
+            val service = NewService()
+            service.id = UUID.randomUUID().toString()
+            service.name = get<Environment>().serviceName
+            service.address = "localhost"
+            service.port = 8082
+
+            val serviceCheck = NewService.Check()
+            serviceCheck.http = "http://localhost:${service.port}/health"
+            serviceCheck.interval = "60s"
+
+            service.check = serviceCheck
+            service
         }
 
         single<DistributedLock> {
