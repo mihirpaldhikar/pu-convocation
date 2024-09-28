@@ -13,7 +13,6 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
 import com.puconvocation.commons.dto.UpdateIAMRole
@@ -29,7 +28,6 @@ import io.ktor.server.routing.*
 
 fun Routing.iamRoute(
     iamController: IAMController,
-    environment: Environment
 ) {
     route("/iam") {
 

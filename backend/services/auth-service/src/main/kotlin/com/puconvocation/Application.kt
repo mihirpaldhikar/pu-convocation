@@ -13,13 +13,21 @@
 
 package com.puconvocation
 
+import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.agent.model.NewService
 import com.puconvocation.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.koin.java.KoinJavaComponent
 
 fun main() {
-    embeddedServer(Netty, port = 8081, host = "0.0.0.0", module = Application::module)
+    embeddedServer(
+        Netty,
+        port = 8081,
+        host = "0.0.0.0",
+        module = Application::module,
+    )
         .start(wait = true)
 }
 
@@ -29,4 +37,9 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureRouting()
+
+    val serviceDiscovery by KoinJavaComponent.inject<ConsulClient>(ConsulClient::class.java)
+    val currentService by KoinJavaComponent.inject<NewService>(NewService::class.java)
+    serviceDiscovery.agentServiceRegister(currentService)
+
 }
