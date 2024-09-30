@@ -15,13 +15,24 @@ package com.puconvocation.plugins
 
 import com.puconvocation.Environment
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import org.koin.java.KoinJavaComponent
 
 fun Application.configureHTTP() {
-    val environment: Environment by KoinJavaComponent.inject(Environment::class.java)
+    val environment: Environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
+
+    install(CachingHeaders) {
+        options { _, outgoingContent ->
+            when (outgoingContent.contentType?.withoutParameters()) {
+                ContentType.Text.CSS -> CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 24 * 60 * 60))
+                else -> null
+            }
+        }
+    }
 
     install(CORS) {
         allowCredentials = true
@@ -42,16 +53,22 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.AccessControlAllowCredentials)
         allowHeader("x-analytics")
 
-        if (environment.developmentMode) {
+        if (environment.service.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
-            allowHost("localhost:8080", listOf("http", "https"))
+            allowHost("localhost:8081", listOf("http", "https"))
+            allowHost("localhost:8083", listOf("http", "https"))
+            allowHost("localhost:8084", listOf("http", "https"))
         }
 
         allowHost(
-            host = "puconvocation.com",
-            schemes = listOf("http", "https"),
-            subDomains = listOf("api", "accounts", "dashboard")
+            host = "*.puconvocation.com",
+            schemes = listOf("https"),
         )
+
+        allowHost(
+            host = "*.svc.cluster.local",
+        )
+
     }
 
     install(DefaultHeaders) {
