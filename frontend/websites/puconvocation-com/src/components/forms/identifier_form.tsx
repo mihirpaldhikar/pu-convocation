@@ -13,9 +13,9 @@
 "use client";
 import { JSX, useState } from "react";
 import { Button, Input } from "@components/ui";
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "use-intl";
 import { useRouter } from "@i18n/routing";
+import { DynamicIcon } from "@components/index";
 
 export default function IdentifierForm(): JSX.Element {
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function IdentifierForm(): JSX.Element {
     >
       <Input
         className={
-          "w-full rounded-full bg-white px-5 py-5 font-medium text-black md:w-1/5"
+          "w-full rounded-full bg-white px-5 py-5 font-semibold text-black md:w-1/5"
         }
         name={"identifier"}
         type={"text"}
@@ -50,10 +50,10 @@ export default function IdentifierForm(): JSX.Element {
         size={"lg"}
         className={"space-x-3 rounded-full bg-red-800 hover:bg-red-900"}
       >
-        <p className={"text-lg font-bold"}>
+        <p className={"text-lg font-semibold"}>
           {formTranslations("submitButton")}
         </p>
-        <ChevronRightIcon className={"w-5"} />
+        <DynamicIcon icon={"ChevronRightIcon"} className={"size-7"} />
       </Button>
     </form>
   );
