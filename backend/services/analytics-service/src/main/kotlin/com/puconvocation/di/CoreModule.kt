@@ -49,18 +49,18 @@ object CoreModule {
         }
 
         single<ConsulClient> {
-            ConsulClient()
+            ConsulClient(get<Environment>().service.discovery)
         }
 
         single<NewService> {
             val service = NewService()
             service.id = UUID.randomUUID().toString()
-            service.name = get<Environment>().serviceName
-            service.address = "localhost"
-            service.port = 8084
+            service.name = get<Environment>().service.name
+            service.address = get<Environment>().service.address
+            service.port = get<Environment>().service.port
 
             val serviceCheck = NewService.Check()
-            serviceCheck.http = "http://localhost:${service.port}/health"
+            serviceCheck.http = "http://${service.address}:${service.port}/health"
             serviceCheck.interval = "60s"
 
             service.check = serviceCheck
