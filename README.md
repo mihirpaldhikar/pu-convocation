@@ -16,7 +16,6 @@ at [puconvocation.com](https://puconvocation.com)
 |
 |-- backend/
 |   |-- services/
-|   |   |-- attendee-service/
 |   |   |-- auth-service/
 |   |   |-- dynamics-service/
 |
