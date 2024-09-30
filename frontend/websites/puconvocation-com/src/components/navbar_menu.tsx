@@ -29,7 +29,6 @@ import {
   PopoverTrigger,
 } from "@components/ui";
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { formatISO } from "date-fns";
 
@@ -154,14 +153,12 @@ export default function NavbarMenu(): JSX.Element {
                     "flex flex-col items-center justify-center space-y-3"
                   }
                 >
-                  <Image
-                    src={account.avatarURL}
-                    alt={account.displayName}
-                    height={50}
-                    width={50}
-                    fetchPriority={"high"}
-                    className={"h-auto w-auto rounded-full"}
-                  />
+                  <Avatar className={"size-20"}>
+                    <AvatarImage src={account.avatarURL} />
+                    <AvatarFallback className={"text-xl"}>
+                      {account.displayName.substring(0, 1)}
+                    </AvatarFallback>
+                  </Avatar>
                   <h5 className={"font-semibold"}>
                     Hello, {account.designation}{" "}
                     {account.displayName.split(" ")[0]}
