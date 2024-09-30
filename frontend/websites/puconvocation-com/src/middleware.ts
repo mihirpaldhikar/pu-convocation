@@ -68,7 +68,7 @@ export default async function middleware(req: NextRequest) {
 
   if (pathName.includes("/authenticate") || protectedPath.includes(pathName)) {
     const authenticationResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
+      `${process.env.INTERNAL_AUTH_SERVICE}/accounts/`,
       {
         credentials: "same-origin",
         method: "GET",
