@@ -13,6 +13,8 @@
 
 package com.puconvocation.di
 
+import aws.sdk.kotlin.services.sqs.SqsClient
+import aws.sdk.kotlin.services.sqs.SqsClient.Companion.invoke
 import com.ecwid.consul.v1.ConsulClient
 import com.ecwid.consul.v1.agent.model.NewService
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -21,10 +23,14 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.serializers.ObjectIdDeserializer
 import com.puconvocation.serializers.ObjectIdSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.KafkaService
+import com.puconvocation.services.LambdaService
+import com.puconvocation.services.MessageQueue
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -99,6 +105,33 @@ object CoreModule {
                 jsonWebToken = get<JsonWebToken>(),
                 serviceDiscovery = get<ConsulClient>()
             )
+        }
+
+        single<DistributedLock> {
+            DistributedLock(
+                jedisPool = get<JedisPool>(),
+            )
+        }
+
+        single<SqsClient> {
+            SqsClient {
+                region = get<Environment>().cloud.aws.region
+            }
+        }
+
+        single<MessageQueue> {
+            MessageQueue(
+                sqsClient = get<SqsClient>(),
+                awsConfig = get<Environment>().cloud.aws
+            )
+        }
+
+        single<CSVSerializer> {
+            CSVSerializer()
+        }
+
+        single<LambdaService> {
+            LambdaService()
         }
 
         single<CacheController> {

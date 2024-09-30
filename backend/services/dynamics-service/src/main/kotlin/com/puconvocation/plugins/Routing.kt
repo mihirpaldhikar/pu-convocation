@@ -15,9 +15,13 @@ package com.puconvocation.plugins
 
 import com.puconvocation.Environment
 import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.RemoteConfigController
+import com.puconvocation.controllers.TransactionController
 import com.puconvocation.routes.analyticsRoute
+import com.puconvocation.routes.attendeesRoute
 import com.puconvocation.routes.remoteConfigRoute
+import com.puconvocation.routes.transactionsRoute
 import com.puconvocation.services.KafkaService
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -32,6 +36,8 @@ fun Application.configureRouting() {
     val kafkaService by KoinJavaComponent.inject<KafkaService>(KafkaService::class.java)
     val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
     val analyticsController by KoinJavaComponent.inject<AnalyticsController>(AnalyticsController::class.java)
+    val attendeeController by KoinJavaComponent.inject<AttendeeController>(AttendeeController::class.java)
+    val transactionController by KoinJavaComponent.inject<TransactionController>(TransactionController::class.java)
 
 
     routing {
@@ -50,6 +56,15 @@ fun Application.configureRouting() {
 
         analyticsRoute(
             analyticsController = analyticsController
+        )
+
+        attendeesRoute(
+            attendeeController = attendeeController
+
+        )
+
+        transactionsRoute(
+            transactionController = transactionController
         )
     }
 }

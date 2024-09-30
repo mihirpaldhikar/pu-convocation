@@ -15,6 +15,7 @@ val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
 val mongoDBVersion: String by project
+val apacheCSV: String by project
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -75,6 +76,15 @@ dependencies {
 
     // Service Discovery
     implementation("com.ecwid.consul:consul-api:1.4.5")
+
+    // Apace CSV
+    implementation("org.apache.commons:commons-csv:$apacheCSV")
+
+    // AWS Lambda
+    implementation("software.amazon.awssdk:lambda:2.28.2")
+
+    // AWS SQS
+    implementation("aws.sdk.kotlin:sqs:1.3.32")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

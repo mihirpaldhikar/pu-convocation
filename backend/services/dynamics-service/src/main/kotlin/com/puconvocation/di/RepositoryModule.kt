@@ -17,7 +17,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
+import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import org.koin.dsl.module
 
 object RepositoryModule {
@@ -35,6 +37,22 @@ object RepositoryModule {
                 database = get<MongoDatabase>(),
                 cache = get<CacheController>(),
                 mapper = get<ObjectMapper>()
+            )
+        }
+
+        single<AttendeeRepository> {
+            AttendeeRepository(
+                database = get<MongoDatabase>(),
+                cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
+                remoteConfigRepository = get<RemoteConfigRepository>()
+            )
+        }
+
+        single<TransactionRepository> {
+            TransactionRepository(
+                database = get<MongoDatabase>(), cache = get<CacheController>(),
+                mapper = get<ObjectMapper>(),
             )
         }
     }

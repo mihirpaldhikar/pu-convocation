@@ -45,4 +45,20 @@ object CachedKeys {
     fun popularDistrictsWithInStatesOfCountryKey(countryCode: String, state: String): String {
         return "analytics:popularDistricts:$countryCode:${state.replace(" ", "_").lowercase()}"
     }
+
+    fun attendeeKey(identifier: String): String {
+        return "attendee:$identifier"
+    }
+
+    fun attendeeWithEnclosureMetadataKey(identifier: String): String {
+        return "attendeeWithEnclosureMetadata:$identifier"
+    }
+
+    fun attendeesWithPaginationKey(page: Int, limit: Int): String {
+        return "attendeesWithPagination:$page:$limit"
+    }
+
+    fun transactionKey(identifier: String): String {
+        return "transaction:$identifier"
+    }
 }
