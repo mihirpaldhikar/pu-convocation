@@ -18,12 +18,19 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class Environment(
-    @JsonProperty("serviceName") val serviceName: String,
-    @JsonProperty("developmentMode") val developmentMode: Boolean,
+    @JsonProperty("service") val service: Service,
     @JsonProperty("database") val database: Database,
     @JsonProperty("security") val security: Security,
     @JsonProperty("cloud") val cloud: Cloud
 ) {
+
+    data class Service(
+        @JsonProperty("name") val name: String,
+        @JsonProperty("port") val port: Int,
+        @JsonProperty("address") val address: String,
+        @JsonProperty("discovery") val discovery: String,
+        @JsonProperty("developmentMode") val developmentMode: Boolean,
+    )
 
     data class Database(
         @JsonProperty("mongoDb") val mongoDb: GenericDatabase,

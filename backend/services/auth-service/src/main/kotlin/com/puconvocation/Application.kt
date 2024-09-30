@@ -40,6 +40,14 @@ fun Application.module() {
 
     val serviceDiscovery by KoinJavaComponent.inject<ConsulClient>(ConsulClient::class.java)
     val currentService by KoinJavaComponent.inject<NewService>(NewService::class.java)
-    serviceDiscovery.agentServiceRegister(currentService)
+
+
+    environment.monitor.subscribe(ApplicationStarted) {
+        serviceDiscovery.agentServiceRegister(currentService)
+    }
+
+    environment.monitor.subscribe(ApplicationStopping) {
+        serviceDiscovery.agentServiceDeregister(currentService.id)
+    }
 
 }

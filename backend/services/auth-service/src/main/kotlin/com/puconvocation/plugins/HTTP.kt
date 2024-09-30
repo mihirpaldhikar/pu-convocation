@@ -53,16 +53,22 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.AccessControlAllowCredentials)
         allowHeader("x-analytics")
 
-        if (environment.developmentMode) {
+        if (environment.service.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
-            allowHost("localhost:8080", listOf("http", "https"))
+            allowHost("localhost:8082", listOf("http", "https"))
+            allowHost("localhost:8083", listOf("http", "https"))
+            allowHost("localhost:8084", listOf("http", "https"))
         }
 
         allowHost(
-            host = "puconvocation.com",
-            schemes = listOf("http", "https"),
-            subDomains = listOf("api", "accounts", "dashboard")
+            host = "*.puconvocation.com",
+            schemes = listOf("https"),
         )
+
+        allowHost(
+            host = "*.svc.cluster.local",
+        )
+
     }
 
     install(DefaultHeaders) {
