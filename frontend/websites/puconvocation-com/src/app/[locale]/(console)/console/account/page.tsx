@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,12 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX } from "react";
-import { AuthController } from "@controllers/index";
-import { StatusCode } from "@enums/StatusCode";
-import { ProgressBar } from "@components/index";
-import { Button } from "@components/ui";
-import { useAuth, useToast } from "@hooks/index";
+import {Fragment, JSX} from "react";
+import {AuthController} from "@controllers/index";
+import {StatusCode} from "@enums/StatusCode";
+import {ProgressBar} from "@components/index";
+import {Button} from "@components/ui";
+import {useAuth, useToast} from "@hooks/index";
 
 const authService = new AuthController();
 

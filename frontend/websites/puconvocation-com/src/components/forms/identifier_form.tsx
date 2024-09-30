@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,11 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useState } from "react";
-import { Button, Input } from "@components/ui";
-import { useTranslations } from "use-intl";
-import { useRouter } from "@i18n/routing";
-import { DynamicIcon } from "@components/index";
+import {JSX, useState} from "react";
+import {Button, Input} from "@components/ui";
+import {useTranslations} from "use-intl";
+import {useRouter} from "@i18n/routing";
+import {DynamicIcon} from "@components/index";
 
 export default function IdentifierForm(): JSX.Element {
   const router = useRouter();

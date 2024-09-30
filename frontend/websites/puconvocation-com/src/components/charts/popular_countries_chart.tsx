@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -12,20 +12,13 @@
  */
 
 "use client";
-import { Fragment, JSX } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
-import { WorldMapData } from "@constants/maps";
-import { GeographicalMap } from "@components/index";
-import { AnalyticsController } from "@controllers/index";
-import { useQuery } from "@tanstack/react-query";
-import { StatusCode } from "@enums/StatusCode";
+import {Fragment, JSX} from "react";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@components/ui/card";
+import {WorldMapData} from "@constants/maps";
+import {GeographicalMap} from "@components/index";
+import {AnalyticsController} from "@controllers/index";
+import {useQuery} from "@tanstack/react-query";
+import {StatusCode} from "@enums/StatusCode";
 
 const analyticsService = new AnalyticsController();
 

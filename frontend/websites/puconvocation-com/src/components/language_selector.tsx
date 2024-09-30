@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,13 +13,13 @@
 
 "use client";
 
-import { JSX } from "react";
+import {JSX} from "react";
 import i18nConfig from "@i18n/config.json";
-import { GlobeAltIcon } from "@heroicons/react/24/outline";
-import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "@i18n/routing";
-import { useTranslations } from "use-intl";
-import { Button } from "@components/ui";
+import {GlobeAltIcon} from "@heroicons/react/24/outline";
+import {useLocale} from "next-intl";
+import {usePathname, useRouter} from "@i18n/routing";
+import {useTranslations} from "use-intl";
+import {Button} from "@components/ui";
 
 export default function LanguageSelector(): JSX.Element {
   const translations = useTranslations("components.footer.languageSelector");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Fragment, type JSX } from "react";
+import {Fragment, type JSX} from "react";
 
 interface ProgressBarProps {
   type?: "linear" | "circular";

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,9 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { createContext, Dispatch, ReactNode, useReducer } from "react";
-import { RemoteConfig } from "@dto/index";
-import { RemoteConfigController } from "@controllers/index";
+import {createContext, Dispatch, ReactNode, useReducer} from "react";
+import {RemoteConfig} from "@dto/index";
+import {RemoteConfigController} from "@controllers/index";
 
 export type RemoteConfigAction =
   | {

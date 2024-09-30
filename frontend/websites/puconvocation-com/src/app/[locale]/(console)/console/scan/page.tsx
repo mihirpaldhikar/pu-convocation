@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,31 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX, useState } from "react";
-import { useZxing } from "react-zxing";
-import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { useTranslations } from "use-intl";
-import {
-  Button,
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@components/ui";
-import { AttendeeController } from "@controllers/index";
-import { DynamicIcon, ProgressBar } from "@components/index";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
-import { StatusCode } from "@enums/StatusCode";
-import { Attendee } from "@dto/index";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@components/ui/input_otp";
-import { useToast } from "@hooks/useToast";
+import {Fragment, JSX, useState} from "react";
+import {useZxing} from "react-zxing";
+import {QrCodeIcon} from "@heroicons/react/24/outline";
+import {useTranslations} from "use-intl";
+import {Button, Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle,} from "@components/ui";
+import {AttendeeController} from "@controllers/index";
+import {DynamicIcon, ProgressBar} from "@components/index";
+import {CheckBadgeIcon} from "@heroicons/react/24/solid";
+import {StatusCode} from "@enums/StatusCode";
+import {Attendee} from "@dto/index";
+import {InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot,} from "@components/ui/input_otp";
+import {useToast} from "@hooks/useToast";
 
 const attendeeService = new AttendeeController();
 

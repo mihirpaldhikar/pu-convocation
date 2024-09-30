@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,12 +13,12 @@
 
 "use client";
 
-import { JSX, ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {JSX, ReactNode} from "react";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import RemoteConfigProvider from "@providers/RemoteConfigProvider";
 import AuthProvider from "@providers/AuthProvider";
-import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
-import { TooltipProvider } from "@components/ui";
+import {AbstractIntlMessages, NextIntlClientProvider} from "next-intl";
+import {TooltipProvider} from "@components/ui";
 
 interface ProvidersProps {
   children: ReactNode;

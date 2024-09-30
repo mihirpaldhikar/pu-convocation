@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -12,10 +12,10 @@
  */
 "use client";
 
-import { JSX } from "react";
-import { Logo } from "@components/ui";
+import {JSX} from "react";
+import {Logo} from "@components/ui";
 import NavbarMenu from "@components/navbar_menu";
-import { Link, usePathname } from "@i18n/routing";
+import {Link, usePathname} from "@i18n/routing";
 
 export default function Navbar(): JSX.Element {
   const path = usePathname();

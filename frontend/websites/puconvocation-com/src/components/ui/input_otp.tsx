@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -14,10 +14,10 @@
 "use client";
 
 import * as React from "react";
-import { DashIcon } from "@radix-ui/react-icons";
-import { OTPInput, OTPInputContext } from "input-otp";
+import {DashIcon} from "@radix-ui/react-icons";
+import {OTPInput, OTPInputContext} from "input-otp";
 
-import { cn } from "@lib/utils";
+import {cn} from "@lib/utils";
 
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,

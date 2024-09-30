@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,24 +13,16 @@
 
 "use client";
 
-import { Fragment, JSX, useState } from "react";
-import { useAuth, useRemoteConfig } from "@hooks/index";
-import { StatusCode } from "@enums/StatusCode";
-import { useQuery } from "@tanstack/react-query";
-import { Link, usePathname, useRouter } from "@i18n/routing";
-import { useLocale } from "next-intl";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/ui";
-import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { PopoverClose } from "@radix-ui/react-popover";
-import { formatISO } from "date-fns";
+import {Fragment, JSX, useState} from "react";
+import {useAuth, useRemoteConfig} from "@hooks/index";
+import {StatusCode} from "@enums/StatusCode";
+import {useQuery} from "@tanstack/react-query";
+import {Link, usePathname, useRouter} from "@i18n/routing";
+import {useLocale} from "next-intl";
+import {Avatar, AvatarFallback, AvatarImage, Button, Popover, PopoverContent, PopoverTrigger,} from "@components/ui";
+import {QrCodeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
+import {PopoverClose} from "@radix-ui/react-popover";
+import {formatISO} from "date-fns";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();

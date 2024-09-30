@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -15,9 +15,9 @@ package com.puconvocation.di
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
+import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
-import com.puconvocation.controllers.CacheController
 import org.koin.dsl.module
 
 object RepositoriesModule {

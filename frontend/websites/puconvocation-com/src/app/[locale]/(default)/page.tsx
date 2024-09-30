@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -14,19 +14,19 @@
 "use client";
 import Image from "next/image";
 import {
-  AboutUsBlob,
-  Carousel,
-  Convocation,
-  CountDown,
-  GalleryFlagsLeft,
-  GalleryFlagsRight,
-  ProgressBar,
+    AboutUsBlob,
+    Carousel,
+    Convocation,
+    CountDown,
+    GalleryFlagsLeft,
+    GalleryFlagsRight,
+    ProgressBar,
 } from "@components/index";
-import { useRemoteConfig } from "@hooks/index";
-import { useTranslations } from "use-intl";
-import { Link } from "@i18n/routing";
-import { Button } from "@components/ui";
-import { IdentifierForm } from "@components/forms";
+import {useRemoteConfig} from "@hooks/index";
+import {useTranslations} from "use-intl";
+import {Link} from "@i18n/routing";
+import {Button} from "@components/ui";
+import {IdentifierForm} from "@components/forms";
 
 export default function Home() {
   const { state: website } = useRemoteConfig();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,9 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { notFound } from "next/navigation";
-import { getRequestConfig } from "next-intl/server";
-import { routing } from "./routing";
+import {notFound} from "next/navigation";
+import {getRequestConfig} from "next-intl/server";
+import {routing} from "./routing";
 
 export default getRequestConfig(async ({ locale }) => {
   if (!routing.locales.includes(locale as any)) notFound();

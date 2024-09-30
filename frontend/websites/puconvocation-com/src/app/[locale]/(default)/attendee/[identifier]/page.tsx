@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,12 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Fragment, JSX } from "react";
-import { AttendeeController } from "@controllers/index";
-import { StatusCode } from "@enums/StatusCode";
-import { SeatMap, SpaceShip, Ticket, VenueMap } from "@components/index";
+import {Fragment, JSX} from "react";
+import {AttendeeController} from "@controllers/index";
+import {StatusCode} from "@enums/StatusCode";
+import {SeatMap, SpaceShip, Ticket, VenueMap} from "@components/index";
 import Link from "next/link";
-import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
+import {MapPinIcon, TicketIcon} from "@heroicons/react/24/solid";
 
 const attendeeService: AttendeeController = new AttendeeController();
 
