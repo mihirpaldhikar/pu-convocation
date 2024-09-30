@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -15,7 +15,7 @@
 
 import * as React from "react";
 
-import type { ToastActionElement, ToastProps } from "@components/ui/toast";
+import type {ToastActionElement, ToastProps} from "@components/ui/toast";
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 1000000;

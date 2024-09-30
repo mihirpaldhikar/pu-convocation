@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -12,13 +12,13 @@
  */
 
 "use client";
-import { Fragment, JSX, ReactNode, useState } from "react";
-import { Button } from "@components/ui";
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
-import { Link, usePathname } from "@i18n/routing";
-import { DynamicIcon } from "@components/index";
-import { NavMenu } from "@dto/index";
-import { useAuth } from "@hooks/index";
+import {Fragment, JSX, ReactNode, useState} from "react";
+import {Button} from "@components/ui";
+import {ChevronRightIcon} from "@heroicons/react/24/solid";
+import {Link, usePathname} from "@i18n/routing";
+import {DynamicIcon} from "@components/index";
+import {NavMenu} from "@dto/index";
+import {useAuth} from "@hooks/index";
 
 interface ConsoleDesktopProps {
   children: ReactNode;

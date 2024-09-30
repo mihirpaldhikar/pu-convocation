@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,6 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
+
 import { Fragment, JSX } from "react";
 import { useAuth } from "@hooks/index";
 import { useQuery } from "@tanstack/react-query";

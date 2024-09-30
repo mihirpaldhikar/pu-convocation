@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { routing } from "@i18n/routing";
+import {NextRequest, NextResponse} from "next/server";
+import {routing} from "@i18n/routing";
 import createMiddleware from "next-intl/middleware";
-import { Account } from "@dto/index";
+import {Account} from "@dto/index";
 
 const i18nMiddleware = createMiddleware(routing);
 
@@ -68,7 +68,7 @@ export default async function middleware(req: NextRequest) {
 
   if (pathName.includes("/authenticate") || protectedPath.includes(pathName)) {
     const authenticationResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
+      `${process.env.INTERNAL_AUTH_SERVICE}/accounts/`,
       {
         credentials: "same-origin",
         method: "GET",

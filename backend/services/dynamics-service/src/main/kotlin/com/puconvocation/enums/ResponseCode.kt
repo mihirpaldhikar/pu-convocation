@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -21,4 +21,13 @@ enum class ResponseCode {
     INVALID_TOKEN,
     NOT_PERMITTED,
     INVALID_OR_NULL_IDENTIFIER,
+    FILE_UPLOADED,
+    ATTENDEE_NOT_FOUND,
+    INVALID_FILE_FORMAT,
+    FILE_NOT_UPLOADED,
+    REQUEST_NOT_FULFILLED,
+    ALREADY_LOCKED,
+    ALREADY_UNLOCKED,
+    NOT_FOUND,
+    BAD_REQUEST
 }

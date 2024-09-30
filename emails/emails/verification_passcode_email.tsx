@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -12,19 +12,19 @@
  */
 
 import * as React from "react";
-import { JSX } from "react";
+import {JSX} from "react";
 import {
-  Body,
-  Button,
-  Container,
-  Font,
-  Heading,
-  Html,
-  Img,
-  Link,
-  Section,
-  Tailwind,
-  Text
+    Body,
+    Button,
+    Container,
+    Font,
+    Heading,
+    Html,
+    Img,
+    Link,
+    Section,
+    Tailwind,
+    Text
 } from "@react-email/components";
 
 export default function VerificationPasscodeEmail(): JSX.Element {

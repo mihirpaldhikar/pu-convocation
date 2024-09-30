@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,7 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-val ktorVersion: String by project
 val kotlinVersion: String by project
 val logbackVersion: String by project
 val koinVersion: String by project
@@ -72,6 +71,9 @@ dependencies {
 
     // Redis
     implementation("redis.clients:jedis:5.1.5")
+
+    // Service Discovery
+    implementation("com.ecwid.consul:consul-api:1.4.5")
 
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")

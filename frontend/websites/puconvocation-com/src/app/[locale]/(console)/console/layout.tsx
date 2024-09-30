@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,15 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import type {Metadata} from "next";
+import {Montserrat} from "next/font/google";
 import "@root/globals.css";
-import { ReactNode } from "react";
-import { Toaster } from "@components/ui";
-import { Providers } from "@providers/index";
-import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
-import { getMessages } from "next-intl/server";
-import { NavMenu } from "@dto/index";
+import {ReactNode} from "react";
+import {Toaster} from "@components/ui";
+import {Providers} from "@providers/index";
+import {ConsoleDesktop, ConsoleMobile, Navbar} from "@components/index";
+import {getMessages} from "next-intl/server";
+import {NavMenu} from "@dto/index";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 

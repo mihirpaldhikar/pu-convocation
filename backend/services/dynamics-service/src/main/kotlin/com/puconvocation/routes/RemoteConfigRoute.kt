@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -49,11 +49,6 @@ fun Routing.remoteConfigRoute(
         }
 
         patch("/mutateAttendeeLock") {
-            val host = call.request.host()
-
-            if (!environment.servicesHosts.split(";;").contains(host)) {
-                return@patch call.respond(false)
-            }
             val lock = call.request.queryParameters["lock"]?.toBooleanStrictOrNull() ?: return@patch call.respond(false)
             val result = remoteConfigController.mutateAttendeeLock(lock)
             call.respond(result)

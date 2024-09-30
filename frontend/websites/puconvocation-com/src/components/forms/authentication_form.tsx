@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,13 +11,13 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX, useState } from "react";
-import { useRouter } from "next/navigation";
-import { StatusCode } from "@enums/StatusCode";
-import { PasskeyIcon } from "@icons/index";
-import { Button, Input } from "@components/ui";
-import { useAuth, useToast } from "@hooks/index";
-import { useTranslations } from "use-intl";
+import {Fragment, JSX, useState} from "react";
+import {useRouter} from "next/navigation";
+import {StatusCode} from "@enums/StatusCode";
+import {PasskeyIcon} from "@icons/index";
+import {Button, Input} from "@components/ui";
+import {useAuth, useToast} from "@hooks/index";
+import {useTranslations} from "use-intl";
 
 interface AuthenticationFormProps {
   redirect?: string;
@@ -53,11 +53,11 @@ export default function AuthenticationForm({
             submitting: true,
           };
         });
-        const response = await state.authService.authenticate(
+        const response = await state.authController.authenticate(
           authenticationPayload.identifier,
         );
         if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-          state.authService.getCurrentAccount().then((res) => {
+          state.authController.getCurrentAccount().then((res) => {
             if (
               res.statusCode === StatusCode.SUCCESS &&
               "payload" in res &&

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,9 +13,19 @@
 
 package com.puconvocation.di
 
+import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.RemoteConfigController
+import com.puconvocation.controllers.TransactionController
+import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
+import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
+import com.puconvocation.database.mongodb.repositories.TransactionRepository
+import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.DistributedLock
+import com.puconvocation.services.LambdaService
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -24,6 +34,33 @@ object ControllerModule {
             RemoteConfigController(
                 remoteConfigRepository = get<RemoteConfigRepository>(),
                 authService = get<AuthService>()
+            )
+        }
+
+        single<AnalyticsController> {
+            AnalyticsController(
+                analyticsRepository = get<AnalyticsRepository>(),
+                authService = get<AuthService>()
+            )
+        }
+
+        single<AttendeeController> {
+            AttendeeController(
+                attendeeRepository = get<AttendeeRepository>(),
+                csvSerializer = get<CSVSerializer>(),
+                authService = get<AuthService>(),
+                distributedLock = get<DistributedLock>(),
+                lambdaService = get<LambdaService>(),
+                remoteConfigRepository = get<RemoteConfigRepository>(),
+            )
+        }
+
+        single<TransactionController> {
+            TransactionController(
+                transactionRepository = get<TransactionRepository>(),
+                attendeeRepository = get<AttendeeRepository>(),
+                jsonWebToken = get<JsonWebToken>(),
+                authService = get<AuthService>(),
             )
         }
     }

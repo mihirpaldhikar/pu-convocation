@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,25 +13,16 @@
 
 "use client";
 
-import { Fragment, JSX, useState } from "react";
-import { useAuth, useRemoteConfig } from "@hooks/index";
-import { StatusCode } from "@enums/StatusCode";
-import { useQuery } from "@tanstack/react-query";
-import { Link, usePathname, useRouter } from "@i18n/routing";
-import { useLocale } from "next-intl";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/ui";
-import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
-import { PopoverClose } from "@radix-ui/react-popover";
-import { formatISO } from "date-fns";
+import {Fragment, JSX, useState} from "react";
+import {useAuth, useRemoteConfig} from "@hooks/index";
+import {StatusCode} from "@enums/StatusCode";
+import {useQuery} from "@tanstack/react-query";
+import {Link, usePathname, useRouter} from "@i18n/routing";
+import {useLocale} from "next-intl";
+import {Avatar, AvatarFallback, AvatarImage, Button, Popover, PopoverContent, PopoverTrigger,} from "@components/ui";
+import {QrCodeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
+import {PopoverClose} from "@radix-ui/react-popover";
+import {formatISO} from "date-fns";
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
@@ -39,12 +30,12 @@ export default function NavbarMenu(): JSX.Element {
   const currentLocale = useLocale();
 
   const {
-    state: { account, authService },
+    state: { account, authController },
     dispatch: dispatchAccountMutation,
   } = useAuth();
 
   const {
-    state: { dynamicsService },
+    state: { remoteConfigController },
     dispatch: dispatchConfigMutation,
   } = useRemoteConfig();
 
@@ -54,7 +45,7 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["websiteConfig"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await dynamicsService.getRemoteConfig(
+      const response = await remoteConfigController.getRemoteConfig(
         `${formatISO(new Date())};${currentLocale};${path}`,
       );
       if (
@@ -78,7 +69,7 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["currentAccount"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await authService.getCurrentAccount();
+      const response = await authController.getCurrentAccount();
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&
@@ -154,14 +145,12 @@ export default function NavbarMenu(): JSX.Element {
                     "flex flex-col items-center justify-center space-y-3"
                   }
                 >
-                  <Image
-                    src={account.avatarURL}
-                    alt={account.displayName}
-                    height={50}
-                    width={50}
-                    fetchPriority={"high"}
-                    className={"h-auto w-auto rounded-full"}
-                  />
+                  <Avatar className={"size-20"}>
+                    <AvatarImage src={account.avatarURL} />
+                    <AvatarFallback className={"text-xl"}>
+                      {account.displayName.substring(0, 1)}
+                    </AvatarFallback>
+                  </Avatar>
                   <h5 className={"font-semibold"}>
                     Hello, {account.designation}{" "}
                     {account.displayName.split(" ")[0]}
@@ -194,7 +183,7 @@ export default function NavbarMenu(): JSX.Element {
                         variant={"outline"}
                         className={"flex-grow"}
                         onClick={async () => {
-                          await authService.signOut();
+                          await authController.signOut();
                           dispatchAccountMutation({
                             type: "SIGN_OUT",
                           });

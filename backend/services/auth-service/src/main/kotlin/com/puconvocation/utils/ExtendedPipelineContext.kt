@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -17,11 +17,9 @@ import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.security.dao.SecurityToken
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.date.*
-import io.ktor.util.pipeline.*
 import org.koin.java.KoinJavaComponent
 
 object CookieName {
@@ -60,9 +58,9 @@ fun RoutingCall.setCookie(
             value = value,
             expires = GMTDate(System.currentTimeMillis() + expiresAt),
             httpOnly = httpOnly,
-            domain = if (environment.developmentMode) "localhost" else ".puconvocation.com",
+            domain = if (environment.service.developmentMode) "localhost" else ".puconvocation.com",
             path = "/",
-            secure = !environment.developmentMode,
+            secure = !environment.service.developmentMode,
             extensions = hashMapOf("SameSite" to "lax")
         )
     )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,32 +13,25 @@
 
 "use client";
 
-import { Fragment, JSX } from "react";
-import { AnalyticsService } from "@services/index";
-import { useQuery } from "@tanstack/react-query";
-import { StatusCode } from "@enums/StatusCode";
+import {Fragment, JSX} from "react";
+import {AnalyticsController} from "@controllers/index";
+import {useQuery} from "@tanstack/react-query";
+import {StatusCode} from "@enums/StatusCode";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
 } from "@components/ui/chart";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { endOfWeek, startOfWeek } from "date-fns";
-import { mergeWeekData } from "@lib/analytics_utils";
-import { DynamicIcon } from "@components/index";
+import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts";
+import {endOfWeek, startOfWeek} from "date-fns";
+import {mergeWeekData} from "@lib/analytics_utils";
+import {DynamicIcon} from "@components/index";
 
-const analyticsService = new AnalyticsService();
+const analyticsService = new AnalyticsController();
 
 const chartConfig = {
   currentWeek: {
@@ -101,7 +94,7 @@ export default function WeeklyTrafficChart(): JSX.Element {
                   data={mergeWeekData(analytics)}
                   className={"ml-[-2rem]"}
                 >
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid vertical={true} />
                   <XAxis
                     dataKey="day"
                     tickLine={true}

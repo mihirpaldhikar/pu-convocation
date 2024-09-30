@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,10 +13,10 @@
 
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import {JSX, useEffect, useState} from "react";
 import Image from "next/image";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { Button } from "@components/ui";
+import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/24/outline";
+import {Button} from "@components/ui";
 
 interface CarouselProps {
   autoPlay?: boolean;

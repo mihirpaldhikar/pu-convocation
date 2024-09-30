@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -10,10 +10,10 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-import { JSX } from "react";
-import { AuthenticationForm } from "@components/forms";
-import { Pattern } from "@components/ui";
-import { getTranslations } from "next-intl/server";
+import {JSX} from "react";
+import {AuthenticationForm} from "@components/forms";
+import {Pattern} from "@components/ui";
+import {getTranslations} from "next-intl/server";
 
 interface AuthenticationProps {
   searchParams: { redirect: string };

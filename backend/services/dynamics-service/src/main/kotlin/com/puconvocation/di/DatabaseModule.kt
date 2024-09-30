@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -17,14 +17,21 @@ import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.Environment
 import com.puconvocation.database.mongodb.MongoDBConnector
 import org.koin.dsl.module
+import redis.clients.jedis.JedisPool
 
 object DatabaseModule {
     val init = module {
         single<MongoDatabase> {
             MongoDBConnector(
-                connectionURL = get<Environment>().mongoDBConnectionURL,
-                database = get<Environment>().mongoDBName
+                connectionURL = get<Environment>().database.mongoDb.url,
+                database = get<Environment>().database.mongoDb.name
             ).connectToDatabase()
+        }
+
+        single<JedisPool> {
+            JedisPool(
+                get<Environment>().database.redis.url
+            )
         }
     }
 }

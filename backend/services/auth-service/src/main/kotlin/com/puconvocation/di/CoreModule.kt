@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,7 +13,10 @@
 
 package com.puconvocation.di
 
+import com.ecwid.consul.v1.ConsulClient
+import com.ecwid.consul.v1.agent.model.NewService
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
@@ -22,30 +25,47 @@ import com.puconvocation.security.passkeys.PasskeyRelyingParty
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
+import java.util.UUID
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 object CoreModule {
+    @OptIn(ExperimentalEncodingApi::class)
     val init = module {
-        single<Environment> {
-            Environment()
-        }
-
-        single<JedisPool> {
-            JedisPool(
-                get<Environment>().redisURL
-            )
-        }
-
         single<ObjectMapper> {
             ObjectMapper()
         }
 
+        single<Environment> {
+            get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
+        }
+
+        single<ConsulClient> {
+            ConsulClient(get<Environment>().service.discovery)
+        }
+
+        single<NewService> {
+            val service = NewService()
+            service.id = UUID.randomUUID().toString()
+            service.name = get<Environment>().service.name
+            service.address = get<Environment>().service.address
+            service.port = get<Environment>().service.port
+
+            val serviceCheck = NewService.Check()
+            serviceCheck.http = "http://${service.address}:${service.port}/health"
+            serviceCheck.interval = "60s"
+
+            service.check = serviceCheck
+            service
+        }
+
         single<JsonWebToken> {
-            JsonWebToken(jwtConfig = get<Environment>().jwtConfig)
+            JsonWebToken(config = get<Environment>().security.jwt)
         }
 
         single<RelyingParty> {
             PasskeyRelyingParty(
-                developmentMode = get<Environment>().developmentMode,
+                developmentMode = get<Environment>().service.developmentMode,
                 accountRepository = get<AccountRepository>()
             ).getRelyingParty()
         }

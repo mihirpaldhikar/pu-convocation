@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,12 +13,13 @@
 
 package com.puconvocation.security.jwt
 
+import com.auth0.jwk.JwkProviderBuilder
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.TokenExpiredException
+import com.puconvocation.Environment
 import com.puconvocation.enums.TokenType
-import com.puconvocation.security.dao.JWTConfig
 import java.security.KeyFactory
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -26,10 +27,15 @@ import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class JsonWebToken(
-    private val jwtConfig: JWTConfig
+    private val config: Environment.Security.JWT
 ) {
+    private val provider =
+        JwkProviderBuilder(config.credentialsAuthority).cached(10, 24, TimeUnit.HOURS)
+            .rateLimited(10, 1, TimeUnit.MINUTES).build()
+
     private data class Keys(
         val authorizationTokenPublicKey: PublicKey,
         val authorizationTokenPrivateKey: PrivateKey,
@@ -38,14 +44,14 @@ class JsonWebToken(
     )
 
     private fun keys(): Keys {
-        val authorizationTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
+        val authorizationTokenPublicKey = provider.get(config.tokens.authorization.keyId).publicKey
         val authorizationTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.authorizationTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(config.tokens.authorization.privateKey))
         val authorizationTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(authorizationTokenKeySpec)
 
-        val refreshTokenPublicKey = jwtConfig.provider.get(jwtConfig.authorizationTokenKeyId).publicKey
+        val refreshTokenPublicKey = provider.get(config.tokens.refresh.keyId).publicKey
         val refreshTokenKeySpec =
-            PKCS8EncodedKeySpec(Base64.getDecoder().decode(jwtConfig.refreshTokenPrivateKey))
+            PKCS8EncodedKeySpec(Base64.getDecoder().decode(config.tokens.refresh.privateKey))
         val refreshTokenPrivateKey = KeyFactory.getInstance("RSA").generatePrivate(refreshTokenKeySpec)
 
         return Keys(
@@ -65,7 +71,7 @@ class JsonWebToken(
                 if (tokenType == TokenType.REFRESH_TOKEN) keys.refreshTokenPrivateKey as RSAPrivateKey
                 else keys.authorizationTokenPrivateKey as RSAPrivateKey
             )
-        ).withIssuer(jwtConfig.issuer).build()
+        ).withIssuer(config.credentialsAuthority).build()
     }
 
     fun getClaims(
@@ -73,6 +79,7 @@ class JsonWebToken(
         tokenType: TokenType,
         claims: List<String> = listOf(UUID_CLAIM)
     ): List<String> {
+
         if (token == null) {
             return emptyList()
         }
@@ -83,9 +90,8 @@ class JsonWebToken(
             val claimData: MutableList<String> = mutableListOf();
 
             claims.map { claim ->
-                claimData.add(jwtVerifier.verify(token).getClaim(claim).asString())
+                claimData.add(jwtVerifier.verify(token).getClaim(claim).asString().replace("\"", ""))
             }
-
             claimData
         } catch (e: TokenExpiredException) {
             return emptyList()
@@ -94,5 +100,7 @@ class JsonWebToken(
 
     companion object {
         const val UUID_CLAIM = "uuid"
+        const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
+        const val SESSION_ID_CLAIM = "session"
     }
 }

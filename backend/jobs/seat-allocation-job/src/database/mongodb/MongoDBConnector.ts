@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { MongoClient } from "mongodb";
+import {MongoClient} from "mongodb";
 
 const database = new MongoClient(process.env.MONGO_DB_CONNECTION_URL!!).db(
   process.env.MONGO_DB_NAME!!,

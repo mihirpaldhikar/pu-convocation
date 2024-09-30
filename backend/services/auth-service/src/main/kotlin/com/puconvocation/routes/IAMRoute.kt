@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,7 +13,6 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
 import com.puconvocation.commons.dto.UpdateIAMRole
@@ -23,23 +22,16 @@ import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.iamRoute(
     iamController: IAMController,
-    environment: Environment
 ) {
     route("/iam") {
 
         get("/authorized") {
-            val host = call.request.host()
-
-            if (!environment.servicesHosts.split(";;").contains(host)) {
-                return@get call.respond(false)
-            }
             val iamHeader = call.request.headers["X-IAM-CHECK"]
             if (iamHeader.isNullOrBlank()) {
                 return@get call.respond(false)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -14,19 +14,19 @@
 "use client";
 import Image from "next/image";
 import {
-  AboutUsBlob,
-  Carousel,
-  Convocation,
-  CountDown,
-  GalleryFlagsLeft,
-  GalleryFlagsRight,
-  IdentifierForm,
-  ProgressBar,
+    AboutUsBlob,
+    Carousel,
+    Convocation,
+    CountDown,
+    GalleryFlagsLeft,
+    GalleryFlagsRight,
+    ProgressBar,
 } from "@components/index";
-import { useRemoteConfig } from "@hooks/index";
-import { useTranslations } from "use-intl";
-import { Link } from "@i18n/routing";
-import { Button } from "@components/ui";
+import {useRemoteConfig} from "@hooks/index";
+import {useTranslations} from "use-intl";
+import {Link} from "@i18n/routing";
+import {Button} from "@components/ui";
+import {IdentifierForm} from "@components/forms";
 
 export default function Home() {
   const { state: website } = useRemoteConfig();
@@ -68,8 +68,10 @@ export default function Home() {
 
   return (
     <section className={"min-h-dvh"}>
-      <div className={"min-h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
-        <div className={"relative z-0 h-[30vh] md:min-h-[50vh] lg:min-h-dvh"}>
+      <div
+        className={"h-[calc(50dvh-5rem)] bg-amber-300 lg:h-[calc(100dvh-5rem)]"}
+      >
+        <div className={"relative h-full"}>
           <Image
             alt={pageTranslations("heroImageDescription")}
             src={website.config?.heroImage ?? ""}
@@ -80,34 +82,33 @@ export default function Home() {
               maxHeight: "auto",
               objectFit: "cover",
             }}
-            priority={true}
           />
         </div>
         <div
           className={
-            "absolute inset-0 z-10 h-[30vh] pt-16 text-white md:min-h-[50vh] lg:min-h-dvh"
+            "absolute inset-x-0 top-20 z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]"
           }
         >
-          <div className="flex h-full flex-col items-center justify-center space-y-3 pt-24 md:space-y-5 md:pt-0">
-            <h5 className={"text-2xl font-bold md:text-3xl lg:text-5xl"}>
-              {pageTranslations.rich("welcomeText", {
-                small: (chunks) => (
-                  <span
-                    className={"text-lg font-medium md:text-xl lg:text-2xl"}
-                  >
-                    {chunks}
-                  </span>
-                ),
-              })}
-            </h5>
-            <div className={"flex items-center space-x-3 md:space-x-5"}>
-              <h1 className={"text-4xl font-black md:text-5xl lg:text-7xl"}>
-                {website.config?.heroTitle}
-              </h1>
-              <Convocation fillColor={"white"} />
-            </div>
-            <IdentifierForm />
+          <h5 className={"text-3xl font-bold md:text-3xl lg:text-6xl"}>
+            {pageTranslations.rich("welcomeText", {
+              small: (chunks) => (
+                <span className={"text-lg font-medium md:text-xl lg:text-2xl"}>
+                  {chunks}
+                </span>
+              ),
+            })}
+          </h5>
+          <div
+            className={
+              "flex items-center space-x-3 pb-5 pt-3 lg:space-x-6 lg:pt-4"
+            }
+          >
+            <h1 className={"text-4xl font-black md:text-5xl lg:text-8xl"}>
+              {website.config?.heroTitle}
+            </h1>
+            <Convocation fillColor={"white"} />
           </div>
+          <IdentifierForm />
         </div>
       </div>
       <div>

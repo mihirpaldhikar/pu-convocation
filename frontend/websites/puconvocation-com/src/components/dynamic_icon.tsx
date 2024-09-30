@@ -1,5 +1,5 @@
 /*
- * Copyright (c) PU Convocation Management System Authors
+ * Copyright (C) PU Convocation Management System Authors
  *
  * This software is owned by PU Convocation Management System Authors.
  * No part of the software is allowed to be copied or distributed
@@ -13,8 +13,8 @@
 
 import * as HeroSolidIcons from "@heroicons/react/24/solid";
 import * as HeroOutlineIcons from "@heroicons/react/24/outline";
-import { JSX } from "react";
-import { twMerge } from "tailwind-merge";
+import {JSX} from "react";
+import {twMerge} from "tailwind-merge";
 
 type IconName = keyof typeof HeroSolidIcons;
 
