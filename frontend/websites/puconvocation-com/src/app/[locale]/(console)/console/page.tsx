@@ -15,20 +15,21 @@
 import { Fragment, JSX } from "react";
 import { useAuth } from "@hooks/index";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter, Link } from "@i18n/routing";
+import { Link, useRouter } from "@i18n/routing";
 import { Button } from "@components/ui";
-import { GeographicalMap } from "@components/index";
-import { TrafficOnDateChart } from "@components/index";
+import {
+  GeographicalMap,
+  ProgressBar,
+  TrafficOnDateChart,
+} from "@components/index";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
-import AnalyticsService from "@services/AnalyticsService";
-import { AttendeeService } from "@services/index";
-import { ProgressBar } from "@components/index";
+import { AnalyticsController, AttendeeController } from "@controllers/index";
 
-const analyticsService = new AnalyticsService();
-const attendeeService = new AttendeeService();
+const analyticsController = new AnalyticsController();
+const attendeeController = new AttendeeController();
 
 export default function ConsolePage(): JSX.Element {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function ConsolePage(): JSX.Element {
     queryKey: ["homeAttendeesList"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const response = await attendeeService.getAllAttendees(0, 10);
+      const response = await attendeeController.getAllAttendees(0, 10);
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&
@@ -62,7 +63,7 @@ export default function ConsolePage(): JSX.Element {
     queryKey: ["popularCountriesAnalytics"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const response = await analyticsService.popularCountries();
+      const response = await analyticsController.popularCountries();
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&

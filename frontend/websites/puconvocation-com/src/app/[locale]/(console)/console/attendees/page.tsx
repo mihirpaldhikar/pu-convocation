@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { Fragment, JSX, useState } from "react";
+import { JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@components/ui";
 import {
@@ -22,16 +22,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card";
-import { AttendeeService } from "@services/index";
+import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import {
-  UsersIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  UsersIcon,
 } from "@heroicons/react/24/solid";
 import { ProgressBar } from "@components/index";
 
-const attendeeService = new AttendeeService();
+const attendeeController = new AttendeeController();
 
 export default function AttendeePage(): JSX.Element {
   const [showAttendees, setShowAttendees] = useState(false);
@@ -46,7 +46,7 @@ export default function AttendeePage(): JSX.Element {
     queryKey: ["homeAttendeesList", page],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const response = await attendeeService.getAllAttendees(page, 10);
+      const response = await attendeeController.getAllAttendees(page, 10);
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&
