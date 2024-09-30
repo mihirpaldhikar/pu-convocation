@@ -24,16 +24,10 @@ import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
 import AnalyticsService from "@services/AnalyticsService";
 import { AttendeeService } from "@services/index";
+import { ProgressBar } from "@components/index";
 
 const analyticsService = new AnalyticsService();
 const attendeeService = new AttendeeService();
-
-// Spinner
-const Spinner = () => (
-  <div className="flex items-center justify-center">
-    <div className="border-t-3 border-b-3 h-8 w-8 animate-spin rounded-full border-red-600"></div>
-  </div>
-);
 
 export default function ConsolePage(): JSX.Element {
   const router = useRouter();
@@ -102,7 +96,7 @@ export default function ConsolePage(): JSX.Element {
               </CardHeader>
               <CardContent className="h-full pt-2">
                 {isLoading ? (
-                  <Spinner />
+                  <ProgressBar type="circular" />
                 ) : isError ? (
                   <p className="text-red-600">Error loading data</p>
                 ) : (
@@ -129,7 +123,7 @@ export default function ConsolePage(): JSX.Element {
               </CardHeader>
               <CardContent className="h-full pt-2">
                 {isLoading ? (
-                  <Spinner />
+                  <ProgressBar type="circular" />
                 ) : isError ? (
                   <p className="text-red-600">Error loading data</p>
                 ) : (
@@ -170,7 +164,7 @@ export default function ConsolePage(): JSX.Element {
             <div className="mb-2 border-b border-gray-300" />
 
             {isAttendeeLoading ? (
-              <Spinner />
+              <ProgressBar type="circular" />
             ) : attendeeError ? (
               <p className="text-red-600">Error loading attendees</p>
             ) : attendees !== null && attendees.length > 0 ? (
