@@ -12,13 +12,13 @@
  */
 "use client";
 import { Fragment, JSX } from "react";
-import { AuthService } from "@services/index";
+import { AuthController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { ProgressBar } from "@components/index";
 import { Button } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 
-const authService = new AuthService();
+const authService = new AuthController();
 
 export default function AccountPage(): JSX.Element {
   const { toast } = useToast();

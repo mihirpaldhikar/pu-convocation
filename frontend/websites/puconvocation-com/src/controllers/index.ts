@@ -11,4 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as HttpService } from "./HttpService";
+export { default as AuthController } from "./AuthController";
+export { default as AttendeeController } from "./AttendeeController";
+export { default as RemoteConfigController } from "./RemoteConfigController";
+export { default as AnalyticsController } from "./AnalyticsController";

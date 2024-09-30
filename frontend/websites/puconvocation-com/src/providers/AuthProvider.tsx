@@ -13,7 +13,7 @@
 
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { Account } from "@dto/index";
-import { AuthService } from "@services/index";
+import { AuthController } from "@controllers/index";
 
 export type AuthAction =
   | {
@@ -35,13 +35,13 @@ export type AuthAction =
 export type AuthState = {
   account: Account | null;
   loading: boolean;
-  authService: AuthService;
+  authController: AuthController;
 };
 
 const initialAuthState: AuthState = {
   account: null,
   loading: true,
-  authService: new AuthService(),
+  authController: new AuthController(),
 };
 
 const authReducer = (

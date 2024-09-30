@@ -12,13 +12,13 @@
  */
 
 import { Fragment, JSX } from "react";
-import { AttendeeService } from "@services/index";
+import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { SeatMap, SpaceShip, Ticket, VenueMap } from "@components/index";
 import Link from "next/link";
 import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
 
-const attendeeService: AttendeeService = new AttendeeService();
+const attendeeService: AttendeeController = new AttendeeController();
 
 export default async function AttendeePage({
   params,

@@ -14,7 +14,7 @@
 "use client";
 
 import { Fragment, JSX } from "react";
-import { AnalyticsService } from "@services/index";
+import { AnalyticsController } from "@controllers/index";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 import {
@@ -38,7 +38,7 @@ import { endOfWeek, startOfWeek } from "date-fns";
 import { mergeWeekData } from "@lib/analytics_utils";
 import { DynamicIcon } from "@components/index";
 
-const analyticsService = new AnalyticsService();
+const analyticsService = new AnalyticsController();
 
 const chartConfig = {
   currentWeek: {

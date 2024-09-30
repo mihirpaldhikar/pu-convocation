@@ -24,7 +24,7 @@ import {
 import { StatusCode } from "@enums/StatusCode";
 import { HttpService } from "@services/index";
 
-export default class AuthService {
+export default class AuthController {
   private BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string;
 
   private httpService = new HttpService(this.BASE_URL);

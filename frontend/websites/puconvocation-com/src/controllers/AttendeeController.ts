@@ -19,8 +19,8 @@ import {
 } from "@dto/index";
 import { HttpService } from "@services/index";
 
-export default class AuthService {
-  private BASE_URL = process.env.NEXT_PUBLIC_ATTENDEE_SERVICE_URL as string;
+export default class AttendeeController {
+  private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
   private httpService = new HttpService(this.BASE_URL);
 

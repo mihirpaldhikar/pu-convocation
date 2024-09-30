@@ -53,11 +53,11 @@ export default function AuthenticationForm({
             submitting: true,
           };
         });
-        const response = await state.authService.authenticate(
+        const response = await state.authController.authenticate(
           authenticationPayload.identifier,
         );
         if (response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL) {
-          state.authService.getCurrentAccount().then((res) => {
+          state.authController.getCurrentAccount().then((res) => {
             if (
               res.statusCode === StatusCode.SUCCESS &&
               "payload" in res &&

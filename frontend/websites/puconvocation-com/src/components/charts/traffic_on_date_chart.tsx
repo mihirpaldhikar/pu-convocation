@@ -14,7 +14,7 @@
 "use client";
 
 import { Fragment, JSX } from "react";
-import { AnalyticsService } from "@services/index";
+import { AnalyticsController } from "@controllers/index";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 import {
@@ -35,7 +35,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { format } from "date-fns";
 
-const analyticsService = new AnalyticsService();
+const analyticsService = new AnalyticsController();
 
 const chartConfig = {
   key: {

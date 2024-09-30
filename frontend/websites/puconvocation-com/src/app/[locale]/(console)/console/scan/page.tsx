@@ -24,7 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@components/ui";
-import { AttendeeService } from "@services/index";
+import { AttendeeController } from "@controllers/index";
 import { DynamicIcon, ProgressBar } from "@components/index";
 import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { StatusCode } from "@enums/StatusCode";
@@ -37,7 +37,7 @@ import {
 } from "@components/ui/input_otp";
 import { useToast } from "@hooks/useToast";
 
-const attendeeService = new AttendeeService();
+const attendeeService = new AttendeeController();
 
 export default function VerificationPage(): JSX.Element {
   const pageTranslations = useTranslations("pages.scanPage");

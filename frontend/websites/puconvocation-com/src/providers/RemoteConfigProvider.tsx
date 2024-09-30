@@ -13,7 +13,7 @@
 
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { RemoteConfig } from "@dto/index";
-import { DynamicsService } from "@services/index";
+import { RemoteConfigController } from "@controllers/index";
 
 export type RemoteConfigAction =
   | {
@@ -32,13 +32,13 @@ export type RemoteConfigAction =
 export type RemoteConfigState = {
   config: RemoteConfig | null;
   loading: boolean;
-  dynamicsService: DynamicsService;
+  remoteConfigController: RemoteConfigController;
 };
 
 const initialConfig: RemoteConfigState = {
   config: null,
   loading: true,
-  dynamicsService: new DynamicsService(),
+  remoteConfigController: new RemoteConfigController(),
 };
 
 const configReducer = (

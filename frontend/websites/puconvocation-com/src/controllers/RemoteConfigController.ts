@@ -15,7 +15,7 @@ import { Response } from "@dto/Response";
 import { RemoteConfig } from "@dto/index";
 import { HttpService } from "@services/index";
 
-export default class DynamicsService {
+export default class RemoteConfigController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
   private httpService = new HttpService(this.BASE_URL);

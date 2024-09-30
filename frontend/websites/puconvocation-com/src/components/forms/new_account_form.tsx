@@ -11,14 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { AuthService } from "@services/index";
+import { AuthController } from "@controllers/index";
 import { useRouter } from "next/navigation";
 import { JSX, useState } from "react";
 import { StatusCode } from "@enums/StatusCode";
 import { Button, Input } from "@components/ui";
 import { useToast } from "@hooks/index";
 
-const authService = new AuthService();
+const authService = new AuthController();
 
 export default function NewAccountForm(): JSX.Element {
   const router = useRouter();

@@ -38,12 +38,12 @@ export default function NavbarMenu(): JSX.Element {
   const currentLocale = useLocale();
 
   const {
-    state: { account, authService },
+    state: { account, authController },
     dispatch: dispatchAccountMutation,
   } = useAuth();
 
   const {
-    state: { dynamicsService },
+    state: { remoteConfigController },
     dispatch: dispatchConfigMutation,
   } = useRemoteConfig();
 
@@ -53,7 +53,7 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["websiteConfig"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await dynamicsService.getRemoteConfig(
+      const response = await remoteConfigController.getRemoteConfig(
         `${formatISO(new Date())};${currentLocale};${path}`,
       );
       if (
@@ -77,7 +77,7 @@ export default function NavbarMenu(): JSX.Element {
     queryKey: ["currentAccount"],
     refetchOnWindowFocus: "always",
     queryFn: async () => {
-      const response = await authService.getCurrentAccount();
+      const response = await authController.getCurrentAccount();
       if (
         response.statusCode === StatusCode.SUCCESS &&
         "payload" in response &&
@@ -191,7 +191,7 @@ export default function NavbarMenu(): JSX.Element {
                         variant={"outline"}
                         className={"flex-grow"}
                         onClick={async () => {
-                          await authService.signOut();
+                          await authController.signOut();
                           dispatchAccountMutation({
                             type: "SIGN_OUT",
                           });

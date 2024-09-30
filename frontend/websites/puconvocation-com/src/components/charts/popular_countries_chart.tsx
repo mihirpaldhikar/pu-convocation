@@ -23,11 +23,11 @@ import {
 } from "@components/ui/card";
 import { WorldMapData } from "@constants/maps";
 import { GeographicalMap } from "@components/index";
-import { AnalyticsService } from "@services/index";
+import { AnalyticsController } from "@controllers/index";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 
-const analyticsService = new AnalyticsService();
+const analyticsService = new AnalyticsController();
 
 export default function PopularCountriesChart(): JSX.Element {
   const {

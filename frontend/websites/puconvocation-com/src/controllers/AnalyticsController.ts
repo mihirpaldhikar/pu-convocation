@@ -16,8 +16,8 @@ import { Response } from "@dto/Response";
 import { Popular, WeeklyTraffic } from "@dto/index";
 import { format, startOfWeek } from "date-fns";
 
-export default class AnalyticsService {
-  private BASE_URL = process.env.NEXT_PUBLIC_ANALYTICS_SERVICE_URL as string;
+export default class AnalyticsController {
+  private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
   private httpService = new HttpService(this.BASE_URL);
 
