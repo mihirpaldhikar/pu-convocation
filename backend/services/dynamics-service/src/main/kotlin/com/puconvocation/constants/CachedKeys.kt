@@ -22,4 +22,27 @@ object CachedKeys {
         return "remoteConfig"
     }
 
+    fun weeklyTrafficKey(): String {
+        return "analytics:weeklyTraffic"
+    }
+
+    fun trafficOnDateKey(date: String): String {
+        return "analytics:trafficOn:${date.replace("-", "_")}"
+    }
+
+    fun popularLangsKey(): String {
+        return "analytics:popularLangs"
+    }
+
+    fun popularCountriesKey(): String {
+        return "analytics:popularCountries"
+    }
+
+    fun popularStatesOfCountryKey(countryCode: String): String {
+        return "analytics:popularStates:$countryCode"
+    }
+
+    fun popularDistrictsWithInStatesOfCountryKey(countryCode: String, state: String): String {
+        return "analytics:popularDistricts:$countryCode:${state.replace(" ", "_").lowercase()}"
+    }
 }

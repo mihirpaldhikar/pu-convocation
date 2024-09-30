@@ -11,23 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.enums
+package com.puconvocation.commons.dto
 
-enum class ResponseCode {
-    OK,
-    INVALID_OR_NULL_TOKEN,
-    REQUEST_NOT_COMPLETED,
-    TOKEN_EXPIRED,
-    INVALID_TOKEN,
-    NOT_PERMITTED,
-    INVALID_OR_NULL_IDENTIFIER,
-    FILE_UPLOADED,
-    ATTENDEE_NOT_FOUND,
-    INVALID_FILE_FORMAT,
-    FILE_NOT_UPLOADED,
-    REQUEST_NOT_FULFILLED,
-    ALREADY_LOCKED,
-    ALREADY_UNLOCKED,
-    NOT_FOUND,
-    BAD_REQUEST
-}
+import com.fasterxml.jackson.annotation.JsonProperty
+
+data class Popular(
+    @JsonProperty("key") val key: String,
+    @JsonProperty("count") val count: Long,
+)

@@ -14,7 +14,9 @@
 package com.puconvocation.plugins
 
 import com.puconvocation.Environment
+import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.controllers.RemoteConfigController
+import com.puconvocation.routes.analyticsRoute
 import com.puconvocation.routes.remoteConfigRoute
 import com.puconvocation.services.KafkaService
 import io.ktor.http.ContentType
@@ -29,6 +31,8 @@ fun Application.configureRouting() {
     val remoteConfigController by KoinJavaComponent.inject<RemoteConfigController>(RemoteConfigController::class.java)
     val kafkaService by KoinJavaComponent.inject<KafkaService>(KafkaService::class.java)
     val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
+    val analyticsController by KoinJavaComponent.inject<AnalyticsController>(AnalyticsController::class.java)
+
 
     routing {
         get("/health") {
@@ -42,6 +46,10 @@ fun Application.configureRouting() {
         remoteConfigRoute(
             remoteConfigController = remoteConfigController,
             kafkaService = kafkaService, environment = environment,
+        )
+
+        analyticsRoute(
+            analyticsController = analyticsController
         )
     }
 }

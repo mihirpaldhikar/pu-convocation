@@ -13,7 +13,9 @@
 
 package com.puconvocation.di
 
+import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.controllers.RemoteConfigController
+import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
 import com.puconvocation.services.AuthService
 import org.koin.dsl.module
@@ -23,6 +25,13 @@ object ControllerModule {
         single<RemoteConfigController> {
             RemoteConfigController(
                 remoteConfigRepository = get<RemoteConfigRepository>(),
+                authService = get<AuthService>()
+            )
+        }
+
+        single<AnalyticsController> {
+            AnalyticsController(
+                analyticsRepository = get<AnalyticsRepository>(),
                 authService = get<AuthService>()
             )
         }

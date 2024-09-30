@@ -24,7 +24,6 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.ObjectIdDeserializer
 import com.puconvocation.serializers.ObjectIdSerializer
 import com.puconvocation.services.AuthService
-import com.puconvocation.services.InMemoryCache
 import com.puconvocation.services.KafkaService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -34,7 +33,6 @@ import org.bson.types.ObjectId
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -71,13 +69,6 @@ object CoreModule {
         single<KafkaService> {
             KafkaService(
                 brokers = get<Environment>().cloud.aws.analyticsMSK.brokers
-            )
-        }
-
-        single<InMemoryCache> {
-            InMemoryCache(
-                expiryDuration = 5,
-                timeUnit = TimeUnit.MINUTES,
             )
         }
 
