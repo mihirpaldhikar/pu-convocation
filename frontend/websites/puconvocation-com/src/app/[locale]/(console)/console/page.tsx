@@ -28,10 +28,10 @@ import { AttendeeService } from "@services/index";
 const analyticsService = new AnalyticsService();
 const attendeeService = new AttendeeService();
 
-// Spinner 
+// Spinner
 const Spinner = () => (
-  <div className="flex justify-center items-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-t-3 border-b-3 border-red-600"></div>
+  <div className="flex items-center justify-center">
+    <div className="border-t-3 border-b-3 h-8 w-8 animate-spin rounded-full border-red-600"></div>
   </div>
 );
 
@@ -86,18 +86,21 @@ export default function ConsolePage(): JSX.Element {
         <div className="analytics-section">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold">Analytics</h2>
-            <Button className="bg-red-600 font-semibold hover:bg-red-700" asChild>
+            <Button
+              className="bg-red-600 font-semibold hover:bg-red-700"
+              asChild
+            >
               <Link href={`/console/analytics`}>View All</Link>
             </Button>
           </div>
-  
-          <div className="cards grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+
+          <div className="cards mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Demographics Card */}
-            <Card className="p-2 shadow-none max-h-[300px] overflow-hidden">
+            <Card className="max-h-[300px] overflow-hidden border border-gray-300 p-2 shadow-none">
               <CardHeader className="pb-2">
                 <CardTitle className="text-red-600">Demographics</CardTitle>
               </CardHeader>
-              <CardContent className="pt-2 h-full">
+              <CardContent className="h-full pt-2">
                 {isLoading ? (
                   <Spinner />
                 ) : isError ? (
@@ -106,29 +109,34 @@ export default function ConsolePage(): JSX.Element {
                   <GeographicalMap
                     geoMap={WorldMapData}
                     viewBox={"0 0 1011 667"}
-                    className={"h-56"} 
+                    className={"h-56"}
                     highlight={
                       popularCountries
-                        ?.filter((country: { count: number }) => country.count > 0)
+                        ?.filter(
+                          (country: { count: number }) => country.count > 0,
+                        )
                         .map((country: { key: any }) => country.key) ?? []
                     }
                   />
                 )}
               </CardContent>
             </Card>
-  
+
             {/* Traffic Card */}
-            <Card className="p-2 shadow-none max-h-[300px] overflow-hidden">
+            <Card className="max-h-[300px] overflow-hidden border border-gray-300 p-2 shadow-none">
               <CardHeader className="pb-2">
                 <CardTitle className="text-red-600">Traffic</CardTitle>
               </CardHeader>
-              <CardContent className="pt-2 h-full">
+              <CardContent className="h-full pt-2">
                 {isLoading ? (
                   <Spinner />
                 ) : isError ? (
                   <p className="text-red-600">Error loading data</p>
                 ) : (
-                  <TrafficOnDateChart showText={false} showShadowAndBorder={false} />
+                  <TrafficOnDateChart
+                    showText={false}
+                    showShadowAndBorder={false}
+                  />
                 )}
               </CardContent>
             </Card>
@@ -137,7 +145,7 @@ export default function ConsolePage(): JSX.Element {
       ) : (
         <Fragment />
       )}
-  
+
       {/* Attendees Section */}
       <div className="attendees-section">
         <div className="mb-6 flex items-center justify-between">
@@ -146,28 +154,61 @@ export default function ConsolePage(): JSX.Element {
             <Link href={`/console/attendees`}>View All</Link>
           </Button>
         </div>
-  
-        <div className="attendees-list mb-4 rounded-t-2xl border border-gray-300 bg-white p-4">
-          <div className="relative mb-4 flex items-center">
-            <MagnifyingGlassIcon className="absolute left-3 h-5 w-5 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search Attendees..."
-              className="w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
-            />
+
+        <div className="attendees-list mb-4 rounded-t-2xl border border-gray-300 bg-white">
+          <div className="ml-2 mt-2 p-4">
+            <div className="relative mb-4 flex items-center">
+              <MagnifyingGlassIcon className="absolute left-3 h-5 w-5 text-gray-500" />
+              <input
+                type="text"
+                placeholder="Search Attendees..."
+                className="w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
+              />
+            </div>
           </div>
-  
           <div className="h-64 overflow-y-auto">
+            <div className="mb-2 border-b border-gray-300" />
+
             {isAttendeeLoading ? (
               <Spinner />
             ) : attendeeError ? (
               <p className="text-red-600">Error loading attendees</p>
             ) : attendees !== null && attendees.length > 0 ? (
-              <Fragment>
-                {attendees.map((a) => {
-                  return <h1 key={a.id}>{a.studentName}</h1>;
-                })}
-              </Fragment>
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                      Convocation Id
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                      Name
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                      Enclosure
+                    </th>
+                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
+                      Row
+                    </th>
+                    <th className="w-1/ px-4 py-2 text-center font-semibold text-gray-700">
+                      Seat
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendees.map((a) => (
+                    <tr
+                      key={a.convocationId}
+                      className="border-b text-center transition-colors duration-200 hover:bg-gray-100"
+                    >
+                      <td className="px-4 py-2">{a.convocationId}</td>
+                      <td className="px-4 py-2">{a.studentName}</td>
+                      <td className="px-4 py-2">{a.allocation.enclosure}</td>
+                      <td className="px-4 py-2">{a.allocation.row}</td>
+                      <td className="px-4 py-2">{a.allocation.seat}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ) : (
               <p>No attendees found</p>
             )}
@@ -176,6 +217,4 @@ export default function ConsolePage(): JSX.Element {
       </div>
     </div>
   );
-  
 }
-
