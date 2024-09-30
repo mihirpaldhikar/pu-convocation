@@ -96,7 +96,7 @@ export default function TrafficOnDateChart(): JSX.Element {
                   data={analytics}
                   className={"ml-[-2rem]"}
                 >
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid vertical={true} />
                   <XAxis
                     dataKey="key"
                     tickLine={true}

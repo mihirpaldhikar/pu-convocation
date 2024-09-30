@@ -101,7 +101,7 @@ export default function WeeklyTrafficChart(): JSX.Element {
                   data={mergeWeekData(analytics)}
                   className={"ml-[-2rem]"}
                 >
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid vertical={true} />
                   <XAxis
                     dataKey="day"
                     tickLine={true}
