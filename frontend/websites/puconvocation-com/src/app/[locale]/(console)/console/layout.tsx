@@ -11,22 +11,21 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import type {Metadata} from "next";
-import {Montserrat} from "next/font/google";
+import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 import "@root/globals.css";
-import {ReactNode} from "react";
-import {Toaster} from "@components/ui";
-import {Providers} from "@providers/index";
-import {ConsoleDesktop, ConsoleMobile, Navbar} from "@components/index";
-import {getMessages} from "next-intl/server";
-import {NavMenu} from "@dto/index";
+import { ReactNode } from "react";
+import { Toaster } from "@components/ui";
+import { Providers } from "@providers/index";
+import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
+import { getMessages } from "next-intl/server";
+import { NavMenu } from "@dto/index";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",
-  description:
-    "Portal to manage everything related to convocation ceremonies at Parul University Convocation.",
+  description: "Manage everything related to the from the Console.",
 };
 
 interface RootLayout {
