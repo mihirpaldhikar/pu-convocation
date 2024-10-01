@@ -116,19 +116,40 @@ class AttendeeRepository(
         return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
     }
 
-    override suspend fun getAttendees(page: Int, limit: Int): List<Attendee> {
+    override suspend fun getAttendees(page: Int, limit: Int): HashMap<String, Any> {
         val cachedAttendees = cache.get(CachedKeys.attendeesWithPaginationKey(page, limit))
         if (cachedAttendees != null) {
-            return mapper.readValue<List<Attendee>>(cachedAttendees)
+            return hashMapOf(
+                "page" to page,
+                "next" to page + 1,
+                "attendees" to mapper.readValue<List<Attendee>>(cachedAttendees)
+            )
         }
 
         val fetchedAttendees =
-            attendeesCollection.withDocumentClass<Attendee>().find().skip((page - 1) * limit).limit(limit)
+            attendeesCollection.withDocumentClass<Attendee>().find().skip(page * limit)
+                .limit(limit)
+                .partial(true).toList()
+
+        val nextFetchedAttendees =
+            attendeesCollection.withDocumentClass<Attendee>().find()
+                .skip((page + 1) * limit).limit(limit)
                 .partial(true).toList()
 
         cache.set(CachedKeys.attendeesWithPaginationKey(page, limit), mapper.writeValueAsString(fetchedAttendees))
 
-        return fetchedAttendees
+        if (nextFetchedAttendees.isNotEmpty()) {
+            cache.set(
+                CachedKeys.attendeesWithPaginationKey(page + 1, limit),
+                mapper.writeValueAsString(nextFetchedAttendees)
+            )
+        }
+
+        return return hashMapOf(
+            "page" to page,
+            "next" to if (nextFetchedAttendees.isNotEmpty()) page + 1 else Int.MAX_VALUE,
+            "attendees" to fetchedAttendees
+        )
     }
 
 }
