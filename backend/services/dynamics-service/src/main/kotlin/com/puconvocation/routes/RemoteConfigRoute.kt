@@ -13,7 +13,6 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ChangeRemoteConfigRequest
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.services.KafkaService
@@ -26,7 +25,6 @@ import io.ktor.server.routing.*
 fun Routing.remoteConfigRoute(
     remoteConfigController: RemoteConfigController,
     kafkaService: KafkaService,
-    environment: Environment,
 ) {
     route("/config") {
         get("/") {
