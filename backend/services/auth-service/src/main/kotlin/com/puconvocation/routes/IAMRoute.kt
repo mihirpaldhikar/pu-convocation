@@ -13,6 +13,7 @@
 
 package com.puconvocation.routes
 
+import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
 import com.puconvocation.commons.dto.UpdateIAMRole
@@ -22,16 +23,24 @@ import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
+import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.iamRoute(
     iamController: IAMController,
+    companionServices: Set<Environment.Service.CompanionService>,
+    developmentMode: Boolean
 ) {
     route("/iam") {
 
         get("/authorized") {
+            if (!developmentMode && companionServices.filter { it.address.contains(call.request.origin.remoteAddress) }
+                    .isEmpty()) {
+                return@get call.respond(false)
+
+            }
             val iamHeader = call.request.headers["X-IAM-CHECK"]
             if (iamHeader.isNullOrBlank()) {
                 return@get call.respond(false)

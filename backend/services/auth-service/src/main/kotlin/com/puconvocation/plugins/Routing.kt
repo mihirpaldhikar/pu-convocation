@@ -13,6 +13,7 @@
 
 package com.puconvocation.plugins
 
+import com.puconvocation.Environment
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.IAMController
 import com.puconvocation.controllers.PasskeyController
@@ -29,6 +30,7 @@ fun Application.configureRouting() {
     val accountController by KoinJavaComponent.inject<AccountController>(AccountController::class.java)
     val passkeyController by KoinJavaComponent.inject<PasskeyController>(PasskeyController::class.java)
     val iamController by KoinJavaComponent.inject<IAMController>(IAMController::class.java)
+    val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
 
     routing {
         get("/health") {
@@ -40,6 +42,8 @@ fun Application.configureRouting() {
         }
         iamRoute(
             iamController = iamController,
+            companionServices = environment.service.companionServices,
+            developmentMode = environment.service.developmentMode
         )
         accountsRoute(
             accountController = accountController,

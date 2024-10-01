@@ -13,8 +13,6 @@
 
 package com.puconvocation.di
 
-import com.ecwid.consul.v1.ConsulClient
-import com.ecwid.consul.v1.agent.model.NewService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
@@ -25,7 +23,6 @@ import com.puconvocation.security.passkeys.PasskeyRelyingParty
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
-import java.util.UUID
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -38,25 +35,6 @@ object CoreModule {
 
         single<Environment> {
             get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
-        }
-
-        single<ConsulClient> {
-            ConsulClient(get<Environment>().service.discovery)
-        }
-
-        single<NewService> {
-            val service = NewService()
-            service.id = UUID.randomUUID().toString()
-            service.name = get<Environment>().service.name
-            service.address = get<Environment>().service.address
-            service.port = get<Environment>().service.port
-
-            val serviceCheck = NewService.Check()
-            serviceCheck.http = "http://${service.address}:${service.port}/health"
-            serviceCheck.interval = "60s"
-
-            service.check = serviceCheck
-            service
         }
 
         single<JsonWebToken> {
