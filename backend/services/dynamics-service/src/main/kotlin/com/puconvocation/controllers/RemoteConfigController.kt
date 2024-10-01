@@ -91,9 +91,4 @@ class RemoteConfigController(
             )
         )
     }
-
-    suspend fun mutateAttendeeLock(lock: Boolean): Boolean {
-        return remoteConfigRepository.mutateAttendeeLock(lock)
-    }
-
 }

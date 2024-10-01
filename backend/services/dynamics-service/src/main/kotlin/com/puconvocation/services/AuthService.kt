@@ -13,9 +13,6 @@
 
 package com.puconvocation.services
 
-import com.ecwid.consul.v1.ConsulClient
-import com.ecwid.consul.v1.QueryParams
-import com.ecwid.consul.v1.health.HealthServicesRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.commons.dto.AccountWithIAMRoles
@@ -26,8 +23,6 @@ import com.puconvocation.security.jwt.JsonWebToken
 import io.ktor.client.*
 import io.ktor.client.call.body
 import io.ktor.client.request.*
-import io.ktor.http.URLBuilder
-import io.ktor.http.URLProtocol
 import org.bson.types.ObjectId
 
 class AuthService(
@@ -35,7 +30,7 @@ class AuthService(
     private val cache: CacheController,
     private val jsonWebToken: JsonWebToken,
     private val json: ObjectMapper,
-    private val serviceDiscovery: ConsulClient
+    private val authServiceAddress: String
 ) {
     suspend fun isAuthorized(role: String, principal: String?): Boolean {
 
@@ -81,21 +76,7 @@ class AuthService(
     }
 
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
-        val healthyAuthServiceRequest = HealthServicesRequest.newBuilder()
-            .setPassing(true)
-            .setQueryParams(QueryParams.DEFAULT)
-            .build()
-
-        val authService =
-            serviceDiscovery.getHealthServices("auth-service", healthyAuthServiceRequest).value.first().service
-
-        val urlBuilder = URLBuilder(
-            protocol = URLProtocol.HTTP,
-            host = authService.address,
-            port = authService.port,
-        )
-
-        val response = client.get("${urlBuilder.build()}/iam/authorized") {
+        val response = client.get("${authServiceAddress}/iam/authorized") {
             header("X-IAM-CHECK", "$rule@$uuid")
         }
         return response.body<Boolean>()

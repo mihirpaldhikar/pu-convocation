@@ -33,7 +33,7 @@ fun Routing.attendeesRoute(
     route("/attendees") {
         get("/{identifier}") {
             val identifier = call.parameters["identifier"] ?: return@get call.sendResponse(
-                com.puconvocation.utils.Result.Error(
+                Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
                         message = "Please provide a valid identifier."
@@ -69,7 +69,7 @@ fun Routing.attendeesRoute(
         get("/verificationToken/{verificationToken}") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val token = call.parameters["verificationToken"] ?: return@get call.sendResponse(
-                com.puconvocation.utils.Result.Error(
+                Result.Error(
                     ErrorResponse(
                         errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
                         message = "Please provide a valid token."
