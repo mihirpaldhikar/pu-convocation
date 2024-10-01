@@ -13,7 +13,6 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ChangeRemoteConfigRequest
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.services.KafkaService
@@ -21,13 +20,11 @@ import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
-import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 
 fun Routing.remoteConfigRoute(
     remoteConfigController: RemoteConfigController,
     kafkaService: KafkaService,
-    environment: Environment,
 ) {
     route("/config") {
         get("/") {
@@ -46,12 +43,6 @@ fun Routing.remoteConfigRoute(
             val changeRemoteConfigRequest = call.receive<ChangeRemoteConfigRequest>()
             val result = remoteConfigController.changeConfig(authorizationToken, changeRemoteConfigRequest)
             call.sendResponse(result)
-        }
-
-        patch("/mutateAttendeeLock") {
-            val lock = call.request.queryParameters["lock"]?.toBooleanStrictOrNull() ?: return@patch call.respond(false)
-            val result = remoteConfigController.mutateAttendeeLock(lock)
-            call.respond(result)
         }
     }
 }

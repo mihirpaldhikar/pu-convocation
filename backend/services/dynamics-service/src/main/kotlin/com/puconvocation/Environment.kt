@@ -28,9 +28,14 @@ data class Environment(
         @JsonProperty("name") val name: String,
         @JsonProperty("port") val port: Int,
         @JsonProperty("address") val address: String,
-        @JsonProperty("discovery") val discovery: String,
         @JsonProperty("developmentMode") val developmentMode: Boolean,
-    )
+        @JsonProperty("companionServices") val companionServices: Set<CompanionService>,
+    ) {
+        data class CompanionService(
+            @JsonProperty("serviceName") val serviceName: String,
+            @JsonProperty("address") val address: String,
+        )
+    }
 
     data class Database(
         @JsonProperty("mongoDb") val mongoDb: GenericDatabase,

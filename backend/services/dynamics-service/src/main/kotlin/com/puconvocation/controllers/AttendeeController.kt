@@ -280,11 +280,7 @@ class AttendeeController(
         val attendees = attendeeRepository.getAttendees(page, limit)
 
         return Result.Success(
-            hashMapOf(
-                "page" to page,
-                "next" to page + limit,
-                "attendees" to attendees
-            )
+            attendees
         )
     }
 

@@ -72,9 +72,6 @@ dependencies {
     // Redis
     implementation("redis.clients:jedis:5.1.5")
 
-    // Service Discovery
-    implementation("com.ecwid.consul:consul-api:1.4.5")
-
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")

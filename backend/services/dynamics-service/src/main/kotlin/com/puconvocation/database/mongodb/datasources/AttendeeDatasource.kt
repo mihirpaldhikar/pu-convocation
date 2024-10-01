@@ -29,5 +29,5 @@ interface AttendeeDatasource {
 
     suspend fun getTotalAttendees(): Int
 
-    suspend fun getAttendees(page: Int, limit: Int): List<Attendee>
+    suspend fun getAttendees(page: Int, limit: Int): HashMap<String, Any>
 }

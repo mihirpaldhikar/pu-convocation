@@ -13,13 +13,10 @@
 
 package com.puconvocation
 
-import com.ecwid.consul.v1.ConsulClient
-import com.ecwid.consul.v1.agent.model.NewService
 import com.puconvocation.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import org.koin.java.KoinJavaComponent
 
 fun main() {
     embeddedServer(
@@ -37,17 +34,4 @@ fun Application.module() {
     configureMonitoring()
     configureSerialization()
     configureRouting()
-
-    val serviceDiscovery by KoinJavaComponent.inject<ConsulClient>(ConsulClient::class.java)
-    val currentService by KoinJavaComponent.inject<NewService>(NewService::class.java)
-
-
-    environment.monitor.subscribe(ApplicationStarted) {
-        serviceDiscovery.agentServiceRegister(currentService)
-    }
-
-    environment.monitor.subscribe(ApplicationStopping) {
-        serviceDiscovery.agentServiceDeregister(currentService.id)
-    }
-
 }
