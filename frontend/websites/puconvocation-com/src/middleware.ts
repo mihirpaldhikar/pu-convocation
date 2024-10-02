@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {NextRequest, NextResponse} from "next/server";
-import {routing} from "@i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
+import { routing } from "@i18n/routing";
 import createMiddleware from "next-intl/middleware";
-import {Account} from "@dto/index";
+import { Account } from "@dto/index";
 
 const i18nMiddleware = createMiddleware(routing);
 
@@ -68,7 +68,7 @@ export default async function middleware(req: NextRequest) {
 
   if (pathName.includes("/authenticate") || protectedPath.includes(pathName)) {
     const authenticationResponse = await fetch(
-      `${process.env.INTERNAL_AUTH_SERVICE}/accounts/`,
+      `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
       {
         credentials: "same-origin",
         method: "GET",
