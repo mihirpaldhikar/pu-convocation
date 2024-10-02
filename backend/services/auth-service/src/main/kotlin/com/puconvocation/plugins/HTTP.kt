@@ -61,12 +61,9 @@ fun Application.configureHTTP() {
         }
 
         allowHost(
-            host = "*.puconvocation.com",
+            host = "puconvocation.com",
+            subDomains = listOf("auth.services", "dynamics.services"),
             schemes = listOf("https"),
-        )
-
-        allowHost(
-            host = "*.svc.cluster.local",
         )
 
     }
