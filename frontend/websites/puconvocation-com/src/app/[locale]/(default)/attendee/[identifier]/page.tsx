@@ -11,12 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Fragment, JSX} from "react";
-import {AttendeeController} from "@controllers/index";
-import {StatusCode} from "@enums/StatusCode";
-import {SeatMap, SpaceShip, Ticket, VenueMap} from "@components/index";
-import Link from "next/link";
-import {MapPinIcon, TicketIcon} from "@heroicons/react/24/solid";
+import { Fragment, JSX } from "react";
+import { AttendeeController } from "@controllers/index";
+import { StatusCode } from "@enums/StatusCode";
+import { SeatMap, SpaceShip, Ticket, VenueMap } from "@components/index";
+import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
+import { Link } from "@i18n/routing";
 
 const attendeeService: AttendeeController = new AttendeeController();
 
@@ -48,7 +48,7 @@ export default async function AttendeePage({
             to find your seat.
           </p>
           <Link
-            href={"/public"}
+            href={"/"}
             className={"rounded-full bg-gray-900 px-5 py-2 text-white"}
           >
             Go Home
