@@ -59,7 +59,8 @@ data class Environment(
             data class Tokens(
                 @JsonProperty("refresh") val refresh: RSABased,
                 @JsonProperty("authorization") val authorization: RSABased,
-                @JsonProperty("invitation") val invitation: HMACBased
+                @JsonProperty("invitation") val invitation: HMACBased,
+                @JsonProperty("serviceAuthorization") val serviceAuthorization: HMACBased,
             ) {
                 data class RSABased(
                     @JsonProperty("keyId") val keyId: String,
