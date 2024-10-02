@@ -13,6 +13,7 @@
 
 package com.puconvocation.controllers
 
+import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
 import com.puconvocation.commons.dto.UpdateIAMRole
@@ -31,7 +32,8 @@ class IAMController(
     private val accountRepository: AccountRepository,
     private val iamRepository: IAMRepository,
     private val jsonWebToken: JsonWebToken,
-    private val cacheController: CacheController
+    private val cacheController: CacheController,
+    private val companionServices: Set<Environment.Service.CompanionService>
 
 ) {
     suspend fun getRule(authorizationToken: String?, name: String): Result<IAMRole, ErrorResponse> {
@@ -273,6 +275,20 @@ class IAMController(
         } else {
             account.iamRoles.contains("write:$iam")
         }
+    }
+
+    suspend fun isAuthorized(authorizationToken: String?, role: String, principal: String): Boolean {
+        val tokenClaims = jsonWebToken.getClaims(
+            token = authorizationToken,
+            tokenType = TokenType.SERVICE_AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.SERVICE_NAME)
+        )
+
+        if (tokenClaims.isEmpty()) return false
+
+        if (companionServices.filter { it.serviceName == tokenClaims[0] }.isEmpty()) return false
+
+        return isAuthorized(role, principal)
     }
 
 }

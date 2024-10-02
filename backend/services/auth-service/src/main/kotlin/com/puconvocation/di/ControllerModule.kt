@@ -13,6 +13,7 @@
 
 package com.puconvocation.di
 
+import com.puconvocation.Environment
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.controllers.IAMController
@@ -30,7 +31,8 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 iamRepository = get<IAMRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
-                cacheController = get<CacheController>()
+                cacheController = get<CacheController>(),
+                companionServices = get<Environment>().service.companionServices
             )
         }
 
