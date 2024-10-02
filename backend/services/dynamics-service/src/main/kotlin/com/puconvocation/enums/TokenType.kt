@@ -16,5 +16,5 @@ package com.puconvocation.enums
 enum class TokenType {
     AUTHORIZATION_TOKEN,
     REFRESH_TOKEN,
-    NULL_TOKEN
+    SERVICE_AUTHORIZATION_TOKEN,
 }
