@@ -13,62 +13,45 @@
 
 "use client";
 
-import {Fragment, JSX, useState} from "react";
-import {useAuth, useRemoteConfig} from "@hooks/index";
-import {StatusCode} from "@enums/StatusCode";
-import {useQuery} from "@tanstack/react-query";
-import {Link, usePathname, useRouter} from "@i18n/routing";
-import {useLocale} from "next-intl";
-import {Avatar, AvatarFallback, AvatarImage, Button, Popover, PopoverContent, PopoverTrigger,} from "@components/ui";
-import {QrCodeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
-import {PopoverClose} from "@radix-ui/react-popover";
-import {formatISO} from "date-fns";
+import { Fragment, JSX, useState } from "react";
+import { useAuth } from "@hooks/index";
+import { StatusCode } from "@enums/StatusCode";
+import { useQuery } from "@tanstack/react-query";
+import { Link, usePathname, useRouter } from "@i18n/routing";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@components/ui";
+import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { PopoverClose } from "@radix-ui/react-popover";
+import { AnalyticsController } from "@controllers/index";
+import { formatISO } from "date-fns";
+import { useLocale } from "next-intl";
+
+const analyticsController = new AnalyticsController();
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
   const path = usePathname();
   const currentLocale = useLocale();
-
   const {
     state: { account, authController },
     dispatch: dispatchAccountMutation,
   } = useAuth();
 
-  const {
-    state: { remoteConfigController },
-    dispatch: dispatchConfigMutation,
-  } = useRemoteConfig();
-
   const [isPopupOpen, openPopup] = useState<boolean>(false);
-
-  useQuery({
-    queryKey: ["websiteConfig"],
-    refetchOnWindowFocus: "always",
-    queryFn: async () => {
-      const response = await remoteConfigController.getRemoteConfig(
-        `${formatISO(new Date())};${currentLocale};${path}`,
-      );
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        dispatchConfigMutation({
-          type: "SET_CONFIG",
-          payload: {
-            config: response.payload,
-          },
-        });
-        return response.payload;
-      }
-      return null;
-    },
-  });
 
   const { isLoading: isAccountLoading, isError: isAccountError } = useQuery({
     queryKey: ["currentAccount"],
-    refetchOnWindowFocus: "always",
     queryFn: async () => {
+      await analyticsController.sendTelemetry(
+        `${formatISO(new Date())};${currentLocale};${path}`,
+      );
       const response = await authController.getCurrentAccount();
       if (
         response.statusCode === StatusCode.SUCCESS &&

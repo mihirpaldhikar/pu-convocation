@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {HttpService} from "@services/index";
-import {Response} from "@dto/Response";
-import {Popular, WeeklyTraffic} from "@dto/index";
-import {format, startOfWeek} from "date-fns";
+import { HttpService } from "@services/index";
+import { Response } from "@dto/Response";
+import { Popular, WeeklyTraffic } from "@dto/index";
+import { format, startOfWeek } from "date-fns";
 
 export default class AnalyticsController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
@@ -22,6 +22,14 @@ export default class AnalyticsController {
   private httpService = new HttpService(this.BASE_URL);
 
   private ANALYTICS_ROUTE = this.BASE_URL.concat("/analytics");
+
+  public async sendTelemetry(telemetry: string) {
+    return await this.httpService.post(`${this.ANALYTICS_ROUTE}/telemetry`, undefined, {
+      header: {
+        "x-telemetry": telemetry,
+      }
+    });
+  }
 
   public async weeklyTraffic(): Promise<Response<WeeklyTraffic | string>> {
     return await this.httpService.get<WeeklyTraffic>(
