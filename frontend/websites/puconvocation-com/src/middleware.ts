@@ -86,7 +86,7 @@ export default async function middleware(req: NextRequest) {
       !pathName.includes("/authenticate")
     ) {
       const absoluteURL = new URL(
-        `/authenticate?redirect=${req.nextUrl.href}`,
+        `/authenticate?redirect=${req.nextUrl.pathname}`,
         req.nextUrl.origin,
       );
       return NextResponse.redirect(absoluteURL.toString());
