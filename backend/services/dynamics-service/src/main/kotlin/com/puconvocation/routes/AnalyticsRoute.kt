@@ -37,7 +37,7 @@ fun Route.analyticsRoute(
             val analyticsHeader = call.request.headers["x-telemetry"]
 
             if (analyticsHeader != null) {
-                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteHost}")
+                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
             }
             call.respondText("Recorded")
         }
