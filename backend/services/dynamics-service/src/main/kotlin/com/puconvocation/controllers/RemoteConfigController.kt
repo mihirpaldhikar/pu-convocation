@@ -59,18 +59,13 @@ class RemoteConfigController(
         val newConfig = currentConfig.copy(
             id = ObjectId(),
             active = true,
-            heroImage = changeRemoteConfigRequest.heroImage ?: currentConfig.heroImage,
-            heroTitle = changeRemoteConfigRequest.heroTitle ?: currentConfig.heroTitle,
-            aboutUs = changeRemoteConfigRequest.aboutUs ?: currentConfig.aboutUs,
-            aboutUsImage = changeRemoteConfigRequest.aboutUsImage ?: currentConfig.aboutUsImage,
-            gallery = changeRemoteConfigRequest.gallery ?: currentConfig.gallery,
-            instructionsFileURL = changeRemoteConfigRequest.instructionsFileURL ?: currentConfig.instructionsFileURL,
-            showInstructionsBanner = changeRemoteConfigRequest.showInstructionsBanner
-                ?: currentConfig.showInstructionsBanner,
-            showCountDown = changeRemoteConfigRequest.showCountDown ?: currentConfig.showCountDown,
-            countDownEndTime = changeRemoteConfigRequest.countDownEndTime ?: currentConfig.countDownEndTime,
+            images = changeRemoteConfigRequest.images ?: currentConfig.images,
+            instructions = currentConfig.instructions.copy(
+                show = changeRemoteConfigRequest.showInstructions ?: currentConfig.instructions.show,
+            ),
+            countdown = changeRemoteConfigRequest.countdown ?: currentConfig.countdown,
             groundMappings = changeRemoteConfigRequest.groundMappings ?: currentConfig.groundMappings,
-            attendeeLocked = currentConfig.attendeeLocked
+            attendeesLocked = currentConfig.attendeesLocked
         )
 
         val success = remoteConfigRepository.changeConfig(newConfig, currentConfig.id)
