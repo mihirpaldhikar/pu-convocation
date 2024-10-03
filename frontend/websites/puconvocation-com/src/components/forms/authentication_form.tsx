@@ -11,13 +11,13 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import {Fragment, JSX, useState} from "react";
-import {useRouter} from "next/navigation";
-import {StatusCode} from "@enums/StatusCode";
-import {PasskeyIcon} from "@icons/index";
-import {Button, Input} from "@components/ui";
-import {useAuth, useToast} from "@hooks/index";
-import {useTranslations} from "use-intl";
+import { Fragment, JSX, useState } from "react";
+import { useRouter } from "next/navigation";
+import { StatusCode } from "@enums/StatusCode";
+import { PasskeyIcon } from "@icons/index";
+import { Button, Input } from "@components/ui";
+import { useAuth, useToast } from "@hooks/index";
+import { useTranslations } from "use-intl";
 
 interface AuthenticationFormProps {
   redirect?: string;
@@ -70,7 +70,9 @@ export default function AuthenticationForm({
                 },
               });
             }
-            router.replace(redirect ?? "/console");
+            router.push(
+              redirect !== undefined ? redirect : "/console",
+            );
           });
         } else if ("message" in response) {
           toast({

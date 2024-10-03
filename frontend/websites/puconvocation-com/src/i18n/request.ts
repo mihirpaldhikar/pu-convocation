@@ -11,15 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {notFound} from "next/navigation";
-import {getRequestConfig} from "next-intl/server";
-import {routing} from "./routing";
+import { notFound } from "next/navigation";
+import { getRequestConfig } from "next-intl/server";
+import { routing } from "./routing";
 
 export default getRequestConfig(async ({ locale }) => {
   if (!routing.locales.includes(locale as any)) notFound();
 
+  const res = await fetch(
+    `https://assets.puconvocation.com/locales/${locale}.json`,
+  );
+  const messages = await res.json();
   return {
-    messages: (await import(`./locales/${locale}.json`)).default,
-    timeZone: "Asia/Kolkata",
+    messages,
   };
 });

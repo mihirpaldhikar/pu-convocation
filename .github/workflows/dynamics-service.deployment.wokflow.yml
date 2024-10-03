@@ -43,8 +43,8 @@ jobs:
       - name: Build and Push Container
         working-directory: ./backend/services/dynamics-service
         run: |-
-          docker build --build-arg DEVELOPMENT_MODE="${{ secrets.DEVELOPMENT_MODE }}" --build-arg MONGO_DB_CONNECTION_URL="${{ secrets.MONGO_DB_CONNECTION_URL }}" --build-arg MONGO_DB_NAME="${{ secrets.MONGO_DB_NAME }}" --build-arg AUTHORIZATION_TOKEN_PRIVATE_KEY="${{ secrets.AUTHORIZATION_TOKEN_PRIVATE_KEY }}" --build-arg REFRESH_TOKEN_PRIVATE_KEY="${{ secrets.REFRESH_TOKEN_PRIVATE_KEY }}" --build-arg AUTHORIZATION_TOKEN_KEY_ID="${{ secrets.AUTHORIZATION_TOKEN_KEY_ID }}" --build-arg REFRESH_TOKEN_KEY_ID="${{ secrets.REFRESH_TOKEN_KEY_ID }}" --build-arg API_AUDIENCE="${{ secrets.API_AUDIENCE }}" --build-arg CREDENTIALS_AUTHORITY="${{ secrets.CREDENTIALS_AUTHORITY }}" --build-arg CREDENTIALS_REALM="${{ secrets.CREDENTIALS_REALM }}" --build-arg AUTH_SERVICE_URL="${{ secrets.AUTH_SERVICE_URL }}" --build-arg REDIS_URL="${{ secrets.REDIS_URL }}" -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}"
+          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/production/${{ env.SERVICE }}:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/production/${{ env.SERVICE }}:${{ github.sha }}"
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -52,5 +52,9 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}
+          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/production/${{ env.SERVICE }}:${{ github.sha }}
           flags: '--port 8083'
+          env_vars: |
+            SERVICE_CONFIG=${{ secrets.DYNAMICS_SERVICE_CONFIG }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}

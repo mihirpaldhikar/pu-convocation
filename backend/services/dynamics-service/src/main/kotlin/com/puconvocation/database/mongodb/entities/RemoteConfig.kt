@@ -27,24 +27,33 @@ data class RemoteConfig(
     val id: ObjectId,
 
     @JsonProperty("active") val active: Boolean,
-
-    @JsonProperty("heroTitle") val heroTitle: String,
-    @JsonProperty("gallery") val gallery: MutableList<Gallery>,
-    @JsonProperty("showInstructionsBanner") val showInstructionsBanner: Boolean,
-    @JsonProperty("instructionsFileURL") val instructionsFileURL: String,
-    @JsonProperty("aboutUs") val aboutUs: String,
-    @JsonProperty("aboutUsImage") val aboutUsImage: String,
-    @JsonProperty("heroImage") val heroImage: String,
-    @JsonProperty("showCountDown") val showCountDown: Boolean,
-    @JsonProperty("countDownEndTime") val countDownEndTime: Long,
-    @JsonProperty("attendeeLocked") val attendeeLocked: Boolean,
+    @JsonProperty("images") val images: Images,
+    @JsonProperty("instructions") val instructions: Instructions,
+    @JsonProperty("countdown") val countdown: Countdown,
+    @JsonProperty("attendeesLocked") val attendeesLocked: Boolean,
     @JsonProperty("groundMappings") val groundMappings: MutableList<Enclosure>,
 ) {
-    data class Gallery(
-        @JsonProperty("title") val title: String,
-        @JsonProperty("url") val url: String,
-        @JsonProperty("description") val description: String,
+
+    data class Instructions(
+        @JsonProperty("show") val show: Boolean,
+        @JsonProperty("document") val document: String,
     )
+
+    data class Countdown(
+        @JsonProperty("show") val show: Boolean,
+        @JsonProperty("endTime") val endTime: Long,
+    )
+
+    data class Images(
+        @JsonProperty("carousel") val carousel: List<ImageMetaData>,
+        @JsonProperty("hero") val hero: ImageMetaData,
+        @JsonProperty("aboutUs") val aboutUs: ImageMetaData,
+    ) {
+        data class ImageMetaData(
+            @JsonProperty("url") val url: String,
+            @JsonProperty("description") val description: String,
+        )
+    }
 
     data class Enclosure(
         @JsonProperty("letter") val letter: String,

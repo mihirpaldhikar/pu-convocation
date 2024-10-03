@@ -41,7 +41,7 @@ class AttendeeController(
     private val remoteConfigRepository: RemoteConfigRepository,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
-        if (!remoteConfigRepository.getConfig().attendeeLocked) {
+        if (!remoteConfigRepository.getConfig().attendeesLocked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -99,7 +99,7 @@ class AttendeeController(
             )
         }
 
-        if (remoteConfigRepository.getConfig().attendeeLocked) {
+        if (remoteConfigRepository.getConfig().attendeesLocked) {
             distributedLock.release("attendeeUploadLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -219,7 +219,7 @@ class AttendeeController(
             )
         }
 
-        if (lock == remoteConfigRepository.getConfig().attendeeLocked) {
+        if (lock == remoteConfigRepository.getConfig().attendeesLocked) {
             distributedLock.release("attendeeLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,

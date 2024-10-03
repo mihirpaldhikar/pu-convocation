@@ -52,6 +52,8 @@ fun Application.configureHTTP() {
         allowHeader(HttpHeaders.AccessControlAllowHeaders)
         allowHeader(HttpHeaders.AccessControlAllowCredentials)
         allowHeader("x-analytics")
+        allowHeader("x-telemetry")
+        allowHeader("Service-Authorization-Token")
 
         if (environment.service.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
@@ -61,12 +63,9 @@ fun Application.configureHTTP() {
         }
 
         allowHost(
-            host = "*.puconvocation.com",
+            host = "puconvocation.com",
+            subDomains = listOf("auth.services", "dynamics.services"),
             schemes = listOf("https"),
-        )
-
-        allowHost(
-            host = "*.svc.cluster.local",
         )
 
     }

@@ -65,6 +65,11 @@ class JsonWebToken(
     }
 
     private fun jwtVerifier(tokenType: TokenType): JWTVerifier {
+        if (tokenType === TokenType.SERVICE_AUTHORIZATION_TOKEN) {
+            return JWT.require(
+                Algorithm.HMAC512(config.tokens.serviceAuthorization.secret)
+            ).withIssuer(config.credentialsAuthority).build()
+        }
         if (tokenType === TokenType.INVITATION_TOKEN) {
             return JWT.require(
                 Algorithm.HMAC512(config.tokens.invitation.secret)
@@ -82,7 +87,6 @@ class JsonWebToken(
     }
 
     fun generateAuthorizationToken(uuid: String, sessionId: String): String {
-
         val currentTime = System.currentTimeMillis()
         val tokenCreatedAt = Date(currentTime)
         val tokenExpiresAt = Date(currentTime + 3600000)
@@ -179,10 +183,26 @@ class JsonWebToken(
             .sign(Algorithm.HMAC512(config.tokens.invitation.secret))
     }
 
+    fun generateServiceAuthorizationToken(serviceName: String): String {
+        val currentTime = System.currentTimeMillis()
+        val tokenCreatedAt = Date(currentTime)
+        val tokenExpiresAt = Date(currentTime + 300000)
+
+        return JWT.create()
+            .withAudience(config.audience)
+            .withIssuer(config.credentialsAuthority)
+            .withClaim(SERVICE_NAME, serviceName)
+            .withIssuedAt(tokenCreatedAt)
+            .withExpiresAt(tokenExpiresAt)
+            .withSubject(API_AUTHORIZATION_SUBJECT)
+            .sign(Algorithm.HMAC512(config.tokens.serviceAuthorization.secret))
+    }
+
     companion object {
         const val UUID_CLAIM = "uuid"
         const val INVITATION_ID_CLAIM = "invitation_id"
         const val API_AUTHORIZATION_SUBJECT = "iam.puconvocation.com"
         const val SESSION_ID_CLAIM = "session"
+        const val SERVICE_NAME = "serviceName"
     }
 }

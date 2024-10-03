@@ -30,7 +30,8 @@ class AuthService(
     private val cache: CacheController,
     private val jsonWebToken: JsonWebToken,
     private val json: ObjectMapper,
-    private val authServiceAddress: String
+    private val authServiceAddress: String,
+    private val currentServiceName: String
 ) {
     suspend fun isAuthorized(role: String, principal: String?): Boolean {
 
@@ -78,7 +79,9 @@ class AuthService(
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
         val response = client.get("${authServiceAddress}/iam/authorized") {
             header("X-IAM-CHECK", "$rule@$uuid")
+            header("Service-Authorization-Token", jsonWebToken.generateServiceAuthorizationToken(currentServiceName))
         }
+
         return response.body<Boolean>()
     }
 }

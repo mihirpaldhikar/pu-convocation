@@ -15,19 +15,14 @@ package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.puconvocation.database.mongodb.entities.RemoteConfig
+import com.puconvocation.database.mongodb.entities.RemoteConfig.Countdown
 import com.puconvocation.database.mongodb.entities.RemoteConfig.Enclosure
+import com.puconvocation.database.mongodb.entities.RemoteConfig.Images
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ChangeRemoteConfigRequest(
-    @JsonProperty("heroTitle") val heroTitle: String?,
-    @JsonProperty("gallery") val gallery: MutableList<RemoteConfig.Gallery>?,
-    @JsonProperty("showInstructionsBanner") val showInstructionsBanner: Boolean?,
-    @JsonProperty("instructionsFileURL") val instructionsFileURL: String?,
-    @JsonProperty("aboutUs") val aboutUs: String?,
-    @JsonProperty("aboutUsImage") val aboutUsImage: String?,
-    @JsonProperty("heroImage") val heroImage: String?,
-    @JsonProperty("showCountDown") val showCountDown: Boolean?,
-    @JsonProperty("countDownEndTime") val countDownEndTime: Long?,
+    @JsonProperty("images") val images: Images?,
+    @JsonProperty("countdown") val countdown: Countdown?,
+    @JsonProperty("showInstructions") val showInstructions: Boolean?,
     @JsonProperty("groundMappings") val groundMappings: MutableList<Enclosure>?,
 )

@@ -15,25 +15,16 @@ package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.ChangeRemoteConfigRequest
 import com.puconvocation.controllers.RemoteConfigController
-import com.puconvocation.services.KafkaService
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
-import io.ktor.server.plugins.origin
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
 fun Routing.remoteConfigRoute(
     remoteConfigController: RemoteConfigController,
-    kafkaService: KafkaService,
 ) {
     route("/config") {
         get("/") {
-            val analyticsHeader = call.request.headers["x-analytics"]
-
-            if (analyticsHeader != null) {
-                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
-            }
-
             val result = remoteConfigController.getConfig()
             call.sendResponse(result)
         }

@@ -82,8 +82,9 @@ object CoreModule {
                 cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
-                authServiceAddress = get<Environment>().service.companionServices.filter { it.serviceName == "authService" }
-                    .first().address
+                authServiceAddress = get<Environment>().service.companionServices.filter { it.serviceName == "auth-service" }
+                    .first().address,
+                currentServiceName =  get<Environment>().service.name
             )
         }
 

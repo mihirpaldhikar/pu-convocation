@@ -11,40 +11,31 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-"use client";
 import Image from "next/image";
-import {
-    AboutUsBlob,
-    Carousel,
-    Convocation,
-    CountDown,
-    GalleryFlagsLeft,
-    GalleryFlagsRight,
-    ProgressBar,
-} from "@components/index";
-import {useRemoteConfig} from "@hooks/index";
-import {useTranslations} from "use-intl";
-import {Link} from "@i18n/routing";
-import {Button} from "@components/ui";
-import {IdentifierForm} from "@components/forms";
+import { AboutUsBlob, Carousel, Convocation, CountDown, GalleryFlagsLeft, GalleryFlagsRight } from "@components/index";
+import { Link } from "@i18n/routing";
+import { Button } from "@components/ui";
+import { IdentifierForm } from "@components/forms";
+import { getTranslations } from "next-intl/server";
+import { RemoteConfigController } from "@controllers/index";
+import { StatusCode } from "@enums/StatusCode";
 
-export default function Home() {
-  const { state: website } = useRemoteConfig();
-  const pageTranslations = useTranslations("pages.landingPage");
-  const coreTranslations = useTranslations("core");
+const remoteConfig = new RemoteConfigController();
 
-  if (website.loading) {
-    return (
-      <div className={"flex min-h-screen"}>
-        <div className={"m-auto"}>
-          <ProgressBar />
-        </div>
-      </div>
-    );
-  }
+export default async function Home() {
+  const response = await remoteConfig.getRemoteConfig();
 
-  if (website.config?.showCountDown) {
-    return (
+  const pageTranslations = await getTranslations("pages.landingPage");
+  const coreTranslations = await getTranslations("core");
+
+  if (
+    response.statusCode === StatusCode.SUCCESS &&
+    "payload" in response &&
+    typeof response.payload === "object"
+  ) {
+    const config = response.payload;
+    return config.countdown.show &&
+      config.countdown.endTime > new Date().getMilliseconds() ? (
       <section className={"flex min-h-dvh"}>
         <div
           className={
@@ -60,117 +51,116 @@ export default function Home() {
           </h1>
           <Convocation fillColor={"#ef4444"} />
           <div className="h-22"></div>
-          <CountDown futureTimestamp={website.config.countDownEndTime ?? 0} />
+          <CountDown futureTimestamp={config.countdown.endTime} />
         </div>
       </section>
-    );
-  }
-
-  return (
-    <section className={"min-h-dvh"}>
-      <div
-        className={"h-[calc(50dvh-5rem)] bg-amber-300 lg:h-[calc(100dvh-5rem)]"}
-      >
-        <div className={"relative h-full"}>
-          <Image
-            alt={pageTranslations("heroImageDescription")}
-            src={website.config?.heroImage ?? ""}
-            fill={true}
-            sizes={"100vw"}
-            style={{
-              maxWidth: "100vw",
-              maxHeight: "auto",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <div
-          className={
-            "absolute inset-x-0 top-20 z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]"
-          }
-        >
-          <h5 className={"text-3xl font-bold md:text-3xl lg:text-6xl"}>
-            {pageTranslations.rich("welcomeText", {
-              small: (chunks) => (
-                <span className={"text-lg font-medium md:text-xl lg:text-2xl"}>
-                  {chunks}
-                </span>
-              ),
-            })}
-          </h5>
-          <div
-            className={
-              "flex items-center space-x-3 pb-5 pt-3 lg:space-x-6 lg:pt-4"
-            }
-          >
-            <h1 className={"text-4xl font-black md:text-5xl lg:text-8xl"}>
-              {website.config?.heroTitle}
-            </h1>
-            <Convocation fillColor={"white"} />
-          </div>
-          <IdentifierForm />
-        </div>
-      </div>
-      <div>
-        <div className={"flex justify-between"}>
-          <GalleryFlagsLeft />
-          <h2
-            className={
-              "pt-14 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
-            }
-          >
-            {pageTranslations("gallery")}
-          </h2>
-          <GalleryFlagsRight />
-        </div>
-        <div
-          className={
-            "flex w-full items-center justify-center px-3 py-10 lg:px-0"
-          }
-        >
-          <div className={"w-full lg:w-2/3"}>
-            <Carousel
-              width={1920}
-              height={1080}
-              images={website.config?.gallery ?? []}
-            />
-          </div>
-        </div>
-        <div className={"flex flex-col justify-between md:flex-row"}>
-          <div className={"flex-1"}>
-            <div className={"relative z-0"}>
-              <AboutUsBlob />
-              <h2
-                className={
-                  "absolute inset-x-10 inset-y-24 z-10 text-2xl font-bold"
-                }
-              >
-                {pageTranslations("aboutUs.title")}
-              </h2>
-            </div>
-            <div className={"flex flex-col space-y-5 px-10 py-5"}>
-              <p>{pageTranslations("aboutUs.description")}</p>
-              <Button asChild={true} className={"w-fit rounded-full"}>
-                <Link href={"https://paruluniversity.ac.in"} target={"_blank"}>
-                  {pageTranslations("aboutUs.knowMore")}
-                </Link>
-              </Button>
-            </div>
-          </div>
-          <div className={"flex flex-1 justify-end px-3 py-3"}>
+    ) : (
+      <section className={"min-h-dvh"}>
+        <div className={"h-[calc(50dvh-5rem)] lg:h-[calc(100dvh-5rem)]"}>
+          <div className={"relative h-full"}>
             <Image
-              src={website.config?.aboutUsImage ?? ""}
-              alt={pageTranslations("aboutUs.title")}
-              width={1920}
-              height={1080}
-              className={"rounded-lg"}
+              alt={pageTranslations("heroImageDescription")}
+              src={config.images.hero.url}
+              fill={true}
+              sizes={"100vw"}
               style={{
+                maxWidth: "100vw",
+                maxHeight: "auto",
                 objectFit: "cover",
               }}
             />
           </div>
+          <div
+            className={`absolute inset-x-0 ${config.instructions.show ? "top-32" : "top-20"} z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]`}
+          >
+            <h5 className={"text-3xl font-bold md:text-3xl lg:text-6xl"}>
+              {pageTranslations.rich("welcomeText", {
+                small: (chunks) => (
+                  <span
+                    className={"text-lg font-medium md:text-xl lg:text-2xl"}
+                  >
+                    {chunks}
+                  </span>
+                ),
+              })}
+            </h5>
+            <div
+              className={
+                "flex items-center space-x-3 pb-5 pt-3 lg:space-x-6 lg:pt-4"
+              }
+            >
+              <h1 className={"text-4xl font-black md:text-5xl lg:text-8xl"}>
+                PU
+              </h1>
+              <Convocation fillColor={"white"} />
+            </div>
+            <IdentifierForm />
+          </div>
         </div>
-      </div>
-    </section>
-  );
+        <div>
+          <div className={"flex justify-between"}>
+            <GalleryFlagsLeft />
+            <h2
+              className={
+                "pt-14 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
+              }
+            >
+              {pageTranslations("gallery")}
+            </h2>
+            <GalleryFlagsRight />
+          </div>
+          <div
+            className={
+              "flex w-full items-center justify-center px-3 py-10 lg:px-0"
+            }
+          >
+            <div className={"w-full lg:w-2/3"}>
+              <Carousel
+                width={1920}
+                height={1080}
+                images={config.images.carousel}
+              />
+            </div>
+          </div>
+          <div className={"flex flex-col justify-between md:flex-row"}>
+            <div className={"flex-1"}>
+              <div className={"relative z-0"}>
+                <AboutUsBlob />
+                <h2
+                  className={
+                    "absolute inset-x-10 inset-y-24 z-10 text-2xl font-bold"
+                  }
+                >
+                  {pageTranslations("aboutUs.title")}
+                </h2>
+              </div>
+              <div className={"flex flex-col space-y-5 px-10 py-5"}>
+                <p>{pageTranslations("aboutUs.description")}</p>
+                <Button asChild={true} className={"w-fit rounded-full"}>
+                  <Link
+                    href={"https://paruluniversity.ac.in"}
+                    target={"_blank"}
+                  >
+                    {pageTranslations("aboutUs.knowMore")}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+            <div className={"flex flex-1 justify-end px-3 py-3"}>
+              <Image
+                src={config.images.aboutUs.url}
+                alt={pageTranslations("aboutUs.title")}
+                width={1920}
+                height={1080}
+                className={"rounded-lg"}
+                style={{
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 }

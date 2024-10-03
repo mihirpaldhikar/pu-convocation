@@ -49,11 +49,11 @@ fun Application.configureRouting() {
 
         remoteConfigRoute(
             remoteConfigController = remoteConfigController,
-            kafkaService = kafkaService,
         )
 
         analyticsRoute(
-            analyticsController = analyticsController
+            analyticsController = analyticsController,
+            kafkaService = kafkaService,
         )
 
         attendeesRoute(

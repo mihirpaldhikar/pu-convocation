@@ -16,18 +16,32 @@ package com.puconvocation.routes
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.enums.ResponseCode
+import com.puconvocation.services.KafkaService
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.plugins.origin
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
+import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
 fun Route.analyticsRoute(
-    analyticsController: AnalyticsController
+    analyticsController: AnalyticsController,
+    kafkaService: KafkaService
 ) {
     route("/analytics") {
+        post("/telemetry") {
+            val analyticsHeader = call.request.headers["x-telemetry"]
+
+            if (analyticsHeader != null) {
+                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
+            }
+            call.respondText("Recorded")
+        }
+
         get("/weeklyTraffic") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val date = call.request.queryParameters["date"] ?: return@get call.sendResponse(

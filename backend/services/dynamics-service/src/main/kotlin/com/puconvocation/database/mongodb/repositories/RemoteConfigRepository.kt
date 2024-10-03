@@ -81,7 +81,7 @@ class RemoteConfigRepository(
         val acknowledged = configCollection.withDocumentClass<RemoteConfig>().updateOne(
             eq(RemoteConfig::active.name, true),
             Updates.combine(
-                Updates.set(RemoteConfig::attendeeLocked.name, lock),
+                Updates.set(RemoteConfig::attendeesLocked.name, lock),
             )
         ).wasAcknowledged()
 

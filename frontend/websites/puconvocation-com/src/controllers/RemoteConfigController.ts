@@ -11,9 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Response} from "@dto/Response";
-import {RemoteConfig} from "@dto/index";
-import {HttpService} from "@services/index";
+import { Response } from "@dto/Response";
+import { RemoteConfig } from "@dto/index";
+import { HttpService } from "@services/index";
 
 export default class RemoteConfigController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
@@ -22,14 +22,8 @@ export default class RemoteConfigController {
 
   private CONFIG_ROUTE = this.BASE_URL.concat("/config");
 
-  public async getRemoteConfig(
-    tracker: string,
-  ): Promise<Response<RemoteConfig | string>> {
-    return await this.httpService.get(`${this.CONFIG_ROUTE}/`, {
-      header: {
-        "x-analytics": tracker,
-      },
-    });
+  public async getRemoteConfig(): Promise<Response<RemoteConfig | string>> {
+    return await this.httpService.get(`${this.CONFIG_ROUTE}/`);
   }
 
   public async changeRemoteConfig(

@@ -13,10 +13,10 @@
 
 "use client";
 
-import {JSX, useEffect, useState} from "react";
+import { JSX, useEffect, useState } from "react";
 import Image from "next/image";
-import {ChevronLeftIcon, ChevronRightIcon} from "@heroicons/react/24/outline";
-import {Button} from "@components/ui";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Button } from "@components/ui";
 
 interface CarouselProps {
   autoPlay?: boolean;
@@ -25,7 +25,6 @@ interface CarouselProps {
   height: number;
   images: Array<{
     url: string;
-    title: string;
     description: string;
   }>;
 }
@@ -64,7 +63,7 @@ export default function Carousel({
             <Image
               key={image.url}
               src={image.url}
-              alt={image.title}
+              alt={image.description}
               width={width}
               height={height}
               className={`block h-full w-full rounded-lg object-cover`}

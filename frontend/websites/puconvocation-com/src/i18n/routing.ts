@@ -11,16 +11,27 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {defineRouting} from "next-intl/routing";
-import {createSharedPathnamesNavigation} from "next-intl/navigation";
+import { defineRouting } from "next-intl/routing";
+import { createSharedPathnamesNavigation } from "next-intl/navigation";
 import config from "./config.json";
+
+interface Lang {
+  code: string;
+  localName: string;
+  name: string;
+  langDir: string;
+  dateFormat: string;
+  hrefLang: string;
+  enabled: boolean;
+  default: boolean;
+}
 
 export const routing = defineRouting({
   locales: config
-    .filter((lang) => lang.enabled === true)
-    .map((lang) => lang.code),
+    .filter((lang: Lang) => lang.enabled)
+    .map((lang: Lang) => lang.code),
 
-  defaultLocale: config.filter((lang) => lang.default === true)[0].code,
+  defaultLocale: config.filter((lang: Lang) => lang.default)[0].code,
 });
 
 export const { Link, redirect, usePathname, useRouter } =
