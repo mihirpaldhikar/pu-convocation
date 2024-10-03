@@ -11,14 +11,16 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import type {Metadata} from "next";
-import {Montserrat} from "next/font/google";
+import type { Metadata } from "next";
+import { Montserrat } from "next/font/google";
 import "@root/globals.css";
-import {ReactNode} from "react";
-import {Toaster} from "@components/ui";
-import {Providers} from "@providers/index";
-import {Footer, Navbar} from "@components/index";
-import {getMessages} from "next-intl/server";
+import { ReactNode } from "react";
+import { Toaster } from "@components/ui";
+import { Providers } from "@providers/index";
+import { Footer, InstructionsBanner, Navbar } from "@components/index";
+import { getMessages } from "next-intl/server";
+import { RemoteConfigController } from "@controllers/index";
+import { StatusCode } from "@enums/StatusCode";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -33,6 +35,8 @@ interface RootLayout {
   params: { locale: string };
 }
 
+const remoteConfig = new RemoteConfigController();
+
 export default async function RootLayout({
   children,
   params: { locale },
@@ -40,6 +44,15 @@ export default async function RootLayout({
   const translations = await getMessages({
     locale: locale,
   });
+
+  const response = await remoteConfig.getRemoteConfig();
+
+  const config =
+    response.statusCode === StatusCode.SUCCESS &&
+    "payload" in response &&
+    typeof response.payload === "object"
+      ? response.payload
+      : null;
 
   return (
     <html lang={locale}>
@@ -49,7 +62,10 @@ export default async function RootLayout({
         <Providers locale={locale} translations={translations}>
           <div className={"flex min-h-dvh flex-col"}>
             <Navbar />
-            <main className={`flex-1 pt-20`}>{children}</main>
+            <main className={`flex-1 pt-20`}>
+              <InstructionsBanner show={config?.instructions.show ?? false} />
+              {children}
+            </main>
             <Toaster />
           </div>
           <Footer />

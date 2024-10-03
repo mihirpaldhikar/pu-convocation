@@ -34,7 +34,8 @@ export default async function Home() {
     typeof response.payload === "object"
   ) {
     const config = response.payload;
-    return config.countdown.show ? (
+    return config.countdown.show &&
+      config.countdown.endTime > new Date().getMilliseconds() ? (
       <section className={"flex min-h-dvh"}>
         <div
           className={
@@ -55,11 +56,7 @@ export default async function Home() {
       </section>
     ) : (
       <section className={"min-h-dvh"}>
-        <div
-          className={
-            "h-[calc(50dvh-5rem)] bg-amber-300 lg:h-[calc(100dvh-5rem)]"
-          }
-        >
+        <div className={"h-[calc(50dvh-5rem)] lg:h-[calc(100dvh-5rem)]"}>
           <div className={"relative h-full"}>
             <Image
               alt={pageTranslations("heroImageDescription")}
@@ -74,9 +71,7 @@ export default async function Home() {
             />
           </div>
           <div
-            className={
-              "absolute inset-x-0 top-20 z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]"
-            }
+            className={`absolute inset-x-0 ${config.instructions.show ? "top-32" : "top-20"} z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]`}
           >
             <h5 className={"text-3xl font-bold md:text-3xl lg:text-6xl"}>
               {pageTranslations.rich("welcomeText", {
