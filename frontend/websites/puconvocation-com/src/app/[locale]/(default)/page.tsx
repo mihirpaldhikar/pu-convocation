@@ -34,8 +34,7 @@ export default async function Home() {
     typeof response.payload === "object"
   ) {
     const config = response.payload;
-
-    return config.showCountDown ? (
+    return config.countdown.show ? (
       <section className={"flex min-h-dvh"}>
         <div
           className={
@@ -51,7 +50,7 @@ export default async function Home() {
           </h1>
           <Convocation fillColor={"#ef4444"} />
           <div className="h-22"></div>
-          <CountDown futureTimestamp={config.countDownEndTime ?? 0} />
+          <CountDown futureTimestamp={config.countdown.endTime} />
         </div>
       </section>
     ) : (
@@ -64,7 +63,7 @@ export default async function Home() {
           <div className={"relative h-full"}>
             <Image
               alt={pageTranslations("heroImageDescription")}
-              src={config.heroImage}
+              src={config.images.hero.url}
               fill={true}
               sizes={"100vw"}
               style={{
@@ -96,7 +95,7 @@ export default async function Home() {
               }
             >
               <h1 className={"text-4xl font-black md:text-5xl lg:text-8xl"}>
-                {config.heroTitle}
+                PU
               </h1>
               <Convocation fillColor={"white"} />
             </div>
@@ -121,7 +120,11 @@ export default async function Home() {
             }
           >
             <div className={"w-full lg:w-2/3"}>
-              <Carousel width={1920} height={1080} images={config.gallery} />
+              <Carousel
+                width={1920}
+                height={1080}
+                images={config.images.carousel}
+              />
             </div>
           </div>
           <div className={"flex flex-col justify-between md:flex-row"}>
@@ -150,7 +153,7 @@ export default async function Home() {
             </div>
             <div className={"flex flex-1 justify-end px-3 py-3"}>
               <Image
-                src={config.aboutUsImage}
+                src={config.images.aboutUs.url}
                 alt={pageTranslations("aboutUs.title")}
                 width={1920}
                 height={1080}

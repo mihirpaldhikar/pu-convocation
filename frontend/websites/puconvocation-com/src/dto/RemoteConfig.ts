@@ -11,21 +11,29 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
+import { Enclosure } from "@dto/index";
+
+interface ImageMetadata {
+  url: string;
+  description: string;
+}
+
 export default interface RemoteConfig {
   id: string;
   active: boolean;
-  attendeeLocked: boolean;
-  heroTitle: string;
-  gallery: Array<{
-    url: string;
-    title: string;
-    description: string;
-  }>;
-  showInstructionsBanner: boolean;
-  instructionsFileURL: string;
-  aboutUs: string;
-  aboutUsImage: string;
-  heroImage: string;
-  showCountDown: boolean;
-  countDownEndTime: number;
+  attendeesLocked: boolean;
+  images: {
+    carousel: Array<ImageMetadata>;
+    aboutUs: ImageMetadata;
+    hero: ImageMetadata;
+  };
+  countdown: {
+    show: boolean;
+    endTime: number;
+  };
+  instructions: {
+    show: boolean;
+    document: string;
+  };
+  groundMappings: Array<Enclosure>;
 }
