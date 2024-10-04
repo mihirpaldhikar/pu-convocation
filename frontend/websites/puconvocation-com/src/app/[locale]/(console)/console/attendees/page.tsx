@@ -182,7 +182,7 @@ export default function AttendeePage(): JSX.Element {
                     <Button
                       onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
                       disabled={page === 0}
-                      className="flex items-center justify-center rounded border border-gray-300 bg-white p-2 hover:bg-gray-300"
+                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
                     >
                       <ChevronLeftIcon className="h-6 w-6 text-black" />
                     </Button>
@@ -192,7 +192,7 @@ export default function AttendeePage(): JSX.Element {
                     <Button
                       onClick={() => setPage((prev) => prev + 1)}
                       disabled={currentAttendees.length < 10}
-                      className="flex items-center justify-center rounded border border-gray-300 bg-white p-2 hover:bg-gray-300"
+                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
                     >
                       <ChevronRightIcon className="h-6 w-6 text-black" />
                     </Button>
