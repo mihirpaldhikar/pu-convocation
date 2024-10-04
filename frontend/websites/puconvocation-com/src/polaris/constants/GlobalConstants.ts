@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { type PolarisConfig, type Style } from "../interfaces";
+import { type PolarisConfig } from "../interfaces";
 
 export const DEFAULT_POLARIS_CONFIG: PolarisConfig = {
   block: {
@@ -55,10 +55,3 @@ export const DEFAULT_POLARIS_CONFIG: PolarisConfig = {
     },
   },
 };
-
-export const DEFAULT_LINK_STYLE: Style[] = [
-  {
-    name: "text-decoration",
-    value: "underline",
-  },
-];

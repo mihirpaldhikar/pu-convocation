@@ -32,7 +32,7 @@ export default class ParagraphBlockPlugin
     this.name = "Paragraph";
     this.description = "Just start typing.";
     this.role = "paragraph";
-    this.icon = <ParagraphIcon size={32} />;
+    this.icon = <ParagraphIcon />;
   }
 
   onInitialized(content: string): {

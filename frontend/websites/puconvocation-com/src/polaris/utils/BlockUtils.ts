@@ -141,10 +141,7 @@ export function traverseAndFindBlockPosition(
       typeof masterBlocks[i].role === "string" &&
       (masterBlocks[i].role as string).toLowerCase().includes("list")
     ) {
-      traverseAndFindBlockPosition(
-        masterBlocks[i].data as BlockSchema[],
-        targetBlock,
-      );
+      traverseAndUpdate(masterBlocks[i].data as BlockSchema[], targetBlock);
     }
   }
   return -1;

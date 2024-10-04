@@ -36,7 +36,6 @@ import {
   nodeInViewPort,
   removeEmptyInlineAnnotations,
   rgbStringToHex,
-  serializeFile,
   setCaretOffset,
   subscribeToEditorEvent,
   traverseAndDelete,
@@ -71,7 +70,6 @@ import {
   TitleBlockPlugin,
   YouTubeVideoBlockPlugin
 } from "../../blocks";
-import { useHotkeys } from "react-hotkeys-hook";
 
 declare global {
   interface Window {
@@ -85,7 +83,7 @@ interface EditorProps {
   config?: PolarisConfig;
   className?: string;
   annotationActions?: Action[];
-  onAttachmentSelected?: (data: File | string) => Promise<string>;
+  onAttachmentSelected: (data: File | string) => Promise<string>;
 }
 
 /**
@@ -113,6 +111,14 @@ export default function Editor({
   className,
   onAttachmentSelected,
 }: EditorProps): JSX.Element {
+  const popupNode = useRef<HTMLDivElement>(null);
+  const dialogNode = useRef<HTMLDivElement>(null);
+  const editorNode = useRef<HTMLDivElement>(null);
+  const screenOffset = useRef(0);
+  const [popUpRoot, setPopupRoot] = useState<Root>();
+  const [dialogRoot, setDialogRoot] = useState<Root>();
+  const isActionMenuOpen = useRef<boolean>(false);
+
   window.registeredBlocks = useMemo(() => {
     blockPlugin.registerBlock(new ParagraphBlockPlugin());
     blockPlugin.registerBlock(new TitleBlockPlugin());
@@ -128,23 +134,6 @@ export default function Editor({
     blockPlugin.registerBlock(new BulletListBlockPlugin());
     return blockPlugin.registeredBlocks();
   }, []);
-
-  const popupNode = useRef<HTMLDivElement>(null);
-  const dialogNode = useRef<HTMLDivElement>(null);
-  const editorNode = useRef<HTMLDivElement>(null);
-  const screenOffset = useRef(0);
-  const [popUpRoot, setPopupRoot] = useState<Root>();
-  const [dialogRoot, setDialogRoot] = useState<Root>();
-  const isActionMenuOpen = useRef<boolean>(false);
-  const isDocumentSelected = useRef(false);
-  const [focusedNode, setFocusedNode] = useState<
-    | {
-        nodeId: string;
-        caretOffset: number;
-        nodeIndex?: number;
-      }
-    | undefined
-  >(undefined);
 
   const registeredBlockActions: Action[] = useMemo(() => {
     return Array.from(blockPlugin.registeredBlocks().values()).map((block) => {
@@ -167,23 +156,26 @@ export default function Editor({
     return [...registeredBlockActions, ...BlockActions];
   }, [registeredBlockActions]);
 
-  let defaultAnnotationActions: readonly Action[] = useMemo(() => {
-    return cloneDeep(AnnotationActions).concat(...(annotationActions ?? []));
-  }, [annotationActions]);
+  let defaultAnnotationActions: readonly Action[] = cloneDeep(
+    AnnotationActions,
+  ).concat(...(annotationActions ?? []));
 
   const [masterBlocks, updateMasterBlocks] = useState<BlockSchema[]>(
     blob.blocks,
   );
-
-  const rootsCreated = useRef(false);
+  const [focusedNode, setFocusedNode] = useState<
+    | {
+        nodeId: string;
+        caretOffset: number;
+        nodeIndex?: number;
+      }
+    | undefined
+  >(undefined);
 
   useEffect(() => {
-    if (!rootsCreated.current) {
-      setPopupRoot(createRoot(popupNode.current as HTMLDivElement));
-      setDialogRoot(createRoot(dialogNode.current as HTMLDivElement));
-      rootsCreated.current = true;
-    }
-  }, []);
+    setPopupRoot(createRoot(popupNode.current as HTMLDivElement));
+    setDialogRoot(createRoot(dialogNode.current as HTMLDivElement));
+  }, [blob.id]);
 
   const propagateChanges = useCallback(
     (
@@ -195,8 +187,32 @@ export default function Editor({
       },
     ) => {
       updateMasterBlocks(blocks);
-      if (focus !== undefined) {
-        setFocusedNode({ ...focus });
+      setFocusedNode(focus);
+      dispatchEditorEvent(`onChanged-${blob.id}`, {
+        ...blob,
+        blocks: masterBlocks,
+      } satisfies Blob);
+    },
+    [blob, masterBlocks],
+  );
+
+  const changeHandler = useCallback(
+    (block: BlockSchema, focus?: boolean) => {
+      const blockIndex: number = masterBlocks
+        .map((blk) => blk.id)
+        .indexOf(block.id);
+      if (blockIndex === -1) {
+        traverseAndUpdate(masterBlocks, block);
+      } else {
+        masterBlocks[blockIndex] = block;
+        updateMasterBlocks(masterBlocks);
+      }
+      if (focus !== undefined && focus) {
+        setFocusedNode({
+          nodeId: block.id,
+          nodeIndex: 0,
+          caretOffset: 0,
+        });
       }
       dispatchEditorEvent(`onChanged-${blob.id}`, {
         ...blob,
@@ -258,12 +274,11 @@ export default function Editor({
             popUpRoot?.render(<Fragment />);
           }}
           onEscape={(query) => {
-            const focusData = {
+            setFocusedNode({
               nodeId: block.id,
               caretOffset: caretOffset + query.length + 1,
               nodeIndex,
-            };
-            setFocusedNode({ ...focusData });
+            });
           }}
           onActionSelected={(execute) => {
             switch (execute.type) {
@@ -428,334 +443,256 @@ export default function Editor({
     [actionMenuTriggerHandler, masterBlocks, popUpRoot],
   );
 
-  useHotkeys(
-    "ctrl+s",
-    () => {
-      dispatchEditorEvent(`onSaved-${blob.id}`, {
-        ...blob,
-        blocks: masterBlocks,
-      } satisfies Blob);
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-    },
-  );
+  const keyboardManager = useCallback(
+    (event: KeyboardEvent): void => {
+      const activeNode = document.activeElement;
+      switch (event.key.toLowerCase()) {
+        case "s": {
+          if (event.ctrlKey) {
+            event.preventDefault();
+            dispatchEditorEvent(`onSaved-${blob.id}`, {
+              ...blob,
+              blocks: masterBlocks,
+            } satisfies Blob);
+          }
+          break;
+        }
+        case "/": {
+          if (
+            isActionMenuOpen.current ||
+            activeNode == null ||
+            activeNode.getAttribute("contenteditable") !== "true"
+          )
+            return;
+          const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
+          if (activeBlock != null) {
+            actionMenuTriggerHandler(
+              activeBlock,
+              activeNode as HTMLElement,
+              false,
+            );
+          }
+          break;
+        }
+        case "arrowup": {
+          if (
+            isActionMenuOpen.current ||
+            activeNode == null ||
+            activeNode.getAttribute("contenteditable") !== "true" ||
+            !(editorNode.current?.contains(activeNode) ?? false)
+          )
+            return;
+          event.preventDefault();
 
-  useHotkeys(
-    "ctrl+a",
-    () => {
-      const range = new Range();
-      range.selectNodeContents(editorNode.current as HTMLElement);
-      window.getSelection()?.removeAllRanges();
-      window.getSelection()?.addRange(range);
-      isDocumentSelected.current = true;
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      ignoreEventWhen: () => {
-        return (
-          editorNode.current === null ||
-          !editorNode.current?.contains(document.activeElement)
-        );
-      },
-    },
-  );
+          const caretOffset = getCaretOffset(activeNode as HTMLElement);
+          const previousNode = findPreviousTextNode(
+            activeNode as HTMLElement,
+            "top",
+          );
+          if (previousNode != null) {
+            const nodeAtCaretOffset = getNodeAt(previousNode, caretOffset);
+            const jumpNode =
+              caretOffset > previousNode.innerText.length
+                ? (previousNode.lastChild ?? previousNode)
+                : nodeAtCaretOffset.nodeType === Node.ELEMENT_NODE
+                  ? (nodeAtCaretOffset.firstChild ?? nodeAtCaretOffset)
+                  : nodeAtCaretOffset;
 
-  useHotkeys(
-    "/",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
-      if (activeBlock != null) {
-        actionMenuTriggerHandler(activeBlock, activeNode, false);
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      ignoreEventWhen: () => {
-        return (
-          document.activeElement == null ||
-          document.activeElement.getAttribute("contenteditable") !== "true"
-        );
-      },
-    },
-  );
+            const computedCaretOffset =
+              caretOffset > previousNode.innerText.length
+                ? previousNode.lastChild?.textContent == null
+                  ? 0
+                  : previousNode.lastChild.textContent.length
+                : caretOffset > (jumpNode.textContent as string).length
+                  ? jumpNode.textContent == null
+                    ? 0
+                    : jumpNode.textContent.length
+                  : caretOffset;
+            setCaretOffset(jumpNode, computedCaretOffset);
+          }
+          break;
+        }
+        case "arrowdown": {
+          if (
+            isActionMenuOpen.current ||
+            activeNode == null ||
+            activeNode.getAttribute("contenteditable") !== "true" ||
+            !(editorNode.current?.contains(activeNode) ?? false)
+          )
+            return;
 
-  useHotkeys(
-    "arrowup",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const caretOffset = getCaretOffset(activeNode);
-      const previousNode = findPreviousTextNode(activeNode, "top");
-      if (previousNode != null) {
-        const nodeAtCaretOffset = getNodeAt(previousNode, caretOffset);
-        const jumpNode =
-          caretOffset > previousNode.innerText.length
-            ? (previousNode.lastChild ?? previousNode)
-            : nodeAtCaretOffset.nodeType === Node.ELEMENT_NODE
-              ? (nodeAtCaretOffset.firstChild ?? nodeAtCaretOffset)
-              : nodeAtCaretOffset;
+          event.preventDefault();
 
-        const computedCaretOffset =
-          caretOffset > previousNode.innerText.length
-            ? previousNode.lastChild?.textContent == null
-              ? 0
-              : previousNode.lastChild.textContent.length
-            : caretOffset > (jumpNode.textContent as string).length
-              ? jumpNode.textContent == null
+          const caretOffset = getCaretOffset(activeNode as HTMLElement);
+          const nextNode = findNextTextNode(
+            activeNode as HTMLElement,
+            "bottom",
+          );
+          if (nextNode != null) {
+            const nodeAtCaretOffset = getNodeAt(nextNode, caretOffset);
+            const jumpNode =
+              caretOffset > nextNode.innerText.length
+                ? (nextNode.firstChild ?? nextNode)
+                : nodeAtCaretOffset.nodeType === Node.ELEMENT_NODE
+                  ? (nodeAtCaretOffset.firstChild ?? nodeAtCaretOffset)
+                  : nodeAtCaretOffset;
+
+            const computedCaretOffset =
+              caretOffset > nextNode.innerText.length
+                ? nextNode.firstChild?.textContent == null
+                  ? 0
+                  : nextNode.firstChild.textContent.length
+                : caretOffset > (jumpNode.textContent as string).length
+                  ? jumpNode.textContent == null
+                    ? 0
+                    : jumpNode.textContent.length
+                  : caretOffset;
+            setCaretOffset(jumpNode, computedCaretOffset);
+          }
+
+          break;
+        }
+        case "arrowleft": {
+          if (
+            isActionMenuOpen.current ||
+            activeNode == null ||
+            activeNode.getAttribute("contenteditable") !== "true"
+          ) {
+            return;
+          }
+
+          const caretOffset = getCaretOffset(activeNode as HTMLElement);
+
+          if (caretOffset !== 0) {
+            return;
+          }
+
+          event.preventDefault();
+          const previousNode = findPreviousTextNode(
+            activeNode as HTMLElement,
+            "left",
+          );
+          if (previousNode != null) {
+            const previousBlockChildNodeIndex =
+              previousNode?.lastChild?.textContent === ""
+                ? previousNode.childNodes.length - 2
+                : previousNode.childNodes.length - 1;
+
+            const jumpNode =
+              previousBlockChildNodeIndex === -1
+                ? previousNode
+                : previousNode.childNodes[previousBlockChildNodeIndex]
+                      .nodeType === Node.ELEMENT_NODE
+                  ? (previousNode.childNodes[previousBlockChildNodeIndex]
+                      .firstChild ?? previousNode)
+                  : previousNode.childNodes[previousBlockChildNodeIndex];
+
+            const computedCaretOffset =
+              previousBlockChildNodeIndex === -1
                 ? 0
-                : jumpNode.textContent.length
-              : caretOffset;
-        setCaretOffset(jumpNode, computedCaretOffset);
+                : previousNode.childNodes[previousBlockChildNodeIndex] != null
+                  ? previousNode.childNodes[previousBlockChildNodeIndex]
+                      .nodeType === Node.ELEMENT_NODE
+                    ? (
+                        previousNode.childNodes[previousBlockChildNodeIndex]
+                          .textContent as string
+                      ).length
+                    : (previousNode.childNodes[previousBlockChildNodeIndex]
+                        .textContent?.length ?? previousNode.innerText.length)
+                  : previousNode.innerText.length;
+            setCaretOffset(jumpNode, computedCaretOffset);
+          }
+          break;
+        }
+        case "arrowright": {
+          if (
+            isActionMenuOpen.current ||
+            activeNode == null ||
+            activeNode.getAttribute("contenteditable") !== "true"
+          ) {
+            return;
+          }
+
+          const caretOffset = getCaretOffset(activeNode as HTMLElement);
+
+          if (caretOffset !== (activeNode as HTMLElement).innerText.length) {
+            return;
+          }
+
+          event.preventDefault();
+          const nextNode = findNextTextNode(activeNode, "right");
+          if (nextNode != null) {
+            setCaretOffset(nextNode.firstChild ?? nextNode, 0);
+          }
+          break;
+        }
+        case "b": {
+          if (event.ctrlKey) {
+            event.preventDefault();
+
+            if (activeNode == null) return;
+            const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
+            if (activeBlock == null) return;
+
+            const style: Style[] = [
+              {
+                name: "font-weight",
+                value: "bold",
+              },
+            ];
+
+            inlineAnnotationsManager(activeNode as HTMLElement, style);
+
+            activeBlock.data = activeNode.innerHTML;
+            changeHandler(activeBlock);
+          }
+          break;
+        }
+        case "i": {
+          if (event.ctrlKey) {
+            event.preventDefault();
+
+            if (activeNode == null) return;
+            const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
+            if (activeBlock == null) return;
+
+            const style: Style[] = [
+              {
+                name: "font-style",
+                value: "italic",
+              },
+            ];
+
+            inlineAnnotationsManager(activeNode as HTMLElement, style);
+            activeBlock.data = activeNode.innerHTML;
+            changeHandler(activeBlock);
+          }
+          break;
+        }
+        case "u": {
+          if (event.ctrlKey) {
+            event.preventDefault();
+
+            if (activeNode == null) return;
+            const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
+            if (activeBlock == null) return;
+
+            const style: Style[] = [
+              {
+                name: "text-decoration",
+                value: "underline",
+              },
+            ];
+
+            inlineAnnotationsManager(activeNode as HTMLElement, style);
+            activeBlock.data = activeNode.innerHTML;
+            changeHandler(activeBlock);
+          }
+          break;
+        }
       }
     },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return (
-          isActionMenuOpen.current ||
-          document.activeElement == null ||
-          document.activeElement.getAttribute("contenteditable") !== "true" ||
-          !(editorNode.current?.contains(document.activeElement) ?? false)
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "arrowdown",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const caretOffset = getCaretOffset(activeNode);
-      const nextNode = findNextTextNode(activeNode, "bottom");
-      if (nextNode != null) {
-        const nodeAtCaretOffset = getNodeAt(nextNode, caretOffset);
-        const jumpNode =
-          caretOffset > nextNode.innerText.length
-            ? (nextNode.firstChild ?? nextNode)
-            : nodeAtCaretOffset.nodeType === Node.ELEMENT_NODE
-              ? (nodeAtCaretOffset.firstChild ?? nodeAtCaretOffset)
-              : nodeAtCaretOffset;
-
-        const computedCaretOffset =
-          caretOffset > nextNode.innerText.length
-            ? nextNode.firstChild?.textContent == null
-              ? 0
-              : nextNode.firstChild.textContent.length
-            : caretOffset > (jumpNode.textContent as string).length
-              ? jumpNode.textContent == null
-                ? 0
-                : jumpNode.textContent.length
-              : caretOffset;
-        setCaretOffset(jumpNode, computedCaretOffset);
-      }
-    },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return (
-          isActionMenuOpen.current ||
-          document.activeElement == null ||
-          document.activeElement.getAttribute("contenteditable") !== "true" ||
-          !(editorNode.current?.contains(document.activeElement) ?? false)
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "arrowleft",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const previousNode = findPreviousTextNode(activeNode, "left");
-      if (previousNode != null) {
-        const previousBlockChildNodeIndex =
-          previousNode?.lastChild?.textContent === ""
-            ? previousNode.childNodes.length - 2
-            : previousNode.childNodes.length - 1;
-
-        const jumpNode =
-          previousBlockChildNodeIndex === -1
-            ? previousNode
-            : previousNode.childNodes[previousBlockChildNodeIndex].nodeType ===
-                Node.ELEMENT_NODE
-              ? (previousNode.childNodes[previousBlockChildNodeIndex]
-                  .firstChild ?? previousNode)
-              : previousNode.childNodes[previousBlockChildNodeIndex];
-
-        const computedCaretOffset =
-          previousBlockChildNodeIndex === -1
-            ? 0
-            : previousNode.childNodes[previousBlockChildNodeIndex] != null
-              ? previousNode.childNodes[previousBlockChildNodeIndex]
-                  .nodeType === Node.ELEMENT_NODE
-                ? (
-                    previousNode.childNodes[previousBlockChildNodeIndex]
-                      .textContent as string
-                  ).length
-                : (previousNode.childNodes[previousBlockChildNodeIndex]
-                    .textContent?.length ?? previousNode.innerText.length)
-              : previousNode.innerText.length;
-        setCaretOffset(jumpNode, computedCaretOffset);
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      ignoreEventWhen: () => {
-        return (
-          isActionMenuOpen.current ||
-          document.activeElement == null ||
-          document.activeElement.getAttribute("contenteditable") !== "true" ||
-          getCaretOffset(document.activeElement) !== 0
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "arrowright",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const nextNode = findNextTextNode(activeNode, "right");
-      if (nextNode != null) {
-        setCaretOffset(nextNode.firstChild ?? nextNode, 0);
-      }
-    },
-    {
-      preventDefault: true,
-      enableOnContentEditable: true,
-      ignoreEventWhen: () => {
-        return (
-          isActionMenuOpen.current ||
-          document.activeElement == null ||
-          document.activeElement.getAttribute("contenteditable") !== "true" ||
-          getCaretOffset(document.activeElement) !==
-            (document.activeElement as HTMLElement).innerText.length
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "ctrl+b",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
-      if (activeBlock == null) return;
-
-      const style: Style[] = [
-        {
-          name: "font-weight",
-          value: "bold",
-        },
-      ];
-
-      inlineAnnotationsManager(activeNode, style);
-
-      activeBlock.data = activeNode.innerHTML;
-      changeHandler(activeBlock);
-    },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return (
-          document.activeElement?.getAttribute("contenteditable") !== "true"
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "ctrl+i",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
-      if (activeBlock == null) return;
-
-      const style: Style[] = [
-        {
-          name: "font-style",
-          value: "italic",
-        },
-      ];
-
-      inlineAnnotationsManager(activeNode, style);
-
-      activeBlock.data = activeNode.innerHTML;
-      changeHandler(activeBlock);
-    },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return (
-          document.activeElement?.getAttribute("contenteditable") !== "true"
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "ctrl+u",
-    () => {
-      const activeNode = document.activeElement as HTMLElement;
-      const activeBlock = traverseAndFind(masterBlocks, activeNode.id);
-      if (activeBlock == null) return;
-
-      const style: Style[] = [
-        {
-          name: "text-decoration",
-          value: "underline",
-        },
-      ];
-
-      inlineAnnotationsManager(activeNode, style);
-
-      activeBlock.data = activeNode.innerHTML;
-      changeHandler(activeBlock);
-    },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return (
-          document.activeElement?.getAttribute("contenteditable") !== "true"
-        );
-      },
-    },
-  );
-
-  useHotkeys(
-    "backspace",
-    () => {
-      const emptyBlock: BlockSchema[] = [
-        {
-          id: generateUUID(),
-          role: "paragraph",
-          data: "",
-          style: [],
-        },
-      ];
-
-      propagateChanges(...[emptyBlock], {
-        nodeId: emptyBlock[0].id,
-        caretOffset: 0,
-        nodeIndex: 0,
-      });
-    },
-    {
-      enableOnContentEditable: true,
-      preventDefault: true,
-      ignoreEventWhen: () => {
-        return !isDocumentSelected.current;
-      },
-    },
+    [blob, masterBlocks, actionMenuTriggerHandler, changeHandler],
   );
 
   const scrollHandler = useCallback(() => {
@@ -797,10 +734,8 @@ export default function Editor({
   useEffect(() => {
     window.addEventListener("scroll", scrollHandler);
     window.addEventListener("scrollend", scrollEndHandler);
+    window.addEventListener("keydown", keyboardManager);
     window.addEventListener("input", mobileInputHandler);
-    window.addEventListener("click", () => {
-      isDocumentSelected.current = false;
-    });
     subscribeToEditorEvent(`saveEditor-${blob.id}`, () => {
       dispatchEditorEvent(`onSaved-${blob.id}`, {
         ...blob,
@@ -810,12 +745,17 @@ export default function Editor({
     return () => {
       window.removeEventListener("scroll", scrollHandler);
       window.removeEventListener("scrollend", scrollEndHandler);
+      window.removeEventListener("keydown", keyboardManager);
       window.removeEventListener("input", mobileInputHandler);
-      window.removeEventListener("click", () => {
-        isDocumentSelected.current = false;
-      });
     };
-  }, [blob, masterBlocks, mobileInputHandler, scrollEndHandler, scrollHandler]);
+  }, [
+    blob,
+    keyboardManager,
+    masterBlocks,
+    mobileInputHandler,
+    scrollEndHandler,
+    scrollHandler,
+  ]);
 
   useEffect(() => {
     if (focusedNode !== undefined) {
@@ -856,30 +796,6 @@ export default function Editor({
       caretOffset: focusOn?.caretOffset ?? 0,
       nodeIndex: focusOn?.nodeChildIndex ?? 0,
     });
-  }
-
-  function changeHandler(block: BlockSchema, focus?: boolean): void {
-    const blockIndex: number = masterBlocks
-      .map((blk) => blk.id)
-      .indexOf(block.id);
-    if (blockIndex === -1) {
-      traverseAndUpdate(masterBlocks, block);
-    } else {
-      masterBlocks[blockIndex] = block;
-      updateMasterBlocks(masterBlocks);
-    }
-    if (focus !== undefined && focus) {
-      const focusData = {
-        nodeId: block.id,
-        nodeIndex: 0,
-        caretOffset: 0,
-      };
-      setFocusedNode({ ...focusData });
-    }
-    dispatchEditorEvent(`onChanged-${blob.id}`, {
-      ...blob,
-      blocks: masterBlocks,
-    } satisfies Blob);
   }
 
   function deletionHandler(
@@ -927,12 +843,7 @@ export default function Editor({
 
     const activeNode = getBlockNode(block.id);
 
-    if (
-      !editable ||
-      selection == null ||
-      activeNode == null ||
-      isDocumentSelected.current
-    ) {
+    if (!editable || selection == null || activeNode == null) {
       return;
     }
     screenOffset.current = window.scrollY;
@@ -1058,55 +969,29 @@ export default function Editor({
       return;
     }
 
-    if (onAttachmentSelected !== undefined) {
-      void onAttachmentSelected(data).then((str) => {
-        block.data.url = str;
-        const blockIndex = masterBlocks.indexOf(block);
-        if (blockIndex === -1) {
-          const activeNode = getBlockNode(block.id) as HTMLElement;
-          const listMetadata = getListMetadata(activeNode);
-          if (listMetadata != null) {
-            const parentBlock = traverseAndFind(
-              masterBlocks,
-              listMetadata.parentId,
-            ) as BlockSchema;
-            traverseAndUpdate(parentBlock.data as BlockSchema[], block);
-          } else {
-            traverseAndUpdate(masterBlocks, block);
-          }
+    void onAttachmentSelected(data).then((str) => {
+      block.data.url = str;
+      const blockIndex = masterBlocks.indexOf(block);
+      if (blockIndex === -1) {
+        const activeNode = getBlockNode(block.id) as HTMLElement;
+        const listMetadata = getListMetadata(activeNode);
+        if (listMetadata != null) {
+          const parentBlock = traverseAndFind(
+            masterBlocks,
+            listMetadata.parentId,
+          ) as BlockSchema;
+          traverseAndUpdate(parentBlock.data as BlockSchema[], block);
         } else {
-          masterBlocks[blockIndex] = block;
+          traverseAndUpdate(masterBlocks, block);
         }
-        propagateChanges(masterBlocks, {
-          nodeId: block.id,
-          caretOffset: 0,
-        });
+      } else {
+        masterBlocks[blockIndex] = block;
+      }
+      propagateChanges(masterBlocks, {
+        nodeId: block.id,
+        caretOffset: 0,
       });
-    } else if (typeof data !== "string") {
-      void serializeFile(data).then((payload) => {
-        block.data.url = payload;
-        const blockIndex = masterBlocks.indexOf(block);
-        if (blockIndex === -1) {
-          const activeNode = getBlockNode(block.id) as HTMLElement;
-          const listMetadata = getListMetadata(activeNode);
-          if (listMetadata != null) {
-            const parentBlock = traverseAndFind(
-              masterBlocks,
-              listMetadata.parentId,
-            ) as BlockSchema;
-            traverseAndUpdate(parentBlock.data as BlockSchema[], block);
-          } else {
-            traverseAndUpdate(masterBlocks, block);
-          }
-        } else {
-          masterBlocks[blockIndex] = block;
-        }
-        propagateChanges(masterBlocks, {
-          nodeId: block.id,
-          caretOffset: 0,
-        });
-      });
-    }
+    });
   }
 
   function markdownHandler(block: BlockSchema, focusBlockId?: string): void {

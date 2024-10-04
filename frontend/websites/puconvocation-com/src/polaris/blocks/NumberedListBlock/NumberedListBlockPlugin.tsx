@@ -30,7 +30,7 @@ export default class NumberedListBlockPlugin
     this.name = "Numbered List";
     this.description = "Create list with numbers.";
     this.role = "numberedList";
-    this.icon = <NumberedListIcon size={32} />;
+    this.icon = <NumberedListIcon />;
   }
 
   onInitialized(content: string): {

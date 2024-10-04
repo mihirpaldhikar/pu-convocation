@@ -23,4 +23,3 @@ export type { default as Table } from "./Table";
 export type { default as BlockExecutable } from "./BlockExecutable";
 export type { default as BlockLifecycle } from "./BlockLifecycle";
 export type { default as GenericBlockPlugin } from "./GenericBlockPlugin";
-export type { default as Piece } from "./Piece";

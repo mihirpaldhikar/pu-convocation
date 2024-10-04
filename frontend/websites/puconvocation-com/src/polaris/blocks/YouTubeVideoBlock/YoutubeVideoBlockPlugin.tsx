@@ -31,7 +31,7 @@ export default class YoutubeVideoBlockPlugin
     this.name = "Youtube Video";
     this.description = "Add a YouTube Video.";
     this.role = "youtubeVideo";
-    this.icon = <YouTubeIcon size={32} />;
+    this.icon = <YouTubeIcon />;
   }
 
   onInitialized(content: string): {

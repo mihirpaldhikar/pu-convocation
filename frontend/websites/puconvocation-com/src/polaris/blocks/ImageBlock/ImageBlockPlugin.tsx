@@ -31,7 +31,7 @@ export default class ImageBlockPlugin
     this.name = "Image";
     this.description = "Add an image.";
     this.role = "image";
-    this.icon = <ImageIcon size={32} />;
+    this.icon = <ImageIcon />;
   }
 
   onInitialized(content: string): {

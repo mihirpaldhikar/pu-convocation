@@ -32,7 +32,7 @@ export default class HeadingBlockPlugin
     this.name = "Heading";
     this.description = "Small section heading.";
     this.role = "heading";
-    this.icon = <HeadingIcon size={32} />;
+    this.icon = <HeadingIcon />;
   }
 
   onInitialized(content: string): {

@@ -12,10 +12,9 @@
  */
 
 import { type BlockSchema, type Coordinates, type Style } from "../interfaces";
-import { DEFAULT_LINK_STYLE, INLINE_ANNOTATIONS_NODE, LINK_ATTRIBUTE, NODE_TYPE } from "../constants";
+import { INLINE_ANNOTATIONS_NODE, LINK_ATTRIBUTE, NODE_TYPE } from "../constants";
 import { getBlockNode } from "./BlockUtils";
 import { generateUUID } from "./SharedUtils";
-import { kebabCase } from "lodash";
 
 /**
  *
@@ -29,7 +28,7 @@ import { kebabCase } from "lodash";
  * @author Mihir Paldhikar
  */
 
-export function getCaretOffset(element: Element | null): number {
+export function getCaretOffset(element: HTMLElement | null): number {
   let position = 0;
   if (element === null) return position;
   const selection = window.getSelection();
@@ -314,17 +313,27 @@ export function generateInlineAnnotationsString(
     tempNode.setAttribute(NODE_TYPE, INLINE_ANNOTATIONS_NODE);
     tempNode.innerText = nodeFragments[i].textContent as string;
 
-    for (const sty of style) {
+    for (let i = 0; i < style.length; i++) {
       if (
-        tempNode.style.getPropertyValue(style[i].name).includes("rgb")
+        tempNode.style.getPropertyValue(style[i].name).length === 0 ||
+        (tempNode.style.getPropertyValue(style[i].name).includes("rgb")
           ? rgbStringToHex(tempNode.style.getPropertyValue(style[i].name)) !==
             style[i].value
-          : tempNode.style.getPropertyValue(kebabCase(style[i].name)) !==
-            kebabCase(style[i].value)
+          : false) ||
+        style[i].name.includes("-link") ||
+        style[i].name.includes("link-") ||
+        style[i].name.includes("-link-") ||
+        tempNode.style.getPropertyValue(style[i].name) !== style[i].value
       ) {
-        tempNode.style.setProperty(kebabCase(sty.name), kebabCase(sty.value));
+        tempNode.style.setProperty(
+          style[i].name
+            .replaceAll("-link", "")
+            .replaceAll("link-", "")
+            .replaceAll("-link-", ""),
+          style[i].value,
+        );
       } else {
-        tempNode.style.removeProperty(kebabCase(sty.name));
+        tempNode.style.removeProperty(style[i].name);
       }
     }
 
@@ -332,18 +341,6 @@ export function generateInlineAnnotationsString(
       tempNode.setAttribute(LINK_ATTRIBUTE, link);
     } else if (link === undefined || link.length === 0) {
       tempNode.removeAttribute(LINK_ATTRIBUTE);
-    }
-
-    if (tempNode.getAttribute(LINK_ATTRIBUTE) != null) {
-      for (const sty of DEFAULT_LINK_STYLE) {
-        tempNode.style.setProperty(kebabCase(sty.name), kebabCase(sty.value));
-      }
-    } else {
-      for (const sty of DEFAULT_LINK_STYLE) {
-        if (style.filter((mSty) => mSty.name === sty.name).length === 0) {
-          tempNode.style.removeProperty(kebabCase(sty.name));
-        }
-      }
     }
 
     inlineAnnotationsString = inlineAnnotationsString.concat(
@@ -574,11 +571,9 @@ export function generateInlineAnnotations(
   }
   range.insertNode(placeholderNode);
   placeholderNode.insertAdjacentHTML("afterend", inlineAnnotations);
-  range.selectNodeContents(placeholderNode.nextElementSibling as HTMLElement);
-  placeholderNode.remove();
+  targetElement.removeChild(placeholderNode);
   selection.removeAllRanges();
-  range.collapse();
-  selection.addRange(range);
+  removeEmptyInlineAnnotations(targetElement);
 }
 
 /**
@@ -718,6 +713,17 @@ export function inlineAnnotationsManager(
     ) {
       link = undefined;
     }
+  }
+
+  if (link !== undefined) {
+    style.push(
+      ...[
+        {
+          name: "link-text-decoration",
+          value: "underline",
+        },
+      ],
+    );
   }
 
   generateInlineAnnotations(targetElement, selection, style, link);
@@ -883,6 +889,7 @@ export function splitBlocksAtCaretOffset<TBlockSchema>(
     }
   }
 
+  block.id = generateUUID();
   block.data = currentBlockContent;
   newBlock.data = newBlockContent;
   newBlock.role = newBlockContent.length === 0 ? "paragraph" : block.role;
