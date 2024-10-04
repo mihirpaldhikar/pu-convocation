@@ -14,6 +14,7 @@
 package com.puconvocation.di
 
 import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.controllers.AssetsController
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.controllers.TransactionController
@@ -24,6 +25,7 @@ import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.CloudStorage
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.LambdaService
 import org.koin.dsl.module
@@ -33,7 +35,7 @@ object ControllerModule {
         single<RemoteConfigController> {
             RemoteConfigController(
                 remoteConfigRepository = get<RemoteConfigRepository>(),
-                authService = get<AuthService>()
+                authService = get<AuthService>(),
             )
         }
 
@@ -61,6 +63,14 @@ object ControllerModule {
                 attendeeRepository = get<AttendeeRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
+            )
+        }
+
+        single<AssetsController> {
+            AssetsController(
+                cloudStorage = get<CloudStorage>(),
+                authService = get<AuthService>(),
+                jsonWebToken = get<JsonWebToken>(),
             )
         }
     }

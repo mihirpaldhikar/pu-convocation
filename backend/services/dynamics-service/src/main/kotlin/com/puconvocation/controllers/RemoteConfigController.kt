@@ -25,12 +25,11 @@ import org.bson.types.ObjectId
 
 class RemoteConfigController(
     private val remoteConfigRepository: RemoteConfigRepository,
-    private val authService: AuthService
+    private val authService: AuthService,
 ) {
 
     suspend fun getConfig(): Result<RemoteConfig, ErrorResponse> {
         val config = remoteConfigRepository.getConfig()
-
         return Result.Success(config)
     }
 

@@ -61,4 +61,8 @@ object CachedKeys {
     fun transactionKey(identifier: String): String {
         return "transaction:$identifier"
     }
+
+    fun objectsOfFolderKey(folderName: String): String {
+        return "cloudStorage:$folderName"
+    }
 }

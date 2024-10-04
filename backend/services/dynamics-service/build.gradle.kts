@@ -77,11 +77,17 @@ dependencies {
     // Apace CSV
     implementation("org.apache.commons:commons-csv:$apacheCSV")
 
+    // Apache Common Codec
+    implementation("commons-codec:commons-codec:1.16.1")
+
     // AWS Lambda
     implementation("software.amazon.awssdk:lambda:2.28.2")
 
     // AWS SQS
     implementation("aws.sdk.kotlin:sqs:1.3.32")
+
+    // GCP Cloud Storage
+    implementation("com.google.cloud:google-cloud-storage:2.43.1")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
