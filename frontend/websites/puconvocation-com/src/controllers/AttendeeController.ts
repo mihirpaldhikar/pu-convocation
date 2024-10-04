@@ -11,8 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Attendee, AttendeeWithEnclosureMetadata, AttendeeWithPagination, Response,} from "@dto/index";
-import {HttpService} from "@services/index";
+import {
+  Attendee,
+  AttendeeWithEnclosureMetadata,
+  AttendeeWithPagination,
+  Response,
+} from "@dto/index";
+import { StatusCode } from "@enums/StatusCode";
+import { HttpService } from "@services/index";
 
 export default class AttendeeController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
@@ -29,12 +35,32 @@ export default class AttendeeController {
     );
   }
 
+  public async getTotalAttendeesCount(): Promise<Response<number | string>> {
+    const response = await this.httpService.get<{ count: number }>(
+      `${this.ATTENDEE_ROUTES}/totalCount`,
+    );
+
+    if (response.statusCode === StatusCode.SUCCESS && response.payload) {
+      return { ...response, payload: response.payload.count };
+    }
+
+    return response;
+  }
+
   public async getAllAttendees(
     page: number,
     limit: number,
+    searchTerm?: string,
   ): Promise<Response<AttendeeWithPagination | string>> {
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    if (searchTerm) {
+      queryParams.append("searchTerm", searchTerm);
+    }
     return this.httpService.get<AttendeeWithPagination>(
-      `${this.ATTENDEE_ROUTES}/all?page=${page}&limit=${limit}`,
+      `${this.ATTENDEE_ROUTES}/all?${queryParams.toString()}`,
     );
   }
 
