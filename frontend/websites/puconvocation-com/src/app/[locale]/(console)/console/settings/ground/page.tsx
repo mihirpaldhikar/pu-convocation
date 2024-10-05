@@ -14,24 +14,98 @@
 "use client";
 import { JSX, useState } from "react";
 import { Button } from "@components/ui";
+import ProgressBar from "@components/progress_bar";
 
 export default function GroundSettingsPage(): JSX.Element {
   const [enclosureName, setEnclosureName] = useState("");
-  const [startNumber, setStartNumber] = useState("");
-  const [endNumber, setEndNumber] = useState("");
+  const [startNumber, setStartNumber] = useState<number | string>("");
+  const [endNumber, setEndNumber] = useState<number | string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState({
+    enclosureName: "",
+    startNumber: "",
+    endNumber: "",
+  });
 
-  const handleEnclosureNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEnclosureNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = e.target.value.toUpperCase();
-    const regex = /^[A-Z]$/;
+    const regex = /^[A-Z]$/; // Only one letter A-Z
     if (regex.test(value) || value === "") {
       setEnclosureName(value);
+      setErrorMessages((prev) => ({ ...prev, enclosureName: "" })); // Clear error on valid input
+    } else {
+      setErrorMessages((prev) => ({
+        ...prev,
+        enclosureName: "Enclosure name must be a single letter (A-Z).",
+      }));
     }
   };
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
+  const handleNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number | string>>,
+    fieldName: keyof typeof errorMessages,
+  ) => {
     const value = e.target.value;
-    if (!value.includes("e")) {
+    const regex = /^(0|[1-9][0-9]*)$/; // Only non-negative integers are allowed
+
+    // Validate the input for numbers
+    if (value === "" || regex.test(value)) {
       setter(value);
+      setErrorMessages((prev) => ({ ...prev, [fieldName]: "" })); // Clear error on valid input
+    } else {
+      setErrorMessages((prev) => ({
+        ...prev,
+        [fieldName]: "Only positive integers are allowed.",
+      }));
+    }
+  };
+
+  const handleKeyPress = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number | string>>,
+    fieldName: keyof typeof errorMessages,
+  ) => {
+    const key = e.key;
+    if (!/^[0-9]$/.test(key) && key !== "Backspace" && key !== "Tab") {
+      e.preventDefault();
+      setErrorMessages((prev) => ({
+        ...prev,
+        [fieldName]: "Only positive integers are allowed.",
+      }));
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Check for valid inputs before submitting
+    if (enclosureName === "" || startNumber === "" || endNumber === "") {
+      setErrorMessages({
+        enclosureName:
+          enclosureName === "" ? "Enclosure name is required." : "",
+        startNumber: startNumber === "" ? "Start number is required." : "",
+        endNumber: endNumber === "" ? "End number is required." : "",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessages({ enclosureName: "", startNumber: "", endNumber: "" });
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setEnclosureName("");
+      setStartNumber("");
+      setEndNumber("");
+    } catch (error) {
+      setErrorMessages({
+        enclosureName: "An error occurred while saving.",
+        startNumber: "",
+        endNumber: "",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,6 +115,8 @@ export default function GroundSettingsPage(): JSX.Element {
         <h2 className="mb-8 text-lg font-semibold text-gray-800">
           Ground Enclosure Settings
         </h2>
+
+        {isLoading && <ProgressBar />}
 
         <div className="space-y-5">
           <div>
@@ -56,8 +132,13 @@ export default function GroundSettingsPage(): JSX.Element {
               value={enclosureName}
               onChange={handleEnclosureNameChange}
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
-              maxLength={1} 
+              maxLength={1}
             />
+            {errorMessages.enclosureName && (
+              <div className="mt-1 text-red-500">
+                {errorMessages.enclosureName}
+              </div>
+            )}
           </div>
 
           <div>
@@ -71,10 +152,19 @@ export default function GroundSettingsPage(): JSX.Element {
               type="number"
               id="startNumber"
               value={startNumber}
-              min="0"
-              onChange={(e) => handleNumberChange(e, setStartNumber)}
+              onChange={(e) =>
+                handleNumberChange(e, setStartNumber, "startNumber")
+              }
+              onKeyPress={(e) =>
+                handleKeyPress(e, setStartNumber, "startNumber")
+              }
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
             />
+            {errorMessages.startNumber && (
+              <div className="mt-1 text-red-500">
+                {errorMessages.startNumber}
+              </div>
+            )}
           </div>
 
           <div>
@@ -88,10 +178,13 @@ export default function GroundSettingsPage(): JSX.Element {
               type="number"
               id="endNumber"
               value={endNumber}
-              min="0"
-              onChange={(e) => handleNumberChange(e, setEndNumber)}
+              onChange={(e) => handleNumberChange(e, setEndNumber, "endNumber")}
+              onKeyPress={(e) => handleKeyPress(e, setEndNumber, "endNumber")}
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
             />
+            {errorMessages.endNumber && (
+              <div className="mt-1 text-red-500">{errorMessages.endNumber}</div>
+            )}
           </div>
         </div>
 
@@ -100,6 +193,7 @@ export default function GroundSettingsPage(): JSX.Element {
             className="px-10 text-lg font-semibold"
             variant="destructive"
             asChild
+            onClick={handleSubmit}
           >
             <span>Save</span>
           </Button>
