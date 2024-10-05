@@ -58,11 +58,28 @@ export default class AssetsController {
     instructions: string,
   ): Promise<Response<{ url: string } | string>> {
     const blob = new Blob([instructions], { type: "text/plain" });
-    const file = new File([blob], "instructions.md", { type: "text/markdown" });
+    const file = new File([blob], "instructions.txt", {
+      type: "text/plain",
+    });
     const form = new FormData();
     form.append(file.name, file);
     return this.httpService.post<{ url: string }>(
       `${this.ASSETS_ROUTE}/documents/instructions/upload`,
+      form,
+    );
+  }
+
+  public async uploadInstructionsSource(
+    instructions: string,
+  ): Promise<Response<{ url: string } | string>> {
+    const blob = new Blob([instructions], { type: "text/plain" });
+    const file = new File([blob], "instructions-source.txt", {
+      type: "text/plain",
+    });
+    const form = new FormData();
+    form.append(file.name, file);
+    return this.httpService.post<{ url: string }>(
+      `${this.ASSETS_ROUTE}/documents/instructions/source/upload`,
       form,
     );
   }

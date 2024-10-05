@@ -11,11 +11,13 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import type Style from "./Style";
+"use client";
+import { JSX } from "react";
 
-interface StyleExecutable {
-  type: "style";
-  args: Style[];
+export default function GroundSettingsPage(): JSX.Element {
+  return (
+    <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
+      <h1>Ground Mappings</h1>
+    </div>
+  );
 }
-
-export default StyleExecutable;

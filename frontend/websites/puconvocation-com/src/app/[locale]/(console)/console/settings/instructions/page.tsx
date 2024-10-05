@@ -11,11 +11,13 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { type BlockSchema, type Table } from "../interfaces";
+"use client";
+import { JSX } from "react";
 
-interface TableBlockSchema extends BlockSchema {
-  role: "table";
-  data: Table;
+export default function InstructionsSettingsPage(): JSX.Element {
+  return (
+    <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
+      <h1>Instructions</h1>
+    </div>
+  );
 }
-
-export default TableBlockSchema;

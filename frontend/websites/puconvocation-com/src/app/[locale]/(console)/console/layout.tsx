@@ -37,24 +37,28 @@ const navMenu: Array<NavMenu> = [
   {
     name: "Home",
     route: "",
+    childRoutes: [],
     icon: "HomeIcon",
     requiredIAMRoles: new Set<string>([]),
   },
   {
     name: "Analytics",
     route: "/analytics",
+    childRoutes: [],
     icon: "ChartBarIcon",
     requiredIAMRoles: new Set<string>(["read:Analytics"]),
   },
   {
     name: "Attendees",
     route: "/attendees",
+    childRoutes: [],
     icon: "UsersIcon",
     requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
   },
   {
     name: "Settings",
     route: "/settings",
+    childRoutes: ["/ground", "/instructions"],
     icon: "Cog6ToothIcon",
     requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
   },

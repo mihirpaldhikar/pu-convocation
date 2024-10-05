@@ -11,16 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
+import { JSX } from "react";
 
-export default function SettingsPage(): JSX.Element {
+export default function GeneralSettingsPage(): JSX.Element {
   return (
-    <div className={"flex min-h-screen"}>
-      <div className={"m-auto"}>
-        <div>
-          <h1 className={"text-2xl font-bold"}>Settings</h1>
-        </div>
-      </div>
+    <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
+      <h1>General</h1>
     </div>
   );
 }

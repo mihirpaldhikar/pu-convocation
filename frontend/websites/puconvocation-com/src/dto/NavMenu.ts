@@ -16,6 +16,7 @@ import * as Icons from "@heroicons/react/24/solid";
 export default interface NavMenu {
   name: string;
   route: string;
+  childRoutes: Array<string>;
   icon: keyof typeof Icons;
   requiredIAMRoles: Set<string>;
 }
