@@ -11,5 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as Providers } from "./Providers";
-export { default as RemoteConfigProvider } from "./RemoteConfigProvider";
+import { useContext } from "react";
+import { RemoteConfigContext } from "@providers/RemoteConfigProvider";
+
+const useRemoteConfig = () => {
+  const context = useContext(RemoteConfigContext);
+  if (!context) {
+    throw new Error(
+      "useRemoteConfig Hook must be used within the RemoteConfig Provider",
+    );
+  }
+  return context;
+};
+
+export default useRemoteConfig;
