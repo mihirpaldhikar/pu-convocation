@@ -54,6 +54,13 @@ fun Routing.assetsRoute(
             call.sendResponse(result)
         }
 
+        post("/documents/instructions/source/upload") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val file = call.receiveMultipart()
+            val result = assetsController.uploadInstructionsSource(authorizationToken, file)
+            call.sendResponse(result)
+        }
+
         get("/images") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val result = assetsController.getObjectsInFolder(authorizationToken, "images/")

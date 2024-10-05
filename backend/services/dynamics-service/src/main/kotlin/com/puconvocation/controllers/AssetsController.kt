@@ -62,7 +62,7 @@ class AssetsController(
                 httpStatusCode = HttpStatusCode.BadRequest,
                 error = ErrorResponse(
                     errorCode = ResponseCode.FILE_NOT_UPLOADED,
-                    message = "Asses must be a file."
+                    message = "Asset must be a file."
                 )
             )
         }
@@ -131,7 +131,14 @@ class AssetsController(
         authorizationToken: String?,
         file: MultiPartData
     ): Result<HashMap<String, String>, ErrorResponse> {
-        return uploadFile(authorizationToken, file, AssetType.DOCUMENT, "instructions.md")
+        return uploadFile(authorizationToken, file, AssetType.DOCUMENT, "instructions.txt")
+    }
+
+    suspend fun uploadInstructionsSource(
+        authorizationToken: String?,
+        file: MultiPartData
+    ): Result<HashMap<String, String>, ErrorResponse> {
+        return uploadFile(authorizationToken, file, AssetType.DOCUMENT, "instructions-source.json")
     }
 
     suspend fun getObjectsInFolder(authorizationToken: String?, folder: String): Result<List<String>, ErrorResponse> {
