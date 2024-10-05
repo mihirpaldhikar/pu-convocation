@@ -20,6 +20,21 @@ export default function GroundSettingsPage(): JSX.Element {
   const [startNumber, setStartNumber] = useState("");
   const [endNumber, setEndNumber] = useState("");
 
+  const handleEnclosureNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toUpperCase();
+    const regex = /^[A-Z]$/;
+    if (regex.test(value) || value === "") {
+      setEnclosureName(value);
+    }
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string>>) => {
+    const value = e.target.value;
+    if (!value.includes("e")) {
+      setter(value);
+    }
+  };
+
   return (
     <div className="flex min-h-screen justify-center rounded-xl border bg-white px-4 py-5 pt-10">
       <div className="w-full p-10">
@@ -39,8 +54,9 @@ export default function GroundSettingsPage(): JSX.Element {
               type="text"
               id="enclosureName"
               value={enclosureName}
-              onChange={(e) => setEnclosureName(e.target.value)}
+              onChange={handleEnclosureNameChange}
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
+              maxLength={1} 
             />
           </div>
 
@@ -56,7 +72,7 @@ export default function GroundSettingsPage(): JSX.Element {
               id="startNumber"
               value={startNumber}
               min="0"
-              onChange={(e) => setStartNumber(e.target.value)}
+              onChange={(e) => handleNumberChange(e, setStartNumber)}
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
             />
           </div>
@@ -73,13 +89,13 @@ export default function GroundSettingsPage(): JSX.Element {
               id="endNumber"
               value={endNumber}
               min="0"
-              onChange={(e) => setEndNumber(e.target.value)}
+              onChange={(e) => handleNumberChange(e, setEndNumber)}
               className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
             />
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-10 flex justify-end">
           <Button
             className="px-10 text-lg font-semibold"
             variant="destructive"
