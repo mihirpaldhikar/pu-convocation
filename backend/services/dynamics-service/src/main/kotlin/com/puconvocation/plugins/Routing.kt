@@ -14,10 +14,12 @@
 package com.puconvocation.plugins
 
 import com.puconvocation.controllers.AnalyticsController
+import com.puconvocation.controllers.AssetsController
 import com.puconvocation.controllers.AttendeeController
 import com.puconvocation.controllers.RemoteConfigController
 import com.puconvocation.controllers.TransactionController
 import com.puconvocation.routes.analyticsRoute
+import com.puconvocation.routes.assetsRoute
 import com.puconvocation.routes.attendeesRoute
 import com.puconvocation.routes.remoteConfigRoute
 import com.puconvocation.routes.transactionsRoute
@@ -36,6 +38,7 @@ fun Application.configureRouting() {
     val analyticsController by KoinJavaComponent.inject<AnalyticsController>(AnalyticsController::class.java)
     val attendeeController by KoinJavaComponent.inject<AttendeeController>(AttendeeController::class.java)
     val transactionController by KoinJavaComponent.inject<TransactionController>(TransactionController::class.java)
+    val assetsController by KoinJavaComponent.inject<AssetsController>(AssetsController::class.java)
 
 
     routing {
@@ -63,6 +66,10 @@ fun Application.configureRouting() {
 
         transactionsRoute(
             transactionController = transactionController
+        )
+
+        assetsRoute(
+            assetsController = assetsController
         )
     }
 }

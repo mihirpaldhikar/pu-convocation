@@ -5,6 +5,7 @@
       "dom.iterable",
       "esnext"
     ],
+    "target": "ESNext",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -75,6 +76,9 @@
       ],
       "@controllers/*": [
         "./src/controllers/*"
+      ],
+      "@polaris/*": [
+        "./src/polaris/*"
       ]
     }
   },

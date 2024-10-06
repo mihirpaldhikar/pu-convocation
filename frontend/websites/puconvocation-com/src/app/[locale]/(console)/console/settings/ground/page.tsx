@@ -12,191 +12,164 @@
  */
 
 "use client";
-import { JSX, useState } from "react";
-import { Button } from "@components/ui";
-import ProgressBar from "@components/progress_bar";
+import { Fragment, JSX, useRef } from "react";
+import { useRemoteConfig } from "@hooks/index";
+import { Input } from "@components/ui";
+import { Enclosure } from "@dto/index";
+
+function totalEnclosureSeats(enclosure: Enclosure): number {
+  let seats = 0;
+  for (let row of enclosure.rows) {
+    const diff = row.end - row.start;
+    seats += diff === 0 ? 0 : diff - row.reserved.length + 1;
+  }
+  return seats;
+}
 
 export default function GroundSettingsPage(): JSX.Element {
-  const [enclosureName, setEnclosureName] = useState("");
-  const [startNumber, setStartNumber] = useState<number | string>("");
-  const [endNumber, setEndNumber] = useState<number | string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessages, setErrorMessages] = useState({
-    enclosureName: "",
-    startNumber: "",
-    endNumber: "",
+  const {
+    state: { config },
+    dispatch,
+  } = useRemoteConfig();
+
+  const focused = useRef<string>("");
+
+  if (config === null) {
+    return <Fragment />;
+  }
+
+  const seatsInEnclosure: Array<number> = config.groundMappings.map(
+    (enclosure) => {
+      return totalEnclosureSeats(enclosure);
+    },
+  );
+
+  let totalSeats = 0;
+
+  seatsInEnclosure.forEach((enclosure) => {
+    totalSeats += enclosure;
   });
 
-  const handleEnclosureNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = e.target.value.toUpperCase();
-    const regex = /^[A-Z]$/; // Only one letter A-Z
-    if (regex.test(value) || value === "") {
-      setEnclosureName(value);
-      setErrorMessages((prev) => ({ ...prev, enclosureName: "" })); // Clear error on valid input
-    } else {
-      setErrorMessages((prev) => ({
-        ...prev,
-        enclosureName: "Enclosure name must be a single letter (A-Z).",
-      }));
-    }
-  };
-
-  const handleNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<number | string>>,
-    fieldName: keyof typeof errorMessages,
-  ) => {
-    const value = e.target.value;
-    const regex = /^(0|[1-9][0-9]*)$/; // Only non-negative integers are allowed
-
-    // Validate the input for numbers
-    if (value === "" || regex.test(value)) {
-      setter(value);
-      setErrorMessages((prev) => ({ ...prev, [fieldName]: "" })); // Clear error on valid input
-    } else {
-      setErrorMessages((prev) => ({
-        ...prev,
-        [fieldName]: "Only positive integers are allowed.",
-      }));
-    }
-  };
-
-  const handleKeyPress = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<number | string>>,
-    fieldName: keyof typeof errorMessages,
-  ) => {
-    const key = e.key;
-    if (!/^[0-9]$/.test(key) && key !== "Backspace" && key !== "Tab") {
-      e.preventDefault();
-      setErrorMessages((prev) => ({
-        ...prev,
-        [fieldName]: "Only positive integers are allowed.",
-      }));
-    }
-  };
-
-  const handleSubmit = async () => {
-    // Check for valid inputs before submitting
-    if (enclosureName === "" || startNumber === "" || endNumber === "") {
-      setErrorMessages({
-        enclosureName:
-          enclosureName === "" ? "Enclosure name is required." : "",
-        startNumber: startNumber === "" ? "Start number is required." : "",
-        endNumber: endNumber === "" ? "End number is required." : "",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessages({ enclosureName: "", startNumber: "", endNumber: "" });
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setEnclosureName("");
-      setStartNumber("");
-      setEndNumber("");
-    } catch (error) {
-      setErrorMessages({
-        enclosureName: "An error occurred while saving.",
-        startNumber: "",
-        endNumber: "",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="flex min-h-screen justify-center rounded-xl border bg-white px-4 py-5 pt-10">
-      <div className="w-full p-10">
-        <h2 className="mb-8 text-lg font-semibold text-gray-800">
-          Ground Enclosure Settings
-        </h2>
-
-        {isLoading && <ProgressBar />}
-
-        <div className="space-y-5">
-          <div>
-            <label
-              htmlFor="enclosureName"
-              className="block text-sm font-medium text-gray-700"
+    <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
+      <div className={"flex items-center justify-end p-5"}>
+        <h4>Total Seats: {totalSeats}</h4>
+      </div>
+      <div className={"space-y-5"}>
+        {config.groundMappings.map((enclosure, index) => {
+          return (
+            <div
+              key={enclosure.letter}
+              className={"space-y-5 rounded-lg border px-5 py-3"}
             >
-              Enclosure Name
-            </label>
-            <input
-              type="text"
-              id="enclosureName"
-              value={enclosureName}
-              onChange={handleEnclosureNameChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
-              maxLength={1}
-            />
-            {errorMessages.enclosureName && (
-              <div className="mt-1 text-red-500">
-                {errorMessages.enclosureName}
+              <div>
+                <div
+                  className={"flex items-center space-x-3 text-lg font-bold"}
+                >
+                  <h4>Enclosure: </h4>
+                  <Input
+                    autoFocus={focused.current === `enclosure-input-${index}`}
+                    value={enclosure.letter}
+                    className={
+                      "w-fit border-none bg-gray-100 text-center shadow-none"
+                    }
+                    onClick={() => {
+                      focused.current = `enclosure-input-${index}`;
+                    }}
+                    onChange={(event) => {
+                      enclosure.letter = event.target.value;
+                      dispatch({
+                        type: "SET_ENCLOSURE",
+                        payload: {
+                          index: index,
+                          enclosure: enclosure,
+                        },
+                      });
+                    }}
+                  />
+                </div>
+                <p className={"text-xs font-medium text-gray-400"}>
+                  Seats: {seatsInEnclosure[index]}
+                </p>
               </div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="startNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Start Number
-            </label>
-            <input
-              type="number"
-              id="startNumber"
-              value={startNumber}
-              onChange={(e) =>
-                handleNumberChange(e, setStartNumber, "startNumber")
-              }
-              onKeyPress={(e) =>
-                handleKeyPress(e, setStartNumber, "startNumber")
-              }
-              className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
-            />
-            {errorMessages.startNumber && (
-              <div className="mt-1 text-red-500">
-                {errorMessages.startNumber}
+              <div className={"grid grid-cols-4 gap-4"}>
+                {enclosure.rows.map((enclosureRow, rIndex) => {
+                  return (
+                    <div
+                      key={`${enclosure.letter}-${enclosureRow.letter}`}
+                      className={"rounded-lg border px-5 py-3"}
+                    >
+                      <div
+                        className={"flex items-center space-x-3 font-semibold"}
+                      >
+                        <Input
+                          autoFocus={
+                            focused.current ===
+                            `input-${enclosure.letter}-row-${index}`
+                          }
+                          value={enclosureRow.letter}
+                          onClick={() => {
+                            focused.current = `input-${enclosure.letter}-row-${index}`;
+                          }}
+                          onChange={(event) => {
+                            enclosure.rows[rIndex].letter = event.target.value;
+                            dispatch({
+                              type: "SET_ENCLOSURE",
+                              payload: {
+                                index: index,
+                                enclosure: enclosure,
+                              },
+                            });
+                          }}
+                          className={
+                            "w-fit border-none bg-red-100 text-center shadow-none"
+                          }
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+                <div
+                  className={"cursor-pointer rounded-lg border px-5 py-3"}
+                  onClick={() => {
+                    enclosure.rows.push({
+                      letter: "",
+                      start: 0,
+                      end: 0,
+                      reserved: [],
+                    });
+                    dispatch({
+                      type: "SET_ENCLOSURE",
+                      payload: {
+                        index: index,
+                        enclosure: enclosure,
+                      },
+                    });
+                  }}
+                >
+                  <h6>Add Row</h6>
+                </div>
               </div>
-            )}
-          </div>
-
-          <div>
-            <label
-              htmlFor="endNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
-              End Number
-            </label>
-            <input
-              type="number"
-              id="endNumber"
-              value={endNumber}
-              onChange={(e) => handleNumberChange(e, setEndNumber, "endNumber")}
-              onKeyPress={(e) => handleKeyPress(e, setEndNumber, "endNumber")}
-              className="mt-1 block w-full rounded-md border border-gray-300 p-3 shadow-sm focus:border-red-600 focus:ring-red-600"
-            />
-            {errorMessages.endNumber && (
-              <div className="mt-1 text-red-500">{errorMessages.endNumber}</div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-10 flex justify-end">
-          <Button
-            className="px-10 text-lg font-semibold"
-            variant="destructive"
-            asChild
-            onClick={handleSubmit}
-          >
-            <span>Save</span>
-          </Button>
+            </div>
+          );
+        })}
+        <div
+          className={"space-y-5 rounded-lg border px-5 py-3"}
+          onClick={() => {
+            config?.groundMappings.push({
+              letter: "",
+              entryDirection: "NONE",
+              rows: [],
+            });
+            dispatch({
+              type: "SET_CONFIG",
+              payload: {
+                config: config,
+              },
+            });
+          }}
+        >
+          Add new Enclosure
         </div>
       </div>
     </div>

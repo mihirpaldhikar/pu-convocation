@@ -21,7 +21,6 @@ import {
   CardTitle,
 } from "@components/ui/card";
 
-
 export default function InstructionsSettingsPage(): JSX.Element {
   const [inputValue, setInputValue] = useState("");
 

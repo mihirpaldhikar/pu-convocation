@@ -25,6 +25,7 @@ import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.serializers.ObjectIdDeserializer
 import com.puconvocation.serializers.ObjectIdSerializer
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.CloudStorage
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.KafkaService
 import com.puconvocation.services.LambdaService
@@ -49,6 +50,14 @@ object CoreModule {
 
         single<Environment> {
             get<ObjectMapper>().readValue<Environment>(Base64.decode(System.getenv("SERVICE_CONFIG")))
+        }
+
+        single<CloudStorage> {
+            CloudStorage(
+                gcp = get<Environment>().cloud.gcp,
+                mapper = get<ObjectMapper>(),
+                cache = get<CacheController>()
+            )
         }
 
         single<KafkaService> {
@@ -84,7 +93,7 @@ object CoreModule {
                 jsonWebToken = get<JsonWebToken>(),
                 authServiceAddress = get<Environment>().service.companionServices.filter { it.serviceName == "auth-service" }
                     .first().address,
-                currentServiceName =  get<Environment>().service.name
+                currentServiceName = get<Environment>().service.name
             )
         }
 

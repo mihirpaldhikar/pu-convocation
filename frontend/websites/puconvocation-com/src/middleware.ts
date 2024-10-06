@@ -49,6 +49,14 @@ const protectedRoutes: Array<{
     requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
   },
   {
+    path: "/settings/ground",
+    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
+  },
+  {
+    path: "/settings/instructions",
+    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
+  },
+  {
     path: "/scan",
     requiredIAMRoles: new Set<string>(["write:Transaction"]),
   },

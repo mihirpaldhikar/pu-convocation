@@ -11,12 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import * as Icons from "@heroicons/react/24/solid";
+package com.puconvocation.enums
 
-export default interface NavMenu {
-  name: string;
-  route: string;
-  childRoutes: Array<string>;
-  icon: keyof typeof Icons;
-  requiredIAMRoles: Set<string>;
+enum class AssetType {
+    IMAGE,
+    AVATAR,
+    DOCUMENT,
 }

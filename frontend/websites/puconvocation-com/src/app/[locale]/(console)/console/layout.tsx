@@ -16,7 +16,7 @@ import { Montserrat } from "next/font/google";
 import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
-import { Providers } from "@providers/index";
+import { Providers, RemoteConfigProvider } from "@providers/index";
 import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
 import { getMessages } from "next-intl/server";
 import { NavMenu } from "@dto/index";
@@ -37,24 +37,28 @@ const navMenu: Array<NavMenu> = [
   {
     name: "Home",
     route: "",
+    childRoutes: [],
     icon: "HomeIcon",
     requiredIAMRoles: new Set<string>([]),
   },
   {
     name: "Analytics",
     route: "/analytics",
+    childRoutes: [],
     icon: "ChartBarIcon",
     requiredIAMRoles: new Set<string>(["read:Analytics"]),
   },
   {
     name: "Attendees",
     route: "/attendees",
+    childRoutes: [],
     icon: "UsersIcon",
     requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
   },
   {
     name: "Settings",
     route: "/settings",
+    childRoutes: ["/ground", "/instructions"],
     icon: "Cog6ToothIcon",
     requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
   },
@@ -74,12 +78,14 @@ export default async function RootLayout({
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
         <Providers locale={locale} translations={translations}>
-          <div className={"flex h-screen flex-col"}>
-            <Navbar />
-            <ConsoleDesktop navMenu={navMenu}>{children}</ConsoleDesktop>
-            <ConsoleMobile navMenu={navMenu}>{children}</ConsoleMobile>
-            <Toaster />
-          </div>
+          <RemoteConfigProvider>
+            <div className={"flex h-screen flex-col"}>
+              <Navbar />
+              <ConsoleDesktop navMenu={navMenu}>{children}</ConsoleDesktop>
+              <ConsoleMobile navMenu={navMenu}>{children}</ConsoleMobile>
+              <Toaster />
+            </div>
+          </RemoteConfigProvider>
         </Providers>
       </body>
     </html>

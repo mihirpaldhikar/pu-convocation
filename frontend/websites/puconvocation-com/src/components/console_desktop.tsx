@@ -12,13 +12,13 @@
  */
 
 "use client";
-import {Fragment, JSX, ReactNode, useState} from "react";
-import {Button} from "@components/ui";
-import {ChevronRightIcon} from "@heroicons/react/24/solid";
-import {Link, usePathname} from "@i18n/routing";
-import {DynamicIcon} from "@components/index";
-import {NavMenu} from "@dto/index";
-import {useAuth} from "@hooks/index";
+import { Fragment, JSX, ReactNode, useState } from "react";
+import { Button } from "@components/ui";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { Link, usePathname } from "@i18n/routing";
+import { DynamicIcon } from "@components/index";
+import { NavMenu } from "@dto/index";
+import { useAuth } from "@hooks/index";
 
 interface ConsoleDesktopProps {
   children: ReactNode;
@@ -47,32 +47,46 @@ export default function ConsoleDesktop({
         <nav
           className={`flex grow flex-col pt-20 ${collapsed ? "items-center" : "pr-10"} space-y-5`}
         >
-          {navMenu.map((menu) => (
-            <Link
-              key={menu.name}
-              href={`/console${menu.route}`}
-              className={`cursor-pointer rounded-tr-full ${
-                path === `/console${menu.route}`
-                  ? "bg-red-100"
-                  : "bg-transparent hover:bg-gray-100"
-              } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
-            >
-              <DynamicIcon
-                icon={menu.icon}
-                outline={!(path === `/console${menu.route}`)}
-                className={
-                  path === `/console${menu.route}`
-                    ? "text-red-700"
-                    : "text-black"
-                }
-              />
-              <span
-                className={`${collapsed ? "hidden" : "font-semibold"} transition-all duration-150 ease-in-out ${path === `/console${menu.route}` ? "text-red-700" : "text-black"}`}
+          {navMenu.map((menu) => {
+            const isChildPathMatched = menu.childRoutes
+              .map((route) => `/console${menu.route}${route}`)
+              .includes(path);
+
+            return (
+              <Link
+                key={menu.name}
+                href={`/console${menu.route}`}
+                className={`cursor-pointer rounded-tr-full ${
+                  path === `/console${menu.route}` || isChildPathMatched
+                    ? "bg-red-100"
+                    : "bg-transparent hover:bg-gray-100"
+                } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
               >
-                {menu.name}
-              </span>
-            </Link>
-          ))}
+                <DynamicIcon
+                  icon={menu.icon}
+                  outline={
+                    !(path === `/console${menu.route}` || isChildPathMatched)
+                  }
+                  className={
+                    path === `/console${menu.route}` ||
+                    path === `/console${menu.route}` ||
+                    isChildPathMatched
+                      ? "text-red-700"
+                      : "text-black"
+                  }
+                />
+                <span
+                  className={`${collapsed ? "hidden" : "font-semibold"} transition-all duration-150 ease-in-out ${
+                    path === `/console${menu.route}` || isChildPathMatched
+                      ? "text-red-700"
+                      : "text-black"
+                  }`}
+                >
+                  {menu.name}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex h-10 items-center justify-start pl-5">
           <Button

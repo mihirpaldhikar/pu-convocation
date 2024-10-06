@@ -15,3 +15,4 @@ export { default as AuthController } from "./AuthController";
 export { default as AttendeeController } from "./AttendeeController";
 export { default as RemoteConfigController } from "./RemoteConfigController";
 export { default as AnalyticsController } from "./AnalyticsController";
+export { default as AssetsController } from "./AssetsController";

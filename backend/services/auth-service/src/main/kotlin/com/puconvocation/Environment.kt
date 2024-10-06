@@ -75,7 +75,8 @@ data class Environment(
     }
 
     data class Cloud(
-        @JsonProperty("aws") val aws: AWS
+        @JsonProperty("aws") val aws: AWS,
+        @JsonProperty("gcp") val gcp: GCP
     ) {
         data class AWS(
             @JsonProperty("accessKeyId") val accessKeyId: String,
@@ -93,5 +94,10 @@ data class Environment(
                 @JsonProperty("brokers") val brokers: String,
             )
         }
+
+        data class GCP(
+            @JsonProperty("serviceAccount") val serviceAccount: String,
+            @JsonProperty("cloudStorage") val cloudStorage: String,
+        )
     }
 }

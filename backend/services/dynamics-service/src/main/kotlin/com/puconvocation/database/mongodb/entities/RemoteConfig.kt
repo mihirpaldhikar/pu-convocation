@@ -64,6 +64,7 @@ data class RemoteConfig(
             @JsonProperty("letter") val letter: String,
             @JsonProperty("start") val start: Int,
             @JsonProperty("end") val end: Int,
+            @JsonProperty("reserved") val reserved: List<Int>,
         )
     }
 }

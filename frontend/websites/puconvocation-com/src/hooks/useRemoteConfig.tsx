@@ -11,12 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import * as Icons from "@heroicons/react/24/solid";
+import { useContext } from "react";
+import { RemoteConfigContext } from "@providers/RemoteConfigProvider";
 
-export default interface NavMenu {
-  name: string;
-  route: string;
-  childRoutes: Array<string>;
-  icon: keyof typeof Icons;
-  requiredIAMRoles: Set<string>;
-}
+const useRemoteConfig = () => {
+  const context = useContext(RemoteConfigContext);
+  if (!context) {
+    throw new Error(
+      "useRemoteConfig Hook must be used within the RemoteConfig Provider",
+    );
+  }
+  return context;
+};
+
+export default useRemoteConfig;
