@@ -179,26 +179,19 @@ class IAMController(
         ruleName: String,
         updateIAMRole: UpdateIAMRole
     ): Result<HashMap<String, Any>, ErrorResponse> {
-        val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenClaims.isEmpty()) {
+        if (ruleName.contains("write:IAMRoles")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN,
-                    message = "Authorization token is invalid."
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to update this rules."
                 )
-
             )
         }
 
         if (!isAuthorized(
                 role = "write:IAMRoles",
-                principal = tokenClaims[0],
+                principal = authorizationToken,
             )
         ) {
             return Result.Error(

@@ -39,7 +39,8 @@ class IAMRepository(
     }
 
     override suspend fun allPolicies(): List<IAMRole> {
-        return iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>().toList()
+        val policies = iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>().toList()
+        return policies.toList().filter { it.role != "write:IAMRoles" }.toList()
     }
 
     override suspend fun getAccountsForRule(rule: String): List<String> {
