@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { JSX, useState, useEffect } from "react";
+import { JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@components/ui";
 import {
@@ -37,20 +37,23 @@ const attendeeController = new AttendeeController();
 export default function AttendeePage(): JSX.Element {
   const [showAttendees, setShowAttendees] = useState(false);
   const [page, setPage] = useState(0);
-  const [attendeeCount, setAttendeeCount] = useState(0);
-  const [totalAttendeeCount, setTotalAttendeeCount] = useState(0); // Total attendees from DB
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const fetchTotalAttendeeCount = async () => {
+  const {
+    data: totalAttendeeCount = 0,
+    isLoading: isTotalLoading,
+    isError: totalError,
+  } = useQuery({
+    queryKey: ["totalAttendeeCount"],
+    queryFn: async () => {
       const response = await attendeeController.getTotalAttendeesCount();
       if (response.statusCode === StatusCode.SUCCESS) {
-        setTotalAttendeeCount(response.payload as number); // Set total count
+        return response.payload as number;
       }
-    };
-
-    fetchTotalAttendeeCount();
-  }, []);
+      return 0;
+    },
+    refetchOnWindowFocus: false,
+  });
 
   const {
     data: attendees,
@@ -100,9 +103,17 @@ export default function AttendeePage(): JSX.Element {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex items-center justify-between">
-              <span className="text-5xl font-bold text-red-600">
-                {totalAttendeeCount}
-              </span>{" "}
+              {isTotalLoading ? (
+                <ProgressBar type="circular" />
+              ) : totalError ? (
+                <p className="text-red-600">
+                  Error loading total attendees count
+                </p>
+              ) : (
+                <span className="text-5xl font-bold text-red-600">
+                  {totalAttendeeCount}
+                </span>
+              )}
               <Button
                 onClick={() => setShowAttendees(!showAttendees)}
                 className="bg-red-600 text-white hover:bg-red-700"
