@@ -95,7 +95,7 @@ export default function AttendeePage(): JSX.Element {
 
       <div className="flex min-h-screen flex-col items-center p-1">
         <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
-          <Card className="h-fit w-full border border-gray-300 p-4">
+          <Card className="h-[200px] w-full border border-gray-300 p-4">
             <CardHeader>
               <CardTitle>Total Attendees</CardTitle>
               <CardDescription>
