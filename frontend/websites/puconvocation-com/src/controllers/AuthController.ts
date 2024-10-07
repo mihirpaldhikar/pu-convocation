@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {create as createPasskeyCredentials, get as getPublicCredentials,} from "@github/webauthn-json";
-import {Account, AccountInvitation, Response, UpdateUACRuleRequest,} from "@dto/index";
-import {StatusCode} from "@enums/StatusCode";
-import {HttpService} from "@services/index";
+import { create as createPasskeyCredentials, get as getPublicCredentials } from "@github/webauthn-json";
+import { Account, AccountInvitation, IAMPolicy, Response, UpdateUACRuleRequest } from "@dto/index";
+import { StatusCode } from "@enums/StatusCode";
+import { HttpService } from "@services/index";
 
 export default class AuthController {
   private BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string;
@@ -22,7 +22,7 @@ export default class AuthController {
   private httpService = new HttpService(this.BASE_URL);
 
   private ACCOUNT_ROUTE = this.BASE_URL.concat("/accounts");
-  private UAC_ROUTE = this.BASE_URL.concat("/iam");
+  private IAM_ROUTE = this.BASE_URL.concat("/iam");
 
   public async getCurrentAccount(): Promise<Response<Account | string>> {
     return await this.httpService.get<Account>(`${this.ACCOUNT_ROUTE}/`);
@@ -36,12 +36,12 @@ export default class AuthController {
     );
   }
 
-  public async updateUACRule(
+  public async updateIAMPolicy(
     ruleName: string,
     updateUACRuleRequest: UpdateUACRuleRequest,
   ): Promise<Response<Array<string> | string>> {
     return await this.httpService.patch<Array<string>>(
-      `${this.UAC_ROUTE}/${ruleName}/update`,
+      `${this.IAM_ROUTE}/${ruleName}/update`,
       updateUACRuleRequest,
     );
   }
@@ -159,6 +159,28 @@ export default class AuthController {
       {
         expectedStatusCode: 201,
       },
+    );
+  }
+
+  public async getIAMPolicy(
+    invitations: Array<AccountInvitation>,
+  ): Promise<Response<any | string>> {
+    return await this.httpService.post<any>(
+      `${this.ACCOUNT_ROUTE}/sendInvitations`,
+      {
+        invites: invitations,
+      },
+      {
+        expectedStatusCode: 201,
+      },
+    );
+  }
+
+  public async getAllIAMPolicies(): Promise<
+    Response<Array<IAMPolicy> | string>
+  > {
+    return await this.httpService.get<Array<IAMPolicy>>(
+      `${this.IAM_ROUTE}/allPolicies`,
     );
   }
 
