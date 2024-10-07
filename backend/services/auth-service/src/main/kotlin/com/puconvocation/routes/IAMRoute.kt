@@ -31,17 +31,18 @@ fun Routing.iamRoute(
 ) {
     route("/iam") {
 
+        get("/allPolicies") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            call.respond(iamController.allPolicies(authorizationToken))
+        }
+
         get("/authorized") {
             val serviceAuthorizationToken = call.request.headers["Service-Authorization-Token"]
             val iamHeader = call.request.headers["X-IAM-CHECK"]
             if (iamHeader.isNullOrBlank()) {
                 return@get call.respond(false)
             }
-
-            val split = iamHeader.split("@")
-            val role = split[0]
-            val principal = split[1]
-            call.respond(iamController.isAuthorized(serviceAuthorizationToken, role, principal))
+            call.respond(iamController.serviceAuthorizationCheck(serviceAuthorizationToken, iamHeader))
         }
 
         route("/{name}") {

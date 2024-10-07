@@ -38,9 +38,8 @@ class IAMRepository(
         return iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>(eq("_id", name)).firstOrNull()
     }
 
-    override suspend fun getAllRules(): List<IAMRole> {
+    override suspend fun allPolicies(): List<IAMRole> {
         return iamRoleCollection.withDocumentClass<IAMRole>().find<IAMRole>().toList()
-
     }
 
     override suspend fun getAccountsForRule(rule: String): List<String> {

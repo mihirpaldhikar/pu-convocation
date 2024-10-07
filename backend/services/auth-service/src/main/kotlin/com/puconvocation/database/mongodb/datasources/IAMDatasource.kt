@@ -20,7 +20,7 @@ interface IAMDatasource {
 
     suspend fun getRule(name: String): IAMRole?
 
-    suspend fun getAllRules(): List<IAMRole>
+    suspend fun allPolicies(): List<IAMRole>
 
     suspend fun getAccountsForRule(rule: String): List<String>
 

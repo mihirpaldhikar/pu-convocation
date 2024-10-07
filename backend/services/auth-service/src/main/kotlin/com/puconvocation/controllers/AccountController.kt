@@ -303,7 +303,7 @@ class AccountController(
             )
         }
 
-        val allIAMRules = iamRepository.getAllRules()
+        val allIAMRules = iamRepository.allPolicies()
 
         val allIAMRoleNames = allIAMRules.map { it.role }
 
