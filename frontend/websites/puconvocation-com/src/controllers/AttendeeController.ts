@@ -29,8 +29,8 @@ export default class AttendeeController {
 
   public async getAttendee(
     identifier: string,
-  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.get<AttendeeWithEnclosureMetadata>(
+  ): Promise<Response<Attendee | string>> {
+    return await this.httpService.get<Attendee>(
       `${this.ATTENDEE_ROUTES}/${identifier}`,
     );
   }
@@ -59,7 +59,7 @@ export default class AttendeeController {
     if (searchTerm) {
       queryParams.append("searchTerm", searchTerm);
     }
-    return this.httpService.get<AttendeeWithPagination>(
+    return await this.httpService.get<AttendeeWithPagination>(
       `${this.ATTENDEE_ROUTES}/all?${queryParams.toString()}`,
     );
   }
@@ -67,7 +67,7 @@ export default class AttendeeController {
   public async getAttendeeFromVerificationToken(
     token: string,
   ): Promise<Response<Attendee | string>> {
-    return this.httpService.get<Attendee>(
+    return await this.httpService.get<Attendee>(
       `${this.ATTENDEE_ROUTES}/verificationToken/${token}`,
     );
   }
@@ -76,7 +76,7 @@ export default class AttendeeController {
     const form = new FormData();
     form.append(file.name, file);
 
-    return this.httpService.post<string>(
+    return await this.httpService.post<string>(
       `${this.ATTENDEE_ROUTES}/upload`,
       form,
     );
@@ -85,7 +85,7 @@ export default class AttendeeController {
   public async createTransaction(
     studentEnrollmentNumber: string,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.post(
+    return await this.httpService.post<AttendeeWithEnclosureMetadata>(
       `${this.BASE_URL}/transactions/new`,
       {
         studentEnrollmentNumber: studentEnrollmentNumber,
@@ -99,7 +99,7 @@ export default class AttendeeController {
   public async mutateAttendeeLock(
     locked: boolean,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.post(
+    return await this.httpService.post<AttendeeWithEnclosureMetadata>(
       `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
     );
   }
