@@ -12,17 +12,17 @@
  */
 "use client";
 
-import {JSX} from "react";
-import {Logo} from "@components/ui";
+import { JSX } from "react";
+import { Logo } from "@components/ui";
 import NavbarMenu from "@components/navbar_menu";
-import {Link, usePathname} from "@i18n/routing";
+import { Link, usePathname } from "@i18n/routing";
 
 export default function Navbar(): JSX.Element {
   const path = usePathname();
 
   return (
     <header
-      className={`fixed z-50 flex h-20 w-full items-center justify-between border-b border-b-gray-300 bg-white/70 px-3 backdrop-blur-3xl md:px-16`}
+      className={`fixed z-50 flex h-20 w-full items-center justify-between bg-white/70 px-3 backdrop-blur-3xl md:px-16`}
     >
       <div className="flex items-center">
         <Link
