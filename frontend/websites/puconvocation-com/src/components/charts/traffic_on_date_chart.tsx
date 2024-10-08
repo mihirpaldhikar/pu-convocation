@@ -13,21 +13,27 @@
 
 "use client";
 
-import {Fragment, JSX} from "react";
-import {AnalyticsController} from "@controllers/index";
-import {useQuery} from "@tanstack/react-query";
-import {StatusCode} from "@enums/StatusCode";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@components/ui/card";
+import { Fragment, JSX } from "react";
+import { AnalyticsController } from "@controllers/index";
+import { useQuery } from "@tanstack/react-query";
+import { StatusCode } from "@enums/StatusCode";
 import {
-    ChartConfig,
-    ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
-    ChartTooltip,
-    ChartTooltipContent,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@components/ui/chart";
-import {Area, AreaChart, CartesianGrid, XAxis, YAxis} from "recharts";
-import {format} from "date-fns";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { format } from "date-fns";
 
 const analyticsService = new AnalyticsController();
 
@@ -70,7 +76,7 @@ export default function TrafficOnDateChart(): JSX.Element {
   });
 
   return (
-    <Card className={"h-fit w-full shadow-none"}>
+    <Card className={"h-fit w-full"}>
       <CardHeader>
         <CardTitle>Daily Traffic</CardTitle>
         <CardDescription>

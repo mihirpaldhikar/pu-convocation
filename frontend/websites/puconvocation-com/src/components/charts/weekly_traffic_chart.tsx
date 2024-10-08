@@ -13,23 +13,30 @@
 
 "use client";
 
-import {Fragment, JSX} from "react";
-import {AnalyticsController} from "@controllers/index";
-import {useQuery} from "@tanstack/react-query";
-import {StatusCode} from "@enums/StatusCode";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle,} from "@components/ui/card";
+import { Fragment, JSX } from "react";
+import { AnalyticsController } from "@controllers/index";
+import { useQuery } from "@tanstack/react-query";
+import { StatusCode } from "@enums/StatusCode";
 import {
-    ChartConfig,
-    ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
-    ChartTooltip,
-    ChartTooltipContent,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@components/ui/chart";
-import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts";
-import {endOfWeek, startOfWeek} from "date-fns";
-import {mergeWeekData} from "@lib/analytics_utils";
-import {DynamicIcon} from "@components/index";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { mergeWeekData } from "@lib/analytics_utils";
+import { DynamicIcon } from "@components/index";
 
 const analyticsService = new AnalyticsController();
 
@@ -71,7 +78,7 @@ export default function WeeklyTrafficChart(): JSX.Element {
   });
 
   return (
-    <Card className={"h-fit w-full shadow-none"}>
+    <Card className={"h-fit w-full"}>
       <CardHeader>
         <CardTitle>Weekly Traffic</CardTitle>
         <CardDescription>
