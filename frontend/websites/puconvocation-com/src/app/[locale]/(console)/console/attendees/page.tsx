@@ -179,7 +179,7 @@ export default function AttendeePage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <Card className="h-full w-full flex-grow border border-gray-300 p-4 shadow-none">
+          <Card className="h-[750px] w-full flex-grow border border-gray-300 p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -189,11 +189,11 @@ export default function AttendeePage(): JSX.Element {
             </CardHeader>
             <CardContent className="flex h-full flex-col">
               <div className="relative mb-4">
-                <MagnifyingGlassIcon className="absolute left-3 h-10 w-5 text-gray-500" />
+                <MagnifyingGlassIcon className="absolute left-3 h-12 w-5 text-gray-500" />
                 <input
                   type="text"
                   placeholder="Search Attendees..."
-                  className="w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
+                  className="mb-2 mt-1 w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
