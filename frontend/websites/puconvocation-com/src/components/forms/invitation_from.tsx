@@ -56,7 +56,7 @@ export default function InvitationForm({
 
   return (
     <div
-      className={"h-fit w-full rounded-3xl bg-neutral-100 px-7 pb-20 lg:w-3/4"}
+      className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}
     >
       <div
         className={authenticationPayload.submitting ? "visible" : "invisible"}
