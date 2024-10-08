@@ -27,7 +27,7 @@ export default async function AuthenticationPage({
   return (
     <section className={"flex min-h-screen w-full"}>
       <div className="m-auto flex h-fit w-full flex-col items-center justify-center space-y-5 px-5 lg:px-0">
-        <AuthenticationForm searchParams={searchParams.redirect} />
+        <AuthenticationForm redirect={searchParams.redirect} />
         <LanguageSelector />
         <div className={"text-center"}>
           <p className={"text-xs text-gray-500"}>
