@@ -15,32 +15,42 @@ import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
-import { Button, Input } from "@components/ui";
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
 import { ProgressBar } from "@components/index";
 
-interface AuthenticationFormProps {
-  redirect?: string;
+interface InvitationFormProps {
+  invitationToken: string;
 }
 
-export default function AuthenticationForm({
-  redirect,
-}: Readonly<AuthenticationFormProps>): JSX.Element {
-  const formTranslations = useTranslations(
-    "components.forms.authenticationForm",
-  );
+export default function InvitationForm({
+  invitationToken,
+}: Readonly<InvitationFormProps>): JSX.Element {
+  const formTranslations = useTranslations("components.forms.invitationForm");
 
   const router = useRouter();
   const { state, dispatch } = useAuth();
   const { toast } = useToast();
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
-    identifier: string;
+    username: string;
+    displayName: string;
+    designation: string;
     submitting: boolean;
   }>({
-    identifier: "",
+    username: "",
+    displayName: "",
+    designation: "",
     submitting: false,
   });
 
@@ -85,8 +95,11 @@ export default function AuthenticationForm({
                     submitting: true,
                   };
                 });
-                const response = await state.authController.authenticate(
-                  authenticationPayload.identifier,
+                const response = await state.authController.createAccount(
+                  invitationToken,
+                  authenticationPayload.displayName,
+                  authenticationPayload.username,
+                  authenticationPayload.designation,
                 );
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
@@ -104,7 +117,7 @@ export default function AuthenticationForm({
                         },
                       });
                     }
-                    router.push(redirect !== undefined ? redirect : "/console");
+                    router.push("/console");
                   });
                 } else if ("message" in response) {
                   toast({
@@ -121,11 +134,45 @@ export default function AuthenticationForm({
                 }
               }}
             >
+              <div className={"flex space-x-3"}>
+                <Select
+                  onValueChange={(value) => {
+                    setAuthenticationPayload({
+                      ...authenticationPayload,
+                      designation: value,
+                    });
+                  }}
+                >
+                  <SelectTrigger className="w-[180px] py-6">
+                    <SelectValue
+                      placeholder={formTranslations("inputs.designation")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Prof.">Prof.</SelectItem>
+                    <SelectItem value="Dr.">Dr.</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  disabled={authenticationPayload.submitting}
+                  type={"text"}
+                  className={"px-3 py-6"}
+                  value={authenticationPayload.displayName}
+                  spellCheck={false}
+                  placeholder={formTranslations("inputs.displayName")}
+                  onChange={(event) => {
+                    setAuthenticationPayload({
+                      ...authenticationPayload,
+                      displayName: event.target.value,
+                    });
+                  }}
+                />
+              </div>
               <Input
                 disabled={authenticationPayload.submitting}
                 type={"text"}
                 className={"px-3 py-6"}
-                value={authenticationPayload.identifier}
+                value={authenticationPayload.username}
                 spellCheck={false}
                 placeholder={formTranslations("inputs.identifier")}
                 onChange={(event) => {
@@ -139,10 +186,12 @@ export default function AuthenticationForm({
                 <Button
                   disabled={
                     authenticationPayload.submitting ||
-                    authenticationPayload.identifier.length === 0
+                    authenticationPayload.displayName.length === 0 ||
+                    authenticationPayload.username.length === 0 ||
+                    authenticationPayload.designation.length === 0
                   }
                   type={"submit"}
-                  className={`flex w-full space-x-3 bg-red-600 py-5 transition-all duration-300`}
+                  className={`flex w-full space-x-3 bg-red-600 py-5 transition-all duration-300 hover:bg-red-700`}
                 >
                   <PasskeyIcon color={"#ffffff"} />{" "}
                   <h2>{formTranslations("buttons.passkey")}</h2>

@@ -11,11 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import {JSX} from "react";
-import {useAuth} from "@hooks/index";
-import {ProgressBar} from "@components/index";
-import {MagnifyingGlassIcon} from "@heroicons/react/24/outline";
-import {useRouter} from "next/navigation";
+import { JSX } from "react";
+import { useAuth } from "@hooks/index";
+import { ProgressBar } from "@components/index";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 export default function ConsolePage(): JSX.Element {
   const { state } = useAuth();
@@ -52,7 +52,7 @@ export default function ConsolePage(): JSX.Element {
         </div>
       </div>
 
-      <div className="mb-6 flex items-center justify-between mt-10">
+      <div className="mb-6 mt-10 flex items-center justify-between">
         <h2 className="text-xl font-bold">Attendees</h2>
         <button
           onClick={() => router.push("/en/console/attendees")}
