@@ -16,12 +16,10 @@ package com.puconvocation.controllers
 import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
-import com.puconvocation.commons.dto.UpdateIAMRole
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.IAMRole
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
-import com.puconvocation.enums.PrincipalOperation
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
@@ -170,91 +168,6 @@ class IAMController(
             data = hashMapOf(
                 "code" to ResponseCode.RULE_CREATED,
                 "message" to "Successfully created a rule",
-            )
-        )
-    }
-
-    suspend fun updateRule(
-        authorizationToken: String?,
-        ruleName: String,
-        updateIAMRole: UpdateIAMRole
-    ): Result<HashMap<String, Any>, ErrorResponse> {
-        if (ruleName.contains("write:IAMRoles")) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to update this rules."
-                )
-            )
-        }
-
-        if (!isAuthorized(
-                role = "write:IAMRoles",
-                principal = authorizationToken,
-            )
-        ) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to update rules."
-                )
-            )
-        }
-
-        var ruleSet = iamRepository.getRule(ruleName)
-            ?: return Result.Error(
-                httpStatusCode = HttpStatusCode.NotFound,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.RULE_NOT_FOUND,
-                    message = "Rule $ruleName not found",
-                )
-            )
-
-        if (updateIAMRole.description != null) {
-            ruleSet = ruleSet.copy(description = updateIAMRole.description)
-        }
-
-        if (updateIAMRole.principals != null) {
-            for (account in updateIAMRole.principals) {
-                if (!accountRepository.accountExists(account.id)) {
-                    return Result.Error(
-                        httpStatusCode = HttpStatusCode.NotFound,
-                        error = ErrorResponse(
-                            errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
-                            message = "Account $account not found",
-                        )
-                    )
-                }
-
-                cacheController.invalidate(CachedKeys.accountKey(account.id))
-                cacheController.invalidate(CachedKeys.accountWithIAMRolesKey(account.id))
-
-                if (account.operation == PrincipalOperation.ADD) {
-                    ruleSet.principals.add(account.id)
-                } else if (account.operation == PrincipalOperation.REMOVE) {
-                    ruleSet.principals.remove(account.id)
-                }
-            }
-        }
-
-        val success = iamRepository.updateRule(ruleSet)
-
-        if (!success) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.InternalServerError,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                    message = "Failed to update rules."
-                )
-            )
-        }
-
-        return Result.Success(
-            hashMapOf(
-                "code" to ResponseCode.OK,
-                "message" to "Successfully updated rule.",
             )
         )
     }

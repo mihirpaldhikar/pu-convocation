@@ -16,12 +16,11 @@ package com.puconvocation.commons.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.puconvocation.enums.PrincipalOperation
 
-data class UpdateIAMRole(
-    @JsonProperty("description") val description: String?,
-    @JsonProperty("enabled") val enabled: Boolean?,
-    @JsonProperty("principals") val principals: MutableSet<Principal>?
+data class UpdateAccountIAMPoliciesRequest(
+    @JsonProperty("uuid") val uuid: String,
+    @JsonProperty("iamOperations") val iamOperations: List<IAMOperation>
 ) {
-    data class Principal(
+    data class IAMOperation(
         @JsonProperty("id") val id: String,
         @JsonProperty("operation") val operation: PrincipalOperation,
     )

@@ -42,7 +42,8 @@ object ControllerModule {
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
                 iamController = get<IAMController>(),
-                iamRepository = get<IAMRepository>()
+                iamRepository = get<IAMRepository>(),
+                cache = get<CacheController>(),
             )
         }
 

@@ -17,6 +17,7 @@ import com.puconvocation.commons.dto.AccountInvitations
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewAccountFromInvitation
+import com.puconvocation.commons.dto.UpdateAccountIAMPoliciesRequest
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.enums.ResponseCode
@@ -66,6 +67,13 @@ fun Routing.accountsRoute(
             val securityToken = call.getSecurityTokens()
             val result = accountController.accountDetails(securityToken)
             call.sendResponseWithAccountCookies(result)
+        }
+
+        post("/updateIAMPolicies") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val request = call.receive<UpdateAccountIAMPoliciesRequest>()
+            val result = accountController.updateAssignedIAMPoliciesForAccount(authorizationToken, request)
+            call.sendResponse(result)
         }
 
         get("/all") {

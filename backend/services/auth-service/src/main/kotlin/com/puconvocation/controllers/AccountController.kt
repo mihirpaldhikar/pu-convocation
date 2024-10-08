@@ -18,10 +18,13 @@ import com.puconvocation.commons.dto.AccountWithIAMRoles
 import com.puconvocation.commons.dto.AuthenticationCredentials
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewAccountFromInvitation
+import com.puconvocation.commons.dto.UpdateAccountIAMPoliciesRequest
+import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.enums.PrincipalOperation
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.SecurityToken
@@ -36,6 +39,7 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
     private val iamController: IAMController,
+    private val cache: CacheController
 ) {
     suspend fun authenticate(credentials: AuthenticationCredentials): Result<Any, ErrorResponse> {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
@@ -374,5 +378,48 @@ class AccountController(
                 "message" to "Invitations sent successfully."
             )
         )
+    }
+
+    suspend fun updateAssignedIAMPoliciesForAccount(
+        authorizationToken: String?,
+        updateAccountIAMPoliciesRequest: UpdateAccountIAMPoliciesRequest
+    ): Result<HashMap<String, Any>, ErrorResponse> {
+        if (!iamController.isAuthorized(
+                role = "write:Account",
+                principal = authorizationToken,
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to update IAM Policies."
+                )
+            )
+        }
+
+        for (iam in updateAccountIAMPoliciesRequest.iamOperations) {
+            val iamPolicy = iamRepository.getRule(iam.id)
+            if (iamPolicy == null) continue;
+
+            if (iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.REMOVE) {
+                iamPolicy.principals.remove(updateAccountIAMPoliciesRequest.uuid)
+            } else if (!iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.ADD) {
+                iamPolicy.principals.add(updateAccountIAMPoliciesRequest.uuid)
+            }
+
+            iamRepository.updateRule(iamPolicy)
+        }
+
+        cache.invalidate(CachedKeys.accountKey(updateAccountIAMPoliciesRequest.uuid))
+        cache.invalidate(CachedKeys.accountWithIAMRolesKey(updateAccountIAMPoliciesRequest.uuid))
+
+        return Result.Success(
+            hashMapOf(
+                "code" to ResponseCode.OK,
+                "message" to "Account IAM Policies updated successfully."
+            )
+        )
+
     }
 }
