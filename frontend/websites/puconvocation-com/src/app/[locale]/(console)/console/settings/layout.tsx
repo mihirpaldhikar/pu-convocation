@@ -40,19 +40,21 @@ export default function SettingsLayout({
   useQuery({
     queryKey: ["remoteConfig"],
     queryFn: async () => {
-      const response = await state.remoteConfigController.getRemoteConfig();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        dispatchRemoteConfig({
-          type: "SET_CONFIG",
-          payload: { config: response.payload },
-        });
-        return response.payload;
+      if (state.config === undefined || state.config === null) {
+        const response = await state.remoteConfigController.getRemoteConfig();
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          dispatchRemoteConfig({
+            type: "SET_CONFIG",
+            payload: { config: response.payload },
+          });
+          return response.payload;
+        }
       }
-      return null;
+      return state.config;
     },
   });
 

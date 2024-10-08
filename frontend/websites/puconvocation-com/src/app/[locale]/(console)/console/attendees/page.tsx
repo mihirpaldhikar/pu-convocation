@@ -31,13 +31,42 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/solid";
 import { ProgressBar } from "@components/index";
+import { useRemoteConfig } from "@hooks/index";
 
 const attendeeController = new AttendeeController();
 
 export default function AttendeePage(): JSX.Element {
-  const [showAttendees, setShowAttendees] = useState(false);
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const {
+    state: {
+      config: remoteConfig,
+      loading: isRemoteConfigLoading,
+      remoteConfigController,
+    },
+    dispatch: dispatchRemoteConfig,
+  } = useRemoteConfig();
+
+  useQuery({
+    queryKey: ["remoteConfig"],
+    queryFn: async () => {
+      if (remoteConfig === undefined || remoteConfig === null) {
+        const response = await remoteConfigController.getRemoteConfig();
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          dispatchRemoteConfig({
+            type: "SET_CONFIG",
+            payload: { config: response.payload },
+          });
+          return response.payload;
+        }
+      }
+      return remoteConfig;
+    },
+  });
 
   const {
     data: totalAttendeeCount = 0,
@@ -126,10 +155,26 @@ export default function AttendeePage(): JSX.Element {
                 </span>
               )}
               <Button
-                onClick={() => setShowAttendees(!showAttendees)}
+                disabled={
+                  isRemoteConfigLoading || remoteConfig?.attendeesLocked
+                }
+                onClick={async () => {
+                  dispatchRemoteConfig({
+                    type: "SET_CONFIG",
+                    payload: {
+                      config: {
+                        ...remoteConfig!!,
+                        attendeesLocked: !remoteConfig?.attendeesLocked,
+                      },
+                    },
+                  });
+                  await attendeeController.mutateAttendeeLock(
+                    !remoteConfig!!.attendeesLocked,
+                  );
+                }}
                 className="bg-red-600 text-white hover:bg-red-700"
               >
-                {showAttendees ? "Unlock" : "Lock"}
+                {remoteConfig?.attendeesLocked ? "Unlock" : "Lock"}
               </Button>
             </CardContent>
           </Card>
