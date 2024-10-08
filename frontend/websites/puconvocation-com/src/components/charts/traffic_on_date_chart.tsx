@@ -54,7 +54,7 @@ const month = Number(format(now, "MM"));
 const day = Number(format(now, "dd"));
 
 interface TrafficOnDateChartProps {
-  showText?: boolean;  
+  showText?: boolean;
   showShadowAndBorder?: boolean;
 }
 
@@ -83,13 +83,17 @@ export default function TrafficOnDateChart({
   });
 
   return (
-    <Card className={"h-fit w-full"}>
-      <CardHeader>
-        <CardTitle>Daily Traffic</CardTitle>
-        <CardDescription>
-          Showing total visitors for {year}-{month}-{day} on the website.
-        </CardDescription>
-      </CardHeader>
+    <Card
+      className={`${showShadowAndBorder ? "border shadow" : "border-none shadow-none"} h-fit w-full`}
+    >
+      {showText && (
+        <CardHeader>
+          <CardTitle>Daily Traffic</CardTitle>
+          <CardDescription>
+            Showing total visitors for {year}-{month}-{day} on the website.
+          </CardDescription>
+        </CardHeader>
+      )}
       <CardContent>
         {isLoading ? (
           <Fragment>Loading....</Fragment>
