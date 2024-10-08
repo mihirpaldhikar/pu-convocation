@@ -10,10 +10,10 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-import {JSX} from "react";
-import {AuthenticationForm} from "@components/forms";
-import {Pattern} from "@components/ui";
-import {getTranslations} from "next-intl/server";
+import { JSX } from "react";
+import { AuthenticationForm } from "@components/forms";
+import { getTranslations } from "next-intl/server";
+import { LanguageSelector } from "@components/index";
 
 interface AuthenticationProps {
   searchParams: { redirect: string };
@@ -22,28 +22,17 @@ interface AuthenticationProps {
 export default async function AuthenticationPage({
   searchParams,
 }: Readonly<AuthenticationProps>): Promise<JSX.Element> {
-  const pageTranslations = await getTranslations("pages.authenticationPage");
+  const coreTranslations = await getTranslations("core");
 
   return (
-    <section className={"grid h-dvh grid-cols-1 lg:grid-cols-2"}>
-      <div className={"hidden flex-1 lg:flex"}>
-        <Pattern />
-      </div>
-      <div
-        className={
-          "flex flex-1 items-center justify-center px-3 lg:bg-red-50 lg:px-0"
-        }
-      >
-        <div
-          className={
-            "flex w-full flex-col space-y-10 rounded-xl border border-gray-300 bg-white px-5 py-10 md:w-2/3"
-          }
-        >
-          <div className={"flex flex-col items-center space-y-5"}>
-            <h3 className={"text-xl font-bold"}>{pageTranslations("title")}</h3>
-            <h5 className={"font-medium"}>{pageTranslations("subTitle")}</h5>
-          </div>
-          <AuthenticationForm redirect={searchParams.redirect} />
+    <section className={"flex min-h-screen w-full"}>
+      <div className="m-auto flex h-fit w-full flex-col items-center justify-center space-y-5 px-5 lg:px-0">
+        <AuthenticationForm searchParams={searchParams.redirect} />
+        <LanguageSelector />
+        <div className={"text-center"}>
+          <p className={"text-xs text-gray-500"}>
+            &copy; {new Date().getFullYear()} {coreTranslations("copyright")}
+          </p>
         </div>
       </div>
     </section>

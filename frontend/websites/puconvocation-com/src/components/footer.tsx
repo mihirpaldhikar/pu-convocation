@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
-import {Flags, LanguageSelector} from "@components/index";
-import {getTranslations} from "next-intl/server";
-import {Link} from "@i18n/routing";
+import { JSX } from "react";
+import { Flags, LanguageSelector } from "@components/index";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@i18n/routing";
 
 export default async function Footer(): Promise<JSX.Element> {
   const coreTranslations = await getTranslations("core");
@@ -62,7 +62,7 @@ export default async function Footer(): Promise<JSX.Element> {
         </section>
         <section className={"space-y-10 text-center"}>
           <p className={"text-xs"}>
-            &copy; {new Date().getFullYear()} {footerTranslations("copyright")}
+            &copy; {new Date().getFullYear()} {coreTranslations("copyright")}
           </p>
           <Link
             href={"https://paruluniversity.ac.in"}
