@@ -222,27 +222,9 @@ class AccountController(
         authorizationToken: String?,
         identifier: String
     ): Result<AccountWithIAMRoles, ErrorResponse> {
-        val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenClaims.isEmpty()) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN,
-                    message = "Authorization token is invalid."
-                )
-
-            )
-        }
-
-
         if (!iamController.isAuthorized(
                 role = "read:Account",
-                principal = tokenClaims[0],
+                principal = authorizationToken,
             )
         ) {
             return Result.Error(
@@ -265,6 +247,26 @@ class AccountController(
 
         return Result.Success(
             account
+        )
+    }
+
+    suspend fun getAllAccounts(authorizationToken: String?): Result<List<AccountWithIAMRoles>, ErrorResponse> {
+        if (!iamController.isAuthorized(
+                role = "read:Account",
+                principal = authorizationToken,
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view accounts."
+                )
+            )
+        }
+
+        return Result.Success(
+            accountRepository.getAllAccounts()
         )
     }
 

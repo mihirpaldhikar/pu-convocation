@@ -68,6 +68,12 @@ fun Routing.accountsRoute(
             call.sendResponseWithAccountCookies(result)
         }
 
+        get("/all") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val result = accountController.getAllAccounts(authorizationToken)
+            call.sendResponseWithAccountCookies(result)
+        }
+
         get("/{identifier}") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val identifier = call.parameters["identifier"] ?: return@get call.sendResponse(

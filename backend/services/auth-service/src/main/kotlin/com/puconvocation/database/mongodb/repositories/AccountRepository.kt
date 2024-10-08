@@ -88,6 +88,29 @@ class AccountRepository(
         return account
     }
 
+    override suspend fun getAllAccounts(): List<AccountWithIAMRoles> {
+        val accounts = accountCollection.find().toList()
+
+        val accountWithIAMPolicies = mutableListOf<AccountWithIAMRoles>()
+
+        for (account in accounts) {
+            val iamPolicies = iamRepository.listRulesForAccount(account.uuid.toHexString())
+            accountWithIAMPolicies.add(
+                AccountWithIAMRoles(
+                    uuid = account.uuid,
+                    email = account.email,
+                    username = account.username,
+                    avatarURL = account.avatarURL,
+                    displayName = account.displayName,
+                    iamRoles = iamPolicies,
+                    designation = account.designation,
+                )
+            )
+        }
+
+        return accountWithIAMPolicies
+    }
+
     override suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMRoles? {
         val cacheAccount = cache.get(CachedKeys.accountWithIAMRolesKey(identifier))
 
