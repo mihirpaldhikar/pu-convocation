@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@components/ui";
 import {
@@ -37,7 +37,7 @@ const attendeeController = new AttendeeController();
 export default function AttendeePage(): JSX.Element {
   const [showAttendees, setShowAttendees] = useState(false);
   const [page, setPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     data: totalAttendeeCount = 0,
@@ -47,8 +47,12 @@ export default function AttendeePage(): JSX.Element {
     queryKey: ["totalAttendeeCount"],
     queryFn: async () => {
       const response = await attendeeController.getTotalAttendeesCount();
-      if (response.statusCode === StatusCode.SUCCESS) {
-        return response.payload as number;
+      if (
+        response.statusCode === StatusCode.SUCCESS &&
+        "payload" in response &&
+        typeof response.payload === "object"
+      ) {
+        return response.payload.count;
       }
       return 0;
     },
@@ -60,20 +64,27 @@ export default function AttendeePage(): JSX.Element {
     isLoading: isAttendeeLoading,
     isError: attendeeError,
   } = useQuery({
-    queryKey: ["attendeesList", page, searchTerm],
+    queryKey: ["attendeesList", searchQuery, page],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const response = await attendeeController.getAllAttendees(
-        page,
-        10,
-        searchTerm,
-      );
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload.attendees;
+      if (searchQuery.length > 0) {
+        const response = await attendeeController.searchAttendees(searchQuery);
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          return response.payload;
+        }
+      } else {
+        const response = await attendeeController.getAllAttendees(page, 10);
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          return response.payload.attendees;
+        }
       }
       return [];
     },
@@ -138,8 +149,10 @@ export default function AttendeePage(): JSX.Element {
                   type="text"
                   placeholder="Search Attendees..."
                   className="w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                  }}
                 />
               </div>
 
@@ -189,7 +202,9 @@ export default function AttendeePage(): JSX.Element {
                     </tbody>
                   </table>
 
-                  <div className="mt-4 flex items-center justify-end">
+                  <div
+                    className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
+                  >
                     <Button
                       onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
                       disabled={page === 0}
