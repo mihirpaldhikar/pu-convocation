@@ -54,6 +54,21 @@ fun Routing.attendeesRoute(
             call.sendResponse(result)
         }
 
+        get("/search") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val query = call.request.queryParameters["query"]?.toString() ?: return@get call.sendResponse(
+                Result.Error(
+                    ErrorResponse(
+                        errorCode = ResponseCode.BAD_REQUEST,
+                        message = "Please provide query."
+                    )
+
+                )
+            )
+            val result = attendeeController.searchAttendees(authorizationToken, query)
+            call.sendResponse(result)
+        }
+
         post("/upload") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
             val multipartData = call.receiveMultipart()
@@ -82,14 +97,15 @@ fun Routing.attendeesRoute(
 
         post("/mutateAttendeeLock") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
-            val locked = call.request.queryParameters["locked"]?.toBooleanStrictOrNull() ?: return@post call.sendResponse(
-                Result.Error(
-                    ErrorResponse(
-                        errorCode = ResponseCode.BAD_REQUEST,
-                        message = "Please provide locked value as true or false as query parameter."
+            val locked =
+                call.request.queryParameters["locked"]?.toBooleanStrictOrNull() ?: return@post call.sendResponse(
+                    Result.Error(
+                        ErrorResponse(
+                            errorCode = ResponseCode.BAD_REQUEST,
+                            message = "Please provide locked value as true or false as query parameter."
+                        )
                     )
                 )
-            )
             val result = attendeeController.mutateAttendeeLock(authorizationToken, locked)
             call.sendResponse(result)
         }

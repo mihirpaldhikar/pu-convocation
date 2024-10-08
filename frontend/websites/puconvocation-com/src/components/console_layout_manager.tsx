@@ -25,7 +25,7 @@ interface ConsoleDesktopProps {
   navMenu: Array<NavMenu>;
 }
 
-export default function ConsoleDesktop({
+export default function ConsoleLayoutManager({
   children,
   navMenu,
 }: ConsoleDesktopProps): JSX.Element {
@@ -40,7 +40,7 @@ export default function ConsoleDesktop({
   const accountIamRoles = new Set<string>(state.account!!.iamRoles);
 
   return (
-    <div className={`hidden flex-1 pt-20 lg:flex`}>
+    <div className={`flex-1 pt-20 lg:flex`}>
       <aside
         className={`${collapsed ? "w-20" : "w-72"} fixed left-0 top-0 z-40 hidden h-dvh flex-col border-r bg-white pb-10 pt-20 transition-all duration-150 ease-in-out lg:flex`}
       >
@@ -108,6 +108,40 @@ export default function ConsoleDesktop({
       >
         {children}
       </main>
+      <nav
+        className={
+          "fixed bottom-0 flex h-20 w-full flex-row items-center justify-evenly border-t bg-white lg:hidden"
+        }
+      >
+        {navMenu.map((menu) => {
+          const isChildPathMatched = menu.childRoutes
+            .map((route) => `/console${menu.route}${route}`)
+            .includes(path);
+          return (
+            <Link
+              key={menu.name}
+              href={`/console${menu.route}`}
+              className={`cursor-pointer rounded-tr-full ${
+                path === `/console${menu.route}` || isChildPathMatched
+                  ? "bg-red-100"
+                  : "bg-transparent hover:bg-gray-100"
+              } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
+            >
+              <DynamicIcon
+                icon={menu.icon}
+                outline={
+                  !(path === `/console${menu.route}` || isChildPathMatched)
+                }
+                className={
+                  path === `/console${menu.route}` || isChildPathMatched
+                    ? "size-6 text-red-700"
+                    : "size-6 text-black"
+                }
+              />
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }

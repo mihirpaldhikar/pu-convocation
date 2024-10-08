@@ -284,4 +284,25 @@ class AttendeeController(
         )
     }
 
+    suspend fun searchAttendees(authorizationToken: String?, query: String): Result<List<Attendee>, ErrorResponse> {
+        if (!authService.isAuthorized(
+                role = "read:Attendee",
+                principal = authorizationToken
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view attendee details."
+                )
+
+            )
+        }
+
+        val matchedAttendees = attendeeRepository.searchAttendees(query)
+
+        return Result.Success(matchedAttendees)
+    }
+
 }

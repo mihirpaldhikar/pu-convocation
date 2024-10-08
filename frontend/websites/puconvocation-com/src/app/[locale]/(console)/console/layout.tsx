@@ -17,7 +17,7 @@ import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers, RemoteConfigProvider } from "@providers/index";
-import { ConsoleDesktop, ConsoleMobile, Navbar } from "@components/index";
+import { ConsoleLayoutManager, Navbar } from "@components/index";
 import { getMessages } from "next-intl/server";
 import { NavMenu } from "@dto/index";
 
@@ -81,8 +81,9 @@ export default async function RootLayout({
           <RemoteConfigProvider>
             <div className={"flex h-screen flex-col"}>
               <Navbar />
-              <ConsoleDesktop navMenu={navMenu}>{children}</ConsoleDesktop>
-              <ConsoleMobile navMenu={navMenu}>{children}</ConsoleMobile>
+              <ConsoleLayoutManager navMenu={navMenu}>
+                {children}
+              </ConsoleLayoutManager>
               <Toaster />
             </div>
           </RemoteConfigProvider>

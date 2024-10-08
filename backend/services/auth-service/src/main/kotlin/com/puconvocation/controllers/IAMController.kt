@@ -27,6 +27,7 @@ import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.utils.Result
 import io.ktor.http.*
+import org.bson.types.ObjectId
 
 class IAMController(
     private val accountRepository: AccountRepository,
@@ -37,26 +38,9 @@ class IAMController(
 
 ) {
     suspend fun getRule(authorizationToken: String?, name: String): Result<IAMRole, ErrorResponse> {
-        val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenClaims.isEmpty()) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.Forbidden,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN,
-                    message = "Authorization token is invalid."
-                )
-
-            )
-        }
-
         if (!isAuthorized(
                 role = "read:IAMRoles",
-                principal = tokenClaims[0],
+                principal = authorizationToken,
             )
         ) {
             return Result.Error(
@@ -79,6 +63,26 @@ class IAMController(
 
         return Result.Success(
             rule
+        )
+    }
+
+    suspend fun allPolicies(authorizationToken: String?): Result<List<IAMRole>, ErrorResponse> {
+        if (!isAuthorized(
+                role = "read:IAMRoles",
+                principal = authorizationToken,
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view rules."
+                )
+            )
+        }
+
+        return Result.Success(
+            data = iamRepository.allPolicies()
         )
     }
 
@@ -175,26 +179,19 @@ class IAMController(
         ruleName: String,
         updateIAMRole: UpdateIAMRole
     ): Result<HashMap<String, Any>, ErrorResponse> {
-        val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
-            tokenType = TokenType.AUTHORIZATION_TOKEN,
-            claims = listOf(JsonWebToken.UUID_CLAIM)
-        )
-
-        if (tokenClaims.isEmpty()) {
+        if (ruleName.contains("write:IAMRoles")) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.INVALID_TOKEN,
-                    message = "Authorization token is invalid."
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to update this rules."
                 )
-
             )
         }
 
         if (!isAuthorized(
                 role = "write:IAMRoles",
-                principal = tokenClaims[0],
+                principal = authorizationToken,
             )
         ) {
             return Result.Error(
@@ -262,24 +259,41 @@ class IAMController(
         )
     }
 
-    suspend fun isAuthorized(role: String, principal: String): Boolean {
+    suspend fun isAuthorized(role: String, principal: String?): Boolean {
+
+        if (principal == null) return false
+
+        val actualPrincipal = if (ObjectId.isValid(principal)) {
+            principal
+        } else {
+            val jwtClaims = jsonWebToken.getClaims(
+                token = principal,
+                tokenType = TokenType.AUTHORIZATION_TOKEN,
+                claims = listOf(JsonWebToken.UUID_CLAIM)
+            )
+
+            if (jwtClaims.isEmpty()) return false
+
+            jwtClaims[0]
+        }
+
         val separator = role.split(":")
         val operation = separator[0]
-        val iam = separator[1]
+        val policy = separator[1]
 
-        val account = accountRepository.getAccountWithIAMRoles(principal) ?: return false
+        val account = accountRepository.getAccountWithIAMRoles(actualPrincipal) ?: return false
 
         return if (operation == "read") {
-            account.iamRoles.contains("write:$iam") ||
-                    account.iamRoles.contains("read:$iam")
+            account.iamRoles.contains("write:$policy") ||
+                    account.iamRoles.contains("read:$policy")
         } else {
-            account.iamRoles.contains("write:$iam")
+            account.iamRoles.contains("write:$policy")
         }
     }
 
-    suspend fun isAuthorized(authorizationToken: String?, role: String, principal: String): Boolean {
+    suspend fun serviceAuthorizationCheck(serviceAuthorizationToken: String?, iamCheck: String): Boolean {
         val tokenClaims = jsonWebToken.getClaims(
-            token = authorizationToken,
+            token = serviceAuthorizationToken,
             tokenType = TokenType.SERVICE_AUTHORIZATION_TOKEN,
             claims = listOf(JsonWebToken.SERVICE_NAME)
         )
@@ -287,6 +301,10 @@ class IAMController(
         if (tokenClaims.isEmpty()) return false
 
         if (companionServices.filter { it.serviceName == tokenClaims[0] }.isEmpty()) return false
+
+        val split = iamCheck.split("@")
+        val role = split[0]
+        val principal = split[1]
 
         return isAuthorized(role, principal)
     }

@@ -48,7 +48,7 @@ export default async function RootLayout({
       >
         <Providers locale={locale} translations={translations}>
           <div className={"flex min-h-dvh flex-col"}>
-            <main className={`flex-1 pt-20`}>{children}</main>
+            <main className={`flex-1`}>{children}</main>
             <Toaster />
           </div>
           <Footer />

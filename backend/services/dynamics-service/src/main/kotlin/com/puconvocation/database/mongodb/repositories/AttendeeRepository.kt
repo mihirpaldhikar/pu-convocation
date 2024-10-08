@@ -15,8 +15,13 @@ package com.puconvocation.database.mongodb.repositories
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.mongodb.client.model.Aggregates
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates
+import com.mongodb.client.model.search.FuzzySearchOptions
+import com.mongodb.client.model.search.SearchOperator
+import com.mongodb.client.model.search.SearchOptions
+import com.mongodb.client.model.search.SearchPath
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
@@ -150,6 +155,27 @@ class AttendeeRepository(
             "next" to if (nextFetchedAttendees.isNotEmpty()) page + 1 else Int.MAX_VALUE,
             "attendees" to fetchedAttendees
         )
+    }
+
+    override suspend fun searchAttendees(query: String): List<Attendee> {
+        val aggregationPipeline = Aggregates.search(
+            SearchOperator.compound().filter(
+                listOf(
+                    SearchOperator.text(
+                        SearchPath.fieldPath(Attendee::studentName.name),
+                        query
+                    ).fuzzy(FuzzySearchOptions.fuzzySearchOptions().maxEdits(2)),
+                )
+            ),
+            SearchOptions.searchOptions().index("searchAttendees")
+        )
+
+        return attendeesCollection.withDocumentClass<Attendee>().aggregate(
+            listOf(
+                aggregationPipeline,
+                Aggregates.limit(10)
+            )
+        ).toList()
     }
 
 }

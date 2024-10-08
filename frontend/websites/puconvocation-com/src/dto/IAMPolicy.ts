@@ -11,7 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as IdentifierForm } from "./identifier_form";
-export { default as AuthenticationForm } from "./authentication_form";
-export { default as NewAccountForm } from "./new_account_form";
-export { default as InvitationFrom } from "./invitation_from";
+export default interface IAMPolicy {
+  role: string;
+  description: string;
+  principals: Set<string>;
+}

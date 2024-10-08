@@ -13,38 +13,40 @@
 
 "use client";
 
-import {JSX} from "react";
+import { JSX } from "react";
 import i18nConfig from "@i18n/config.json";
-import {GlobeAltIcon} from "@heroicons/react/24/outline";
-import {useLocale} from "next-intl";
-import {usePathname, useRouter} from "@i18n/routing";
-import {useTranslations} from "use-intl";
-import {Button} from "@components/ui";
+import { useLocale } from "next-intl";
+import { usePathname, useRouter } from "@i18n/routing";
+import { Button } from "@components/ui";
+import { useSearchParams } from "next/navigation";
 
 export default function LanguageSelector(): JSX.Element {
-  const translations = useTranslations("components.footer.languageSelector");
-
   const currentLocale = useLocale();
   const pathName = usePathname();
+  const queries = useSearchParams();
   const router = useRouter();
 
   return (
     <div className={"flex flex-col items-start space-y-3"}>
-      <h6 className={"font-semibold"}>
-        <GlobeAltIcon className={"inline-block size-5"} />{" "}
-        {translations("title")}
-      </h6>
       <div className={"flex space-x-4"}>
         {i18nConfig.map((lang) => {
           return (
             <Button
               hidden={!lang.enabled}
               key={lang.code}
-              className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border bg-transparent text-black hover:text-white"} rounded-full text-xs`}
+              size={"sm"}
+              className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border bg-transparent text-black hover:bg-neutral-200"} rounded-full text-xs`}
               onClick={() => {
-                router.replace(pathName, {
-                  locale: lang.code,
-                });
+                router.replace(
+                  `${pathName}`.concat(
+                    queries.toString().length !== 0
+                      ? `?${queries.toString()}`
+                      : "",
+                  ),
+                  {
+                    locale: lang.code,
+                  },
+                );
               }}
             >
               {lang.localName}
