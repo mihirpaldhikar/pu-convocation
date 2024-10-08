@@ -76,7 +76,7 @@ export default function ConsolePage(): JSX.Element {
   });
 
   return (
-    <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-20">
+    <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
       {/* Analytics Section */}
       {state.account?.iamRoles.includes("read:Analytics") ? (
         <div className="analytics-section">
@@ -169,7 +169,9 @@ export default function ConsolePage(): JSX.Element {
               <ProgressBar type="circular" />
             ) : attendeeError ? (
               <p className="text-red-600">Error loading attendees</p>
-            ) : attendees !== null && attendees !== undefined && attendees.length > 0 ? (
+            ) : attendees !== null &&
+              attendees !== undefined &&
+              attendees.length > 0 ? (
               <table className="min-w-full table-auto border-collapse">
                 <thead>
                   <tr className="border-b">
@@ -185,7 +187,7 @@ export default function ConsolePage(): JSX.Element {
                     <th className="px-4 py-2 text-center font-semibold text-gray-700">
                       Row
                     </th>
-                    <th className="w-1/ px-4 py-2 text-center font-semibold text-gray-700">
+                    <th className="w-1/6 px-4 py-2 text-center font-semibold text-gray-700">
                       Seat
                     </th>
                   </tr>
