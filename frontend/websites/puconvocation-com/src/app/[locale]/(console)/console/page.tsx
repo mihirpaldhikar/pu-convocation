@@ -169,7 +169,7 @@ export default function ConsolePage(): JSX.Element {
               <ProgressBar type="circular" />
             ) : attendeeError ? (
               <p className="text-red-600">Error loading attendees</p>
-            ) : attendees !== null && attendees.length > 0 ? (
+            ) : attendees !== null && attendees !== undefined && attendees.length > 0 ? (
               <table className="min-w-full table-auto border-collapse">
                 <thead>
                   <tr className="border-b">
