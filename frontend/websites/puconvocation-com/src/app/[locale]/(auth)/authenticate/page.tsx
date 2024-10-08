@@ -11,12 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 import { JSX } from "react";
-import { AuthenticationForm } from "@components/forms";
+import { AuthenticationForm, InvitationFrom } from "@components/forms";
 import { getTranslations } from "next-intl/server";
 import { LanguageSelector } from "@components/index";
 
 interface AuthenticationProps {
-  searchParams: { redirect: string };
+  searchParams: {
+    redirect: string;
+    invitationToken: string;
+  };
 }
 
 export default async function AuthenticationPage({
@@ -27,7 +30,16 @@ export default async function AuthenticationPage({
   return (
     <section className={"flex min-h-screen w-full"}>
       <div className="m-auto flex h-fit w-full flex-col items-center justify-center space-y-5 px-5 lg:px-0">
-        <AuthenticationForm redirect={searchParams.redirect} />
+        {searchParams.invitationToken === null ||
+        searchParams.invitationToken === undefined ||
+        searchParams.invitationToken === "" ||
+        !searchParams.invitationToken?.match(
+          /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
+        ) ? (
+          <AuthenticationForm redirect={searchParams.redirect} />
+        ) : (
+          <InvitationFrom invitationToken={searchParams.invitationToken} />
+        )}
         <LanguageSelector />
         <div className={"text-center"}>
           <p className={"text-xs text-gray-500"}>

@@ -75,7 +75,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
+        className={`min-h-screen font-sans antialiased bg-white ${montserrat.variable}`}
       >
         <Providers locale={locale} translations={translations}>
           <RemoteConfigProvider>

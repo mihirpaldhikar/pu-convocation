@@ -42,7 +42,7 @@ export default function ConsoleLayoutManager({
   return (
     <div className={`flex-1 pt-20 lg:flex`}>
       <aside
-        className={`${collapsed ? "w-20" : "w-72"} fixed left-0 top-0 z-40 hidden h-dvh flex-col border-r bg-white pb-10 pt-20 transition-all duration-150 ease-in-out lg:flex`}
+        className={`${collapsed ? "w-20" : "w-72"} fixed left-0 top-0 z-40 hidden h-dvh flex-col bg-white pb-10 pt-20 transition-all duration-150 ease-in-out lg:flex`}
       >
         <nav
           className={`flex grow flex-col pt-20 ${collapsed ? "items-center" : "pr-10"} space-y-5`}
@@ -104,13 +104,13 @@ export default function ConsoleLayoutManager({
         </div>
       </aside>
       <main
-        className={`ml-0 flex-1 bg-zinc-50 ${collapsed ? "lg:ml-20" : "lg:ml-72"} transition-all duration-150 ease-in-out`}
+        className={`ml-0 flex-1 ${collapsed ? "lg:ml-20" : "lg:ml-72"} transition-all duration-150 ease-in-out bg-neutral-100 lg:rounded-tl-3xl`}
       >
         {children}
       </main>
       <nav
         className={
-          "fixed bottom-0 flex h-20 w-full flex-row items-center justify-evenly border-t bg-white lg:hidden"
+          "fixed bottom-0 flex h-20 w-full flex-row items-center justify-evenly bg-white lg:hidden"
         }
       >
         {navMenu.map((menu) => {
