@@ -131,7 +131,7 @@ export default function AuthenticationForm({
                 onChange={(event) => {
                   setAuthenticationPayload({
                     ...authenticationPayload,
-                    username: event.target.value.trim().replace(/\s/g, ""),
+                    identifier: event.target.value.trim().replace(/\s/g, ""),
                   });
                 }}
               />
