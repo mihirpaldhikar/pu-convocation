@@ -18,10 +18,12 @@ import i18nConfig from "@i18n/config.json";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@i18n/routing";
 import { Button } from "@components/ui";
+import { useSearchParams } from "next/navigation";
 
 export default function LanguageSelector(): JSX.Element {
   const currentLocale = useLocale();
   const pathName = usePathname();
+  const queries = useSearchParams();
   const router = useRouter();
 
   return (
@@ -35,9 +37,16 @@ export default function LanguageSelector(): JSX.Element {
               size={"sm"}
               className={`${currentLocale === lang.code ? "bg-primary text-primary-foreground" : "border border-border bg-transparent text-black hover:bg-neutral-200"} rounded-full text-xs`}
               onClick={() => {
-                router.replace(pathName, {
-                  locale: lang.code,
-                });
+                router.replace(
+                  `${pathName}`.concat(
+                    queries.toString().length !== 0
+                      ? `?${queries.toString()}`
+                      : "",
+                  ),
+                  {
+                    locale: lang.code,
+                  },
+                );
               }}
             >
               {lang.localName}
