@@ -11,16 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Fragment, JSX} from "react";
-import {NewAccountForm} from "@components/forms";
+import { useEffect, useState } from "react";
 
-export default function NewAccountPage(): JSX.Element {
-  return (
-    <Fragment>
-      <section className={"space-y-5"}>
-        <h2 className={"text-2xl font-bold"}>Create New Account</h2>
-        <NewAccountForm />
-      </section>
-    </Fragment>
-  );
+export default function useDebounce(value: string, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }

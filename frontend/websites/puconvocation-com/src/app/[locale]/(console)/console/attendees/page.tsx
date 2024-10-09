@@ -14,7 +14,7 @@
 
 import { JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@components/ui";
+import { Button, Input } from "@components/ui";
 import {
   Card,
   CardContent,
@@ -27,17 +27,18 @@ import { StatusCode } from "@enums/StatusCode";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  MagnifyingGlassIcon,
   UsersIcon,
 } from "@heroicons/react/24/solid";
 import { ProgressBar } from "@components/index";
-import { useRemoteConfig } from "@hooks/index";
+import { useDebounce, useRemoteConfig } from "@hooks/index";
 
 const attendeeController = new AttendeeController();
 
 export default function AttendeePage(): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   const {
     state: {
       config: remoteConfig,
@@ -93,11 +94,12 @@ export default function AttendeePage(): JSX.Element {
     isLoading: isAttendeeLoading,
     isError: attendeeError,
   } = useQuery({
-    queryKey: ["attendeesList", searchQuery, page],
+    queryKey: ["attendeesList", debouncedSearchQuery, page],
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      if (searchQuery.length > 0) {
-        const response = await attendeeController.searchAttendees(searchQuery);
+      if (debouncedSearchQuery.length > 0) {
+        const response =
+          await attendeeController.searchAttendees(debouncedSearchQuery);
         if (
           response.statusCode === StatusCode.SUCCESS &&
           "payload" in response &&
@@ -188,12 +190,10 @@ export default function AttendeePage(): JSX.Element {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex h-full flex-col">
-              <div className="relative mb-4">
-                <MagnifyingGlassIcon className="absolute left-3 h-12 w-5 text-gray-500" />
-                <input
+              <div className="flex items-center pb-5">
+                <Input
                   type="text"
                   placeholder="Search Attendees..."
-                  className="mb-2 mt-1 w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
