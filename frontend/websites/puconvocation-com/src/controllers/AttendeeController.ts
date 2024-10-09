@@ -11,13 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {
-  Attendee,
-  AttendeeWithEnclosureMetadata,
-  AttendeeWithPagination,
-  Response,
-} from "@dto/index";
-import { StatusCode } from "@enums/StatusCode";
+import { Attendee, AttendeeWithEnclosureMetadata, AttendeeWithPagination, Response } from "@dto/index";
 import { HttpService } from "@services/index";
 
 export default class AttendeeController {
@@ -29,8 +23,8 @@ export default class AttendeeController {
 
   public async getAttendee(
     identifier: string,
-  ): Promise<Response<Attendee | string>> {
-    return await this.httpService.get<Attendee>(
+  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+    return await this.httpService.get<AttendeeWithEnclosureMetadata>(
       `${this.ATTENDEE_ROUTES}/${identifier}`,
     );
   }
