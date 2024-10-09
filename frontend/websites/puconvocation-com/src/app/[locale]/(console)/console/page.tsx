@@ -15,7 +15,7 @@
 import { Fragment, JSX } from "react";
 import { useAuth } from "@hooks/index";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useRouter } from "@i18n/routing";
+import { Link } from "@i18n/routing";
 import { Button } from "@components/ui";
 import {
   GeographicalMap,
@@ -32,7 +32,6 @@ const analyticsController = new AnalyticsController();
 const attendeeController = new AttendeeController();
 
 export default function ConsolePage(): JSX.Element {
-  const router = useRouter();
   const { state } = useAuth();
 
   const {
@@ -92,7 +91,7 @@ export default function ConsolePage(): JSX.Element {
 
           <div className="cards mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Demographics Card */}
-            <Card className="max-h-[300px] overflow-hidden border border-gray-300 p-2 shadow-none">
+            <Card className="max-h-[300px] overflow-hidden p-2 shadow-none">
               <CardHeader className="pb-2">
                 <CardTitle className="text-red-600">Demographics</CardTitle>
               </CardHeader>
@@ -119,7 +118,7 @@ export default function ConsolePage(): JSX.Element {
             </Card>
 
             {/* Traffic Card */}
-            <Card className="max-h-[300px] overflow-hidden border border-gray-300 p-2 shadow-none">
+            <Card className="max-h-[300px] overflow-hidden p-2 shadow-none">
               <CardHeader className="pb-2">
                 <CardTitle className="text-red-600">Traffic</CardTitle>
               </CardHeader>
@@ -129,10 +128,7 @@ export default function ConsolePage(): JSX.Element {
                 ) : isError ? (
                   <p className="text-red-600">Error loading data</p>
                 ) : (
-                  <TrafficOnDateChart
-                    showText={false}
-                    showShadowAndBorder={false}
-                  />
+                  <TrafficOnDateChart showText={false} />
                 )}
               </CardContent>
             </Card>
@@ -151,7 +147,7 @@ export default function ConsolePage(): JSX.Element {
           </Button>
         </div>
 
-        <div className="attendees-list mb-4 rounded-t-2xl border border-gray-300 bg-white">
+        <div className="h-full rounded-3xl bg-white">
           <div className="ml-2 mt-2 p-4">
             <div className="relative mb-4 flex items-center">
               <MagnifyingGlassIcon className="absolute left-3 h-5 w-5 text-gray-500" />
@@ -162,7 +158,7 @@ export default function ConsolePage(): JSX.Element {
               />
             </div>
           </div>
-          <div className="h-64 overflow-y-auto">
+          <div className="h-full overflow-y-auto">
             <div className="mb-2 border-b border-gray-300" />
 
             {isAttendeeLoading ? (
@@ -193,10 +189,10 @@ export default function ConsolePage(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {attendees.map((a) => (
+                  {attendees.map((a, index) => (
                     <tr
                       key={a.convocationId}
-                      className="border-b text-center transition-colors duration-200 hover:bg-gray-100"
+                      className={`${index !== attendees.length - 1 ? "border-b" : ""} cursor-pointer text-center transition-colors duration-200 hover:bg-gray-100`}
                     >
                       <td className="px-4 py-2">{a.convocationId}</td>
                       <td className="px-4 py-2">{a.studentName}</td>

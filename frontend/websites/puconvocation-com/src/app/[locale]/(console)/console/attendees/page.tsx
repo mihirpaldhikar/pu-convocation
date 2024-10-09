@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@components/ui";
 import {
@@ -27,8 +27,8 @@ import { StatusCode } from "@enums/StatusCode";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  UsersIcon,
   MagnifyingGlassIcon,
+  UsersIcon,
 } from "@heroicons/react/24/solid";
 import { ProgressBar } from "@components/index";
 import { useRemoteConfig } from "@hooks/index";
@@ -135,7 +135,7 @@ export default function AttendeePage(): JSX.Element {
 
       <div className="flex min-h-screen flex-col items-center p-1">
         <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
-          <Card className="h-[200px] w-full border border-gray-300 p-4">
+          <Card className="h-[200px] w-full p-4">
             <CardHeader>
               <CardTitle>Total Attendees</CardTitle>
               <CardDescription>
@@ -179,7 +179,7 @@ export default function AttendeePage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <Card className="h-[750px] w-full flex-grow border border-gray-300 p-4 shadow-none">
+          <Card className="h-[750px] w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -233,7 +233,7 @@ export default function AttendeePage(): JSX.Element {
                       {currentAttendees.map((a) => (
                         <tr
                           key={a.convocationId}
-                          className="border-b text-center transition-colors duration-200 hover:bg-gray-100"
+                          className="cursor-pointer border-b text-center transition-colors duration-200 hover:bg-gray-100"
                         >
                           <td className="px-4 py-2">{a.convocationId}</td>
                           <td className="px-4 py-2">{a.studentName}</td>

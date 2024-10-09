@@ -55,12 +55,10 @@ const day = Number(format(now, "dd"));
 
 interface TrafficOnDateChartProps {
   showText?: boolean;
-  showShadowAndBorder?: boolean;
 }
 
 export default function TrafficOnDateChart({
   showText = true,
-  showShadowAndBorder = true,
 }: TrafficOnDateChartProps): JSX.Element {
   const {
     data: analytics,
@@ -83,9 +81,7 @@ export default function TrafficOnDateChart({
   });
 
   return (
-    <Card
-      className={`${showShadowAndBorder ? "border shadow" : "border-none shadow-none"} h-fit w-full`}
-    >
+    <Card className={`h-fit w-full`}>
       {showText && (
         <CardHeader>
           <CardTitle>Daily Traffic</CardTitle>
