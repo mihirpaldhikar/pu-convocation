@@ -25,6 +25,8 @@ interface AccountDatasource {
 
     suspend fun getAccount(identifier: String): Account?
 
+    suspend fun getAllAccounts(): List<AccountWithIAMRoles>
+
     suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMRoles?
 
     suspend fun updateAccount(account: Account): Boolean

@@ -11,7 +11,17 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export default interface Credentials {
-  identifier: string;
-  password: string;
+package com.puconvocation.commons.dto
+
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.puconvocation.enums.PrincipalOperation
+
+data class UpdateAccountIAMPoliciesRequest(
+    @JsonProperty("uuid") val uuid: String,
+    @JsonProperty("iamOperations") val iamOperations: List<IAMOperation>
+) {
+    data class IAMOperation(
+        @JsonProperty("id") val id: String,
+        @JsonProperty("operation") val operation: PrincipalOperation,
+    )
 }

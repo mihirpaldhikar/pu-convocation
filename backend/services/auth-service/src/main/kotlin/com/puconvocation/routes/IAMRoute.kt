@@ -15,7 +15,6 @@ package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.NewIAMRole
-import com.puconvocation.commons.dto.UpdateIAMRole
 import com.puconvocation.controllers.IAMController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
@@ -60,23 +59,6 @@ fun Routing.iamRoute(
                 )
                 val result = iamController.getRule(authorizationToken, rule)
                 call.sendResponse(result)
-            }
-
-            patch("/update") {
-                val authorizationToken = call.getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@patch call.sendResponse(
-                    Result.Error(
-                        httpStatusCode = HttpStatusCode.BadRequest,
-                        error = ErrorResponse(
-                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                            message = "Please provide a rule name."
-                        )
-                    )
-                )
-                val updateIAMRole = call.receive<UpdateIAMRole>()
-                val result = iamController.updateRule(authorizationToken, rule, updateIAMRole)
-                call.sendResponse(result)
-
             }
         }
 

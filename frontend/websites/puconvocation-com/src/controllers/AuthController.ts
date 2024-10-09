@@ -12,7 +12,7 @@
  */
 
 import { create as createPasskeyCredentials, get as getPublicCredentials } from "@github/webauthn-json";
-import { Account, AccountInvitation, IAMPolicy, Response, UpdateUACRuleRequest } from "@dto/index";
+import { Account, AccountInvitation, IAMPolicy, Response } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import { HttpService } from "@services/index";
 
@@ -36,13 +36,19 @@ export default class AuthController {
     );
   }
 
-  public async updateIAMPolicy(
-    ruleName: string,
-    updateUACRuleRequest: UpdateUACRuleRequest,
+  public async updateIAMPoliciesAssignedForAccount(
+    uuid: string,
+    iamOperations: Array<{
+      id: string;
+      operation: "ADD" | "REMOVE";
+    }>,
   ): Promise<Response<Array<string> | string>> {
-    return await this.httpService.patch<Array<string>>(
-      `${this.IAM_ROUTE}/${ruleName}/update`,
-      updateUACRuleRequest,
+    return await this.httpService.post<Array<string>>(
+      `${this.ACCOUNT_ROUTE}/updateIAMPolicies`,
+      {
+        uuid: uuid,
+        iamOperations: iamOperations,
+      },
     );
   }
 
