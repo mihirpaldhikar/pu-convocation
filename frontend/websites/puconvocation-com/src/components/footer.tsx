@@ -36,25 +36,42 @@ export default async function Footer(): Promise<JSX.Element> {
         </section>
         <section className={"space-y-3"}>
           <h3 className={"text-xl font-bold"}>
-            {footerTranslations("credits.title")}
+            {coreTranslations("credits.title")}
           </h3>
           <p className={"font-semibold"}>
-            {footerTranslations("credits.developedBy")}{" "}
-            <Link
-              target={"_blank"}
-              href={"https://mihirpaldhikar.com"}
-              className={"text-red-800 underline"}
-            >
-              {coreTranslations("mihirPaldhikar")}
-            </Link>{" "}
-            &{" "}
-            <Link
-              target={"_blank"}
-              href={"https://www.linkedin.com/in/suhani-shah-o13"}
-              className={"text-red-800 underline"}
-            >
-              {coreTranslations("suhaniShah")}
-            </Link>
+            {coreTranslations.rich("credits.developedBy", {
+              mihir: (chunks) => (
+                  <Link
+                      target={"_blank"}
+                      href={"https://mihirpaldhikar.com"}
+                      className={"text-red-800 underline"}
+                  >
+                    {chunks}
+                  </Link>
+              ),
+              suhani: (chunks) => (
+                  <Link
+                      target={"_blank"}
+                      href={"https://www.linkedin.com/in/suhani-shah-o13"}
+                      className={"text-red-800 underline"}
+                  >
+                    {chunks}
+                  </Link>
+              ),
+            })}
+          </p>
+          <p className={"font-semibold"}>
+            {coreTranslations.rich("credits.guidedBy", {
+              guide: (chunks) => (
+                  <Link
+                      target={"_blank"}
+                      href={"https://www.linkedin.com/in/dr-swapnil-parikh-43a90715"}
+                      className={"text-red-800 underline"}
+                  >
+                    {chunks}
+                  </Link>
+              ),
+            })}
           </p>
         </section>
         <section>
@@ -65,15 +82,15 @@ export default async function Footer(): Promise<JSX.Element> {
             &copy; {new Date().getFullYear()} {coreTranslations("copyright")}
           </p>
           <Link
-            href={"https://paruluniversity.ac.in"}
-            target={"_blank"}
-            className={
-              "block text-4xl font-black opacity-30 md:text-6xl lg:text-8xl"
-            }
+              href={"https://paruluniversity.ac.in"}
+              target={"_blank"}
+              className={
+                "block text-4xl font-black opacity-30 md:text-6xl lg:text-8xl"
+              }
           >
             {coreTranslations.rich("styledUniversityName", {
               highlight: (chunks) => (
-                <span className={"text-red-800"}>{chunks}</span>
+                  <span className={"text-red-800"}>{chunks}</span>
               ),
             })}
           </Link>
