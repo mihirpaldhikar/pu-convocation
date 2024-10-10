@@ -11,16 +11,18 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Fragment, JSX} from "react";
-import {NewAccountForm} from "@components/forms";
+import { cn } from "@lib/utils";
 
-export default function NewAccountPage(): JSX.Element {
+function Skeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Fragment>
-      <section className={"space-y-5"}>
-        <h2 className={"text-2xl font-bold"}>Create New Account</h2>
-        <NewAccountForm />
-      </section>
-    </Fragment>
+    <div
+      className={cn("animate-pulse rounded-md bg-primary/10", className)}
+      {...props}
+    />
   );
 }
+
+export { Skeleton };

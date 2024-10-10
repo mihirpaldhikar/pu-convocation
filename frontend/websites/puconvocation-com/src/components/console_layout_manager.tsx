@@ -104,7 +104,7 @@ export default function ConsoleLayoutManager({
         </div>
       </aside>
       <main
-        className={`ml-0 flex-1 ${collapsed ? "lg:ml-20" : "lg:ml-72"} transition-all duration-150 ease-in-out bg-neutral-100 lg:rounded-tl-3xl`}
+        className={`ml-0 flex-1 ${collapsed ? "lg:ml-20" : "lg:ml-72"} lg:mb-0 mb-20 transition-all duration-150 ease-in-out bg-neutral-100 lg:rounded-tl-3xl`}
       >
         {children}
       </main>

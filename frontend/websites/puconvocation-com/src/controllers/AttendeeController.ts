@@ -11,8 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Attendee, AttendeeWithEnclosureMetadata, AttendeeWithPagination, Response,} from "@dto/index";
-import {HttpService} from "@services/index";
+import { Attendee, AttendeeWithEnclosureMetadata, AttendeeWithPagination, Response } from "@dto/index";
+import { HttpService } from "@services/index";
 
 export default class AttendeeController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
@@ -24,8 +24,16 @@ export default class AttendeeController {
   public async getAttendee(
     identifier: string,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.get<AttendeeWithEnclosureMetadata>(
+    return await this.httpService.get<AttendeeWithEnclosureMetadata>(
       `${this.ATTENDEE_ROUTES}/${identifier}`,
+    );
+  }
+
+  public async getTotalAttendeesCount(): Promise<
+    Response<{ count: number } | string>
+  > {
+    return await this.httpService.get<{ count: number }>(
+      `${this.ATTENDEE_ROUTES}/totalCount`,
     );
   }
 
@@ -33,15 +41,32 @@ export default class AttendeeController {
     page: number,
     limit: number,
   ): Promise<Response<AttendeeWithPagination | string>> {
-    return this.httpService.get<AttendeeWithPagination>(
-      `${this.ATTENDEE_ROUTES}/all?page=${page}&limit=${limit}`,
+    const queryParams = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    return await this.httpService.get<AttendeeWithPagination>(
+      `${this.ATTENDEE_ROUTES}/all?${queryParams.toString()}`,
+    );
+  }
+
+  public async searchAttendees(
+    query: string,
+  ): Promise<Response<Array<Attendee> | string>> {
+    const queryParams = new URLSearchParams({
+      query: query.trim(),
+    });
+
+    return await this.httpService.get<Array<Attendee>>(
+      `${this.ATTENDEE_ROUTES}/search?${queryParams.toString()}`,
     );
   }
 
   public async getAttendeeFromVerificationToken(
     token: string,
   ): Promise<Response<Attendee | string>> {
-    return this.httpService.get<Attendee>(
+    return await this.httpService.get<Attendee>(
       `${this.ATTENDEE_ROUTES}/verificationToken/${token}`,
     );
   }
@@ -50,7 +75,7 @@ export default class AttendeeController {
     const form = new FormData();
     form.append(file.name, file);
 
-    return this.httpService.post<string>(
+    return await this.httpService.post<string>(
       `${this.ATTENDEE_ROUTES}/upload`,
       form,
     );
@@ -59,7 +84,7 @@ export default class AttendeeController {
   public async createTransaction(
     studentEnrollmentNumber: string,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.post(
+    return await this.httpService.post<AttendeeWithEnclosureMetadata>(
       `${this.BASE_URL}/transactions/new`,
       {
         studentEnrollmentNumber: studentEnrollmentNumber,
@@ -73,7 +98,7 @@ export default class AttendeeController {
   public async mutateAttendeeLock(
     locked: boolean,
   ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return this.httpService.post(
+    return await this.httpService.post<AttendeeWithEnclosureMetadata>(
       `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
     );
   }

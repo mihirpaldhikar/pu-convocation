@@ -66,7 +66,7 @@ export default async function AttendeePage({
     const payload = response.payload;
 
     return (
-      <section className={"grid grid-cols-1 gap-10 px-3 lg:grid-cols-2"}>
+      <section className={"grid grid-cols-1 gap-10 px-3 lg:grid-cols-2 pt-5 lg:pt-10"}>
         <div className={"order-2 flex-1 lg:order-1 lg:min-h-screen"}>
           <div
             className={

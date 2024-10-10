@@ -11,8 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
-import {Enclosure} from "@dto/index";
+import { JSX } from "react";
+import { Enclosure } from "@dto/index";
 import Seat from "@components/seat";
 
 interface SeatMapProps {
@@ -31,7 +31,7 @@ export default function SeatMap({
     <div className={"flex flex-col space-y-5"}>
       {enclosure.rows.map((row) => {
         return (
-          <div key={row.letter} className={"flex items-center"}>
+          <div key={row.letter} className={"flex justify-center"}>
             <h5
               className={`h-fit w-[25px] rounded-md px-2 py-1 text-center text-xs font-medium ${
                 row.letter === activeArrangement.row
@@ -43,7 +43,7 @@ export default function SeatMap({
             </h5>
             <div
               className={
-                "mx-3 flex h-7 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
+                "mx-3 flex h-12 max-w-[350px]  justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
               }
             >
               {Array.from(

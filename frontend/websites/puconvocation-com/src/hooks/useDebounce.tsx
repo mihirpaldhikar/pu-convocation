@@ -11,7 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { useToast, toast } from "./useToast";
-export { default as useAuth } from "./useAuth";
-export { default as useRemoteConfig } from "./useRemoteConfig";
-export { default as useDebounce } from "./useDebounce";
+import { useEffect, useState } from "react";
+
+export default function useDebounce(value: string, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}

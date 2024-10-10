@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { useToast, toast } from "./useToast";
-export { default as useAuth } from "./useAuth";
-export { default as useRemoteConfig } from "./useRemoteConfig";
-export { default as useDebounce } from "./useDebounce";
+export default interface ProtectedRoute {
+  pathRegex: RegExp;
+  requiredIAMPermissions: Set<string> | null;
+}

@@ -49,12 +49,17 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const now = new Date();
-
 const year = Number(format(now, "yyyy"));
 const month = Number(format(now, "MM"));
 const day = Number(format(now, "dd"));
 
-export default function TrafficOnDateChart(): JSX.Element {
+interface TrafficOnDateChartProps {
+  showText?: boolean;
+}
+
+export default function TrafficOnDateChart({
+  showText = true,
+}: TrafficOnDateChartProps): JSX.Element {
   const {
     data: analytics,
     isLoading,
@@ -76,13 +81,15 @@ export default function TrafficOnDateChart(): JSX.Element {
   });
 
   return (
-    <Card className={"h-fit w-full"}>
-      <CardHeader>
-        <CardTitle>Daily Traffic</CardTitle>
-        <CardDescription>
-          Showing total visitors for {year}-{month}-{day} on the website.
-        </CardDescription>
-      </CardHeader>
+    <Card className={`h-fit w-full`}>
+      {showText && (
+        <CardHeader>
+          <CardTitle>Daily Traffic</CardTitle>
+          <CardDescription>
+            Showing total visitors for {year}-{month}-{day} on the website.
+          </CardDescription>
+        </CardHeader>
+      )}
       <CardContent>
         {isLoading ? (
           <Fragment>Loading....</Fragment>
