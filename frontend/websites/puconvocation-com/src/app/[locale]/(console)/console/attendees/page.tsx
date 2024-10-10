@@ -14,7 +14,19 @@
 
 import { JSX, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Input, Skeleton } from "@components/ui";
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+  Skeleton,
+} from "@components/ui";
 import {
   Card,
   CardContent,
@@ -29,6 +41,7 @@ import { ProgressBar, SpaceShip } from "@components/index";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
 import { useInView } from "react-intersection-observer";
 import { Attendee, AttendeeWithPagination } from "@dto/index";
+import { DialogBody } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog";
 
 const attendeeController = new AttendeeController();
 
@@ -38,6 +51,9 @@ export default function AttendeePage(): JSX.Element {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [endReached, setEndReached] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(
+    null,
+  );
 
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const { ref, inView } = useInView();
@@ -226,29 +242,65 @@ export default function AttendeePage(): JSX.Element {
                 </div>
               ) : (
                 <div className="flex-grow">
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                          Enrollment Number
-                        </th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                          Name
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {attendees.map((a) => (
-                        <tr
-                          key={a.convocationId.concat(Math.random().toString())}
-                          className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100"
-                        >
-                          <td className="px-4 py-2">{a.enrollmentNumber}</td>
-                          <td className="px-4 py-2">{a.studentName}</td>
+                  <Dialog>
+                    <table className="min-w-full table-auto border-collapse">
+                      <thead>
+                        <tr>
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                            Enrollment Number
+                          </th>
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                            Name
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {attendees.map((a) => (
+                          <DialogTrigger
+                            asChild={true}
+                            key={a.convocationId.concat(
+                              Math.random().toString(),
+                            )}
+                            onClick={() => {
+                              setSelectedAttendee(a);
+                            }}
+                          >
+                            <tr className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100">
+                              <td className="px-4 py-2">
+                                {a.enrollmentNumber}
+                              </td>
+                              <td className="px-4 py-2">{a.studentName}</td>
+                            </tr>
+                          </DialogTrigger>
+                        ))}
+                      </tbody>
+                    </table>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Attendee Details</DialogTitle>
+                        <DialogDescription></DialogDescription>
+                      </DialogHeader>
+                      <DialogBody>
+                        <h4>
+                          Enrollment Number:{" "}
+                          {selectedAttendee?.enrollmentNumber}
+                        </h4>
+                        <h4>Name: {selectedAttendee?.studentName}</h4>
+                        <h4>Department: {selectedAttendee?.department}</h4>
+                        <h4>Institute: {selectedAttendee?.institute}</h4>
+                        <h4>
+                          Enclosure: {selectedAttendee?.allocation.enclosure}
+                        </h4>
+                        <h4>Seat: {selectedAttendee?.allocation.seat}</h4>
+                        <h4>Row: {selectedAttendee?.allocation.row}</h4>
+                      </DialogBody>
+                      <DialogFooter>
+                        <DialogClose asChild={true}>
+                          <Button>Close</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                   <div
                     ref={ref}
                     className={`${searchQuery.length === 0 && !endReached ? "flex" : "hidden"} flex-col space-y-3 py-3`}
