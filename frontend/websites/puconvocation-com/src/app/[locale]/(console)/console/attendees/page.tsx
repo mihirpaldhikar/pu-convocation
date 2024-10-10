@@ -12,9 +12,9 @@
  */
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Input } from "@components/ui";
+import { Button, Input, Skeleton } from "@components/ui";
 import {
   Card,
   CardContent,
@@ -24,13 +24,11 @@ import {
 } from "@components/ui/card";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  UsersIcon,
-} from "@heroicons/react/24/solid";
+import { UsersIcon } from "@heroicons/react/24/solid";
 import { ProgressBar } from "@components/index";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
+import { useInView } from "react-intersection-observer";
+import { Attendee, AttendeeWithPagination } from "@dto/index";
 
 const attendeeController = new AttendeeController();
 
@@ -38,6 +36,58 @@ export default function AttendeePage(): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [endReached, setEndReached] = useState(false);
+
+  const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (debouncedSearchQuery.length > 1) {
+      setPage(0);
+      setEndReached(false);
+      attendeeController
+        .searchAttendees(debouncedSearchQuery)
+        .then((response) => {
+          if (
+            response.statusCode === StatusCode.SUCCESS &&
+            "payload" in response &&
+            typeof response.payload === "object"
+          ) {
+            setAttendees(response.payload);
+          }
+        });
+      return;
+    }
+    if (endReached) return;
+    let cancelToken = null;
+    if (inView) {
+      cancelToken = setTimeout(() => {
+        attendeeController.getAllAttendees(page, 10).then((response) => {
+          if (
+            response.statusCode === StatusCode.SUCCESS &&
+            "payload" in response &&
+            typeof response.payload === "object"
+          ) {
+            if (page == 0) {
+              setAttendees([...response.payload.attendees]);
+            } else {
+              setAttendees((prevAttendees) => [
+                ...prevAttendees,
+                ...(response.payload as AttendeeWithPagination).attendees,
+              ]);
+            }
+            setPage(response.payload.next);
+            setEndReached(response.payload.next === 2147483647);
+          }
+        });
+      }, 500);
+    }
+    return () => {
+      if (cancelToken !== null) {
+        clearTimeout(cancelToken);
+      }
+    };
+  }, [inView, page, debouncedSearchQuery, endReached]);
 
   const {
     state: {
@@ -88,41 +138,6 @@ export default function AttendeePage(): JSX.Element {
     },
     refetchOnWindowFocus: false,
   });
-
-  const {
-    data: attendees,
-    isLoading: isAttendeeLoading,
-    isError: attendeeError,
-  } = useQuery({
-    queryKey: ["attendeesList", debouncedSearchQuery, page],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      if (debouncedSearchQuery.length > 0) {
-        const response =
-          await attendeeController.searchAttendees(debouncedSearchQuery);
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
-          return response.payload;
-        }
-      } else {
-        const response = await attendeeController.getAllAttendees(page, 10);
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
-          return response.payload.attendees;
-        }
-      }
-      return [];
-    },
-  });
-
-  const currentAttendees = attendees || [];
-  const totalPages = Math.ceil(totalAttendeeCount / 10);
 
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
@@ -181,7 +196,7 @@ export default function AttendeePage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <Card className="h-[750px] w-full flex-grow p-4 shadow-none">
+          <Card className="w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -200,78 +215,39 @@ export default function AttendeePage(): JSX.Element {
                   }}
                 />
               </div>
-
-              {isAttendeeLoading ? (
-                <div className="flex h-full items-center justify-center">
-                  <ProgressBar type="circular" />
-                </div>
-              ) : attendeeError ? (
-                <p className="text-red-600">Error loading attendees</p>
-              ) : currentAttendees.length > 0 ? (
-                <div className="flex-grow overflow-y-auto">
-                  <table className="min-w-full table-auto border-collapse">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                          Convocation Id
-                        </th>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                          Name
-                        </th>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                          Enclosure
-                        </th>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                          Row
-                        </th>
-                        <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                          Seat
-                        </th>
+              <div className="flex-grow">
+                <table className="min-w-full table-auto border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                        Enrollment Number
+                      </th>
+                      <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                        Name
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {attendees.map((a) => (
+                      <tr
+                        key={a.convocationId.concat(Math.random().toString())}
+                        className="cursor-pointer border-b transition-colors duration-200 hover:bg-gray-100 rounded-xl"
+                      >
+                        <td className="px-4 py-2">{a.enrollmentNumber}</td>
+                        <td className="px-4 py-2">{a.studentName}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {currentAttendees.map((a) => (
-                        <tr
-                          key={a.convocationId}
-                          className="cursor-pointer border-b text-center transition-colors duration-200 hover:bg-gray-100"
-                        >
-                          <td className="px-4 py-2">{a.convocationId}</td>
-                          <td className="px-4 py-2">{a.studentName}</td>
-                          <td className="px-4 py-2">
-                            {a.allocation.enclosure}
-                          </td>
-                          <td className="px-4 py-2">{a.allocation.row}</td>
-                          <td className="px-4 py-2">{a.allocation.seat}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-
-                  <div
-                    className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
-                  >
-                    <Button
-                      onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-                      disabled={page === 0}
-                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
-                    >
-                      <ChevronLeftIcon className="h-6 w-6 text-black" />
-                    </Button>
-                    <span className="mx-2 text-lg">
-                      {page + 1}/{totalPages}
-                    </span>
-                    <Button
-                      onClick={() => setPage((prev) => prev + 1)}
-                      disabled={currentAttendees.length < 10}
-                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
-                    >
-                      <ChevronRightIcon className="h-6 w-6 text-black" />
-                    </Button>
-                  </div>
+                    ))}
+                  </tbody>
+                </table>
+                <div
+                  ref={ref}
+                  className={`${searchQuery.length === 0 && !endReached ? "flex" : "hidden"} flex-col space-y-3 py-3`}
+                >
+                  <Skeleton className="h-9 w-full rounded-md" />
+                  <Skeleton className="h-9 w-full rounded-md" />
+                  <Skeleton className="h-9 w-full rounded-md" />
                 </div>
-              ) : (
-                <p>No attendees found</p>
-              )}
+              </div>
             </CardContent>
           </Card>
         </div>

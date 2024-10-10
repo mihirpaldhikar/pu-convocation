@@ -74,3 +74,4 @@ export {
   SelectTrigger,
   SelectValue,
 } from "./select";
+export { Skeleton } from "./skeleton";
