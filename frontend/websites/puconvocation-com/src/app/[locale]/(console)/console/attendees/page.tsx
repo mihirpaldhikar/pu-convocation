@@ -25,7 +25,7 @@ import {
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { UsersIcon } from "@heroicons/react/24/solid";
-import { ProgressBar } from "@components/index";
+import { ProgressBar, SpaceShip } from "@components/index";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
 import { useInView } from "react-intersection-observer";
 import { Attendee, AttendeeWithPagination } from "@dto/index";
@@ -37,6 +37,7 @@ export default function AttendeePage(): JSX.Element {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [endReached, setEndReached] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const { ref, inView } = useInView();
@@ -78,6 +79,7 @@ export default function AttendeePage(): JSX.Element {
             }
             setPage(response.payload.next);
             setEndReached(response.payload.next === 2147483647);
+            setLoading(false);
           }
         });
       }, 500);
@@ -215,39 +217,48 @@ export default function AttendeePage(): JSX.Element {
                   }}
                 />
               </div>
-              <div className="flex-grow">
-                <table className="min-w-full table-auto border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                        Enrollment Number
-                      </th>
-                      <th className="px-4 py-2 text-left font-semibold text-gray-700">
-                        Name
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {attendees.map((a) => (
-                      <tr
-                        key={a.convocationId.concat(Math.random().toString())}
-                        className="cursor-pointer border-b transition-colors duration-200 hover:bg-gray-100 rounded-xl"
-                      >
-                        <td className="px-4 py-2">{a.enrollmentNumber}</td>
-                        <td className="px-4 py-2">{a.studentName}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              {!loading && attendees.length === 0 ? (
                 <div
-                  ref={ref}
-                  className={`${searchQuery.length === 0 && !endReached ? "flex" : "hidden"} flex-col space-y-3 py-3`}
+                  className={"flex flex-col items-center justify-center py-5"}
                 >
-                  <Skeleton className="h-9 w-full rounded-md" />
-                  <Skeleton className="h-9 w-full rounded-md" />
-                  <Skeleton className="h-9 w-full rounded-md" />
+                  <SpaceShip />
+                  <p className={"font-semibold"}>Attendees not uploaded.</p>
                 </div>
-              </div>
+              ) : (
+                <div className="flex-grow">
+                  <table className="min-w-full table-auto border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                          Enrollment Number
+                        </th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                          Name
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {attendees.map((a) => (
+                        <tr
+                          key={a.convocationId.concat(Math.random().toString())}
+                          className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100"
+                        >
+                          <td className="px-4 py-2">{a.enrollmentNumber}</td>
+                          <td className="px-4 py-2">{a.studentName}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div
+                    ref={ref}
+                    className={`${searchQuery.length === 0 && !endReached ? "flex" : "hidden"} flex-col space-y-3 py-3`}
+                  >
+                    <Skeleton className="h-9 w-full rounded-md" />
+                    <Skeleton className="h-9 w-full rounded-md" />
+                    <Skeleton className="h-9 w-full rounded-md" />
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
