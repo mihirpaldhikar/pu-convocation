@@ -16,6 +16,7 @@ import { routing } from "@i18n/routing";
 import createMiddleware from "next-intl/middleware";
 import { Account, ProtectedRoute } from "@dto/index";
 import { PROTECTED_ROUTES } from "./protected_routes";
+import { parseCookie } from "@lib/cookie_utils";
 
 const i18nMiddleware = createMiddleware(routing);
 
@@ -40,7 +41,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   const matchedProtectedRoute = matchPath(pathName, PROTECTED_ROUTES);
-
+  let authCookies = null;
   if (matchedProtectedRoute !== null || pathName.includes("/authenticate")) {
     const authenticationResponse = await fetch(
       `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
@@ -55,6 +56,8 @@ export default async function middleware(req: NextRequest) {
         },
       },
     );
+
+    authCookies = authenticationResponse.headers.get("set-cookie");
 
     if (
       authenticationResponse.status !== 200 &&
@@ -87,6 +90,19 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(absoluteURL.toString());
       }
     }
+  }
+
+  if (authCookies !== null) {
+    const split = authCookies.split(", __");
+    const authorizationTokenCookie = parseCookie(split[0]);
+    const refreshTokenCookie = parseCookie("__".concat(split[1]));
+    response.cookies
+      .set(authorizationTokenCookie.name, authorizationTokenCookie.value, {
+        ...authorizationTokenCookie.options,
+      })
+      .set(refreshTokenCookie.name, refreshTokenCookie.value, {
+        ...refreshTokenCookie.options,
+      });
   }
 
   return response;
