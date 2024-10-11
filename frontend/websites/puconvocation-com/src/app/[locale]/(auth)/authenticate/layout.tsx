@@ -18,6 +18,9 @@ import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
 import { getMessages } from "next-intl/server";
+import { AuthController } from "@controllers/index";
+import { cookies } from "next/headers";
+import { StatusCode } from "@enums/StatusCode";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -39,12 +42,29 @@ export default async function RootLayout({
     locale: locale,
   });
 
+  const authController = new AuthController({
+    cookies: cookies().toString(),
+  });
+
+  const authResponse = await authController.getCurrentAccount();
+
+  const account =
+    authResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in authResponse &&
+    typeof authResponse.payload === "object"
+      ? authResponse.payload
+      : null;
+
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen font-sans antialiased bg-neutral-100 ${montserrat.variable}`}
+        className={`min-h-screen bg-neutral-100 font-sans antialiased ${montserrat.variable}`}
       >
-        <Providers locale={locale} translations={translations}>
+        <Providers
+          locale={locale}
+          translations={translations}
+          account={account}
+        >
           <div className={"flex h-screen flex-col"}>
             <main className={`flex-1`}>{children}</main>
             <Toaster />

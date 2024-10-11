@@ -12,7 +12,7 @@
  */
 
 "use client";
-import { Fragment, JSX, useRef } from "react";
+import { JSX, useRef } from "react";
 import { useRemoteConfig } from "@hooks/index";
 import { Input } from "@components/ui";
 import { Enclosure } from "@dto/index";
@@ -27,18 +27,11 @@ function totalEnclosureSeats(enclosure: Enclosure): number {
 }
 
 export default function GroundSettingsPage(): JSX.Element {
-  const {
-    state: { config },
-    dispatch,
-  } = useRemoteConfig();
+  const { remoteConfig, dispatch } = useRemoteConfig();
 
   const focused = useRef<string>("");
 
-  if (config === null) {
-    return <Fragment />;
-  }
-
-  const seatsInEnclosure: Array<number> = config.groundMappings.map(
+  const seatsInEnclosure: Array<number> = remoteConfig.groundMappings.map(
     (enclosure) => {
       return totalEnclosureSeats(enclosure);
     },
@@ -56,7 +49,7 @@ export default function GroundSettingsPage(): JSX.Element {
         <h4>Total Seats: {totalSeats}</h4>
       </div>
       <div className={"space-y-5"}>
-        {config.groundMappings.map((enclosure, index) => {
+        {remoteConfig.groundMappings.map((enclosure, index) => {
           return (
             <div
               key={enclosure.letter}
@@ -156,7 +149,7 @@ export default function GroundSettingsPage(): JSX.Element {
         <div
           className={"space-y-5 rounded-lg border px-5 py-3"}
           onClick={() => {
-            config?.groundMappings.push({
+            remoteConfig?.groundMappings.push({
               letter: "",
               entryDirection: "NONE",
               rows: [],
@@ -164,7 +157,7 @@ export default function GroundSettingsPage(): JSX.Element {
             dispatch({
               type: "SET_CONFIG",
               payload: {
-                config: config,
+                config: remoteConfig,
               },
             });
           }}

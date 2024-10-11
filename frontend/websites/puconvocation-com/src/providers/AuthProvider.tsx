@@ -11,88 +11,59 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {createContext, Dispatch, ReactNode, useReducer} from "react";
-import {Account} from "@dto/index";
-import {AuthController} from "@controllers/index";
+import { createContext, Dispatch, ReactNode, useReducer } from "react";
+import { Account } from "@dto/index";
 
 export type AuthAction =
   | {
       type: "SET_ACCOUNT";
       payload: {
-        account: Account | null;
-      };
-    }
-  | {
-      type: "LOADING";
-      payload: {
-        loading: boolean;
+        account: Account;
       };
     }
   | {
       type: "SIGN_OUT";
     };
 
-export type AuthState = {
-  account: Account | null;
-  loading: boolean;
-  authController: AuthController;
-};
-
-const initialAuthState: AuthState = {
-  account: null,
-  loading: true,
-  authController: new AuthController(),
-};
-
 const authReducer = (
-  state: AuthState = initialAuthState,
+  account: Account | null = null,
   action: AuthAction,
-): AuthState => {
+): Account | null => {
   switch (action.type) {
     case "SET_ACCOUNT": {
       return {
-        ...state,
-        account: action.payload.account,
-        loading: false,
+        ...action.payload.account,
       };
     }
     case "SIGN_OUT": {
-      return {
-        ...state,
-        account: null,
-      };
-    }
-    case "LOADING": {
-      return {
-        ...state,
-        loading: action.payload.loading,
-      };
+      return null;
     }
     default: {
-      return state;
+      return account;
     }
   }
 };
 
 export const AuthContext = createContext<{
-  state: AuthState;
+  account: Account | null;
   dispatch: Dispatch<AuthAction>;
 }>({
-  state: initialAuthState,
+  account: null,
   dispatch: () => undefined,
 });
 
 export interface AuthProviderProps {
   children: ReactNode;
+  account: Account | null;
 }
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [state, dispatch] = useReducer(authReducer, initialAuthState);
+const AuthProvider = ({ children, account }: Readonly<AuthProviderProps>) => {
+  const [state, dispatch] = useReducer(authReducer, account);
 
   return (
     <AuthContext.Provider
       value={{
-        state: state,
+        account: state,
         dispatch: dispatch,
       }}
     >

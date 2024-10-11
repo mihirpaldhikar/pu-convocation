@@ -35,7 +35,7 @@ const analyticsController = new AnalyticsController();
 const attendeeController = new AttendeeController();
 
 export default function ConsolePage(): JSX.Element {
-  const { state } = useAuth();
+  const { account } = useAuth();
 
   const {
     data: attendees,
@@ -80,7 +80,7 @@ export default function ConsolePage(): JSX.Element {
   return (
     <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
       {/* Analytics Section */}
-      {state.account?.iamRoles.includes("read:Analytics") ? (
+      {account?.iamRoles.includes("read:Analytics") ? (
         <div className="analytics-section">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-bold">Analytics</h2>

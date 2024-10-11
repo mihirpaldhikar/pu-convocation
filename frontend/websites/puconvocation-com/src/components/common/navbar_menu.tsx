@@ -15,8 +15,6 @@
 
 import { Fragment, JSX, useState } from "react";
 import { useAuth } from "@hooks/index";
-import { StatusCode } from "@enums/StatusCode";
-import { useQuery } from "@tanstack/react-query";
 import { Link, usePathname, useRouter } from "@i18n/routing";
 import {
   Avatar,
@@ -29,59 +27,16 @@ import {
 } from "@components/ui";
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { AnalyticsController } from "@controllers/index";
-import { formatISO } from "date-fns";
-import { useLocale } from "next-intl";
+import { AuthController } from "@controllers/index";
 
-const analyticsController = new AnalyticsController();
+const authController = new AuthController();
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
   const path = usePathname();
-  const currentLocale = useLocale();
-  const {
-    state: { account, authController },
-    dispatch: dispatchAccountMutation,
-  } = useAuth();
+  const { account, dispatch: dispatchAccountMutation } = useAuth();
 
   const [isPopupOpen, openPopup] = useState<boolean>(false);
-
-  const { isLoading: isAccountLoading, isError: isAccountError } = useQuery({
-    queryKey: ["currentAccount"],
-    queryFn: async () => {
-      await analyticsController.sendTelemetry(
-        `${formatISO(new Date())};${currentLocale};${path}`,
-      );
-      const response = await authController.getCurrentAccount();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        dispatchAccountMutation({
-          type: "SET_ACCOUNT",
-          payload: {
-            account: response.payload,
-          },
-        });
-        return response.payload;
-      }
-      return null;
-    },
-  });
-
-  if (isAccountLoading || isAccountError) {
-    return (
-      <nav
-        className={`flex items-center space-x-5 rounded-xl bg-white px-5 py-3`}
-      >
-        <div role="status" className="max-w-sm animate-pulse">
-          <div className="h-10 w-28 rounded-lg bg-gray-300 dark:bg-gray-700"></div>
-          <span className="sr-only">Loading...</span>
-        </div>
-      </nav>
-    );
-  }
 
   return (
     <nav className={"flex items-center justify-center space-x-5"}>

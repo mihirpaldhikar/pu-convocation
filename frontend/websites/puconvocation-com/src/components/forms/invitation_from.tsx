@@ -28,6 +28,9 @@ import { useAuth, useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
 import { useRouter } from "@i18n/routing";
+import { AuthController } from "@controllers/index";
+
+const authController = new AuthController();
 
 interface InvitationFormProps {
   invitationToken: string;
@@ -39,7 +42,7 @@ export default function InvitationForm({
   const formTranslations = useTranslations("components.forms.invitationForm");
 
   const router = useRouter();
-  const { state, dispatch } = useAuth();
+  const { account, dispatch } = useAuth();
   const { toast } = useToast();
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
@@ -55,9 +58,7 @@ export default function InvitationForm({
   });
 
   return (
-    <div
-      className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}
-    >
+    <div className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}>
       <div
         className={authenticationPayload.submitting ? "visible" : "invisible"}
       >
@@ -95,7 +96,7 @@ export default function InvitationForm({
                     submitting: true,
                   };
                 });
-                const response = await state.authController.createAccount(
+                const response = await authController.createAccount(
                   invitationToken,
                   authenticationPayload.displayName,
                   authenticationPayload.username,
@@ -104,7 +105,7 @@ export default function InvitationForm({
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
-                  state.authController.getCurrentAccount().then((res) => {
+                  authController.getCurrentAccount().then((res) => {
                     if (
                       res.statusCode === StatusCode.SUCCESS &&
                       "payload" in res &&

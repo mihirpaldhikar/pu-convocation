@@ -19,6 +19,9 @@ import { Button, Input, ProgressBar } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
+import { AuthController } from "@controllers/index";
+
+const authController = new AuthController();
 
 interface AuthenticationFormProps {
   redirect?: string;
@@ -32,7 +35,7 @@ export default function AuthenticationForm({
   );
 
   const router = useRouter();
-  const { state, dispatch } = useAuth();
+  const { account, dispatch } = useAuth();
   const { toast } = useToast();
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
@@ -84,13 +87,13 @@ export default function AuthenticationForm({
                     submitting: true,
                   };
                 });
-                const response = await state.authController.authenticate(
+                const response = await authController.authenticate(
                   authenticationPayload.identifier,
                 );
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
-                  state.authController.getCurrentAccount().then((res) => {
+                  authController.getCurrentAccount().then((res) => {
                     if (
                       res.statusCode === StatusCode.SUCCESS &&
                       "payload" in res &&

@@ -14,13 +14,17 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "@root/globals.css";
-import { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers, RemoteConfigProvider } from "@providers/index";
 import { Navbar } from "@components/common";
 import { ConsoleLayout } from "@components/layouts";
 import { getMessages } from "next-intl/server";
 import { NavMenu } from "@dto/index";
+import { StatusCode } from "@enums/StatusCode";
+import { AuthController } from "@controllers/index";
+import { cookies } from "next/headers";
+import RemoteConfigController from "@controllers/RemoteConfigController";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -73,20 +77,53 @@ export default async function RootLayout({
     locale: locale,
   });
 
+  const remoteConfigController = new RemoteConfigController({
+    cookies: cookies().toString(),
+  });
+
+  const authController = new AuthController({
+    cookies: cookies().toString(),
+  });
+
+  const authResponse = await authController.getCurrentAccount();
+  const remoteConfigResponse = await remoteConfigController.getRemoteConfig();
+
+  const account =
+    authResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in authResponse &&
+    typeof authResponse.payload === "object"
+      ? authResponse.payload
+      : null;
+
+  const remoteConfig =
+    remoteConfigResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in remoteConfigResponse &&
+    typeof remoteConfigResponse.payload === "object"
+      ? remoteConfigResponse.payload
+      : null;
+
   return (
     <html lang={locale}>
       <body
         className={`min-h-screen bg-white font-sans antialiased ${montserrat.variable}`}
       >
-        <Providers locale={locale} translations={translations}>
-          <RemoteConfigProvider>
-            <div className={"flex h-screen flex-col"}>
-              <Navbar />
-              <ConsoleLayout navMenu={navMenu}>{children}</ConsoleLayout>
-              <Toaster />
-            </div>
-          </RemoteConfigProvider>
-        </Providers>
+        {account === null ? (
+          <Fragment />
+        ) : (
+          <Providers
+            locale={locale}
+            translations={translations}
+            account={account}
+          >
+            <RemoteConfigProvider remoteConfig={remoteConfig}>
+              <div className={"flex h-screen flex-col"}>
+                <Navbar />
+                <ConsoleLayout navMenu={navMenu}>{children}</ConsoleLayout>
+                <Toaster />
+              </div>
+            </RemoteConfigProvider>
+          </Providers>
+        )}
       </body>
     </html>
   );

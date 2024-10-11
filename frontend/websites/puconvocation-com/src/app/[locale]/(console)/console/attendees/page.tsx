@@ -105,35 +105,7 @@ export default function AttendeePage(): JSX.Element {
     };
   }, [inView, page, debouncedSearchQuery, endReached]);
 
-  const {
-    state: {
-      config: remoteConfig,
-      loading: isRemoteConfigLoading,
-      remoteConfigController,
-    },
-    dispatch: dispatchRemoteConfig,
-  } = useRemoteConfig();
-
-  useQuery({
-    queryKey: ["remoteConfig"],
-    queryFn: async () => {
-      if (remoteConfig === undefined || remoteConfig === null) {
-        const response = await remoteConfigController.getRemoteConfig();
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
-          dispatchRemoteConfig({
-            type: "SET_CONFIG",
-            payload: { config: response.payload },
-          });
-          return response.payload;
-        }
-      }
-      return remoteConfig;
-    },
-  });
+  const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
 
   const {
     data: totalAttendeeCount = 0,
@@ -188,9 +160,7 @@ export default function AttendeePage(): JSX.Element {
                 </span>
               )}
               <Button
-                disabled={
-                  isRemoteConfigLoading || remoteConfig?.attendeesLocked
-                }
+                disabled={remoteConfig.attendeesLocked}
                 onClick={async () => {
                   dispatchRemoteConfig({
                     type: "SET_CONFIG",

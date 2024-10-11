@@ -31,13 +31,11 @@ export default function ConsoleLayout({
 }: ConsoleLayoutProps): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const path = usePathname();
-  const { state } = useAuth();
+  const { account } = useAuth();
 
-  if (state.loading || state.account === null) {
-    return <Fragment />;
-  }
+  if (account === null) return <Fragment />;
 
-  const accountIamRoles = new Set<string>(state.account!!.iamRoles);
+  const accountIamRoles = new Set<string>(account?.iamRoles ?? []);
 
   return (
     <div className={`flex-1 pt-20 lg:flex`}>
@@ -104,7 +102,7 @@ export default function ConsoleLayout({
         </div>
       </aside>
       <main
-        className={`ml-0 flex-1 ${collapsed ? "lg:ml-20" : "lg:ml-72"} lg:mb-0 mb-20 transition-all duration-150 ease-in-out bg-neutral-100 lg:rounded-tl-3xl`}
+        className={`ml-0 flex-1 ${collapsed ? "lg:ml-20" : "lg:ml-72"} mb-20 bg-neutral-100 transition-all duration-150 ease-in-out lg:mb-0 lg:rounded-tl-3xl`}
       >
         {children}
       </main>

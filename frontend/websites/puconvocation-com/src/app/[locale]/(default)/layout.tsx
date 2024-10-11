@@ -19,8 +19,9 @@ import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
 import { Footer, InstructionsBanner, Navbar } from "@components/common";
 import { getMessages } from "next-intl/server";
-import { RemoteConfigController } from "@controllers/index";
+import { AuthController, RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
+import { cookies } from "next/headers";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -35,14 +36,17 @@ interface RootLayout {
   params: { locale: string };
 }
 
-const remoteConfig = new RemoteConfigController();
-
 export default async function RootLayout({
   children,
   params: { locale },
 }: Readonly<RootLayout>) {
   const translations = await getMessages({
     locale: locale,
+  });
+
+  const remoteConfig = new RemoteConfigController();
+  const authController = new AuthController({
+    cookies: cookies().toString(),
   });
 
   const response = await remoteConfig.getRemoteConfig();
@@ -54,12 +58,21 @@ export default async function RootLayout({
       ? response.payload
       : null;
 
+  const authResponse = await authController.getCurrentAccount();
+
+  const account =
+    authResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in authResponse &&
+    typeof authResponse.payload === "object"
+        ? authResponse.payload
+      : null;
+
   return (
     <html lang={locale}>
       <body
         className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
       >
-        <Providers locale={locale} translations={translations}>
+        <Providers locale={locale} translations={translations} account={account}>
           <div className={"flex min-h-dvh flex-col"}>
             <Navbar />
             <main className={`flex-1 pt-20`}>

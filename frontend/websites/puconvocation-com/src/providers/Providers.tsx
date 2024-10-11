@@ -18,10 +18,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthProvider from "@providers/AuthProvider";
 import { AbstractIntlMessages, NextIntlClientProvider } from "next-intl";
 import { TooltipProvider } from "@components/ui";
+import { Account } from "@dto/index";
 
 interface ProvidersProps {
   children: ReactNode;
   locale: string;
+  account: Account | null;
   translations: AbstractIntlMessages;
 }
 
@@ -29,6 +31,7 @@ export default function Providers({
   children,
   locale,
   translations,
+  account,
 }: Readonly<ProvidersProps>): JSX.Element {
   const queryClient = new QueryClient();
   return (
@@ -38,7 +41,7 @@ export default function Providers({
       timeZone={"Asia/Kolkata"}
     >
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <AuthProvider account={account}>
           <TooltipProvider>{children}</TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

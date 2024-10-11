@@ -31,10 +31,7 @@ import { AssetsController } from "@controllers/index";
 const assetsController = new AssetsController();
 
 export default function GeneralSettingsPage(): JSX.Element {
-  const {
-    state: { config },
-    dispatch,
-  } = useRemoteConfig();
+  const { remoteConfig, dispatch } = useRemoteConfig();
 
   const {
     data: imageLibrary,
@@ -56,10 +53,6 @@ export default function GeneralSettingsPage(): JSX.Element {
     },
   });
 
-  if (config === null) {
-    return <Fragment />;
-  }
-
   return (
     <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
       <section className={"space-y-5"}>
@@ -69,7 +62,7 @@ export default function GeneralSettingsPage(): JSX.Element {
           <div
             className={"grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"}
           >
-            {config.images.carousel.map((image, index) => {
+            {remoteConfig.images.carousel.map((image, index) => {
               return (
                 <div key={image.url} className={"relative"}>
                   <Image
@@ -85,15 +78,15 @@ export default function GeneralSettingsPage(): JSX.Element {
                         "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
                       }
                       onClick={() => {
-                        const x = config?.images.carousel;
+                        const x = remoteConfig.images.carousel;
                         x.splice(index, 1);
                         dispatch({
                           type: "SET_CONFIG",
                           payload: {
                             config: {
-                              ...config,
+                              ...remoteConfig,
                               images: {
-                                ...config.images,
+                                ...remoteConfig.images,
                                 carousel: [...x],
                               },
                             },
@@ -151,11 +144,11 @@ export default function GeneralSettingsPage(): JSX.Element {
                                   type: "SET_CONFIG",
                                   payload: {
                                     config: {
-                                      ...config,
+                                      ...remoteConfig,
                                       images: {
-                                        ...config.images,
+                                        ...remoteConfig.images,
                                         carousel: [
-                                          ...config.images.carousel,
+                                          ...remoteConfig.images.carousel,
                                           {
                                             url: image,
                                             description: "Image from Library",

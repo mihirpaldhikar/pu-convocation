@@ -13,13 +13,12 @@
 "use client";
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { Enclosure, RemoteConfig } from "@dto/index";
-import { RemoteConfigController } from "@controllers/index";
 
 export type RemoteConfigAction =
   | {
       type: "SET_CONFIG";
       payload: {
-        config: RemoteConfig | null;
+        config: RemoteConfig;
       };
     }
   | {
@@ -36,67 +35,96 @@ export type RemoteConfigAction =
       };
     };
 
-export type RemoteConfigState = {
-  config: RemoteConfig | null;
-  loading: boolean;
-  remoteConfigController: RemoteConfigController;
-};
-
-const initialConfig: RemoteConfigState = {
-  config: null,
-  loading: true,
-  remoteConfigController: new RemoteConfigController(),
+const defaultRemoteConfig: RemoteConfig = {
+  id: "66f43d29e72a9f955579c4ea",
+  active: true,
+  images: {
+    carousel: [
+      {
+        url: "https://assets.puconvocation.com/images/J8dtdhGcH2wg4T8zkWwZW.avif",
+        description: "Parul University",
+      },
+      {
+        url: "https://assets.puconvocation.com/images/rZbzniVmT4N8VWeYtGKUX.avif",
+        description: "Parul University",
+      },
+      {
+        url: "https://assets.puconvocation.com/images/x6hPktFnZ2tYzbkpHNg9a.avif",
+        description: "Parul University",
+      },
+      {
+        url: "https://assets.puconvocation.com/images/R6ACVfcrf3KKeyaGr9rr2.avif",
+        description: "Parul University",
+      },
+    ],
+    hero: {
+      url: "https://assets.puconvocation.com/images/4VLYHL9DKhfjpz4ZyMyH7.avif",
+      description: "Parul University",
+    },
+    aboutUs: {
+      url: "https://assets.puconvocation.com/images/AGrNHGTqDKr9JVw8LnVJa.avif",
+      description: "Parul University",
+    },
+  },
+  instructions: {
+    show: false,
+    document: "",
+  },
+  countdown: { show: false, endTime: 0 },
+  attendeesLocked: true,
+  groundMappings: [],
 };
 
 const configReducer = (
-  state: RemoteConfigState = initialConfig,
+  remoteConfig: RemoteConfig = defaultRemoteConfig,
   action: RemoteConfigAction,
-): RemoteConfigState => {
+): RemoteConfig => {
   switch (action.type) {
     case "SET_CONFIG": {
       return {
-        ...state,
-        config: action.payload.config,
-        loading: false,
-      };
-    }
-    case "LOADING": {
-      return {
-        ...state,
-        loading: action.payload.loading,
+        ...action.payload.config,
       };
     }
     case "SET_ENCLOSURE": {
-      state.config!!.groundMappings[action.payload.index] = { ...action.payload.enclosure }
+      remoteConfig.groundMappings[action.payload.index] = {
+        ...action.payload.enclosure,
+      };
       return {
-        ...state,
+        ...remoteConfig,
       };
     }
     default: {
-      return state;
+      return remoteConfig;
     }
   }
 };
 
 export const RemoteConfigContext = createContext<{
-  state: RemoteConfigState;
+  remoteConfig: RemoteConfig;
   dispatch: Dispatch<RemoteConfigAction>;
 }>({
-  state: initialConfig,
+  remoteConfig: defaultRemoteConfig,
   dispatch: () => undefined,
 });
 
 export interface RemoteConfigProviderProps {
   children: ReactNode;
+  remoteConfig: RemoteConfig | null;
 }
 
-const RemoteConfigProvider = ({ children }: RemoteConfigProviderProps) => {
-  const [state, dispatch] = useReducer(configReducer, initialConfig);
+const RemoteConfigProvider = ({
+  children,
+  remoteConfig,
+}: RemoteConfigProviderProps) => {
+  const [state, dispatch] = useReducer(
+    configReducer,
+    remoteConfig ?? defaultRemoteConfig,
+  );
 
   return (
     <RemoteConfigContext.Provider
       value={{
-        state: state,
+        remoteConfig: state,
         dispatch: dispatch,
       }}
     >

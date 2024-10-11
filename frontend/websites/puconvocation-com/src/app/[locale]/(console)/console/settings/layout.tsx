@@ -14,9 +14,6 @@
 import { JSX, ReactNode } from "react";
 import { Link, usePathname } from "@i18n/routing";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { useRemoteConfig } from "@hooks/index";
-import { useQuery } from "@tanstack/react-query";
-import { StatusCode } from "@enums/StatusCode";
 
 interface SettingsLayoutProps {
   children: ReactNode;
@@ -35,31 +32,6 @@ export default function SettingsLayout({
   children,
 }: SettingsLayoutProps): JSX.Element {
   const path = usePathname();
-  const { state, dispatch: dispatchRemoteConfig } = useRemoteConfig();
-
-  useQuery({
-    queryKey: ["remoteConfig"],
-    queryFn: async () => {
-      if (state.config === undefined || state.config === null) {
-        const response = await state.remoteConfigController.getRemoteConfig();
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
-          dispatchRemoteConfig({
-            type: "SET_CONFIG",
-            payload: { config: response.payload },
-          });
-          return response.payload;
-        }
-      }
-      return state.config;
-    },
-  });
-
-  if (state.loading) return <div>Loading...</div>;
-  if (state.config === null) return <div>Error</div>;
 
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">

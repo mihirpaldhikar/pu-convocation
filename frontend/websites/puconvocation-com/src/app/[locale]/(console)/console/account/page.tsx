@@ -14,36 +14,22 @@
 import { Fragment, JSX } from "react";
 import { AuthController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { Button, ProgressBar } from "@components/ui";
+import { Button } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 
 const authService = new AuthController();
 
 export default function AccountPage(): JSX.Element {
   const { toast } = useToast();
-  const { state } = useAuth();
-
-  if (state.loading) {
-    return (
-      <section className={"flex min-h-dvh"}>
-        <div className="m-auto flex items-center justify-center space-y-5">
-          <ProgressBar />
-        </div>
-      </section>
-    );
-  }
+  const { account } = useAuth();
 
   return (
     <Fragment>
       <section className={"space-y-5"}>
-        <h2 className={"text-2xl font-bold"}>
-          Hello, {state.account?.displayName}
-        </h2>
+        <h2 className={"text-2xl font-bold"}>Hello, {account?.displayName}</h2>
         <Button
           onClick={async () => {
-            const response = await authService.registerPasskey(
-              state.account?.uuid!!,
-            );
+            const response = await authService.registerPasskey(account?.uuid!!);
             if ("message" in response) {
               toast({
                 title:
