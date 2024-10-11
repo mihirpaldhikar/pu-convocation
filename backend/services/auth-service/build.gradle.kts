@@ -73,6 +73,6 @@ dependencies {
     implementation("redis.clients:jedis:5.1.5")
 
     // Test Dependencies
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }

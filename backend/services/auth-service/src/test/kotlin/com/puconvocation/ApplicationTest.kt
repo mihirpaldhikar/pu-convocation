@@ -13,7 +13,6 @@
 
 package com.puconvocation
 
-import com.puconvocation.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -24,11 +23,10 @@ class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
         application {
-            configureRouting()
+            module()
         }
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
-        }
+        val response = client.get("/health")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("Auth Service is Healthy.", response.bodyAsText())
     }
 }
