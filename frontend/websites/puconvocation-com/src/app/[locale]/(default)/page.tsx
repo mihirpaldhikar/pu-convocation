@@ -21,6 +21,7 @@ import { IdentifierForm } from "@components/forms";
 import { getTranslations } from "next-intl/server";
 import { RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
+import { blurImageData } from "@lib/blur_image_util";
 
 const remoteConfig = new RemoteConfigController();
 
@@ -36,6 +37,20 @@ export default async function Home() {
     typeof response.payload === "object"
   ) {
     const config = response.payload;
+    const carouselData: Array<{
+      url: string;
+      description: string;
+      blurData: string;
+    }> = [];
+
+    for (const image of config.images.carousel) {
+      carouselData.push({
+        url: image.url,
+        description: image.description,
+        blurData: (await blurImageData(image.url)).base64,
+      });
+    }
+
     return config.countdown.show &&
       config.countdown.endTime > new Date().getMilliseconds() ? (
       <section className={"flex min-h-dvh"}>
@@ -65,6 +80,8 @@ export default async function Home() {
               src={config.images.hero.url}
               fill={true}
               sizes={"100vw"}
+              placeholder={"blur"}
+              blurDataURL={(await blurImageData(config.images.hero.url)).base64}
               style={{
                 maxWidth: "100vw",
                 maxHeight: "auto",
@@ -117,11 +134,7 @@ export default async function Home() {
             }
           >
             <div className={"w-full lg:w-2/3"}>
-              <Carousel
-                width={1920}
-                height={1080}
-                images={config.images.carousel}
-              />
+              <Carousel width={1920} height={1080} images={carouselData} />
             </div>
           </div>
           <div className={"flex flex-col justify-between md:flex-row"}>
@@ -154,6 +167,8 @@ export default async function Home() {
                 alt={pageTranslations("aboutUs.title")}
                 width={1920}
                 height={1080}
+                placeholder={"blur"}
+                blurDataURL={(await blurImageData(config.images.aboutUs.url)).base64}
                 className={"rounded-lg"}
                 style={{
                   objectFit: "cover",

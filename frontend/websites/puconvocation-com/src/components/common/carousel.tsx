@@ -26,6 +26,7 @@ interface CarouselProps {
   images: Array<{
     url: string;
     description: string;
+    blurData: string;
   }>;
 }
 
@@ -54,9 +55,7 @@ export default function Carousel({
   return (
     <div className={"relative h-full w-full"}>
       <div
-        className={
-          "flex h-full w-full flex-shrink-0 flex-grow-0 overflow-hidden"
-        }
+        className={`flex min-h-full min-w-full flex-shrink-0 flex-grow-0 overflow-hidden`}
       >
         {images.map((image) => {
           return (
@@ -66,6 +65,8 @@ export default function Carousel({
               alt={image.description}
               width={width}
               height={height}
+              placeholder={"blur"}
+              blurDataURL={image.blurData}
               className={`block h-full w-full rounded-lg object-cover`}
               style={{
                 translate: `${-100 * imageIndex}%`,

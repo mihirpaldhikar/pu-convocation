@@ -10,24 +10,25 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
+"use server";
+import { getPlaiceholder } from "plaiceholder";
 
-import createNextIntlPlugin from "next-intl/plugin";
-import withPlaiceholder from "@plaiceholder/next";
+export async function blurImageData(url: string) {
+  const buffer = await fetch(url).then(async (res) =>
+    Buffer.from(await res.arrayBuffer()),
+  );
 
-const i18n = createNextIntlPlugin();
+  const {
+    metadata: { height, width },
+    ...plaiceholder
+  } = await getPlaiceholder(buffer, { size: 10 });
 
-/** @type {import("next").NextConfig} */
-const nextConfig = {
-  output: "standalone",
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "assets.puconvocation.com",
-      },
-    ],
-  },
-};
-
-export default withPlaiceholder(i18n(nextConfig));
+  return {
+    ...plaiceholder,
+    img: {
+      url,
+      height,
+      width,
+    },
+  };
+}
