@@ -19,16 +19,24 @@ import { format, startOfWeek } from "date-fns";
 export default class AnalyticsController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
-  private httpService = new HttpService(this.BASE_URL);
+  private httpService: HttpService;
 
   private ANALYTICS_ROUTE = this.BASE_URL.concat("/analytics");
 
+  public constructor(options?: { cookies?: string }) {
+    this.httpService = new HttpService(this.BASE_URL, options);
+  }
+
   public async sendTelemetry(telemetry: string) {
-    return await this.httpService.post(`${this.ANALYTICS_ROUTE}/telemetry`, undefined, {
-      header: {
-        "x-telemetry": telemetry,
-      }
-    });
+    return await this.httpService.post(
+      `${this.ANALYTICS_ROUTE}/telemetry`,
+      undefined,
+      {
+        header: {
+          "x-telemetry": telemetry,
+        },
+      },
+    );
   }
 
   public async weeklyTraffic(): Promise<Response<WeeklyTraffic | string>> {

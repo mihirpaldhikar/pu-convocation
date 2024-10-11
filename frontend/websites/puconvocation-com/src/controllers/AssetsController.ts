@@ -17,9 +17,13 @@ import { Response } from "@dto/Response";
 export default class AssetsController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
-  private httpService = new HttpService(this.BASE_URL);
+  private httpService: HttpService;
 
   private ASSETS_ROUTE = this.BASE_URL.concat("/assets");
+
+  public constructor(options?: { cookies?: string }) {
+    this.httpService = new HttpService(this.BASE_URL, options);
+  }
 
   public async uploadImage(
     file: File,

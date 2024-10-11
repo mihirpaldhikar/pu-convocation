@@ -19,10 +19,14 @@ import { HttpService } from "@services/index";
 export default class AuthController {
   private BASE_URL = process.env.NEXT_PUBLIC_AUTH_SERVICE_URL as string;
 
-  private httpService = new HttpService(this.BASE_URL);
+  private httpService: HttpService;
 
   private ACCOUNT_ROUTE = this.BASE_URL.concat("/accounts");
   private IAM_ROUTE = this.BASE_URL.concat("/iam");
+
+  public constructor(options?: { cookies?: string }) {
+    this.httpService = new HttpService(this.BASE_URL, options);
+  }
 
   public async getCurrentAccount(): Promise<Response<Account | string>> {
     return await this.httpService.get<Account>(`${this.ACCOUNT_ROUTE}/`);

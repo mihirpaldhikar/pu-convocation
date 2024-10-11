@@ -18,9 +18,13 @@ import { HttpService } from "@services/index";
 export default class RemoteConfigController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
-  private httpService = new HttpService(this.BASE_URL);
+  private httpService: HttpService;
 
   private CONFIG_ROUTE = this.BASE_URL.concat("/config");
+
+  public constructor(options?: { cookies?: string }) {
+    this.httpService = new HttpService(this.BASE_URL, options);
+  }
 
   public async getRemoteConfig(): Promise<Response<RemoteConfig | string>> {
     return await this.httpService.get(`${this.CONFIG_ROUTE}/`);

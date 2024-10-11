@@ -17,9 +17,13 @@ import { HttpService } from "@services/index";
 export default class AttendeeController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
 
-  private httpService = new HttpService(this.BASE_URL);
+  private httpService: HttpService;
 
   private ATTENDEE_ROUTES = this.BASE_URL.concat("/attendees");
+
+  public constructor(options?: { cookies?: string }) {
+    this.httpService = new HttpService(this.BASE_URL, options);
+  }
 
   public async getAttendee(
     identifier: string,

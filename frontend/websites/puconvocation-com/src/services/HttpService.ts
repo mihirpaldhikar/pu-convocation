@@ -11,20 +11,34 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import axios, {AxiosError, AxiosInstance} from "axios";
-import {Response} from "@dto/index";
-import {StatusCode} from "@enums/StatusCode";
+import axios, { AxiosError, AxiosInstance } from "axios";
+import { Response } from "@dto/index";
+import { StatusCode } from "@enums/StatusCode";
 
 export default class HttpService {
   private httpClient: AxiosInstance;
 
   private REQUEST_TIMEOUT = 1000 * 10;
 
-  public constructor(baseURL: string) {
-    this.httpClient = axios.create({
-      baseURL: baseURL,
-      withCredentials: true,
-    });
+  public constructor(
+    baseURL: string,
+    options?: {
+      cookies?: string;
+    },
+  ) {
+    this.httpClient =
+      options?.cookies === undefined
+        ? axios.create({
+            baseURL: baseURL,
+            withCredentials: true,
+          })
+        : axios.create({
+            baseURL: baseURL,
+            withCredentials: true,
+            headers: {
+              Cookie: options.cookies,
+            },
+          });
   }
 
   public async get<T>(
