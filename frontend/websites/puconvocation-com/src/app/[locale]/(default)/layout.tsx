@@ -12,8 +12,7 @@
  */
 
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import "@root/globals.css";
+import "@app/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
@@ -22,8 +21,7 @@ import { getMessages } from "next-intl/server";
 import { AuthController, RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { cookies } from "next/headers";
-
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
+import { SYSTEM_FONT } from "@root/system_font";
 
 export const metadata: Metadata = {
   title: "PU Convocation",
@@ -64,15 +62,19 @@ export default async function RootLayout({
     authResponse.statusCode === StatusCode.SUCCESS &&
     "payload" in authResponse &&
     typeof authResponse.payload === "object"
-        ? authResponse.payload
+      ? authResponse.payload
       : null;
 
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen font-sans antialiased ${montserrat.variable}`}
+        className={`min-h-screen font-sans antialiased ${SYSTEM_FONT.variable}`}
       >
-        <Providers locale={locale} translations={translations} account={account}>
+        <Providers
+          locale={locale}
+          translations={translations}
+          account={account}
+        >
           <div className={"flex min-h-dvh flex-col"}>
             <Navbar />
             <main className={`flex-1 pt-20`}>

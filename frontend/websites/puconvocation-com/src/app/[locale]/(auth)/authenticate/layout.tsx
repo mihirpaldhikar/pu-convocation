@@ -12,8 +12,7 @@
  */
 
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import "@root/globals.css";
+import "@app/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
@@ -21,8 +20,7 @@ import { getMessages } from "next-intl/server";
 import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
-
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
+import { SYSTEM_FONT } from "@root/system_font";
 
 export const metadata: Metadata = {
   title: "Authenticate | PU Convocation",
@@ -58,7 +56,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen bg-neutral-100 font-sans antialiased ${montserrat.variable}`}
+        className={`min-h-screen bg-neutral-100 font-sans antialiased ${SYSTEM_FONT.variable}`}
       >
         <Providers
           locale={locale}

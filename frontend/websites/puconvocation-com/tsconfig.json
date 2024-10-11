@@ -24,6 +24,9 @@
     ],
     "paths": {
       "@root/*": [
+        "./src/*"
+      ],
+      "@app/*": [
         "./src/app/[locale]/*"
       ],
       "@public/*": [

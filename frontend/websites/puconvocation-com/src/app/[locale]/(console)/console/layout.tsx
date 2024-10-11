@@ -12,8 +12,7 @@
  */
 
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
-import "@root/globals.css";
+import "@app/globals.css";
 import { Fragment, ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers, RemoteConfigProvider } from "@providers/index";
@@ -25,8 +24,7 @@ import { StatusCode } from "@enums/StatusCode";
 import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import RemoteConfigController from "@controllers/RemoteConfigController";
-
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
+import { SYSTEM_FONT } from "@root/system_font";
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",
@@ -105,7 +103,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen bg-white font-sans antialiased ${montserrat.variable}`}
+        className={`min-h-screen bg-white font-sans antialiased ${SYSTEM_FONT.variable}`}
       >
         {account === null ? (
           <Fragment />
