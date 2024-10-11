@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Fragment, type JSX} from "react";
+import { Fragment, type JSX } from "react";
 
 interface ProgressBarProps {
   type?: "linear" | "circular";

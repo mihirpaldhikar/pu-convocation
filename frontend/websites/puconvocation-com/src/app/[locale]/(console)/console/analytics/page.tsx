@@ -11,9 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
-import {PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart,} from "@components/charts";
-import {DynamicIcon} from "@components/index";
+import { JSX } from "react";
+import { PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart } from "@components/charts";
+import { DynamicIcon } from "@components/graphics";
 
 export default function AnalyticsPage(): JSX.Element {
   return (

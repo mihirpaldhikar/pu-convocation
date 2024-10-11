@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from "@components/ui/card";
 import { WorldMapData } from "@constants/maps";
-import { GeographicalMap } from "@components/index";
+import { GeographicalMap } from "@components/graphics";
 import { AnalyticsController } from "@controllers/index";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";

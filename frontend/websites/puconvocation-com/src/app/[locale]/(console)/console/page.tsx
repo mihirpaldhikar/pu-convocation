@@ -16,14 +16,17 @@ import { Fragment, JSX } from "react";
 import { useAuth } from "@hooks/index";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@i18n/routing";
-import { Button } from "@components/ui";
 import {
-  GeographicalMap,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   ProgressBar,
-  TrafficOnDateChart,
-} from "@components/index";
+} from "@components/ui";
+import { GeographicalMap } from "@components/graphics";
+import { TrafficOnDateChart } from "@components/charts";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card";
 import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
 import { AnalyticsController, AttendeeController } from "@controllers/index";

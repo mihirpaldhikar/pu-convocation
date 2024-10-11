@@ -11,9 +11,9 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
-import {GeoMap} from "@dto/index";
-import {cn} from "@lib/utils";
+import { JSX } from "react";
+import { GeoMap } from "@dto/index";
+import { cn } from "@lib/utils";
 
 interface GeographicalMapProps {
   geoMap: Array<GeoMap>;

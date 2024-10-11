@@ -13,7 +13,7 @@
 
 "use client";
 
-import {JSX} from "react";
+import { JSX } from "react";
 
 interface FilePickerProps {
   allowedFileExtensions: string;

@@ -16,19 +16,19 @@ import { Fragment, JSX, ReactNode, useState } from "react";
 import { Button } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Link, usePathname } from "@i18n/routing";
-import { DynamicIcon } from "@components/index";
+import { DynamicIcon } from "@components/graphics";
 import { NavMenu } from "@dto/index";
 import { useAuth } from "@hooks/index";
 
-interface ConsoleDesktopProps {
+interface ConsoleLayoutProps {
   children: ReactNode;
   navMenu: Array<NavMenu>;
 }
 
-export default function ConsoleLayoutManager({
+export default function ConsoleLayout({
   children,
   navMenu,
-}: ConsoleDesktopProps): JSX.Element {
+}: ConsoleLayoutProps): JSX.Element {
   const [collapsed, setCollapsed] = useState(false);
   const path = usePathname();
   const { state } = useAuth();

@@ -32,11 +32,11 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@components/ui/chart";
+} from "@components/ui";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { mergeWeekData } from "@lib/analytics_utils";
-import { DynamicIcon } from "@components/index";
+import { DynamicIcon } from "@components/graphics";
 
 const analyticsService = new AnalyticsController();
 

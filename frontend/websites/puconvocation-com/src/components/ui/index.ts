@@ -29,7 +29,6 @@ export {
   PopoverTrigger,
 } from "./popover";
 export { default as Logo } from "./logo";
-export { default as Pattern } from "./pattern";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 export {
   Tooltip,
@@ -75,3 +74,28 @@ export {
   SelectValue,
 } from "./select";
 export { Skeleton } from "./skeleton";
+export { default as ProgressBar } from "./progress_bar";
+export {
+  ChartContainer,
+  ChartStyle,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltipContent,
+  ChartTooltip,
+} from "./chart";
+export type { ChartConfig } from "./chart";
+export { default as FilePicker } from "./file_picker";
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./card";
+export {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "./input_otp";

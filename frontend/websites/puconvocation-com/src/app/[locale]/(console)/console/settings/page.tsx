@@ -14,7 +14,7 @@
 import { Fragment, JSX } from "react";
 import { useRemoteConfig } from "@hooks/index";
 import Image from "next/image";
-import { DynamicIcon } from "@components/index";
+import { DynamicIcon } from "@components/graphics";
 import {
   Dialog,
   DialogClose,

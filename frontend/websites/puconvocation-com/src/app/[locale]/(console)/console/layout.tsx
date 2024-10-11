@@ -17,7 +17,8 @@ import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers, RemoteConfigProvider } from "@providers/index";
-import { ConsoleLayoutManager, Navbar } from "@components/index";
+import { Navbar } from "@components/common";
+import { ConsoleLayout } from "@components/layouts";
 import { getMessages } from "next-intl/server";
 import { NavMenu } from "@dto/index";
 
@@ -75,15 +76,13 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`min-h-screen font-sans antialiased bg-white ${montserrat.variable}`}
+        className={`min-h-screen bg-white font-sans antialiased ${montserrat.variable}`}
       >
         <Providers locale={locale} translations={translations}>
           <RemoteConfigProvider>
             <div className={"flex h-screen flex-col"}>
               <Navbar />
-              <ConsoleLayoutManager navMenu={navMenu}>
-                {children}
-              </ConsoleLayoutManager>
+              <ConsoleLayout navMenu={navMenu}>{children}</ConsoleLayout>
               <Toaster />
             </div>
           </RemoteConfigProvider>

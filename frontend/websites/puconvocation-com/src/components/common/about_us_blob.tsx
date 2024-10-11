@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
+import { JSX } from "react";
 
 export default function AboutUsBlob(): JSX.Element {
   return (

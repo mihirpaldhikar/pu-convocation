@@ -13,8 +13,8 @@
 
 "use client";
 
-import {JSX, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import { JSX, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface CountDownProps {
   futureTimestamp: number;

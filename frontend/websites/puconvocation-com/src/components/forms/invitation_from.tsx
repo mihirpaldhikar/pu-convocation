@@ -12,12 +12,12 @@
  */
 "use client";
 import { JSX, useState } from "react";
-import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import {
   Button,
   Input,
+  ProgressBar,
   Select,
   SelectContent,
   SelectItem,
@@ -27,7 +27,7 @@ import {
 import { useAuth, useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
-import { ProgressBar } from "@components/index";
+import { useRouter } from "@i18n/routing";
 
 interface InvitationFormProps {
   invitationToken: string;

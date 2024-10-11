@@ -15,7 +15,7 @@
 import { JSX } from "react";
 import { Button } from "@components/ui";
 import { Link, usePathname } from "@i18n/routing";
-import { DynamicIcon } from "@components/index";
+import { DynamicIcon } from "@components/graphics";
 
 interface InstructionsBannerProps {
   show: boolean;

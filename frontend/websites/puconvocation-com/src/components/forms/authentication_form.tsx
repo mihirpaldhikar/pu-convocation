@@ -15,11 +15,10 @@ import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
-import { Button, Input } from "@components/ui";
+import { Button, Input, ProgressBar } from "@components/ui";
 import { useAuth, useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
-import { ProgressBar } from "@components/index";
 
 interface AuthenticationFormProps {
   redirect?: string;

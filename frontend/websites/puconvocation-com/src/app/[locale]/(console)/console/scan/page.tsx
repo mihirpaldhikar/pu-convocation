@@ -11,18 +11,31 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import {Fragment, JSX, useState} from "react";
-import {useZxing} from "react-zxing";
-import {QrCodeIcon} from "@heroicons/react/24/outline";
-import {useTranslations} from "use-intl";
-import {Button, Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle,} from "@components/ui";
-import {AttendeeController} from "@controllers/index";
-import {DynamicIcon, ProgressBar} from "@components/index";
-import {CheckBadgeIcon} from "@heroicons/react/24/solid";
-import {StatusCode} from "@enums/StatusCode";
-import {Attendee} from "@dto/index";
-import {InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot,} from "@components/ui/input_otp";
-import {useToast} from "@hooks/useToast";
+import { Fragment, JSX, useState } from "react";
+import { useZxing } from "react-zxing";
+import { QrCodeIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "use-intl";
+import {
+  Button,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+  ProgressBar,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@components/ui";
+import { AttendeeController } from "@controllers/index";
+import { DynamicIcon } from "@components/graphics";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { StatusCode } from "@enums/StatusCode";
+import { Attendee } from "@dto/index";
+
+import { useToast } from "@hooks/useToast";
 
 const attendeeService = new AttendeeController();
 

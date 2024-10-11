@@ -12,7 +12,8 @@
  */
 
 import { JSX } from "react";
-import { Flags, LanguageSelector } from "@components/index";
+import { Flags } from "@components/graphics";
+import LanguageSelector from "./language_selector";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@i18n/routing";
 
@@ -41,35 +42,37 @@ export default async function Footer(): Promise<JSX.Element> {
           <p className={"font-semibold"}>
             {coreTranslations.rich("credits.developedBy", {
               mihir: (chunks) => (
-                  <Link
-                      target={"_blank"}
-                      href={"https://mihirpaldhikar.com"}
-                      className={"text-red-800 underline"}
-                  >
-                    {chunks}
-                  </Link>
+                <Link
+                  target={"_blank"}
+                  href={"https://mihirpaldhikar.com"}
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
               ),
               suhani: (chunks) => (
-                  <Link
-                      target={"_blank"}
-                      href={"https://www.linkedin.com/in/suhani-shah-o13"}
-                      className={"text-red-800 underline"}
-                  >
-                    {chunks}
-                  </Link>
+                <Link
+                  target={"_blank"}
+                  href={"https://www.linkedin.com/in/suhani-shah-o13"}
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
               ),
             })}
           </p>
           <p className={"font-semibold"}>
             {coreTranslations.rich("credits.guidedBy", {
               guide: (chunks) => (
-                  <Link
-                      target={"_blank"}
-                      href={"https://www.linkedin.com/in/dr-swapnil-parikh-43a90715"}
-                      className={"text-red-800 underline"}
-                  >
-                    {chunks}
-                  </Link>
+                <Link
+                  target={"_blank"}
+                  href={
+                    "https://www.linkedin.com/in/dr-swapnil-parikh-43a90715"
+                  }
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
               ),
             })}
           </p>
@@ -82,15 +85,15 @@ export default async function Footer(): Promise<JSX.Element> {
             &copy; {new Date().getFullYear()} {coreTranslations("copyright")}
           </p>
           <Link
-              href={"https://paruluniversity.ac.in"}
-              target={"_blank"}
-              className={
-                "block text-4xl font-black opacity-30 md:text-6xl lg:text-8xl"
-              }
+            href={"https://paruluniversity.ac.in"}
+            target={"_blank"}
+            className={
+              "block text-4xl font-black opacity-30 md:text-6xl lg:text-8xl"
+            }
           >
             {coreTranslations.rich("styledUniversityName", {
               highlight: (chunks) => (
-                  <span className={"text-red-800"}>{chunks}</span>
+                <span className={"text-red-800"}>{chunks}</span>
               ),
             })}
           </Link>

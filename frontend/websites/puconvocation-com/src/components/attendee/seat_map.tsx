@@ -13,7 +13,7 @@
 
 import { JSX } from "react";
 import { Enclosure } from "@dto/index";
-import Seat from "@components/seat";
+import Seat from "./seat";
 
 interface SeatMapProps {
   enclosure: Enclosure;

@@ -10,8 +10,8 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-import {Attendee} from "@dto/index";
-import {JSX} from "react";
+import { Attendee } from "@dto/index";
+import { JSX } from "react";
 import QRCode from "react-qr-code";
 
 interface TicketProps {

@@ -13,8 +13,8 @@
 
 import * as HeroSolidIcons from "@heroicons/react/24/solid";
 import * as HeroOutlineIcons from "@heroicons/react/24/outline";
-import {JSX} from "react";
-import {twMerge} from "tailwind-merge";
+import { JSX } from "react";
+import { twMerge } from "tailwind-merge";
 
 type IconName = keyof typeof HeroSolidIcons;
 

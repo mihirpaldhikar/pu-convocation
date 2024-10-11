@@ -16,6 +16,11 @@ import { JSX, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
   Dialog,
   DialogClose,
   DialogContent,
@@ -25,23 +30,16 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
+  ProgressBar,
   Skeleton,
 } from "@components/ui";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { UsersIcon } from "@heroicons/react/24/solid";
-import { ProgressBar, SpaceShip } from "@components/index";
+import { SpaceShip } from "@components/graphics";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
 import { useInView } from "react-intersection-observer";
 import { Attendee, AttendeeWithPagination } from "@dto/index";
-import { DialogBody } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog";
 
 const attendeeController = new AttendeeController();
 
@@ -280,7 +278,7 @@ export default function AttendeePage(): JSX.Element {
                         <DialogTitle>Attendee Details</DialogTitle>
                         <DialogDescription></DialogDescription>
                       </DialogHeader>
-                      <DialogBody>
+                      <div>
                         <h4>
                           Enrollment Number:{" "}
                           {selectedAttendee?.enrollmentNumber}
@@ -293,7 +291,7 @@ export default function AttendeePage(): JSX.Element {
                         </h4>
                         <h4>Seat: {selectedAttendee?.allocation.seat}</h4>
                         <h4>Row: {selectedAttendee?.allocation.row}</h4>
-                      </DialogBody>
+                      </div>
                       <DialogFooter>
                         <DialogClose asChild={true}>
                           <Button>Close</Button>

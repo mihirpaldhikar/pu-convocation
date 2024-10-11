@@ -12,7 +12,9 @@
  */
 
 import Image from "next/image";
-import { AboutUsBlob, Carousel, Convocation, CountDown, GalleryFlagsLeft, GalleryFlagsRight } from "@components/index";
+import { AboutUsBlob, Carousel } from "@components/common";
+import { Convocation, LeftGalleryFlags, RightGalleryFlags } from "@components/graphics";
+import { Countdown } from "@components/layouts";
 import { Link } from "@i18n/routing";
 import { Button } from "@components/ui";
 import { IdentifierForm } from "@components/forms";
@@ -51,7 +53,7 @@ export default async function Home() {
           </h1>
           <Convocation fillColor={"#ef4444"} />
           <div className="h-22"></div>
-          <CountDown futureTimestamp={config.countdown.endTime} />
+          <Countdown futureTimestamp={config.countdown.endTime} />
         </div>
       </section>
     ) : (
@@ -99,7 +101,7 @@ export default async function Home() {
         </div>
         <div>
           <div className={"flex justify-between"}>
-            <GalleryFlagsLeft />
+            <LeftGalleryFlags />
             <h2
               className={
                 "pt-14 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
@@ -107,7 +109,7 @@ export default async function Home() {
             >
               {pageTranslations("gallery")}
             </h2>
-            <GalleryFlagsRight />
+            <RightGalleryFlags />
           </div>
           <div
             className={

@@ -17,7 +17,7 @@ import "@root/globals.css";
 import { ReactNode } from "react";
 import { Toaster } from "@components/ui";
 import { Providers } from "@providers/index";
-import { Footer, InstructionsBanner, Navbar } from "@components/index";
+import { Footer, InstructionsBanner, Navbar } from "@components/common";
 import { getMessages } from "next-intl/server";
 import { RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";

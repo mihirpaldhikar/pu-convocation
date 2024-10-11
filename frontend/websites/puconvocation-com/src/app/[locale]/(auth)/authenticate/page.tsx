@@ -13,7 +13,7 @@
 import { JSX } from "react";
 import { AuthenticationForm, InvitationFrom } from "@components/forms";
 import { getTranslations } from "next-intl/server";
-import { LanguageSelector } from "@components/index";
+import { LanguageSelector } from "@components/common";
 
 interface AuthenticationProps {
   searchParams: {

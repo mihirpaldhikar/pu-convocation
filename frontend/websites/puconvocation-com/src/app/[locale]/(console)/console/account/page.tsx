@@ -11,12 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import {Fragment, JSX} from "react";
-import {AuthController} from "@controllers/index";
-import {StatusCode} from "@enums/StatusCode";
-import {ProgressBar} from "@components/index";
-import {Button} from "@components/ui";
-import {useAuth, useToast} from "@hooks/index";
+import { Fragment, JSX } from "react";
+import { AuthController } from "@controllers/index";
+import { StatusCode } from "@enums/StatusCode";
+import { Button, ProgressBar } from "@components/ui";
+import { useAuth, useToast } from "@hooks/index";
 
 const authService = new AuthController();
 

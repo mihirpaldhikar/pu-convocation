@@ -14,7 +14,7 @@
 
 import { JSX } from "react";
 import { Logo } from "@components/ui";
-import NavbarMenu from "@components/navbar_menu";
+import NavbarMenu from "./navbar_menu";
 import { Link, usePathname } from "@i18n/routing";
 
 export default function Navbar(): JSX.Element {

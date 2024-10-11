@@ -11,8 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {JSX} from "react";
-import {ProgressBar} from "@components/index";
+import { JSX } from "react";
+import { ProgressBar } from "@components/ui";
 
 export default function PageLoading(): JSX.Element {
   return (
