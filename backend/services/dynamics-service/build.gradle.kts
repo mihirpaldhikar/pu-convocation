@@ -89,6 +89,7 @@ dependencies {
     // GCP Cloud Storage
     implementation("com.google.cloud:google-cloud-storage:2.43.1")
 
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    // Test Dependencies
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }

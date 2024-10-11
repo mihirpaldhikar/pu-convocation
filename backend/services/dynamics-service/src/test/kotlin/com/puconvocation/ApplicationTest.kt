@@ -13,7 +13,6 @@
 
 package com.puconvocation
 
-import com.puconvocation.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -23,9 +22,12 @@ import kotlin.test.*
 class ApplicationTest {
     @Test
     fun testRoot() = testApplication {
-        client.get("/").apply {
-            assertEquals(HttpStatusCode.OK, status)
-            assertEquals("Hello World!", bodyAsText())
+        application {
+            module()
         }
+        val response = client.get("/health")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("Dynamics Service is Healthy.", response.bodyAsText())
     }
 }
+
