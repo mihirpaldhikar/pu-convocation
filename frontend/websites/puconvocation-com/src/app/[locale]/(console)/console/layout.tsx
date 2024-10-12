@@ -24,7 +24,7 @@ import { StatusCode } from "@enums/StatusCode";
 import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import RemoteConfigController from "@controllers/RemoteConfigController";
-import { SYSTEM_FONT } from "@root/system_font";
+import { SYSTEM_FONT } from "@fonts/system_font";
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",

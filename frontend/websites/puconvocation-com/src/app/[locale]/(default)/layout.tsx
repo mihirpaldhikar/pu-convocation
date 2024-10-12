@@ -21,7 +21,7 @@ import { getMessages } from "next-intl/server";
 import { AuthController, RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { cookies } from "next/headers";
-import { SYSTEM_FONT } from "@root/system_font";
+import { SYSTEM_FONT } from "@fonts/system_font";
 
 export const metadata: Metadata = {
   title: "PU Convocation",

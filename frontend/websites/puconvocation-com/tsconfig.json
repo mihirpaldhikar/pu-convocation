@@ -23,11 +23,11 @@
       }
     ],
     "paths": {
-      "@root/*": [
-        "./src/*"
-      ],
       "@app/*": [
         "./src/app/[locale]/*"
+      ],
+      "@fonts/*": [
+        "./src/fonts/*"
       ],
       "@public/*": [
         "./public/*"

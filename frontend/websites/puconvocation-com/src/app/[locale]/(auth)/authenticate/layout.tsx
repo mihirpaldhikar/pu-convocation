@@ -20,7 +20,7 @@ import { getMessages } from "next-intl/server";
 import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
-import { SYSTEM_FONT } from "@root/system_font";
+import { SYSTEM_FONT } from "@fonts/system_font";
 
 export const metadata: Metadata = {
   title: "Authenticate | PU Convocation",
