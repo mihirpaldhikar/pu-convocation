@@ -108,7 +108,7 @@ export default function ConsoleLayout({
       </main>
       <nav
         className={
-          "fixed bottom-0 flex h-20 w-full flex-row items-center justify-evenly bg-white lg:hidden"
+          "fixed bottom-0 z-50 flex h-20 w-full flex-row items-center justify-evenly bg-white lg:hidden"
         }
       >
         {navMenu.map((menu) => {
