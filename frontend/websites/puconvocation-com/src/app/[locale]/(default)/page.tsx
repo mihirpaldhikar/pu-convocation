@@ -119,7 +119,7 @@ export default async function Home() {
               "flex w-full items-center justify-center px-3 py-10 lg:px-0"
             }
           >
-            <div className={"w-full lg:w-2/3"}>
+            <div className={"w-full lg:w-2/3 min-h-60 lg:min-h-96"}>
               <Carousel
                 width={1920}
                 height={1080}
