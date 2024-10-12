@@ -13,6 +13,7 @@
 
 package com.puconvocation.di
 
+import com.puconvocation.Environment
 import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.controllers.AssetsController
 import com.puconvocation.controllers.AttendeeController
@@ -28,6 +29,7 @@ import com.puconvocation.services.AuthService
 import com.puconvocation.services.CloudStorage
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.LambdaService
+import io.ktor.client.HttpClient
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -71,6 +73,8 @@ object ControllerModule {
                 cloudStorage = get<CloudStorage>(),
                 authService = get<AuthService>(),
                 jsonWebToken = get<JsonWebToken>(),
+                httpClient = get<HttpClient>(),
+                credentialsAuthority = get<Environment>().security.jwt.credentialsAuthority
             )
         }
     }

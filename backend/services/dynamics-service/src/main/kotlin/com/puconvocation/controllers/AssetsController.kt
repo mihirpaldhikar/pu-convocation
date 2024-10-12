@@ -21,6 +21,9 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CloudStorage
 import com.puconvocation.utils.Result
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.MultiPartData
 import io.ktor.http.content.PartData
@@ -28,12 +31,17 @@ import io.ktor.utils.io.core.readBytes
 import io.ktor.utils.io.readBuffer
 import org.apache.commons.io.FilenameUtils
 import java.util.UUID
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 
+@OptIn(ExperimentalEncodingApi::class)
 class AssetsController(
     private val cloudStorage: CloudStorage,
     private val authService: AuthService,
     private val jsonWebToken: JsonWebToken,
+    private val httpClient: HttpClient,
+    private val credentialsAuthority: String
 ) {
 
     private suspend fun uploadFile(
@@ -77,8 +85,6 @@ class AssetsController(
                     "images/$objectName",
                     part.provider.invoke().readBuffer().readBytes()
                 )
-
-
             }
 
             AssetType.AVATAR -> {
@@ -94,6 +100,10 @@ class AssetsController(
                     part.provider.invoke().readBuffer().readBytes()
                 )
             }
+        }
+
+        if (assetType == AssetType.IMAGE) {
+            generateThumbnail(objectURL)
         }
 
         return Result.Success(
@@ -160,6 +170,20 @@ class AssetsController(
         }
         return Result.Success(
             data = cloudStorage.getObjectsInFolder(folder)
+        )
+    }
+
+    private suspend fun generateThumbnail(imageURL: String) {
+        val thumbnailGenerator = httpClient.get("$credentialsAuthority/api/generateThumbnail?imageURL=$imageURL")
+        val base64Thumbnail = thumbnailGenerator.bodyAsText()
+
+        println(base64Thumbnail)
+
+        val decodedThumbnail =
+            Base64.decode(base64Thumbnail)
+        cloudStorage.uploadObject(
+            "thumbnails/${FilenameUtils.getBaseName(imageURL)}.png",
+            decodedThumbnail
         )
     }
 }
