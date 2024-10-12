@@ -13,7 +13,7 @@
 
 import axios, { AxiosError, AxiosInstance } from "axios";
 import { Response } from "@dto/index";
-import { StatusCode } from "@enums/StatusCode";
+import { StatusCode } from "@enums/index";
 
 export default class HttpService {
   private httpClient: AxiosInstance;

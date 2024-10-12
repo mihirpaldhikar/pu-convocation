@@ -17,6 +17,7 @@ import { JSX, useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Button } from "@components/ui";
+import { convertToThumbnailUrl } from "@lib/image_utils";
 
 interface CarouselProps {
   autoPlay?: boolean;
@@ -26,7 +27,6 @@ interface CarouselProps {
   images: Array<{
     url: string;
     description: string;
-    blurData: string;
   }>;
 }
 
@@ -66,7 +66,7 @@ export default function Carousel({
               width={width}
               height={height}
               placeholder={"blur"}
-              blurDataURL={image.blurData}
+              blurDataURL={convertToThumbnailUrl(image.url)}
               className={`block h-full w-full rounded-lg object-cover`}
               style={{
                 translate: `${-100 * imageIndex}%`,
