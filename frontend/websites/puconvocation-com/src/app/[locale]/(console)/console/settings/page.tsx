@@ -27,6 +27,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 import { AssetsController } from "@controllers/index";
+import { convertToThumbnailUrl } from "@lib/image_utils";
 
 const assetsController = new AssetsController();
 
@@ -70,6 +71,8 @@ export default function GeneralSettingsPage(): JSX.Element {
                     alt={image.description}
                     width={500}
                     height={250}
+                    placeholder={"blur"}
+                    blurDataURL={convertToThumbnailUrl(image.url)}
                     className={"rounded-xl"}
                   />
                   <div className={"absolute right-0 top-0 z-10 p-2"}>
