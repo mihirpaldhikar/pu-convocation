@@ -116,7 +116,7 @@ export default async function Home() {
           </div>
           <div
             className={
-              "flex w-full items-center justify-center px-3 py-10 lg:px-0"
+              "flex w-full items-center justify-center px-3 pb-10 lg:px-0"
             }
           >
             <div className={"w-full lg:w-2/3"}>

@@ -55,7 +55,7 @@ export default function Carousel({
   return (
     <div className={"relative"}>
       <div
-        className={`flex h-[30dvh] overflow-hidden rounded-xl bg-neutral-300 lg:h-[80dvh]`}
+        className={`flex h-[30dvh] min-w-full overflow-hidden rounded-xl bg-neutral-300 lg:h-[80dvh]`}
       >
         {images.map((image) => {
           return (
