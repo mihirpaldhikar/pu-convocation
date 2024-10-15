@@ -72,8 +72,6 @@ export default function Carousel({
                 translate: `${-100 * imageIndex}%`,
                 transition: "translate 300ms ease-in-out",
                 maxWidth: "100vw",
-                maxHeight: "auto",
-                objectFit: "cover",
               }}
             />
           );
