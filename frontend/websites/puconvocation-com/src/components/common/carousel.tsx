@@ -55,7 +55,7 @@ export default function Carousel({
   return (
     <div className={"relative"}>
       <div
-        className={`flex h-[30dvh] min-w-full overflow-hidden rounded-xl bg-neutral-300 lg:h-[80dvh]`}
+        className={`flex min-h-[30dvh] min-w-full overflow-hidden lg:min-h-[80dvh] rounded-xl bg-neutral-300`}
       >
         {images.map((image) => {
           return (
@@ -71,7 +71,6 @@ export default function Carousel({
               style={{
                 translate: `${-100 * imageIndex}%`,
                 transition: "translate 300ms ease-in-out",
-                maxWidth: "100vw",
               }}
             />
           );
