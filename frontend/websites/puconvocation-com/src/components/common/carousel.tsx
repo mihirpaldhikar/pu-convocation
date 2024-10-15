@@ -53,9 +53,9 @@ export default function Carousel({
   }, [autoPlay, imageIndex, images, interval]);
 
   return (
-    <div className={"relative h-full w-full"}>
+    <div className={"relative"}>
       <div
-        className={`flex min-h-full min-w-full flex-shrink-0 flex-grow-0 overflow-hidden`}
+        className={`flex h-[30dvh] overflow-hidden rounded-xl bg-neutral-300 lg:h-[80dvh]`}
       >
         {images.map((image) => {
           return (
@@ -67,10 +67,13 @@ export default function Carousel({
               height={height}
               placeholder={"blur"}
               blurDataURL={convertToThumbnailUrl(image.url)}
-              className={`block h-full w-full rounded-lg object-cover`}
+              className={`block h-full w-full rounded-xl object-cover`}
               style={{
                 translate: `${-100 * imageIndex}%`,
                 transition: "translate 300ms ease-in-out",
+                maxWidth: "100vw",
+                maxHeight: "auto",
+                objectFit: "cover",
               }}
             />
           );
