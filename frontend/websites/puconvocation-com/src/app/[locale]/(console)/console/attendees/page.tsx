@@ -51,7 +51,6 @@ export default function AttendeePage(): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-
   const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
   const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(
     null,
@@ -149,7 +148,7 @@ export default function AttendeePage(): JSX.Element {
                     type: "SET_CONFIG",
                     payload: {
                       config: {
-                        ...remoteConfig!!,
+                        ...remoteConfig,
                         attendeesLocked: !remoteConfig?.attendeesLocked,
                       },
                     },
@@ -164,7 +163,7 @@ export default function AttendeePage(): JSX.Element {
               </Button>
             </CardContent>
           </Card>
-          <Card className="h-[750px] w-full flex-grow p-4 shadow-none">
+          <Card className="h-[1200px] w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -199,7 +198,38 @@ export default function AttendeePage(): JSX.Element {
                 </div>
               ) : (
                 <div className="flex-grow overflow-y-auto">
-                  <Dialog>
+                  <Dialog
+                    open={!!selectedAttendee}
+                    onOpenChange={() => setSelectedAttendee(null)}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Attendee Details</DialogTitle>
+                        <DialogDescription></DialogDescription>
+                      </DialogHeader>
+                      {selectedAttendee && (
+                        <div>
+                          <h4>
+                            Enrollment Number:{" "}
+                            {selectedAttendee.enrollmentNumber}
+                          </h4>
+                          <h4>Name: {selectedAttendee.studentName}</h4>
+                          <h4>Department: {selectedAttendee.department}</h4>
+                          <h4>Institute: {selectedAttendee.institute}</h4>
+                          <h4>
+                            Enclosure: {selectedAttendee.allocation.enclosure}
+                          </h4>
+                          <h4>Seat: {selectedAttendee.allocation.seat}</h4>
+                          <h4>Row: {selectedAttendee.allocation.row}</h4>
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <DialogClose asChild={true}>
+                          <Button>Close</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+
                     <table className="min-w-full table-auto border-collapse">
                       <thead>
                         <tr>
@@ -209,56 +239,58 @@ export default function AttendeePage(): JSX.Element {
                           <th className="px-4 py-2 text-left font-semibold text-gray-700">
                             Name
                           </th>
+                          <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
+                            Department
+                          </th>
+                          <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
+                            Institute
+                          </th>
+                          <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
+                            Enclosure
+                          </th>
+                          <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
+                            Seat
+                          </th>
+                          <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
+                            Row
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {attendees.map((a) => (
-                          <DialogTrigger
-                            asChild={true}
+                          <tr
                             key={a.convocationId.concat(
                               Math.random().toString(),
                             )}
+                            className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100"
                             onClick={() => {
-                              setSelectedAttendee(a);
+                              if (window.innerWidth < 768) {
+                                setSelectedAttendee(a);
+                              }
                             }}
                           >
-                            <tr className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100">
-                              <td className="px-4 py-2">
-                                {a.enrollmentNumber}
-                              </td>
-                              <td className="px-4 py-2">{a.studentName}</td>
-                            </tr>
-                          </DialogTrigger>
+                            <td className="px-4 py-2">{a.enrollmentNumber}</td>
+                            <td className="px-4 py-2">{a.studentName}</td>
+                            <td className="hidden px-4 py-2 lg:table-cell">
+                              {a.department}
+                            </td>
+                            <td className="hidden px-4 py-2 lg:table-cell">
+                              {a.institute}
+                            </td>
+                            <td className="hidden px-4 py-2 lg:table-cell">
+                              {a.allocation.enclosure}
+                            </td>
+                            <td className="hidden px-4 py-2 lg:table-cell">
+                              {a.allocation.seat}
+                            </td>
+                            <td className="hidden px-4 py-2 lg:table-cell">
+                              {a.allocation.row}
+                            </td>
+                          </tr>
                         ))}
                       </tbody>
                     </table>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Attendee Details</DialogTitle>
-                        <DialogDescription></DialogDescription>
-                      </DialogHeader>
-                      <div>
-                        <h4>
-                          Enrollment Number:{" "}
-                          {selectedAttendee?.enrollmentNumber}
-                        </h4>
-                        <h4>Name: {selectedAttendee?.studentName}</h4>
-                        <h4>Department: {selectedAttendee?.department}</h4>
-                        <h4>Institute: {selectedAttendee?.institute}</h4>
-                        <h4>
-                          Enclosure: {selectedAttendee?.allocation.enclosure}
-                        </h4>
-                        <h4>Seat: {selectedAttendee?.allocation.seat}</h4>
-                        <h4>Row: {selectedAttendee?.allocation.row}</h4>
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild={true}>
-                          <Button>Close</Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
                   </Dialog>
-
                   <div
                     className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
                   >
@@ -273,7 +305,9 @@ export default function AttendeePage(): JSX.Element {
                       {page + 1}/{Math.ceil(totalAttendeeCount / 10)}
                     </span>
                     <Button
-                      onClick={() => setPage((prev) => prev + 1)}
+                      onClick={() =>
+                        setPage((prev) => (attendees.length ? prev + 1 : prev))
+                      }
                       disabled={attendees.length < 10}
                       className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
                     >
