@@ -12,15 +12,10 @@
  */
 "use client";
 
-import { JSX, useEffect, useState } from "react";
+import { JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Dialog,
   DialogClose,
   DialogContent,
@@ -31,15 +26,24 @@ import {
   DialogTrigger,
   Input,
   ProgressBar,
-  Skeleton,
 } from "@components/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui/card";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { UsersIcon } from "@heroicons/react/24/solid";
-import { SpaceShip } from "@components/graphics";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  UsersIcon,
+} from "@heroicons/react/24/solid";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
-import { useInView } from "react-intersection-observer";
-import { Attendee, AttendeeWithPagination } from "@dto/index";
+import { Attendee } from "@dto/index";
+import { SpaceShip } from "@components/graphics";
 
 const attendeeController = new AttendeeController();
 
@@ -47,65 +51,11 @@ export default function AttendeePage(): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
-  const [endReached, setEndReached] = useState(false);
-  const [loading, setLoading] = useState(true);
+
+  const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
   const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(
     null,
   );
-
-  const [attendees, setAttendees] = useState<Attendee[]>([]);
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (debouncedSearchQuery.length > 1) {
-      setPage(0);
-      setEndReached(false);
-      attendeeController
-        .searchAttendees(debouncedSearchQuery)
-        .then((response) => {
-          if (
-            response.statusCode === StatusCode.SUCCESS &&
-            "payload" in response &&
-            typeof response.payload === "object"
-          ) {
-            setAttendees(response.payload);
-          }
-        });
-      return;
-    }
-    if (endReached) return;
-    let cancelToken = null;
-    if (inView) {
-      cancelToken = setTimeout(() => {
-        attendeeController.getAllAttendees(page, 10).then((response) => {
-          if (
-            response.statusCode === StatusCode.SUCCESS &&
-            "payload" in response &&
-            typeof response.payload === "object"
-          ) {
-            if (page == 0) {
-              setAttendees([...response.payload.attendees]);
-            } else {
-              setAttendees((prevAttendees) => [
-                ...prevAttendees,
-                ...(response.payload as AttendeeWithPagination).attendees,
-              ]);
-            }
-            setPage(response.payload.next);
-            setEndReached(response.payload.next === 2147483647);
-            setLoading(false);
-          }
-        });
-      }, 500);
-    }
-    return () => {
-      if (cancelToken !== null) {
-        clearTimeout(cancelToken);
-      }
-    };
-  }, [inView, page, debouncedSearchQuery, endReached]);
-
-  const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
 
   const {
     data: totalAttendeeCount = 0,
@@ -125,6 +75,39 @@ export default function AttendeePage(): JSX.Element {
       return 0;
     },
     refetchOnWindowFocus: false,
+  });
+
+  const {
+    data: attendees = [],
+    isLoading: isAttendeeLoading,
+    isError: attendeeError,
+  } = useQuery({
+    queryKey: ["attendeesList", debouncedSearchQuery, page],
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      if (debouncedSearchQuery.length > 0) {
+        const response =
+          await attendeeController.searchAttendees(debouncedSearchQuery);
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          return response.payload;
+        }
+        return [];
+      } else {
+        const response = await attendeeController.getAllAttendees(page, 10);
+        if (
+          response.statusCode === StatusCode.SUCCESS &&
+          "payload" in response &&
+          typeof response.payload === "object"
+        ) {
+          return response.payload.attendees;
+        }
+        return [];
+      }
+    },
   });
 
   return (
@@ -181,8 +164,7 @@ export default function AttendeePage(): JSX.Element {
               </Button>
             </CardContent>
           </Card>
-
-          <Card className="w-full flex-grow p-4 shadow-none">
+          <Card className="h-[750px] w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -201,7 +183,14 @@ export default function AttendeePage(): JSX.Element {
                   }}
                 />
               </div>
-              {!loading && attendees.length === 0 ? (
+
+              {isAttendeeLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <ProgressBar type="circular" />
+                </div>
+              ) : attendeeError ? (
+                <p className="text-red-600">Error loading attendees</p>
+              ) : attendees.length === 0 ? (
                 <div
                   className={"flex flex-col items-center justify-center py-5"}
                 >
@@ -209,7 +198,7 @@ export default function AttendeePage(): JSX.Element {
                   <p className={"font-semibold"}>Attendees not uploaded.</p>
                 </div>
               ) : (
-                <div className="flex-grow">
+                <div className="flex-grow overflow-y-auto">
                   <Dialog>
                     <table className="min-w-full table-auto border-collapse">
                       <thead>
@@ -269,13 +258,27 @@ export default function AttendeePage(): JSX.Element {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
+
                   <div
-                    ref={ref}
-                    className={`${searchQuery.length === 0 && !endReached ? "flex" : "hidden"} flex-col space-y-3 py-3`}
+                    className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
                   >
-                    <Skeleton className="h-9 w-full rounded-md" />
-                    <Skeleton className="h-9 w-full rounded-md" />
-                    <Skeleton className="h-9 w-full rounded-md" />
+                    <Button
+                      onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+                      disabled={page === 0}
+                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
+                    >
+                      <ChevronLeftIcon className="h-6 w-6 text-black" />
+                    </Button>
+                    <span className="mx-2 text-lg">
+                      {page + 1}/{Math.ceil(totalAttendeeCount / 10)}
+                    </span>
+                    <Button
+                      onClick={() => setPage((prev) => prev + 1)}
+                      disabled={attendees.length < 10}
+                      className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
+                    >
+                      <ChevronRightIcon className="h-6 w-6 text-black" />
+                    </Button>
                   </div>
                 </div>
               )}
