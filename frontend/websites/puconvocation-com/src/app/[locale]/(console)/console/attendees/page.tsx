@@ -39,6 +39,7 @@ import { StatusCode } from "@enums/StatusCode";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
+  MagnifyingGlassIcon,
   UsersIcon,
 } from "@heroicons/react/24/solid";
 import { useDebounce, useRemoteConfig } from "@hooks/index";
@@ -120,7 +121,7 @@ export default function AttendeePage(): JSX.Element {
         </p>
       </div>
 
-      <div className="flex min-h-screen flex-col items-center p-1">
+      <div className="flex min-h-screen flex-col items-center">
         <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
           <Card className="h-[200px] w-full p-4">
             <CardHeader>
@@ -163,7 +164,7 @@ export default function AttendeePage(): JSX.Element {
               </Button>
             </CardContent>
           </Card>
-          <Card className="h-[1200px] w-full flex-grow p-4 shadow-none">
+          <Card className="max-h-[1200px] min-h-[1050px] w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -172,15 +173,19 @@ export default function AttendeePage(): JSX.Element {
               </CardDescription>
             </CardHeader>
             <CardContent className="flex h-full flex-col">
-              <div className="flex items-center pb-5">
-                <Input
-                  type="text"
-                  placeholder="Search Attendees..."
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                  }}
-                />
+              <div className="min-w-1/3 max-w-2/3 flex items-center pb-5">
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Search Attendees..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                    }}
+                    className="bg-white pl-10"
+                  />
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500" />
+                </div>
               </div>
 
               {isAttendeeLoading ? (
