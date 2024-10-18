@@ -123,7 +123,7 @@ export default function AttendeePage(): JSX.Element {
 
       <div className="flex min-h-screen flex-col items-center">
         <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
-          <Card className="h-[200px] w-full p-4">
+          <Card className="h-[12rem] w-full p-4">
             <CardHeader>
               <CardTitle>Total Attendees</CardTitle>
               <CardDescription>
@@ -164,7 +164,8 @@ export default function AttendeePage(): JSX.Element {
               </Button>
             </CardContent>
           </Card>
-          <Card className="max-h-[1200px] min-h-[1050px] w-full flex-grow p-4 shadow-none">
+
+          <Card className="max-h-[90rem] min-h-[65rem] w-full flex-grow p-4 shadow-none">
             <CardHeader>
               <CardTitle>Attendee List</CardTitle>
               <CardDescription>
@@ -182,7 +183,7 @@ export default function AttendeePage(): JSX.Element {
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
                     }}
-                    className="bg-white pl-10"
+                    className="pl-10"
                   />
                   <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500" />
                 </div>
