@@ -23,7 +23,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Input,
   ProgressBar,
 } from "@components/ui";
@@ -56,6 +55,7 @@ export default function AttendeePage(): JSX.Element {
   const [selectedAttendee, setSelectedAttendee] = useState<Attendee | null>(
     null,
   );
+  const [isClosing, setIsClosing] = useState(false);
 
   const {
     data: totalAttendeeCount = 0,
@@ -109,6 +109,14 @@ export default function AttendeePage(): JSX.Element {
       }
     },
   });
+
+  const handleDialogClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setSelectedAttendee(null);
+      setIsClosing(false);
+    }, 300);
+  };
 
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
@@ -205,8 +213,8 @@ export default function AttendeePage(): JSX.Element {
               ) : (
                 <div className="flex-grow overflow-y-auto">
                   <Dialog
-                    open={!!selectedAttendee}
-                    onOpenChange={() => setSelectedAttendee(null)}
+                    open={!!selectedAttendee && !isClosing}
+                    onOpenChange={handleDialogClose}
                   >
                     <DialogContent>
                       <DialogHeader>
@@ -270,7 +278,7 @@ export default function AttendeePage(): JSX.Element {
                             )}
                             className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100"
                             onClick={() => {
-                              if (window.innerWidth < 768) {
+                              if (window.innerWidth < 1024) {
                                 setSelectedAttendee(a);
                               }
                             }}
