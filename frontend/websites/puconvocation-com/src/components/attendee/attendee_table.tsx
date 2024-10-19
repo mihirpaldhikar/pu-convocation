@@ -44,7 +44,13 @@ import { SpaceShip } from "@components/graphics";
 
 const attendeeController = new AttendeeController();
 
-export const AttendeeTable = (): JSX.Element => {
+export const AttendeeTable = ({
+  showTitleAndDescription = true,
+  headingColor = "text-black",
+}: {
+  showTitleAndDescription?: boolean;
+  headingColor?: string;
+}): JSX.Element => {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -117,11 +123,13 @@ export const AttendeeTable = (): JSX.Element => {
   return (
     <Card className="max-h-[90rem] min-h-[65rem] w-full flex-grow p-4 shadow-none">
       <CardHeader>
-        <CardTitle>Attendee List</CardTitle>
-        <CardDescription>
-          Showing detailed list of registered attendees with their respective
-          information.
-        </CardDescription>
+        <CardTitle className={`${headingColor}`}>Attendee List</CardTitle>
+        {showTitleAndDescription && (
+          <CardDescription>
+            Showing detailed list of registered attendees with their respective
+            information.
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex h-full flex-col">
         <div className="min-w-1/3 max-w-2/3 flex items-center pb-5">

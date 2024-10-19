@@ -30,6 +30,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
 import { AnalyticsController, AttendeeController } from "@controllers/index";
+import { AttendeeTable } from "@components/attendee/attendee_table";
 
 const analyticsController = new AnalyticsController();
 const attendeeController = new AttendeeController();
@@ -142,75 +143,17 @@ export default function ConsolePage(): JSX.Element {
       )}
 
       {/* Attendees Section */}
-      <div className="attendees-section">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Attendees</h2>
-          <Button className="bg-red-600 font-semibold hover:bg-red-700" asChild>
-            <Link href={`/console/attendees`}>View All</Link>
-          </Button>
-        </div>
-
-        <div className="h-full rounded-3xl bg-white">
-          <div className="ml-2 mt-2 p-4">
-            <div className="relative mb-4 flex items-center">
-              <MagnifyingGlassIcon className="absolute left-3 h-5 w-5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search Attendees..."
-                className="w-1/4 rounded-lg bg-gray-100 p-2 pl-10"
-              />
-            </div>
-          </div>
-          <div className="h-full overflow-y-auto">
-            <div className="mb-2 border-b border-gray-300" />
-
-            {isAttendeeLoading ? (
-              <ProgressBar type="circular" />
-            ) : attendeeError ? (
-              <p className="text-red-600">Error loading attendees</p>
-            ) : attendees !== null &&
-              attendees !== undefined &&
-              attendees.length > 0 ? (
-              <table className="min-w-full table-auto border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                      Convocation Id
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                      Name
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                      Enclosure
-                    </th>
-                    <th className="px-4 py-2 text-center font-semibold text-gray-700">
-                      Row
-                    </th>
-                    <th className="w-1/6 px-4 py-2 text-center font-semibold text-gray-700">
-                      Seat
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {attendees.map((a, index) => (
-                    <tr
-                      key={a.convocationId}
-                      className={`${index !== attendees.length - 1 ? "border-b" : ""} cursor-pointer text-center transition-colors duration-200 hover:bg-gray-100`}
-                    >
-                      <td className="px-4 py-2">{a.convocationId}</td>
-                      <td className="px-4 py-2">{a.studentName}</td>
-                      <td className="px-4 py-2">{a.allocation.enclosure}</td>
-                      <td className="px-4 py-2">{a.allocation.row}</td>
-                      <td className="px-4 py-2">{a.allocation.seat}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p>No attendees found</p>
-            )}
-          </div>
-        </div>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-bold">Attendees</h2>
+        <Button className="bg-red-600 font-semibold hover:bg-red-700" asChild>
+          <Link href={`/console/attendees`}>View All</Link>
+        </Button>
+      </div>
+      <div>
+        <AttendeeTable
+          showTitleAndDescription={false}
+          headingColor="text-red-600"
+        />
       </div>
     </div>
   );
