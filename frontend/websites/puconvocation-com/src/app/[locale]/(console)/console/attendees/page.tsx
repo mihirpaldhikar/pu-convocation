@@ -23,7 +23,7 @@ import {
   ProgressBar,
 } from "@components/ui";
 import { UsersIcon } from "@heroicons/react/24/solid";
-import { AttendeeTable } from "@components/attendee/attendee_table";
+import { AttendeeTable } from "@components/attendee";
 import { useQuery } from "@tanstack/react-query";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";

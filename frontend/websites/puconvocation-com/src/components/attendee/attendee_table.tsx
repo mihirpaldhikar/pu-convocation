@@ -40,11 +40,11 @@ interface AttendeeTableProps {
   totalAttendeeCount?: number;
 }
 
-export const AttendeeTable = ({
-  showTitleAndDescription = true,
-  headingColor = "text-black",
+export default function AttendeeTable({
   totalAttendeeCount,
-}: Readonly<AttendeeTableProps>): JSX.Element => {
+  showTitleAndDescription,
+  headingColor,
+}: Readonly<AttendeeTableProps>): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -251,4 +251,4 @@ export const AttendeeTable = ({
       </CardContent>
     </Card>
   );
-};
+}

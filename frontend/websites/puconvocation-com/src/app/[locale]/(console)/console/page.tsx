@@ -26,11 +26,10 @@ import {
 } from "@components/ui";
 import { GeographicalMap } from "@components/graphics";
 import { TrafficOnDateChart } from "@components/charts";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
 import { AnalyticsController, AttendeeController } from "@controllers/index";
-import { AttendeeTable } from "@components/attendee/attendee_table";
+import { AttendeeTable } from "@components/attendee";
 
 const analyticsController = new AnalyticsController();
 const attendeeController = new AttendeeController();
