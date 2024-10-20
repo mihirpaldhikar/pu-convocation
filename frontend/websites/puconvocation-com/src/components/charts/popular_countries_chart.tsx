@@ -12,7 +12,6 @@
  */
 
 import { JSX } from "react";
-import { WorldMapData } from "@constants/maps";
 import { GeographicalMap } from "@components/graphics";
 import { Popular } from "@dto/analytics";
 
@@ -28,7 +27,7 @@ export default async function PopularCountriesChart({
   return (
     <div className={"space-y-5"}>
       <GeographicalMap
-        geoMap={WorldMapData}
+        mapType={"world"}
         viewBox={"0 0 1011 667"}
         className={"h-64"}
         highlight={analytics

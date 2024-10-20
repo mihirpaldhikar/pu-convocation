@@ -12,24 +12,31 @@
  */
 
 import { JSX } from "react";
-import { GeoMap } from "@dto/index";
 import { cn } from "@lib/utils";
+import { GeoMap } from "@dto/index";
 
 interface GeographicalMapProps {
-  geoMap: Array<GeoMap>;
+  mapType: "world";
   viewBox: string;
   className?: string;
   highlight?: Array<string>;
   highlightColor?: string;
 }
 
-export default function GeographicalMap({
-  geoMap,
+export default async function GeographicalMap({
+  mapType,
   viewBox,
   className,
   highlight = [],
   highlightColor = "#dc2626",
-}: GeographicalMapProps): JSX.Element {
+}: GeographicalMapProps): Promise<JSX.Element> {
+  const response = await fetch(
+    `https://assets.puconvocation.com/maps/${mapType}.json`,
+    {
+      cache: "force-cache",
+    },
+  );
+  const geoMap = (await response.json()) as GeoMap[];
   return (
     <svg
       viewBox={viewBox}
