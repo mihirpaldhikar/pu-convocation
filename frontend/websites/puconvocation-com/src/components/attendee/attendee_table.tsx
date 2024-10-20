@@ -183,7 +183,7 @@ export default function AttendeeTable({
               <tbody>
                 {attendees.map((a) => (
                   <tr
-                    key={a.convocationId.concat(Math.random().toString())}
+                    key={a.convocationId}
                     className="cursor-pointer rounded-xl border-b transition-colors duration-200 hover:bg-gray-100"
                     onClick={() => {
                       if (window.innerWidth < 1024) {
