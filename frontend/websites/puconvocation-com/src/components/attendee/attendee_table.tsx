@@ -10,7 +10,7 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
+"use client";
 import { Fragment, JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -22,9 +22,13 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
-  ProgressBar
+  ProgressBar,
 } from "@components/ui";
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/solid";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { Attendee } from "@dto/index";

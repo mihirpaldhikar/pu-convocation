@@ -10,49 +10,28 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-"use client";
 
 import { JSX } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  ProgressBar,
-} from "@components/ui";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
 import { UsersIcon } from "@heroicons/react/24/solid";
-import { AttendeeTable } from "@components/attendee";
-import { useQuery } from "@tanstack/react-query";
+import { AttendeeControlPlane, AttendeeTable } from "@components/attendee";
 import { AttendeeController } from "@controllers/index";
+import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
-import { useRemoteConfig } from "@hooks/index";
 
-const attendeeController = new AttendeeController();
-
-export default function AttendeePage(): JSX.Element {
-  const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
-
-  const {
-    data: totalAttendeeCount = 0,
-    isLoading: isTotalLoading,
-    isError: totalError,
-  } = useQuery({
-    queryKey: ["totalAttendeeCount"],
-    queryFn: async () => {
-      const response = await attendeeController.getTotalAttendeesCount();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload.count;
-      }
-      return 0;
-    },
-    refetchOnWindowFocus: false,
+export default async function AttendeePage(): Promise<JSX.Element> {
+  const attendeeController = new AttendeeController({
+    cookies: cookies().toString(),
   });
+
+  const response = await attendeeController.getTotalAttendeesCount();
+
+  const totalAttendeeCount =
+    response.statusCode === StatusCode.SUCCESS &&
+    "payload" in response &&
+    typeof response.payload === "object"
+      ? response.payload.count
+      : 0;
 
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
@@ -67,52 +46,13 @@ export default function AttendeePage(): JSX.Element {
 
       <div className="flex min-h-screen flex-col items-center">
         <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
-          <Card className="h-[12rem] w-full p-4">
-            <CardHeader>
-              <CardTitle>Total Attendees</CardTitle>
-              <CardDescription>
-                Showing total number of attendees for the convocation.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center justify-between">
-              {isTotalLoading ? (
-                <ProgressBar type="circular" />
-              ) : totalError ? (
-                <p className="text-red-600">
-                  Error loading total attendees count
-                </p>
-              ) : (
-                <span className="text-5xl font-bold text-red-600">
-                  {totalAttendeeCount}
-                </span>
-              )}
-              <Button
-                disabled={remoteConfig.attendeesLocked}
-                onClick={async () => {
-                  dispatchRemoteConfig({
-                    type: "SET_CONFIG",
-                    payload: {
-                      config: {
-                        ...remoteConfig,
-                        attendeesLocked: !remoteConfig?.attendeesLocked,
-                      },
-                    },
-                  });
-                  await attendeeController.mutateAttendeeLock(
-                    !remoteConfig!!.attendeesLocked,
-                  );
-                }}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                {remoteConfig?.attendeesLocked ? "Unlock" : "Lock"}
-              </Button>
-            </CardContent>
-          </Card>
-
+          <AttendeeControlPlane totalAttendeeCount={totalAttendeeCount} />
           <Card>
             <CardHeader>
               <CardTitle>Attendees</CardTitle>
-              <CardDescription>View detailed information of the attendees.</CardDescription>
+              <CardDescription>
+                View detailed information of the attendees.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <AttendeeTable totalAttendeeCount={totalAttendeeCount} />
