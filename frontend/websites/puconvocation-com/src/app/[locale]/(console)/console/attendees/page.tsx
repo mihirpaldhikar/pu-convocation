@@ -109,7 +109,15 @@ export default function AttendeePage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <AttendeeTable totalAttendeeCount={totalAttendeeCount} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Attendees</CardTitle>
+              <CardDescription>View detailed information of the attendees.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AttendeeTable totalAttendeeCount={totalAttendeeCount} />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

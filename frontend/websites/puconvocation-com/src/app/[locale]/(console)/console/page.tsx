@@ -127,12 +127,12 @@ export default function ConsolePage(): JSX.Element {
           <Link href={`/console/attendees`}>View All</Link>
         </Button>
       </div>
-      <div>
-        <AttendeeTable
-          showTitleAndDescription={false}
-          headingColor="text-red-600"
-        />
-      </div>
+      <Card>
+        <CardHeader></CardHeader>
+       <CardContent>
+         <AttendeeTable />
+       </CardContent>
+      </Card>
     </div>
   );
 }
