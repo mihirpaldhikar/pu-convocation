@@ -14,6 +14,7 @@
 import { JSX } from "react";
 import { PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart } from "@components/charts";
 import { DynamicIcon } from "@components/graphics";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
 
 export default function AnalyticsPage(): JSX.Element {
   return (
@@ -36,7 +37,17 @@ export default function AnalyticsPage(): JSX.Element {
       <TrafficOnDateChart />
       <div className={"grid grid-cols-1 gap-4 md:grid-cols-2"}>
         <WeeklyTrafficChart />
-        <PopularCountriesChart />
+        <Card>
+          <CardHeader>
+            <CardTitle>Popular Countries</CardTitle>
+            <CardDescription>
+              Identify the top 5 countries with the highest visitor volume.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <PopularCountriesChart />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

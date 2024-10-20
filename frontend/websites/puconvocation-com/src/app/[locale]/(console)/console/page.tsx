@@ -10,115 +10,67 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-"use client";
 
-import { Fragment, JSX } from "react";
-import { useAuth } from "@hooks/index";
-import { useQuery } from "@tanstack/react-query";
+import { JSX } from "react";
 import { Link } from "@i18n/routing";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  ProgressBar,
-} from "@components/ui";
-import { GeographicalMap } from "@components/graphics";
-import { TrafficOnDateChart } from "@components/charts";
-import { StatusCode } from "@enums/StatusCode";
-import { WorldMapData } from "@constants/maps";
-import { AnalyticsController } from "@controllers/index";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@components/ui";
+import { PopularCountriesChart, TrafficOnDateChart } from "@components/charts";
 import { AttendeeTable } from "@components/attendee";
+import { AuthController } from "@controllers/index";
+import { cookies } from "next/headers";
+import { StatusCode } from "@enums/StatusCode";
 
-const analyticsController = new AnalyticsController();
-
-export default function ConsolePage(): JSX.Element {
-  const { account } = useAuth();
-
-  const {
-    data: popularCountries,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["popularCountriesAnalytics"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await analyticsController.popularCountries();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload;
-      }
-      return null;
-    },
+export default async function ConsolePage(): Promise<JSX.Element> {
+  const authController = new AuthController({
+    cookies: cookies().toString(),
   });
+
+  const authResponse = await authController.getCurrentAccount();
+
+  const account =
+    authResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in authResponse &&
+    typeof authResponse.payload === "object"
+      ? authResponse.payload
+      : null;
 
   return (
     <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
       {/* Analytics Section */}
-      {account?.iamRoles.includes("read:Analytics") ? (
-        <div className="analytics-section">
-          <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-bold">Analytics</h2>
-            <Button
-              className="bg-red-600 font-semibold hover:bg-red-700"
-              asChild
-            >
-              <Link href={`/console/analytics`}>View All</Link>
-            </Button>
-          </div>
-
-          <div className="cards mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Demographics Card */}
-            <Card className="max-h-[300px] overflow-hidden p-2 shadow-none">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-red-600">Demographics</CardTitle>
-              </CardHeader>
-              <CardContent className="h-full pt-2">
-                {isLoading ? (
-                  <ProgressBar type="circular" />
-                ) : isError ? (
-                  <p className="text-red-600">Error loading data</p>
-                ) : (
-                  <GeographicalMap
-                    geoMap={WorldMapData}
-                    viewBox={"0 0 1011 667"}
-                    className={"h-56"}
-                    highlight={
-                      popularCountries
-                        ?.filter(
-                          (country: { count: number }) => country.count > 0,
-                        )
-                        .map((country: { key: any }) => country.key) ?? []
-                    }
-                  />
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Traffic Card */}
-            <Card className="max-h-[300px] overflow-hidden p-2 shadow-none">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-red-600">Traffic</CardTitle>
-              </CardHeader>
-              <CardContent className="h-full pt-2">
-                {isLoading ? (
-                  <ProgressBar type="circular" />
-                ) : isError ? (
-                  <p className="text-red-600">Error loading data</p>
-                ) : (
-                  <TrafficOnDateChart showText={false} />
-                )}
-              </CardContent>
-            </Card>
-          </div>
+      <div
+        hidden={
+          account === null || !account?.iamRoles.includes("read:Analytics")
+        }
+      >
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-xl font-bold">Analytics</h2>
+          <Button className="bg-red-600 font-semibold hover:bg-red-700" asChild>
+            <Link href={`/console/analytics`}>View All</Link>
+          </Button>
         </div>
-      ) : (
-        <Fragment />
-      )}
+
+        <div className="cards mb-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Demographics Card */}
+          <Card className="h-full overflow-hidden p-2 shadow-none">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-red-600">Demographics</CardTitle>
+            </CardHeader>
+            <CardContent className="h-full py-5">
+              <PopularCountriesChart showLegends={false} />
+            </CardContent>
+          </Card>
+
+          {/* Traffic Card */}
+          <Card className="h-fit overflow-hidden p-2 shadow-none">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-red-600">Traffic</CardTitle>
+            </CardHeader>
+            <CardContent className="h-full pt-2">
+              <TrafficOnDateChart showText={false} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       {/* Attendees Section */}
       <div className="mb-6 flex items-center justify-between">
@@ -129,9 +81,9 @@ export default function ConsolePage(): JSX.Element {
       </div>
       <Card>
         <CardHeader></CardHeader>
-       <CardContent>
-         <AttendeeTable />
-       </CardContent>
+        <CardContent>
+          <AttendeeTable />
+        </CardContent>
       </Card>
     </div>
   );

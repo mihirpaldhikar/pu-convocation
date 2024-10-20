@@ -10,84 +10,58 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
-"use client";
 import { Fragment, JSX } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
 import { WorldMapData } from "@constants/maps";
 import { GeographicalMap } from "@components/graphics";
 import { AnalyticsController } from "@controllers/index";
-import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
+import { cookies } from "next/headers";
 
-const analyticsService = new AnalyticsController();
+interface PopularCountriesChartProps {
+  showLegends?: boolean;
+}
 
-export default function PopularCountriesChart(): JSX.Element {
-  const {
-    data: popularCountries,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["popularCountriesAnalytics"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await analyticsService.popularCountries();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload;
-      }
-      return null;
-    },
+export default async function PopularCountriesChart({
+  showLegends = true,
+}: Readonly<PopularCountriesChartProps>): Promise<JSX.Element> {
+  const analyticsService = new AnalyticsController({
+    cookies: cookies().toString(),
   });
 
-  if (isLoading) {
-    return <h1>Loading....</h1>;
-  }
+  const response = await analyticsService.popularCountries();
+
+  const popularCountries =
+    response.statusCode === StatusCode.SUCCESS &&
+    "payload" in response &&
+    typeof response.payload === "object"
+      ? response.payload
+      : null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Popular Countries</CardTitle>
-        <CardDescription>
-          Showing Top 5 most popular countries from which high traffic
-          originates.
-        </CardDescription>
-        <CardContent>
-          {popularCountries !== null && popularCountries !== undefined ? (
-            <GeographicalMap
-              geoMap={WorldMapData}
-              viewBox={"0 0 1011 667"}
-              className={"h-64"}
-              highlight={popularCountries
-                .filter((country) => country.count > 0)
-                .map((country) => country.key)}
-            />
-          ) : (
-            <Fragment></Fragment>
-          )}
-        </CardContent>
-        <CardFooter>
-          <div className={"flex w-full items-center justify-center space-x-3"}>
-            {popularCountries?.map((country) => {
-              return (
-                <h6 key={country.key} className={"text-xs"}>
-                  {country.key}: {country.count}
-                </h6>
-              );
-            })}
-          </div>
-        </CardFooter>
-      </CardHeader>
-    </Card>
+    <div className={"space-y-5"}>
+      {popularCountries !== null ? (
+        <GeographicalMap
+          geoMap={WorldMapData}
+          viewBox={"0 0 1011 667"}
+          className={"h-64"}
+          highlight={popularCountries
+            .filter((country) => country.count > 0)
+            .map((country) => country.key)}
+        />
+      ) : (
+        <Fragment></Fragment>
+      )}
+      <div
+        className={`${showLegends ? "flex" : "hidden"} w-full items-center justify-center space-x-3`}
+      >
+        {popularCountries?.map((country) => {
+          return (
+            <h6 key={country.key} className={"text-xs"}>
+              {country.key}: {country.count}
+            </h6>
+          );
+        })}
+      </div>
+    </div>
   );
 }
