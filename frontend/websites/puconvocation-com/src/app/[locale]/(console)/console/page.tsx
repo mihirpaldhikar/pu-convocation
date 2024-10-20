@@ -28,34 +28,13 @@ import { GeographicalMap } from "@components/graphics";
 import { TrafficOnDateChart } from "@components/charts";
 import { StatusCode } from "@enums/StatusCode";
 import { WorldMapData } from "@constants/maps";
-import { AnalyticsController, AttendeeController } from "@controllers/index";
+import { AnalyticsController } from "@controllers/index";
 import { AttendeeTable } from "@components/attendee";
 
 const analyticsController = new AnalyticsController();
-const attendeeController = new AttendeeController();
 
 export default function ConsolePage(): JSX.Element {
   const { account } = useAuth();
-
-  const {
-    data: attendees,
-    isLoading: isAttendeeLoading,
-    isError: attendeeError,
-  } = useQuery({
-    queryKey: ["homeAttendeesList"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await attendeeController.getAllAttendees(0, 10);
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload.attendees;
-      }
-      return null;
-    },
-  });
 
   const {
     data: popularCountries,
