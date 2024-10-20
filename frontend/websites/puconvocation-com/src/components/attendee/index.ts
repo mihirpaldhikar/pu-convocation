@@ -14,3 +14,5 @@
 export {default as SeatMap} from "./seat_map"
 export {default as Ticket} from "./ticket"
 export {default as VenueMap} from "./venue_map"
+export {default as AttendeeTable} from "./attendee_table"
+export {default as AttendeeControlPlane} from "./attendee_controlplane"

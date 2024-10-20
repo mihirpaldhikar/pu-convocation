@@ -11,83 +11,40 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-"use client";
-import { Fragment, JSX } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
-import { WorldMapData } from "@constants/maps";
+import { JSX } from "react";
 import { GeographicalMap } from "@components/graphics";
-import { AnalyticsController } from "@controllers/index";
-import { useQuery } from "@tanstack/react-query";
-import { StatusCode } from "@enums/StatusCode";
+import { Popular } from "@dto/analytics";
 
-const analyticsService = new AnalyticsController();
+interface PopularCountriesChartProps {
+  analytics: Popular[];
+  showLegends?: boolean;
+}
 
-export default function PopularCountriesChart(): JSX.Element {
-  const {
-    data: popularCountries,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["popularCountriesAnalytics"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await analyticsService.popularCountries();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload;
-      }
-      return null;
-    },
-  });
-
-  if (isLoading) {
-    return <h1>Loading....</h1>;
-  }
-
+export default async function PopularCountriesChart({
+  showLegends = true,
+  analytics,
+}: Readonly<PopularCountriesChartProps>): Promise<JSX.Element> {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Popular Countries</CardTitle>
-        <CardDescription>
-          Showing Top 5 most popular countries from which high traffic
-          originates.
-        </CardDescription>
-        <CardContent>
-          {popularCountries !== null && popularCountries !== undefined ? (
-            <GeographicalMap
-              geoMap={WorldMapData}
-              viewBox={"0 0 1011 667"}
-              className={"h-64"}
-              highlight={popularCountries
-                .filter((country) => country.count > 0)
-                .map((country) => country.key)}
-            />
-          ) : (
-            <Fragment></Fragment>
-          )}
-        </CardContent>
-        <CardFooter>
-          <div className={"flex w-full items-center justify-center space-x-3"}>
-            {popularCountries?.map((country) => {
-              return (
-                <h6 key={country.key} className={"text-xs"}>
-                  {country.key}: {country.count}
-                </h6>
-              );
-            })}
-          </div>
-        </CardFooter>
-      </CardHeader>
-    </Card>
+    <div className={"space-y-5"}>
+      <GeographicalMap
+        mapType={"world"}
+        viewBox={"0 0 1011 667"}
+        className={"h-64"}
+        highlight={analytics
+          .filter((country) => country.count > 0)
+          .map((country) => country.key)}
+      />
+      <div
+        className={`${showLegends ? "flex" : "hidden"} w-full items-center justify-center space-x-3`}
+      >
+        {analytics.map((country) => {
+          return (
+            <h6 key={country.key} className={"text-xs"}>
+              {country.key}: {country.count}
+            </h6>
+          );
+        })}
+      </div>
+    </div>
   );
 }

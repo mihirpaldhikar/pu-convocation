@@ -13,17 +13,7 @@
 
 "use client";
 
-import { Fragment, JSX } from "react";
-import { AnalyticsController } from "@controllers/index";
-import { useQuery } from "@tanstack/react-query";
-import { StatusCode } from "@enums/StatusCode";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
+import { JSX } from "react";
 import {
   ChartConfig,
   ChartContainer,
@@ -33,9 +23,7 @@ import {
   ChartTooltipContent,
 } from "@components/ui";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { format } from "date-fns";
-
-const analyticsService = new AnalyticsController();
+import { Popular } from "@dto/analytics";
 
 const chartConfig = {
   key: {
@@ -48,99 +36,46 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const now = new Date();
-const year = Number(format(now, "yyyy"));
-const month = Number(format(now, "MM"));
-const day = Number(format(now, "dd"));
-
 interface TrafficOnDateChartProps {
-  showText?: boolean;
+  analytics: Popular[];
 }
 
 export default function TrafficOnDateChart({
-  showText = true,
+  analytics,
 }: TrafficOnDateChartProps): JSX.Element {
-  const {
-    data: analytics,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["trafficOnDateAnalytics"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const response = await analyticsService.trafficOnDate(year, month, day);
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload;
-      }
-      return null;
-    },
-  });
-
   return (
-    <Card className={`h-fit w-full`}>
-      {showText && (
-        <CardHeader>
-          <CardTitle>Daily Traffic</CardTitle>
-          <CardDescription>
-            Showing total visitors for {year}-{month}-{day} on the website.
-          </CardDescription>
-        </CardHeader>
-      )}
-      <CardContent>
-        {isLoading ? (
-          <Fragment>Loading....</Fragment>
-        ) : (
-          analytics !== null &&
-          analytics !== undefined && (
-            <Fragment>
-              <ChartContainer config={chartConfig} className={"h-64 w-full"}>
-                <AreaChart
-                  accessibilityLayer={true}
-                  data={analytics}
-                  className={"ml-[-2rem]"}
-                >
-                  <CartesianGrid vertical={true} />
-                  <XAxis
-                    dataKey="key"
-                    tickLine={true}
-                    axisLine={true}
-                    tickMargin={8}
-                    tickFormatter={(value: string) => {
-                      return value.length === 1
-                        ? "0".concat(value.concat(":00"))
-                        : value.concat(":00");
-                    }}
-                  />
-                  <YAxis
-                    dataKey="count"
-                    tickLine={true}
-                    axisLine={true}
-                    tickMargin={8}
-                  />
-                  <ChartTooltip
-                    cursor={true}
-                    content={
-                      <ChartTooltipContent indicator="line" labelKey={"Time"} />
-                    }
-                  />
-                  <Area
-                    dataKey="count"
-                    type="natural"
-                    fill="var(--color-count)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-count)"
-                  />
-                  <ChartLegend content={<ChartLegendContent />} />
-                </AreaChart>
-              </ChartContainer>
-            </Fragment>
-          )
-        )}
-      </CardContent>
-    </Card>
+    <ChartContainer config={chartConfig} className={"h-72 w-full"}>
+      <AreaChart
+        accessibilityLayer={true}
+        data={analytics}
+        className={"ml-[-2rem] w-full"}
+      >
+        <CartesianGrid vertical={true} />
+        <XAxis
+          dataKey="key"
+          tickLine={true}
+          axisLine={true}
+          tickMargin={8}
+          tickFormatter={(value: string) => {
+            return value.length === 1
+              ? "0".concat(value.concat(":00"))
+              : value.concat(":00");
+          }}
+        />
+        <YAxis dataKey="count" tickLine={true} axisLine={true} tickMargin={8} />
+        <ChartTooltip
+          cursor={true}
+          content={<ChartTooltipContent indicator="line" labelKey={"Time"} />}
+        />
+        <Area
+          dataKey="count"
+          type="natural"
+          fill="var(--color-count)"
+          fillOpacity={0.4}
+          stroke="var(--color-count)"
+        />
+        <ChartLegend content={<ChartLegendContent />} />
+      </AreaChart>
+    </ChartContainer>
   );
 }
