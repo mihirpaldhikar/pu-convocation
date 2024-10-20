@@ -24,14 +24,24 @@ export default async function AttendeePage(): Promise<JSX.Element> {
     cookies: cookies().toString(),
   });
 
-  const response = await attendeeController.getTotalAttendeesCount();
+  const totalAttendeeResponse =
+    await attendeeController.getTotalAttendeesCount();
 
   const totalAttendeeCount =
-    response.statusCode === StatusCode.SUCCESS &&
-    "payload" in response &&
-    typeof response.payload === "object"
-      ? response.payload.count
+    totalAttendeeResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in totalAttendeeResponse &&
+    typeof totalAttendeeResponse.payload === "object"
+      ? totalAttendeeResponse.payload.count
       : 0;
+
+  const attendeesListResponse = await attendeeController.getAllAttendees(0, 10);
+
+  const attendees =
+    attendeesListResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in attendeesListResponse &&
+    typeof attendeesListResponse.payload === "object"
+      ? attendeesListResponse.payload.attendees
+      : [];
 
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
@@ -55,7 +65,10 @@ export default async function AttendeePage(): Promise<JSX.Element> {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AttendeeTable totalAttendeeCount={totalAttendeeCount} />
+              <AttendeeTable
+                initialAttendees={attendees}
+                totalAttendeeCount={totalAttendeeCount}
+              />
             </CardContent>
           </Card>
         </div>

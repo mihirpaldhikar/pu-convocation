@@ -16,7 +16,7 @@ import { Link } from "@i18n/routing";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@components/ui";
 import { PopularCountriesChart, TrafficOnDateChart } from "@components/charts";
 import { AttendeeTable } from "@components/attendee";
-import { AnalyticsController, AuthController } from "@controllers/index";
+import { AnalyticsController, AttendeeController, AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
 import { format } from "date-fns";
@@ -35,6 +35,10 @@ export default async function ConsolePage(): Promise<JSX.Element> {
     cookies: cookies().toString(),
   });
 
+  const attendeeController = new AttendeeController({
+    cookies: cookies().toString(),
+  });
+
   const authResponse = await authController.getCurrentAccount();
 
   const account =
@@ -43,6 +47,15 @@ export default async function ConsolePage(): Promise<JSX.Element> {
     typeof authResponse.payload === "object"
       ? authResponse.payload
       : null;
+
+  const attendeesListResponse = await attendeeController.getAllAttendees(0, 10);
+
+  const attendees =
+    attendeesListResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in attendeesListResponse &&
+    typeof attendeesListResponse.payload === "object"
+      ? attendeesListResponse.payload.attendees
+      : [];
 
   const dailyVisitorAnalyticsResponse = await analyticsController.trafficOnDate(
     year,
@@ -118,7 +131,7 @@ export default async function ConsolePage(): Promise<JSX.Element> {
       <Card>
         <CardHeader></CardHeader>
         <CardContent>
-          <AttendeeTable />
+          <AttendeeTable initialAttendees={attendees} />
         </CardContent>
       </Card>
     </div>

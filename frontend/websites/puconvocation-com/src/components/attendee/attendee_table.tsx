@@ -39,10 +39,12 @@ const attendeeController = new AttendeeController();
 
 interface AttendeeTableProps {
   totalAttendeeCount?: number;
+  initialAttendees: Attendee[];
 }
 
 export default function AttendeeTable({
   totalAttendeeCount,
+  initialAttendees,
 }: Readonly<AttendeeTableProps>): JSX.Element {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,6 +61,9 @@ export default function AttendeeTable({
   } = useQuery({
     queryKey: ["attendeesList", debouncedSearchQuery, page],
     refetchOnWindowFocus: false,
+    initialData: () => {
+      return initialAttendees;
+    },
     queryFn: async () => {
       if (debouncedSearchQuery.length > 0) {
         const response =
