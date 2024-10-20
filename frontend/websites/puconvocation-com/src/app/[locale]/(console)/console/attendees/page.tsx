@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX } from "react";
 import {
   Button,
   Card,
@@ -20,11 +20,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  ProgressBar,
 } from "@components/ui";
 import { UsersIcon } from "@heroicons/react/24/solid";
 import { AttendeeTable } from "@components/attendee/attendee_table";
 import { useQuery } from "@tanstack/react-query";
-import { ProgressBar } from "@components/ui";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { useRemoteConfig } from "@hooks/index";
@@ -109,7 +109,7 @@ export default function AttendeePage(): JSX.Element {
             </CardContent>
           </Card>
 
-          <AttendeeTable />
+          <AttendeeTable totalAttendeeCount={totalAttendeeCount} />
         </div>
       </div>
     </div>

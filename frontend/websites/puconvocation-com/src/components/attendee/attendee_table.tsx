@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { JSX, useState } from "react";
+import { Fragment, JSX, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Button,
@@ -34,13 +34,17 @@ import { SpaceShip } from "@components/graphics";
 
 const attendeeController = new AttendeeController();
 
+interface AttendeeTableProps {
+  showTitleAndDescription?: boolean;
+  headingColor?: string;
+  totalAttendeeCount?: number;
+}
+
 export const AttendeeTable = ({
   showTitleAndDescription = true,
   headingColor = "text-black",
-}: {
-  showTitleAndDescription?: boolean;
-  headingColor?: string;
-}): JSX.Element => {
+  totalAttendeeCount,
+}: Readonly<AttendeeTableProps>): JSX.Element => {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -48,26 +52,6 @@ export const AttendeeTable = ({
     null,
   );
   const [isClosing, setIsClosing] = useState(false);
-
-  const {
-    data: totalAttendeeCount = 0,
-    isLoading: isTotalLoading,
-    isError: totalError,
-  } = useQuery({
-    queryKey: ["totalAttendeeCount"],
-    queryFn: async () => {
-      const response = await attendeeController.getTotalAttendeesCount();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
-        return response.payload.count;
-      }
-      return 0;
-    },
-    refetchOnWindowFocus: false,
-  });
 
   const {
     data: attendees = [],
@@ -139,7 +123,7 @@ export const AttendeeTable = ({
           <div className="flex h-full items-center justify-center">
             <ProgressBar type="circular" />
           </div>
-        ) : totalError ? (
+        ) : attendeeError ? (
           <p className="text-red-600">Error loading attendees</p>
         ) : attendees.length === 0 ? (
           <div className={"flex flex-col items-center justify-center py-5"}>
@@ -235,29 +219,33 @@ export const AttendeeTable = ({
                 </tbody>
               </table>
             </Dialog>
-            <div
-              className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
-            >
-              <Button
-                onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-                disabled={page === 0}
-                className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
+            {totalAttendeeCount !== undefined ? (
+              <div
+                className={`${searchQuery.length > 0 ? "hidden" : "flex"} mt-4 items-center justify-end`}
               >
-                <ChevronLeftIcon className="h-6 w-6 text-black" />
-              </Button>
-              <span className="mx-2 text-lg">
-                {page + 1}/{Math.ceil(totalAttendeeCount / 10)}
-              </span>
-              <Button
-                onClick={() =>
-                  setPage((prev) => (attendees.length ? prev + 1 : prev))
-                }
-                disabled={attendees.length < 10}
-                className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
-              >
-                <ChevronRightIcon className="h-6 w-6 text-black" />
-              </Button>
-            </div>
+                <Button
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+                  disabled={page === 0}
+                  className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
+                >
+                  <ChevronLeftIcon className="h-6 w-6 text-black" />
+                </Button>
+                <span className="mx-2 text-lg">
+                  {page + 1}/{Math.ceil(totalAttendeeCount / 10)}
+                </span>
+                <Button
+                  onClick={() =>
+                    setPage((prev) => (attendees.length ? prev + 1 : prev))
+                  }
+                  disabled={attendees.length < 10}
+                  className="flex items-center justify-center bg-white p-2 hover:bg-gray-300"
+                >
+                  <ChevronRightIcon className="h-6 w-6 text-black" />
+                </Button>
+              </div>
+            ) : (
+              <Fragment />
+            )}
           </div>
         )}
       </CardContent>
