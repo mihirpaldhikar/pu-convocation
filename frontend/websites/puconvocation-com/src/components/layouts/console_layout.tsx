@@ -19,17 +19,20 @@ import { Link, usePathname } from "@i18n/routing";
 import { DynamicIcon } from "@components/graphics";
 import { NavMenu } from "@dto/index";
 import { useAuth } from "@hooks/index";
+import Cookie from "js-cookie";
 
 interface ConsoleLayoutProps {
   children: ReactNode;
   navMenu: Array<NavMenu>;
+  sidebarCollapsed: boolean;
 }
 
 export default function ConsoleLayout({
   children,
   navMenu,
+  sidebarCollapsed,
 }: ConsoleLayoutProps): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(sidebarCollapsed);
   const path = usePathname();
   const { account } = useAuth();
 
@@ -92,7 +95,10 @@ export default function ConsoleLayout({
             size={"icon"}
             className={"rounded-full"}
             onClick={() => {
-              setCollapsed(!collapsed);
+              setCollapsed((collapsed) => {
+                Cookie.set("sidebarCollapsed", `${!collapsed}`);
+                return !collapsed;
+              });
             }}
           >
             <ChevronRightIcon

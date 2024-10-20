@@ -31,6 +31,7 @@
     "embla-carousel-autoplay": "^8.3.0",
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.445.0",
     "next": "^14.2.5",
     "next-intl": "^3.19.0",
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
     "@types/debounce": "^1.2.4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20.13.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",

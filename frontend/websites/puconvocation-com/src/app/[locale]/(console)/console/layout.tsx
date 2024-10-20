@@ -85,7 +85,6 @@ export default async function RootLayout({
 
   const authResponse = await authController.getCurrentAccount();
   const remoteConfigResponse = await remoteConfigController.getRemoteConfig();
-
   const account =
     authResponse.statusCode === StatusCode.SUCCESS &&
     "payload" in authResponse &&
@@ -116,7 +115,14 @@ export default async function RootLayout({
             <RemoteConfigProvider remoteConfig={remoteConfig}>
               <div className={"flex h-screen flex-col"}>
                 <Navbar />
-                <ConsoleLayout navMenu={navMenu}>{children}</ConsoleLayout>
+                <ConsoleLayout
+                  sidebarCollapsed={
+                    cookies().get("sidebarCollapsed")?.value === "true"
+                  }
+                  navMenu={navMenu}
+                >
+                  {children}
+                </ConsoleLayout>
                 <Toaster />
               </div>
             </RemoteConfigProvider>
