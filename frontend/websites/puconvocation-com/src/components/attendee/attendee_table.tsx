@@ -22,20 +22,10 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
-  ProgressBar,
+  ProgressBar
 } from "@components/ui";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/solid";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { Attendee } from "@dto/index";
@@ -145,7 +135,7 @@ export const AttendeeTable = ({
           </div>
         </div>
 
-        {isTotalLoading ? (
+        {isAttendeeLoading ? (
           <div className="flex h-full items-center justify-center">
             <ProgressBar type="circular" />
           </div>
