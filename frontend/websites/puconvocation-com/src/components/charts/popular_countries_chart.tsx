@@ -10,51 +10,35 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-import { Fragment, JSX } from "react";
+
+import { JSX } from "react";
 import { WorldMapData } from "@constants/maps";
 import { GeographicalMap } from "@components/graphics";
-import { AnalyticsController } from "@controllers/index";
-import { StatusCode } from "@enums/StatusCode";
-import { cookies } from "next/headers";
+import { Popular } from "@dto/analytics";
 
 interface PopularCountriesChartProps {
+  analytics: Popular[];
   showLegends?: boolean;
 }
 
 export default async function PopularCountriesChart({
   showLegends = true,
+  analytics,
 }: Readonly<PopularCountriesChartProps>): Promise<JSX.Element> {
-  const analyticsService = new AnalyticsController({
-    cookies: cookies().toString(),
-  });
-
-  const response = await analyticsService.popularCountries();
-
-  const popularCountries =
-    response.statusCode === StatusCode.SUCCESS &&
-    "payload" in response &&
-    typeof response.payload === "object"
-      ? response.payload
-      : null;
-
   return (
     <div className={"space-y-5"}>
-      {popularCountries !== null ? (
-        <GeographicalMap
-          geoMap={WorldMapData}
-          viewBox={"0 0 1011 667"}
-          className={"h-64"}
-          highlight={popularCountries
-            .filter((country) => country.count > 0)
-            .map((country) => country.key)}
-        />
-      ) : (
-        <Fragment></Fragment>
-      )}
+      <GeographicalMap
+        geoMap={WorldMapData}
+        viewBox={"0 0 1011 667"}
+        className={"h-64"}
+        highlight={analytics
+          .filter((country) => country.count > 0)
+          .map((country) => country.key)}
+      />
       <div
         className={`${showLegends ? "flex" : "hidden"} w-full items-center justify-center space-x-3`}
       >
-        {popularCountries?.map((country) => {
+        {analytics.map((country) => {
           return (
             <h6 key={country.key} className={"text-xs"}>
               {country.key}: {country.count}

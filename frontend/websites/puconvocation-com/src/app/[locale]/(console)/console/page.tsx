@@ -16,12 +16,22 @@ import { Link } from "@i18n/routing";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@components/ui";
 import { PopularCountriesChart, TrafficOnDateChart } from "@components/charts";
 import { AttendeeTable } from "@components/attendee";
-import { AuthController } from "@controllers/index";
+import { AnalyticsController, AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
+import { format } from "date-fns";
+
+const now = new Date();
+const year = Number(format(now, "yyyy"));
+const month = Number(format(now, "MM"));
+const day = Number(format(now, "dd"));
 
 export default async function ConsolePage(): Promise<JSX.Element> {
   const authController = new AuthController({
+    cookies: cookies().toString(),
+  });
+
+  const analyticsController = new AnalyticsController({
     cookies: cookies().toString(),
   });
 
@@ -33,6 +43,29 @@ export default async function ConsolePage(): Promise<JSX.Element> {
     typeof authResponse.payload === "object"
       ? authResponse.payload
       : null;
+
+  const dailyVisitorAnalyticsResponse = await analyticsController.trafficOnDate(
+    year,
+    month,
+    day,
+  );
+
+  const popularCountriesAnalyticsResponse =
+    await analyticsController.popularCountries();
+
+  const popularCountries =
+    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in popularCountriesAnalyticsResponse &&
+    typeof popularCountriesAnalyticsResponse.payload === "object"
+      ? popularCountriesAnalyticsResponse.payload
+      : [];
+
+  const dailyVisitors =
+    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in dailyVisitorAnalyticsResponse &&
+    typeof dailyVisitorAnalyticsResponse.payload === "object"
+      ? dailyVisitorAnalyticsResponse.payload
+      : [];
 
   return (
     <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
@@ -56,7 +89,10 @@ export default async function ConsolePage(): Promise<JSX.Element> {
               <CardTitle className="text-red-600">Demographics</CardTitle>
             </CardHeader>
             <CardContent className="h-full py-5">
-              <PopularCountriesChart showLegends={false} />
+              <PopularCountriesChart
+                analytics={popularCountries}
+                showLegends={false}
+              />
             </CardContent>
           </Card>
 
@@ -66,7 +102,7 @@ export default async function ConsolePage(): Promise<JSX.Element> {
               <CardTitle className="text-red-600">Traffic</CardTitle>
             </CardHeader>
             <CardContent className="h-full pt-2">
-              <TrafficOnDateChart showText={false} />
+              <TrafficOnDateChart analytics={dailyVisitors} />
             </CardContent>
           </Card>
         </div>
