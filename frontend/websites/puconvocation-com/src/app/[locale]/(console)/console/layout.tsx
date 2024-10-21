@@ -39,6 +39,7 @@ interface RootLayout {
 const navMenu: Array<NavMenu> = [
   {
     name: "Home",
+    pathRegex: "^/console$",
     route: "",
     childRoutes: [],
     icon: "HomeIcon",
@@ -46,6 +47,7 @@ const navMenu: Array<NavMenu> = [
   },
   {
     name: "Analytics",
+    pathRegex: "^/console/analytics(/.*)?$",
     route: "/analytics",
     childRoutes: [],
     icon: "ChartBarIcon",
@@ -53,6 +55,7 @@ const navMenu: Array<NavMenu> = [
   },
   {
     name: "Attendees",
+    pathRegex: "^/console/attendees(/.*)?$",
     route: "/attendees",
     childRoutes: [],
     icon: "UsersIcon",
@@ -60,6 +63,7 @@ const navMenu: Array<NavMenu> = [
   },
   {
     name: "Settings",
+    pathRegex: "^/console/settings(/.*)?$",
     route: "/settings",
     childRoutes: ["/ground", "/instructions"],
     icon: "Cog6ToothIcon",

@@ -49,38 +49,26 @@ export default function ConsoleLayout({
           className={`flex grow flex-col pt-20 ${collapsed ? "items-center" : "pr-10"} space-y-5`}
         >
           {navMenu.map((menu) => {
-            const isChildPathMatched = menu.childRoutes
-              .map((route) => `/console${menu.route}${route}`)
-              .includes(path);
-
             return (
               <Link
                 key={menu.name}
                 href={`/console${menu.route}`}
                 className={`cursor-pointer rounded-tr-full ${
-                  path === `/console${menu.route}` || isChildPathMatched
+                  new RegExp(menu.pathRegex).test(path)
                     ? "bg-red-100"
                     : "bg-transparent hover:bg-gray-100"
                 } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
               >
                 <DynamicIcon
                   icon={menu.icon}
-                  outline={
-                    !(path === `/console${menu.route}` || isChildPathMatched)
-                  }
+                  outline={!RegExp(menu.pathRegex).test(path)}
                   className={
-                    path === `/console${menu.route}` ||
-                    path === `/console${menu.route}` ||
-                    isChildPathMatched
-                      ? "text-red-700"
-                      : "text-black"
+                    RegExp(menu.pathRegex).test(path) ? "text-red-700" : "text-black"
                   }
                 />
                 <span
                   className={`${collapsed ? "hidden" : "font-semibold"} transition-all duration-150 ease-in-out ${
-                    path === `/console${menu.route}` || isChildPathMatched
-                      ? "text-red-700"
-                      : "text-black"
+                    RegExp(menu.pathRegex).test(path) ? "text-red-700" : "text-black"
                   }`}
                 >
                   {menu.name}
@@ -118,26 +106,21 @@ export default function ConsoleLayout({
         }
       >
         {navMenu.map((menu) => {
-          const isChildPathMatched = menu.childRoutes
-            .map((route) => `/console${menu.route}${route}`)
-            .includes(path);
           return (
             <Link
               key={menu.name}
               href={`/console${menu.route}`}
               className={`cursor-pointer rounded-tr-full ${
-                path === `/console${menu.route}` || isChildPathMatched
+                RegExp(menu.pathRegex).test(path)
                   ? "bg-red-100"
                   : "bg-transparent hover:bg-gray-100"
               } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
             >
               <DynamicIcon
                 icon={menu.icon}
-                outline={
-                  !(path === `/console${menu.route}` || isChildPathMatched)
-                }
+                outline={!RegExp(menu.pathRegex).test(path)}
                 className={
-                  path === `/console${menu.route}` || isChildPathMatched
+                  RegExp(menu.pathRegex).test(path)
                     ? "size-6 text-red-700"
                     : "size-6 text-black"
                 }
