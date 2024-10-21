@@ -36,12 +36,10 @@ export default async function middleware(req: NextRequest) {
   const pathName = req.nextUrl.pathname.substring(3);
   const response = i18nMiddleware(req);
 
-  if (/^\/(_next\/.*|favicon\.ico)$/.test(pathName)) {
-    return;
-  }
-
   const matchedProtectedRoute = matchPath(pathName, PROTECTED_ROUTES);
+
   let authCookies = null;
+
   if (matchedProtectedRoute !== null || pathName.includes("/authenticate")) {
     const authenticationResponse = await fetch(
       `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
@@ -51,8 +49,9 @@ export default async function middleware(req: NextRequest) {
         headers: {
           Cookie: req.cookies.toString(),
         },
+        cache: "force-cache",
         next: {
-          revalidate: 1800,
+          revalidate: 3600,
         },
       },
     );
@@ -109,5 +108,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
