@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "optimizedDev": "npm run build && npm run start"
+    "optimizedDev": "npm run build && npm run start",
+    "productionBundleAnalysis": "ANALYZE=true npm run build"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
@@ -16,6 +17,7 @@
   "dependencies": {
     "@github/webauthn-json": "^2.1.1",
     "@heroicons/react": "^2.1.3",
+    "@next/bundle-analyzer": "^15.0.0",
     "@plaiceholder/next": "^3.0.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.2",

@@ -30,4 +30,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPlaiceholder(i18n(nextConfig));
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
+export default withBundleAnalyzer(withPlaiceholder(i18n(nextConfig)));
