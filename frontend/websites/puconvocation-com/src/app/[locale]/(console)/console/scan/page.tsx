@@ -14,7 +14,7 @@
 import { Fragment, JSX, useState } from "react";
 import { useZxing } from "react-zxing";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import {
   Button,
   InputOTP,

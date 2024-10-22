@@ -17,7 +17,7 @@ import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import { Button, Input, ProgressBar } from "@components/ui";
 import { useToast } from "@hooks/index";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { AuthController } from "@controllers/index";
 

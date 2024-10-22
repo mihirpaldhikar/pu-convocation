@@ -13,7 +13,7 @@
 "use client";
 import { JSX, useState } from "react";
 import { Button, Input } from "@components/ui";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@i18n/routing";
 import { DynamicIcon } from "@components/graphics";
 

@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@components/ui";
 import { useToast } from "@hooks/index";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@i18n/routing";
 import { AuthController } from "@controllers/index";
