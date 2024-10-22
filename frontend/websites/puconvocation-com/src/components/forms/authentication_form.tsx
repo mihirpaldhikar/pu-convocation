@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@icons/index";
 import { Button, Input, ProgressBar } from "@components/ui";
-import { useAuth, useToast } from "@hooks/index";
+import { useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
 import { AuthController } from "@controllers/index";
@@ -35,7 +35,6 @@ export default function AuthenticationForm({
   );
 
   const router = useRouter();
-  const { account, dispatch } = useAuth();
   const { toast } = useToast();
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
@@ -47,9 +46,7 @@ export default function AuthenticationForm({
   });
 
   return (
-    <div
-      className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}
-    >
+    <div className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}>
       <div
         className={authenticationPayload.submitting ? "visible" : "invisible"}
       >
@@ -99,14 +96,10 @@ export default function AuthenticationForm({
                       "payload" in res &&
                       typeof res.payload === "object"
                     ) {
-                      dispatch({
-                        type: "SET_ACCOUNT",
-                        payload: {
-                          account: res.payload,
-                        },
-                      });
+                      router.push(
+                        redirect !== undefined ? redirect : "/console",
+                      );
                     }
-                    router.push(redirect !== undefined ? redirect : "/console");
                   });
                 } else if ("message" in response) {
                   toast({

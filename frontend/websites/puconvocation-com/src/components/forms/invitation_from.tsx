@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui";
-import { useAuth, useToast } from "@hooks/index";
+import { useToast } from "@hooks/index";
 import { useTranslations } from "use-intl";
 import Image from "next/image";
 import { useRouter } from "@i18n/routing";
@@ -42,7 +42,6 @@ export default function InvitationForm({
   const formTranslations = useTranslations("components.forms.invitationForm");
 
   const router = useRouter();
-  const { account, dispatch } = useAuth();
   const { toast } = useToast();
 
   const [authenticationPayload, setAuthenticationPayload] = useState<{
@@ -111,14 +110,8 @@ export default function InvitationForm({
                       "payload" in res &&
                       typeof res.payload === "object"
                     ) {
-                      dispatch({
-                        type: "SET_ACCOUNT",
-                        payload: {
-                          account: res.payload,
-                        },
-                      });
+                      router.push("/console");
                     }
-                    router.push("/console");
                   });
                 } else if ("message" in response) {
                   toast({

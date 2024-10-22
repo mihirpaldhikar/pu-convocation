@@ -14,13 +14,11 @@
 import type { Metadata } from "next";
 import "@app/globals.css";
 import { ReactNode } from "react";
-import { Toaster } from "@components/ui";
-import { Providers } from "@providers/index";
+import { Toaster, TooltipProvider } from "@components/ui";
 import { getMessages } from "next-intl/server";
-import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
-import { StatusCode } from "@enums/StatusCode";
 import { SYSTEM_FONT } from "@fonts/system_font";
+import { NextIntlClientProvider } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Authenticate | PU Convocation",
@@ -37,40 +35,29 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayout>) {
   const { locale } = await params;
-  const agentCookies = await cookies()
+  const agentCookies = await cookies();
 
   const translations = await getMessages({
     locale: locale,
   });
-
-  const authController = new AuthController({
-    cookies: agentCookies.toString(),
-  });
-
-  const authResponse = await authController.getCurrentAccount();
-
-  const account =
-    authResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in authResponse &&
-    typeof authResponse.payload === "object"
-      ? authResponse.payload
-      : null;
 
   return (
     <html lang={locale}>
       <body
         className={`min-h-screen bg-neutral-100 font-sans antialiased ${SYSTEM_FONT.variable}`}
       >
-        <Providers
+        <NextIntlClientProvider
+          messages={translations}
           locale={locale}
-          translations={translations}
-          account={account}
+          timeZone={"Asia/Kolkata"}
         >
-          <div className={"flex h-screen flex-col"}>
-            <main className={`flex-1`}>{children}</main>
-            <Toaster />
-          </div>
-        </Providers>
+          <TooltipProvider>
+            <div className={"flex h-screen flex-col"}>
+              <main className={`flex-1`}>{children}</main>
+              <Toaster />
+            </div>
+          </TooltipProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
