@@ -16,7 +16,6 @@ import "@app/globals.css";
 import { ReactNode } from "react";
 import { Toaster, TooltipProvider } from "@components/ui";
 import { getMessages } from "next-intl/server";
-import { cookies } from "next/headers";
 import { SYSTEM_FONT } from "@fonts/system_font";
 import { NextIntlClientProvider } from "next-intl";
 
@@ -35,8 +34,6 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayout>) {
   const { locale } = await params;
-  const agentCookies = await cookies();
-
   const translations = await getMessages({
     locale: locale,
   });
