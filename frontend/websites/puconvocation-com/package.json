@@ -1,5 +1,10 @@
 {
   "name": "puconvocation-com",
+  "author": {
+    "name": "Mihir & Suhani",
+    "email": "authors@puconvocation.com",
+    "url": "https://mihirpaldhikar.com"
+  },
   "version": "3.0.0-canary.1",
   "private": true,
   "type": "module",
