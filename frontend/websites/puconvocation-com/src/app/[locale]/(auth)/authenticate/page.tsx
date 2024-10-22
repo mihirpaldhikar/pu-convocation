@@ -16,29 +16,30 @@ import { getTranslations } from "next-intl/server";
 import { LanguageSelector } from "@components/common";
 
 interface AuthenticationProps {
-  searchParams: {
+  searchParams: Promise<{
     redirect: string;
     invitationToken: string;
-  };
+  }>;
 }
 
 export default async function AuthenticationPage({
   searchParams,
 }: Readonly<AuthenticationProps>): Promise<JSX.Element> {
+  const { invitationToken, redirect } = await searchParams;
   const coreTranslations = await getTranslations("core");
 
   return (
     <section className={"flex min-h-screen w-full"}>
       <div className="m-auto flex h-fit w-full flex-col items-center justify-center space-y-5 px-5 lg:px-0">
-        {searchParams.invitationToken === null ||
-        searchParams.invitationToken === undefined ||
-        searchParams.invitationToken === "" ||
-        !searchParams.invitationToken?.match(
+        {invitationToken === null ||
+        invitationToken === undefined ||
+        invitationToken === "" ||
+        !invitationToken?.match(
           /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
         ) ? (
-          <AuthenticationForm redirect={searchParams.redirect} />
+          <AuthenticationForm redirect={redirect} />
         ) : (
-          <InvitationFrom invitationToken={searchParams.invitationToken} />
+          <InvitationFrom invitationToken={invitationToken} />
         )}
         <LanguageSelector />
         <div className={"text-center"}>

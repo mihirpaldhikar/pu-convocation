@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
 interface RootLayout {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 const navMenu: Array<NavMenu> = [
@@ -73,8 +73,10 @@ const navMenu: Array<NavMenu> = [
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: Readonly<RootLayout>) {
+  const { locale } = await params;
+
   const translations = await getMessages({
     locale: locale,
   });

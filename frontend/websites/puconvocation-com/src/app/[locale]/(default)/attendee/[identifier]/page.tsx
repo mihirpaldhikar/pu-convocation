@@ -21,14 +21,16 @@ import { Link } from "@i18n/routing";
 
 const attendeeService: AttendeeController = new AttendeeController();
 
+interface AttendeePageProps {
+  params: Promise<{ identifier: string }>;
+}
+
 export default async function AttendeePage({
   params,
-}: {
-  params: { identifier: string };
-}): Promise<JSX.Element> {
-  const response = await attendeeService.getAttendee(
-    params.identifier.toUpperCase(),
-  );
+}: Readonly<AttendeePageProps>): Promise<JSX.Element> {
+  const { identifier } = await params;
+
+  const response = await attendeeService.getAttendee(identifier.toUpperCase());
 
   if (
     response.statusCode === StatusCode.ATTENDEE_NOT_FOUND &&
@@ -45,8 +47,8 @@ export default async function AttendeePage({
           </h3>
           <p className={"pb-4 text-gray-600"}>
             Please use{" "}
-            {params.identifier.length > 10 ? "CRR Number" : "Enrollment Number"}{" "}
-            to find your seat.
+            {identifier.length > 10 ? "CRR Number" : "Enrollment Number"} to
+            find your seat.
           </p>
           <Link
             href={"/"}
