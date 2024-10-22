@@ -10,6 +10,9 @@
     "lint": "next lint",
     "optimizedDev": "npm run build && npm run start"
   },
+  "overrides": {
+    "react-is": "^19.0.0-rc-69d4b800-20241021"
+  },
   "dependencies": {
     "@github/webauthn-json": "^2.1.1",
     "@heroicons/react": "^2.1.3",
@@ -44,7 +47,7 @@
     "react-intersection-observer": "^9.13.1",
     "react-qr-code": "^2.0.15",
     "react-zxing": "^2.0.2",
-    "recharts": "^2.12.7",
+    "recharts": "^2.13.0",
     "sharp": "^0.33.4",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
