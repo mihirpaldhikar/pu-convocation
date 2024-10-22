@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
 interface RootLayout {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 const navMenu: Array<NavMenu> = [
@@ -73,18 +73,21 @@ const navMenu: Array<NavMenu> = [
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: Readonly<RootLayout>) {
+  const { locale } = await params;
+  const agentCookies = await cookies()
+
   const translations = await getMessages({
     locale: locale,
   });
 
   const remoteConfigController = new RemoteConfigController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const authController = new AuthController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const authResponse = await authController.getCurrentAccount();
@@ -121,7 +124,7 @@ export default async function RootLayout({
                 <Navbar />
                 <ConsoleLayout
                   sidebarCollapsed={
-                    cookies().get("sidebarCollapsed")?.value === "true"
+                    agentCookies.get("sidebarCollapsed")?.value === "true"
                   }
                   navMenu={navMenu}
                 >

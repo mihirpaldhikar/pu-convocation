@@ -13,11 +13,11 @@
 
 import createNextIntlPlugin from "next-intl/plugin";
 import withPlaiceholder from "@plaiceholder/next";
+import { NextConfig } from "next";
 
 const i18n = createNextIntlPlugin();
 
-/** @type {import("next").NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   images: {

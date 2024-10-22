@@ -29,8 +29,10 @@ const startOfCurrentWeek = startOfWeek(now);
 const endOfCurrentWeek = endOfWeek(now);
 
 export default async function AnalyticsPage(): Promise<JSX.Element> {
+  const agentCookies = await cookies()
+
   const analyticsController = new AnalyticsController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const dailyVisitorAnalyticsResponse = await analyticsController.trafficOnDate(

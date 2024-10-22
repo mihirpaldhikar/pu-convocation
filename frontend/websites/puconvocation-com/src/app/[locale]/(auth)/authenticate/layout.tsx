@@ -29,19 +29,22 @@ export const metadata: Metadata = {
 
 interface RootLayout {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: Readonly<RootLayout>) {
+  const { locale } = await params;
+  const agentCookies = await cookies()
+
   const translations = await getMessages({
     locale: locale,
   });
 
   const authController = new AuthController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const authResponse = await authController.getCurrentAccount();
