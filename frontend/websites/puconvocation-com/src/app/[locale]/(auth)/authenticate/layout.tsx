@@ -37,13 +37,14 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayout>) {
   const { locale } = await params;
+  const agentCookies = await cookies()
 
   const translations = await getMessages({
     locale: locale,
   });
 
   const authController = new AuthController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const authResponse = await authController.getCurrentAccount();

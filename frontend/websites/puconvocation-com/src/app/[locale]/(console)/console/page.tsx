@@ -27,16 +27,18 @@ const month = Number(format(now, "MM"));
 const day = Number(format(now, "dd"));
 
 export default async function ConsolePage(): Promise<JSX.Element> {
+  const agentCookies = await cookies();
+
   const authController = new AuthController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const analyticsController = new AnalyticsController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const attendeeController = new AttendeeController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const authResponse = await authController.getCurrentAccount();

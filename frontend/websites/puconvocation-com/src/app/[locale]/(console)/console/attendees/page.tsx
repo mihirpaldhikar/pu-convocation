@@ -20,8 +20,10 @@ import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
 
 export default async function AttendeePage(): Promise<JSX.Element> {
+  const agentCookies = await cookies()
+
   const attendeeController = new AttendeeController({
-    cookies: cookies().toString(),
+    cookies: agentCookies.toString(),
   });
 
   const totalAttendeeResponse =
