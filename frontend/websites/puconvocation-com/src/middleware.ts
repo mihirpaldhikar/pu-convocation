@@ -33,78 +33,83 @@ function matchPath(
 }
 
 export default async function middleware(req: NextRequest) {
-  const pathName = req.nextUrl.pathname.substring(3);
-  const response = i18nMiddleware(req);
+  try {
+    const pathName = req.nextUrl.pathname.substring(3);
+    const response = i18nMiddleware(req);
 
-  const matchedProtectedRoute = matchPath(pathName, PROTECTED_ROUTES);
+    const matchedProtectedRoute = matchPath(pathName, PROTECTED_ROUTES);
 
-  let authCookies = null;
+    let authCookies = null;
 
-  if (matchedProtectedRoute !== null || pathName.includes("/authenticate")) {
-    const authenticationResponse = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
-      {
-        credentials: "same-origin",
-        method: "GET",
-        headers: {
-          Cookie: req.cookies.toString(),
+    if (matchedProtectedRoute !== null || pathName.includes("/authenticate")) {
+      const authenticationResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_AUTH_SERVICE_URL}/accounts/`,
+        {
+          credentials: "same-origin",
+          method: "GET",
+          headers: {
+            Cookie: req.cookies.toString(),
+          },
+          cache: "force-cache",
+          next: {
+            revalidate: 3600,
+          },
         },
-        cache: "force-cache",
-        next: {
-          revalidate: 3600,
-        },
-      },
-    );
-
-    authCookies = authenticationResponse.headers.get("set-cookie");
-
-    if (
-      authenticationResponse.status !== 200 &&
-      !pathName.includes("/authenticate")
-    ) {
-      const absoluteURL = new URL(
-        `/authenticate?redirect=${req.nextUrl.pathname}`,
-        req.nextUrl.origin,
       );
-      return NextResponse.redirect(absoluteURL.toString());
-    }
 
-    if (authenticationResponse.status === 200) {
-      if (pathName.includes("/authenticate")) {
-        const absoluteURL = new URL("/console", req.nextUrl.origin);
-        return NextResponse.redirect(absoluteURL.toString());
-      }
-
-      const account = (await authenticationResponse.json()) as Account;
-      const associatedRoles = new Set<string>(account.iamRoles);
+      authCookies = authenticationResponse.headers.get("set-cookie");
 
       if (
-        matchedProtectedRoute !== null &&
-        matchedProtectedRoute.requiredIAMPermissions !== null &&
-        matchedProtectedRoute.requiredIAMPermissions.intersection(
-          associatedRoles,
-        ).size === 0
+        authenticationResponse.status !== 200 &&
+        !pathName.includes("/authenticate")
       ) {
-        const absoluteURL = new URL("/console", req.nextUrl.origin);
+        const absoluteURL = new URL(
+          `/authenticate?redirect=${req.nextUrl.pathname}`,
+          req.nextUrl.origin,
+        );
         return NextResponse.redirect(absoluteURL.toString());
       }
+
+      if (authenticationResponse.status === 200) {
+        if (pathName.includes("/authenticate")) {
+          const absoluteURL = new URL("/console", req.nextUrl.origin);
+          return NextResponse.redirect(absoluteURL.toString());
+        }
+
+        const account = (await authenticationResponse.json()) as Account;
+        const associatedRoles = new Set<string>(account.iamRoles);
+
+        if (
+          matchedProtectedRoute !== null &&
+          matchedProtectedRoute.requiredIAMPermissions !== null &&
+          matchedProtectedRoute.requiredIAMPermissions.intersection(
+            associatedRoles,
+          ).size === 0
+        ) {
+          const absoluteURL = new URL("/console", req.nextUrl.origin);
+          return NextResponse.redirect(absoluteURL.toString());
+        }
+      }
     }
-  }
 
-  if (authCookies !== null) {
-    const split = authCookies.split(", __");
-    const authorizationTokenCookie = parseCookie(split[0]);
-    const refreshTokenCookie = parseCookie("__".concat(split[1]));
-    response.cookies
-      .set(authorizationTokenCookie.name, authorizationTokenCookie.value, {
-        ...authorizationTokenCookie.options,
-      })
-      .set(refreshTokenCookie.name, refreshTokenCookie.value, {
-        ...refreshTokenCookie.options,
-      });
-  }
+    if (authCookies !== null) {
+      const split = authCookies.split(", __");
+      const authorizationTokenCookie = parseCookie(split[0]);
+      const refreshTokenCookie = parseCookie("__".concat(split[1]));
+      response.cookies
+        .set(authorizationTokenCookie.name, authorizationTokenCookie.value, {
+          ...authorizationTokenCookie.options,
+        })
+        .set(refreshTokenCookie.name, refreshTokenCookie.value, {
+          ...refreshTokenCookie.options,
+        });
+    }
 
-  return response;
+    return response;
+  }catch (error) {
+    const absoluteURL = new URL("/error", req.nextUrl.origin);
+    return NextResponse.redirect(absoluteURL.toString());
+  }
 }
 
 export const config = {

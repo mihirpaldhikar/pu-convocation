@@ -22,6 +22,7 @@ import { AuthController, RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { cookies } from "next/headers";
 import { SYSTEM_FONT } from "@fonts/system_font";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "PU Convocation",
@@ -39,7 +40,7 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayout>) {
   const { locale } = await params;
-  const agentCookies = await cookies()
+  const agentCookies = await cookies();
 
   const translations = await getMessages({
     locale: locale,
@@ -50,13 +51,20 @@ export default async function RootLayout({
     cookies: agentCookies.toString(),
   });
 
-  const response = await remoteConfig.getRemoteConfig();
+  const remoteConfigResponse = await remoteConfig.getRemoteConfig();
+
+  const isServiceOffline =
+    remoteConfigResponse.statusCode === StatusCode.NETWORK_ERROR;
+
+  if (isServiceOffline) {
+    redirect("/error");
+  }
 
   const config =
-    response.statusCode === StatusCode.SUCCESS &&
-    "payload" in response &&
-    typeof response.payload === "object"
-      ? response.payload
+    remoteConfigResponse.statusCode === StatusCode.SUCCESS &&
+    "payload" in remoteConfigResponse &&
+    typeof remoteConfigResponse.payload === "object"
+      ? remoteConfigResponse.payload
       : null;
 
   const authResponse = await authController.getCurrentAccount();

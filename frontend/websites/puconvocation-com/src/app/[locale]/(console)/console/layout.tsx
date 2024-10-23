@@ -25,6 +25,7 @@ import { AuthController } from "@controllers/index";
 import { cookies } from "next/headers";
 import RemoteConfigController from "@controllers/RemoteConfigController";
 import { SYSTEM_FONT } from "@fonts/system_font";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",
@@ -76,7 +77,7 @@ export default async function RootLayout({
   params,
 }: Readonly<RootLayout>) {
   const { locale } = await params;
-  const agentCookies = await cookies()
+  const agentCookies = await cookies();
 
   const translations = await getMessages({
     locale: locale,
@@ -92,6 +93,14 @@ export default async function RootLayout({
 
   const authResponse = await authController.getCurrentAccount();
   const remoteConfigResponse = await remoteConfigController.getRemoteConfig();
+
+  const isServiceOffline =
+    remoteConfigResponse.statusCode === StatusCode.NETWORK_ERROR;
+
+  if (isServiceOffline) {
+    redirect("/error");
+  }
+
   const account =
     authResponse.statusCode === StatusCode.SUCCESS &&
     "payload" in authResponse &&

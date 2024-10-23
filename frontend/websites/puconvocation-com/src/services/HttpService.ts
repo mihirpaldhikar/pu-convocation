@@ -150,6 +150,12 @@ export default class HttpService {
 
   private async errorHandler(error: any): Promise<Response<string>> {
     let axiosError = (await error) as AxiosError;
+    if(axiosError.code === "ECONNREFUSED") {
+      return {
+        statusCode: StatusCode.NETWORK_ERROR,
+        message: "Cannot Connect to the Services."
+      }
+    }
     if (axiosError.message.includes("INTERNAL:")) {
       return {
         statusCode: StatusCode.FAILURE,
