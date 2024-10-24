@@ -13,8 +13,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "optimizedDev": "npm run build && npm run start",
-    "productionBundleAnalysis": "ANALYZE=true npm run build"
+    "optimizedDev": "next build && next start",
+    "productionBundleAnalysis": "ANALYZE=true next build"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
