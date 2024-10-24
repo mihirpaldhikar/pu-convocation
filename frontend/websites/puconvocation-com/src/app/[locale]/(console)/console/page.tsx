@@ -47,14 +47,14 @@ export default async function ConsolePage(): Promise<JSX.Element> {
     }
 
     const PopularCountriesChart = dynamic(
-      () => import("@components/charts/popular_countries_chart"),
+      () => import("@components/analytics/popular_countries_chart"),
       {
         loading: () => <p>Loading...</p>,
       },
     );
 
     const TrafficOnDateChart = dynamic(
-      () => import("@components/charts/traffic_on_date_chart"),
+      () => import("@components/analytics/traffic_on_date_chart"),
       {
         loading: () => <p>Loading...</p>,
       },

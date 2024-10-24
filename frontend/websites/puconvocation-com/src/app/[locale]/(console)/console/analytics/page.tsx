@@ -12,7 +12,7 @@
  */
 
 import { JSX } from "react";
-import { PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart } from "@components/charts";
+import { PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart } from "@components/analytics";
 import { DynamicIcon } from "@components/graphics";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
 import { endOfWeek, format, startOfWeek } from "date-fns";
@@ -29,7 +29,7 @@ const startOfCurrentWeek = startOfWeek(now);
 const endOfCurrentWeek = endOfWeek(now);
 
 export default async function AnalyticsPage(): Promise<JSX.Element> {
-  const agentCookies = await cookies()
+  const agentCookies = await cookies();
 
   const analyticsController = new AnalyticsController({
     cookies: agentCookies.toString(),

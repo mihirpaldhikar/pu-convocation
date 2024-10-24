@@ -11,5 +11,5 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export * from "./charts/index";
+export * from "./analytics/index";
 export * from "./attendee/index";
