@@ -20,7 +20,7 @@ import {
   ChartLegend,
   ChartLegendContent,
   ChartTooltip,
-  ChartTooltipContent
+  ChartTooltipContent,
 } from "@components/ui";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { mergeWeekData } from "@lib/analytics_utils";
@@ -29,12 +29,12 @@ import { WeeklyTraffic } from "@dto/analytics";
 const chartConfig = {
   currentWeek: {
     label: "Current",
-    color: "hsl(var(--chart-1))"
+    color: "hsl(var(--chart-1))",
   },
   previousWeek: {
     label: "Previous",
-    color: "hsl(var(--chart-2))"
-  }
+    color: "hsl(var(--chart-2))",
+  },
 } satisfies ChartConfig;
 
 interface WeeklyTrafficChartProps {
@@ -42,8 +42,8 @@ interface WeeklyTrafficChartProps {
 }
 
 export default function WeeklyTrafficChart({
-                                             analytics
-                                           }: Readonly<WeeklyTrafficChartProps>): JSX.Element {
+  analytics,
+}: Readonly<WeeklyTrafficChartProps>): JSX.Element {
   return (
     <ChartContainer config={chartConfig} className={"h-72 w-full"}>
       <BarChart

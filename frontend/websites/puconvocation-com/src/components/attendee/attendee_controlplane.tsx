@@ -12,7 +12,14 @@
  */
 "use client";
 import { JSX } from "react";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui";
 import { useRemoteConfig } from "@hooks/index";
 import { AttendeeController } from "@controllers/index";
 
@@ -23,8 +30,8 @@ interface AttendeeControllerProps {
 }
 
 export default function AttendeeControlPlane({
-                                               totalAttendeeCount
-                                             }: Readonly<AttendeeControllerProps>): JSX.Element {
+  totalAttendeeCount,
+}: Readonly<AttendeeControllerProps>): JSX.Element {
   const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
   return (
     <Card className="h-[12rem] w-full p-4">
@@ -46,12 +53,12 @@ export default function AttendeeControlPlane({
               payload: {
                 config: {
                   ...remoteConfig,
-                  attendeesLocked: !remoteConfig?.attendeesLocked
-                }
-              }
+                  attendeesLocked: !remoteConfig?.attendeesLocked,
+                },
+              },
             });
             await attendeeController.mutateAttendeeLock(
-              !remoteConfig.attendeesLocked
+              !remoteConfig.attendeesLocked,
             );
           }}
           className="bg-red-600 text-white hover:bg-red-700"
