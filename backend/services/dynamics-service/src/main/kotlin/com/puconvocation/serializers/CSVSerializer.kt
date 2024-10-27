@@ -16,13 +16,13 @@ package com.puconvocation.serializers
 import com.puconvocation.database.mongodb.entities.Attendee
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
-import java.io.InputStreamReader
+import java.io.Reader
 import java.util.UUID
 import kotlin.random.Random
 
 class CSVSerializer {
-    fun serializeAttendeesCSV(reader: InputStreamReader): List<Attendee> {
-        val attendees: MutableList<Attendee> = emptyList<Attendee>().toMutableList()
+    fun serializeAttendeesCSV(reader: Reader): List<Attendee> {
+        val attendees: MutableList<Attendee> = mutableListOf<Attendee>()
         val csvFormat = CSVFormat.DEFAULT
             .builder()
             .setHeader(

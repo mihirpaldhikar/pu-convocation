@@ -27,8 +27,10 @@ import com.puconvocation.utils.Result
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.MultiPartData
 import io.ktor.http.content.PartData
-import io.ktor.http.content.readAllParts
-import io.ktor.http.content.streamProvider
+import io.ktor.utils.io.core.readBytes
+import io.ktor.utils.io.readBuffer
+import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
@@ -110,7 +112,7 @@ class AttendeeController(
             )
         }
 
-        val part = multiPart.readAllParts().first()
+        val part = multiPart.readPart()
         if (part !is PartData.FileItem ||
             !part.originalFileName?.lowercase()?.contains(".csv")!!
         ) {
@@ -124,7 +126,14 @@ class AttendeeController(
             )
         }
 
-        val attendees: List<Attendee> = csvSerializer.serializeAttendeesCSV(part.streamProvider().reader())
+        val attendees: List<Attendee> = csvSerializer.serializeAttendeesCSV(
+            InputStreamReader(
+                ByteArrayInputStream(
+                    part.provider.invoke().readBuffer().readBytes()
+                ),
+                "UTF-8"
+            )
+        )
         val response = attendeeRepository.uploadAttendees(attendees)
         if (!response) {
             distributedLock.release("attendeeUploadLock")
