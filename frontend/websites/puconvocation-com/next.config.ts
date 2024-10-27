@@ -14,6 +14,7 @@
 import createNextIntlPlugin from "next-intl/plugin";
 import withPlaiceholder from "@plaiceholder/next";
 import { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
 
 const i18n = createNextIntlPlugin();
 
@@ -30,7 +31,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
+const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 

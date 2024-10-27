@@ -14,12 +14,12 @@
 export function parseCookie(cookieString: string): {
   name: string;
   value: string;
-  options: { httpOnly: boolean; [key: string]: any };
+  options: { httpOnly: boolean; [key: string]: unknown };
 } {
   const cookieParts = cookieString.split(";");
   const [name, value] = cookieParts[0].trim().split("=");
-  const options: { httpOnly: boolean; [key: string]: any } = {
-    httpOnly: false,
+  const options: { httpOnly: boolean; [key: string]: unknown } = {
+    httpOnly: false
   };
 
   for (let i = 1; i < cookieParts.length; i++) {

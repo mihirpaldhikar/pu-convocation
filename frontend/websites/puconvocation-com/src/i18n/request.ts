@@ -17,7 +17,7 @@ import { routing } from "./routing";
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const locale = await requestLocale;
-  if (!routing.locales.includes(locale as any)) notFound();
+  if (!routing.locales.includes(locale as string)) notFound();
 
   const res = await fetch(
     `https://assets.puconvocation.com/locales/${locale}.json`,

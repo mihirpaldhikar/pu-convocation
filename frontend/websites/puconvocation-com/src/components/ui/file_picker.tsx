@@ -21,9 +21,9 @@ interface FilePickerProps {
 }
 
 export default function FilePicker({
-  allowedFileExtensions,
-  onFilePicked,
-}: Readonly<FilePickerProps>): JSX.Element {
+                                     allowedFileExtensions,
+                                     onFilePicked
+                                   }: Readonly<FilePickerProps>): JSX.Element {
   return (
     <div className={"h-full w-full"}>
       <input
@@ -31,12 +31,12 @@ export default function FilePicker({
         className={"h-full w-full opacity-0"}
         accept={allowedFileExtensions}
         onChange={(state) => {
-          if (state.target.files!!.length !== 0) {
-            let reader = new FileReader();
-            reader.onload = function (e) {
-              onFilePicked(state.target.files!![0]);
+          if (state.target.files!.length !== 0) {
+            const reader = new FileReader();
+            reader.onload = function() {
+              onFilePicked(state.target.files![0]);
             };
-            reader.readAsDataURL(state.target.files!![0]);
+            reader.readAsDataURL(state.target.files![0]);
           } else {
             onFilePicked(null);
           }

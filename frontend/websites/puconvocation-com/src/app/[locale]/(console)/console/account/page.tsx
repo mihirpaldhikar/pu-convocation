@@ -23,13 +23,17 @@ export default function AccountPage(): JSX.Element {
   const { toast } = useToast();
   const { account } = useAuth();
 
+  if (account === null) {
+    return <Fragment />;
+  }
+
   return (
     <Fragment>
       <section className={"space-y-5"}>
         <h2 className={"text-2xl font-bold"}>Hello, {account?.displayName}</h2>
         <Button
           onClick={async () => {
-            const response = await authService.registerPasskey(account?.uuid!!);
+            const response = await authService.registerPasskey(account.uuid!);
             if ("message" in response) {
               toast({
                 title:
@@ -37,7 +41,7 @@ export default function AccountPage(): JSX.Element {
                     ? "Success"
                     : "Failure",
                 description: response.message,
-                duration: 5000,
+                duration: 5000
               });
             }
           }}

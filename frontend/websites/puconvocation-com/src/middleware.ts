@@ -22,7 +22,7 @@ const i18nMiddleware = createMiddleware(routing);
 
 function matchPath(
   currentPath: string,
-  protectedRoutes: Array<ProtectedRoute>,
+  protectedRoutes: Array<ProtectedRoute>
 ): ProtectedRoute | null {
   for (let i = 0; i < protectedRoutes.length; i++) {
     if (protectedRoutes[i].pathRegex.test(currentPath)) {
@@ -48,13 +48,13 @@ export default async function middleware(req: NextRequest) {
           credentials: "same-origin",
           method: "GET",
           headers: {
-            Cookie: req.cookies.toString(),
+            Cookie: req.cookies.toString()
           },
           cache: "force-cache",
           next: {
-            revalidate: 3600,
-          },
-        },
+            revalidate: 3600
+          }
+        }
       );
 
       authCookies = authenticationResponse.headers.get("set-cookie");
@@ -65,7 +65,7 @@ export default async function middleware(req: NextRequest) {
       ) {
         const absoluteURL = new URL(
           `/authenticate?redirect=${req.nextUrl.pathname}`,
-          req.nextUrl.origin,
+          req.nextUrl.origin
         );
         return NextResponse.redirect(absoluteURL.toString());
       }
@@ -83,7 +83,7 @@ export default async function middleware(req: NextRequest) {
           matchedProtectedRoute !== null &&
           matchedProtectedRoute.requiredIAMPermissions !== null &&
           matchedProtectedRoute.requiredIAMPermissions.intersection(
-            associatedRoles,
+            associatedRoles
           ).size === 0
         ) {
           const absoluteURL = new URL("/console", req.nextUrl.origin);
@@ -98,20 +98,20 @@ export default async function middleware(req: NextRequest) {
       const refreshTokenCookie = parseCookie("__".concat(split[1]));
       response.cookies
         .set(authorizationTokenCookie.name, authorizationTokenCookie.value, {
-          ...authorizationTokenCookie.options,
+          ...authorizationTokenCookie.options
         })
         .set(refreshTokenCookie.name, refreshTokenCookie.value, {
-          ...refreshTokenCookie.options,
+          ...refreshTokenCookie.options
         });
     }
 
     return response;
-  }catch (error) {
+  } catch {
     const absoluteURL = new URL("/error", req.nextUrl.origin);
     return NextResponse.redirect(absoluteURL.toString());
   }
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.well-known).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.well-known).*)"]
 };

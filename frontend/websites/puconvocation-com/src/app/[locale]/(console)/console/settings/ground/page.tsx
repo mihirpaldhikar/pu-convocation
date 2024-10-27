@@ -19,7 +19,7 @@ import { Enclosure } from "@dto/index";
 
 function totalEnclosureSeats(enclosure: Enclosure): number {
   let seats = 0;
-  for (let row of enclosure.rows) {
+  for (const row of enclosure.rows) {
     const diff = row.end - row.start;
     seats += diff === 0 ? 0 : diff - row.reserved.length + 1;
   }
@@ -34,7 +34,7 @@ export default function GroundSettingsPage(): JSX.Element {
   const seatsInEnclosure: Array<number> = remoteConfig.groundMappings.map(
     (enclosure) => {
       return totalEnclosureSeats(enclosure);
-    },
+    }
   );
 
   let totalSeats = 0;
@@ -75,8 +75,8 @@ export default function GroundSettingsPage(): JSX.Element {
                         type: "SET_ENCLOSURE",
                         payload: {
                           index: index,
-                          enclosure: enclosure,
-                        },
+                          enclosure: enclosure
+                        }
                       });
                     }}
                   />
@@ -110,8 +110,8 @@ export default function GroundSettingsPage(): JSX.Element {
                               type: "SET_ENCLOSURE",
                               payload: {
                                 index: index,
-                                enclosure: enclosure,
-                              },
+                                enclosure: enclosure
+                              }
                             });
                           }}
                           className={
@@ -129,14 +129,14 @@ export default function GroundSettingsPage(): JSX.Element {
                       letter: "",
                       start: 0,
                       end: 0,
-                      reserved: [],
+                      reserved: []
                     });
                     dispatch({
                       type: "SET_ENCLOSURE",
                       payload: {
                         index: index,
-                        enclosure: enclosure,
-                      },
+                        enclosure: enclosure
+                      }
                     });
                   }}
                 >
@@ -152,13 +152,13 @@ export default function GroundSettingsPage(): JSX.Element {
             remoteConfig?.groundMappings.push({
               letter: "",
               entryDirection: "NONE",
-              rows: [],
+              rows: []
             });
             dispatch({
               type: "SET_CONFIG",
               payload: {
-                config: remoteConfig,
-              },
+                config: remoteConfig
+              }
             });
           }}
         >

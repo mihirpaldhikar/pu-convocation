@@ -33,10 +33,10 @@ export default class AuthController {
   }
 
   public async getAccount(
-    identifier: string,
+    identifier: string
   ): Promise<Response<Account | string>> {
     return await this.httpService.get<Account>(
-      `${this.ACCOUNT_ROUTE}/${identifier}`,
+      `${this.ACCOUNT_ROUTE}/${identifier}`
     );
   }
 
@@ -45,14 +45,14 @@ export default class AuthController {
     iamOperations: Array<{
       id: string;
       operation: "ADD" | "REMOVE";
-    }>,
+    }>
   ): Promise<Response<Array<string> | string>> {
     return await this.httpService.post<Array<string>>(
       `${this.ACCOUNT_ROUTE}/updateIAMPolicies`,
       {
         uuid: uuid,
-        iamOperations: iamOperations,
-      },
+        iamOperations: iamOperations
+      }
     );
   }
 
@@ -60,15 +60,15 @@ export default class AuthController {
     invitationToken: string,
     displayName: string,
     username: string,
-    designation: string,
+    designation: string
   ): Promise<Response<string>> {
     const handshakeResponse = await this.httpService.post<string>(
       `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
       {
         username: username,
         displayName: displayName,
-        designation: designation,
-      },
+        designation: designation
+      }
     );
 
     if (
@@ -85,12 +85,12 @@ export default class AuthController {
         `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
         {
           identifier: username,
-          passkeyCredentials: JSON.stringify(passkeyCredentials),
+          passkeyCredentials: JSON.stringify(passkeyCredentials)
         },
         {
           expectedStatusCode: 201,
-          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
-        },
+          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL
+        }
       );
     }
 
@@ -101,8 +101,8 @@ export default class AuthController {
     const authenticationHandshake = await this.httpService.post<string>(
       `${this.ACCOUNT_ROUTE}/authenticate`,
       {
-        identifier: identifier,
-      },
+        identifier: identifier
+      }
     );
 
     if (
@@ -116,12 +116,12 @@ export default class AuthController {
         `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
         {
           identifier: identifier,
-          passkeyCredentials: JSON.stringify(passkeyCredentials),
+          passkeyCredentials: JSON.stringify(passkeyCredentials)
         },
         {
           expectedStatusCode: 200,
-          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
-        },
+          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL
+        }
       );
     }
 
@@ -130,7 +130,7 @@ export default class AuthController {
 
   public async registerPasskey(identifier: string): Promise<Response<string>> {
     const handshakeRequest = await this.httpService.post<string>(
-      `${this.ACCOUNT_ROUTE}/passkeys/register`,
+      `${this.ACCOUNT_ROUTE}/passkeys/register`
     );
 
     if (
@@ -146,12 +146,12 @@ export default class AuthController {
         `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
         {
           identifier: identifier,
-          passkeyCredentials: JSON.stringify(passkeyCredentials),
+          passkeyCredentials: JSON.stringify(passkeyCredentials)
         },
         {
           expectedStatusCode: 201,
-          expectedResponseCode: StatusCode.PASSKEY_REGISTERED,
-        },
+          expectedResponseCode: StatusCode.PASSKEY_REGISTERED
+        }
       );
     }
 
@@ -159,30 +159,30 @@ export default class AuthController {
   }
 
   public async sendAccountInvitations(
-    invitations: Array<AccountInvitation>,
-  ): Promise<Response<any | string>> {
-    return await this.httpService.post<any>(
+    invitations: Array<AccountInvitation>
+  ): Promise<Response<never | string>> {
+    return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
-        invites: invitations,
+        invites: invitations
       },
       {
-        expectedStatusCode: 201,
-      },
+        expectedStatusCode: 201
+      }
     );
   }
 
   public async getIAMPolicy(
-    invitations: Array<AccountInvitation>,
-  ): Promise<Response<any | string>> {
-    return await this.httpService.post<any>(
+    invitations: Array<AccountInvitation>
+  ): Promise<Response<never | string>> {
+    return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
-        invites: invitations,
+        invites: invitations
       },
       {
-        expectedStatusCode: 201,
-      },
+        expectedStatusCode: 201
+      }
     );
   }
 
@@ -190,7 +190,7 @@ export default class AuthController {
     Response<Array<IAMPolicy> | string>
   > {
     return await this.httpService.get<Array<IAMPolicy>>(
-      `${this.IAM_ROUTE}/allPolicies`,
+      `${this.IAM_ROUTE}/allPolicies`
     );
   }
 

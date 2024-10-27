@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {WeeklyTraffic} from "@dto/analytics";
+import { WeeklyTraffic } from "@dto/analytics";
 
 type MergedData = {
   day: string;
@@ -19,19 +19,22 @@ type MergedData = {
   previousWeek: number;
 };
 
-export function mergeWeekData(weeklyTraffic: WeeklyTraffic): MergedData[] {
+export function mergeWeekData(weeklyTraffic: WeeklyTraffic | null): MergedData[] {
+  if (weeklyTraffic === null) {
+    return [];
+  }
   const previousWeekMap: Record<string, number> =
     weeklyTraffic.previousWeek.reduce(
       (map, data) => {
         map[data.day] = data.requests;
         return map;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
 
   return weeklyTraffic.currentWeek.map((data) => ({
     day: data.day,
     currentWeek: data.requests,
-    previousWeek: previousWeekMap[data.day] || 0,
+    previousWeek: previousWeekMap[data.day] || 0
   }));
 }

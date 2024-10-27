@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@components/ui";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
@@ -37,7 +37,7 @@ export default function GeneralSettingsPage(): JSX.Element {
   const {
     data: imageLibrary,
     isLoading: imageLibraryLoading,
-    refetch: fetchImageLibrary,
+    refetch: fetchImageLibrary
   } = useQuery({
     queryKey: ["imageLibrary"],
     enabled: false,
@@ -51,7 +51,7 @@ export default function GeneralSettingsPage(): JSX.Element {
         return response.payload;
       }
       return null;
-    },
+    }
   });
 
   return (
@@ -90,10 +90,10 @@ export default function GeneralSettingsPage(): JSX.Element {
                               ...remoteConfig,
                               images: {
                                 ...remoteConfig.images,
-                                carousel: [...x],
-                              },
-                            },
-                          },
+                                carousel: [...x]
+                              }
+                            }
+                          }
                         });
                       }}
                     >
@@ -138,7 +138,7 @@ export default function GeneralSettingsPage(): JSX.Element {
                       <Fragment>Loading...</Fragment>
                     ) : imageLibrary !== null && imageLibrary !== undefined ? (
                       <div className={"grid grid-cols-3 gap-4"}>
-                        {imageLibrary.map((image, index) => {
+                        {imageLibrary.map((image) => {
                           return (
                             <DialogClose
                               key={image}
@@ -154,12 +154,12 @@ export default function GeneralSettingsPage(): JSX.Element {
                                           ...remoteConfig.images.carousel,
                                           {
                                             url: image,
-                                            description: "Image from Library",
-                                          },
-                                        ],
-                                      },
-                                    },
-                                  },
+                                            description: "Image from Library"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
                                 });
                               }}
                             >

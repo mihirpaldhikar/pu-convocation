@@ -23,5 +23,6 @@ const compat = new FlatCompat({
   recommendedConfig: js.configs.recommended,
   allConfig: js.configs.all,
 });
+
 const modules = [...compat.extends("next/core-web-vitals", "next", "prettier")];
 export default modules;
