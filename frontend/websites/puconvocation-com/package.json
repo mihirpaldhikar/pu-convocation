@@ -16,12 +16,12 @@
     "optimizedDev": "next build && next start",
     "productionBundleAnalysis": "ANALYZE=true next build"
   },
-  "overrides": {
-    "react-is": "^19.0.0-rc-69d4b800-20241021"
-  },
+  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228",
   "pnpm": {
     "overrides": {
-      "react-is": "^19.0.0-rc-69d4b800-20241021"
+      "react-is": "^19.0.0-rc-69d4b800-20241021",
+      "react": "19.0.0-rc-69d4b800-20241021",
+      "react-dom": "19.0.0-rc-69d4b800-20241021"
     }
   },
   "dependencies": {
@@ -46,11 +46,11 @@
     "input-otp": "^1.2.4",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.445.0",
-    "next": "^15.0.1",
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "react-dom": "19.0.0-rc-69d4b800-20241021",
+    "next": "15.0.1",
     "next-intl": "^3.23.5",
     "plaiceholder": "^3.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "react-intersection-observer": "^9.13.1",
     "react-markdown": "^9.0.1",
     "react-qr-code": "^2.0.15",
