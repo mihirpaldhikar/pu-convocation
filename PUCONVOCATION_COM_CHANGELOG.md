@@ -1,3 +1,10 @@
+## 3.0.0-canary.2 (October 29, 2024)
+
+### Fix:
+
+- Fix an issue in which the "TypeError: Response.clone: Body has already been consumed." was thrown due to issue with Undici module bundled with Node.js v20+. Until the error is fixed, the Node.js v18 will be used.
+
+
 ## 3.0.0-canary.1 (October 25, 2024)
 
 ### Breaking Changes:
