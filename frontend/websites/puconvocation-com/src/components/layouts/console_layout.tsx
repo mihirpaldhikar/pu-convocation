@@ -57,18 +57,25 @@ export default function ConsoleLayout({
                   new RegExp(menu.pathRegex).test(path)
                     ? "bg-red-100"
                     : "bg-transparent hover:bg-gray-100"
-                } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
+                  // TODO:
+                  //  Temporarily as we are using Node.js v18, the Set class do not have inbuilt intersection method.
+                  //  So we need to do a workaround.
+                } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${new Set([...menu.requiredIAMRoles].filter((iamRole) => accountIamRoles.has(iamRole))).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
               >
                 <DynamicIcon
                   icon={menu.icon}
                   outline={!RegExp(menu.pathRegex).test(path)}
                   className={
-                    RegExp(menu.pathRegex).test(path) ? "text-red-700" : "text-black"
+                    RegExp(menu.pathRegex).test(path)
+                      ? "text-red-700"
+                      : "text-black"
                   }
                 />
                 <span
                   className={`${collapsed ? "hidden" : "font-semibold"} transition-all duration-150 ease-in-out ${
-                    RegExp(menu.pathRegex).test(path) ? "text-red-700" : "text-black"
+                    RegExp(menu.pathRegex).test(path)
+                      ? "text-red-700"
+                      : "text-black"
                   }`}
                 >
                   {menu.name}
@@ -114,7 +121,10 @@ export default function ConsoleLayout({
                 RegExp(menu.pathRegex).test(path)
                   ? "bg-red-100"
                   : "bg-transparent hover:bg-gray-100"
-              } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
+                // TODO:
+                //  Temporarily as we are using Node.js v18, the Set class do not have inbuilt intersection method.
+                //  So we need to do a workaround.
+              } ${new Set([...menu.requiredIAMRoles].filter((iamRole) => accountIamRoles.has(iamRole))).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
             >
               <DynamicIcon
                 icon={menu.icon}
