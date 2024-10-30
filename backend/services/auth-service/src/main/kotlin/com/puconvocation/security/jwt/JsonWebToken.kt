@@ -119,8 +119,8 @@ class JsonWebToken(
             .withExpiresAt(tokenExpiresAt)
             .withSubject(API_AUTHORIZATION_SUBJECT).sign(
                 Algorithm.RSA256(
-                    keys.authorizationTokenPublicKey as RSAPublicKey,
-                    keys.authorizationTokenPrivateKey as RSAPrivateKey
+                    keys.refreshTokenPublicKey as RSAPublicKey,
+                    keys.refreshTokenPrivateKey as RSAPrivateKey
                 )
             )
     }
