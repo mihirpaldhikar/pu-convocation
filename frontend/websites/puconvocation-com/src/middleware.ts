@@ -83,13 +83,8 @@ export default async function middleware(req: NextRequest) {
         if (
           matchedProtectedRoute !== null &&
           matchedProtectedRoute.requiredIAMPermissions !== null &&
-          // TODO:
-          //  Temporarily as we are using Node.js v18, the Set class do not have inbuilt intersection method.
-          //  So we need to do a workaround.
-          new Set(
-            [...matchedProtectedRoute.requiredIAMPermissions].filter(
-              (iamRole) => associatedRoles.has(iamRole),
-            ),
+          matchedProtectedRoute.requiredIAMPermissions.intersection(
+            associatedRoles,
           ).size === 0
         ) {
           const absoluteURL = new URL("/console", req.nextUrl.origin);
