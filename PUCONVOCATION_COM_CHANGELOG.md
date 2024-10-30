@@ -1,11 +1,3 @@
-## 3.0.0-beta.1 (October 30, 2024)
-
-### Fix:
-
-- Fix an issue in which the undici module of Node.js was causing Response error. This issue is now eliminated by
-  removing builtin fetch function and replace it with AuthController, which uses axios under the hood for making HTTP
-  Requests.
-
 ## 3.0.0-canary.2 (October 29, 2024)
 
 ### Fix:
