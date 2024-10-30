@@ -1,9 +1,17 @@
+## 3.0.0-beta.1 (October 30, 2024)
+
+### Fix:
+
+- Fix an issue in which the undici module of Node.js was causing Response error. This issue is now eliminated by
+  removing builtin fetch function and replace it with AuthController, which uses axios under the hood for making HTTP
+  Requests.
+
 ## 3.0.0-canary.2 (October 29, 2024)
 
 ### Fix:
 
-- Fix an issue in which the "TypeError: Response.clone: Body has already been consumed." was thrown due to issue with Undici module bundled with Node.js v20+. Until the error is fixed, the Node.js v18 will be used.
-
+- Fix an issue in which the "TypeError: Response.clone: Body has already been consumed." was thrown due to issue with
+  Undici module bundled with Node.js v20+. Until the error is fixed, the Node.js v18 will be used.
 
 ## 3.0.0-canary.1 (October 25, 2024)
 
@@ -16,9 +24,11 @@
 - Upgrade to Next.js 15 and React 19.
 - Add the ability to redirect to the error page whenever the webapp cannot connect to the services due to network error.
 - Console Sidebar now retains the collapsed state even if the page is refreshed.
-- Add initialAttendees props in AttendeeTable so that the data fetched from the server components can be passed as initial value, thus resulting in a faster rendering of the contents in the table.
+- Add initialAttendees props in AttendeeTable so that the data fetched from the server components can be passed as
+  initial value, thus resulting in a faster rendering of the contents in the table.
 - Add the ability to use thumbnail images while the browser is loading the actual image.
-- Add a dedicated route for generating thumbnails for the images instead of generating it when requests arrive to load pages.
+- Add a dedicated route for generating thumbnails for the images instead of generating it when requests arrive to load
+  pages.
 - Add the ability to show blurred image while the browser is loading the actual image, enhancing the user experience.
 - Add a dialog to view all the details of the selected attendee.
 - Add the ability to search and dynamically render a list of matched attendees
@@ -36,16 +46,19 @@
 - Add the ability to switch between supported languages.
 - Add Internationalization (i18n) Support to the website. The Default language is English (US).
 - Add the ability to remotely change the content of the pages with dynamics-service.
-- Add a custom carousel component for images as the react-responsive-carouse library was causing performance issues and was not customizable, according to project needs.
+- Add a custom carousel component for images as the react-responsive-carouse library was causing performance issues and
+  was not customizable, according to project needs.
 - Add Loading indicators for Console Home Page and Navbar Menu for better User Experience.
 - Add a scan page for scanning QR Code of the attendee.
 - Add QR Code with a new UI to verify and validate attendance and degree certificate transaction.
 - Add the ability to register new passkeys for a currently authenticated account.
-- Merge Invitations Page into Authenticate Page. The appropriate forms are now dynamically rendered based on URL schemes.
+- Merge Invitations Page into Authenticate Page. The appropriate forms are now dynamically rendered based on URL
+  schemes.
 
 ### Fixes:
 
-- Fix an issue in which the Instructions were not rendered on the instruction page due to conflict between RemoteMarkdown and React 19.
+- Fix an issue in which the Instructions were not rendered on the instruction page due to conflict between
+  RemoteMarkdown and React 19.
 - Fix an issue in which the charts were not rendering due to BREAKING-CHANGES made in Next.js 15 and React 19.
 - Fix an issue in which the locale param was deprecated in the latest version on next-intl.
 - Fix an issue in which the height of the placeholder of the carousel was more than that of the image.
@@ -53,7 +66,8 @@
 - Fix an issue in which the carousel images were overlapping each other.
 - Fix an issue in which the carousel container was missing the minimum height.
 - Fix an issue in which the bottom navigation bar of the console layout was not having a proper z-index.
-- Fix an issue in which the middleware did not properly set the new cookies issued by auth-service when authorization-token expires and refresh-token is still valid.
+- Fix an issue in which the middleware did not properly set the new cookies issued by auth-service when
+  authorization-token expires and refresh-token is still valid.
 - Fix an issue in which the scrollbars were overlapping with the seat map.
 - Fix an issue in which the content of the console was rendered behind the bottom navigation bar for mobile view.
 - Fix an issue in which the searchAttendee method was called multiple times while the user is still typing.
@@ -62,14 +76,18 @@
 
 ### Miscellaneous:
 
-- Refactor Console Home Page to dynamically importing components based on IAM permissions, thus reducing the Bundle Size.
+- Refactor Console Home Page to dynamically importing components based on IAM permissions, thus reducing the Bundle
+  Size.
 - Remove unnecessary initial account fetch while authenticating.
 - Refactor the next.config file to use TypeScript instead of Modular JS.
-- Refactor codebase to use an asynchronous way to access cookies inorder to comply with BREAKING-CHANGES made in Next.js 15.
-- Refactor params and searchParams in props interfaces to use Promises inorder to comply with BREAKING-CHANGES made by next.js 15 for accessing params and searchParams.
+- Refactor codebase to use an asynchronous way to access cookies inorder to comply with BREAKING-CHANGES made in Next.js
+  15.
+- Refactor params and searchParams in props interfaces to use Promises inorder to comply with BREAKING-CHANGES made by
+  next.js 15 for accessing params and searchParams.
 - Refactor middleware.ts to cache the account details, thus reducing api calls to the auth-service.
 - Refactor middleware.ts to cache the account details, thus reducing api calls to the auth-service.
-- Refactor GeographicalMap to fetch map details from CDN instead of directly bundling map data within the codebase. This will make the codebase lighter and easier to manager.
+- Refactor GeographicalMap to fetch map details from CDN instead of directly bundling map data within the codebase. This
+  will make the codebase lighter and easier to manager.
 - Refactor TrafficOnDateChart and WeeklyTrafficChart to render data provided by their parents.
 - Refactor Console Home and Analytics page to be rendered on server. Also, a Popular Countries component is now RSC
 - Refactor Console Attendee Page to be a Server Rendered.
@@ -77,16 +95,19 @@
 - Refactor imports for the AttendeeTable component to use a Barrel files scheme.
 - Refactor the AttendeeTable component to use the totalAttendeeCount prop to figure out pagination.
 - Refactor system_font.ts from root to dedicated fonts' directory.
-- Refactor fonts used by the layouts into a dedicated system_font.ts for easier management of the fonts across the codebase.
+- Refactor fonts used by the layouts into a dedicated system_font.ts for easier management of the fonts across the
+  codebase.
 - Refactor Providers are to use data provided by Server Components instead of fetching data on the Client.
 - Refactor components directory for easy management of the components.
 - Refactor middleware to use regex for protected route path matching.
 - Merge console layouts for desktop and mobile into single console layout manager.
 - Refactor RemoteConfig DTO inorder to comply with the latest API changes in dynamics-service.
 - Refactor Landing Page to Server Component instead of Client Component for faster rendering of the content.
-- Remove unnecessary states in Authentication From and add status indicator while authenticating for better user experience.
+- Remove unnecessary states in Authentication From and add status indicator while authenticating for better user
+  experience.
 - Refactor WebsiteConfig to RemoteConfig inorder to comply with the latest API changes.
-- Refactor QR Code Scanner page to use Sheets inorder to show attendee details instead of redirecting to a new page for verification.
+- Refactor QR Code Scanner page to use Sheets inorder to show attendee details instead of redirecting to a new page for
+  verification.
 - Refactor HttpService methods to use an option object for configuring the http parameters.
 - Refactor Account and AuthService to comply with the latest IAM changes.
 
@@ -113,7 +134,6 @@
 - Upgrade dependencies to latest versions.
 - Rename AuthService.signIn method to AuthService.authenticate
 - Add AccountType field to comply with latest auth-service API changes.
-
 
 ## 1.0.4 (May 22, 2024)
 
