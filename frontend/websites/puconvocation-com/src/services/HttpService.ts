@@ -24,21 +24,21 @@ export default class HttpService {
     baseURL: string,
     options?: {
       cookies?: string;
-    }
+    },
   ) {
     this.httpClient =
       options?.cookies === undefined
         ? axios.create({
-          baseURL: baseURL,
-          withCredentials: true
-        })
+            baseURL: baseURL,
+            withCredentials: true,
+          })
         : axios.create({
-          baseURL: baseURL,
-          withCredentials: true,
-          headers: {
-            Cookie: options.cookies
-          }
-        });
+            baseURL: baseURL,
+            withCredentials: true,
+            headers: {
+              Cookie: options.cookies,
+            },
+          });
   }
 
   public async get<T>(
@@ -48,7 +48,7 @@ export default class HttpService {
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
       header?: object;
-    }
+    },
   ): Promise<Response<T | string>> {
     try {
       const givenOptions: typeof options = {
@@ -56,18 +56,19 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
-        header: options?.header ?? undefined
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.get(`${route}`, {
         timeout: givenOptions.requestTimeout,
-        headers: givenOptions.header
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
         return {
           statusCode: givenOptions.expectedResponseCode,
-          payload: await response.data
+          payload: await response.data,
+          cookies: response.headers["set-cookie"],
         } as Response<T>;
       }
       throw new AxiosError("INTERNAL:Unknown Error Occurred.");
@@ -84,7 +85,7 @@ export default class HttpService {
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
       header?: object;
-    }
+    },
   ): Promise<Response<T | string>> {
     try {
       const givenOptions: typeof options = {
@@ -92,18 +93,19 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
-        header: options?.header ?? undefined
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.post(`${route}`, body, {
         timeout: givenOptions.requestTimeout,
-        headers: givenOptions.header
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
         return {
           statusCode: givenOptions.expectedResponseCode,
-          payload: await response.data
+          payload: await response.data,
+          cookies: response.headers["set-cookie"],
         } as Response<T>;
       }
       throw new AxiosError("INTERNAL:Unknown Error Occurred.");
@@ -120,7 +122,7 @@ export default class HttpService {
       expectedStatusCode?: number;
       expectedResponseCode?: StatusCode;
       header?: object;
-    }
+    },
   ): Promise<Response<T | string>> {
     try {
       const givenOptions: typeof options = {
@@ -128,18 +130,19 @@ export default class HttpService {
         expectedStatusCode: options?.expectedStatusCode ?? 200,
         expectedResponseCode:
           options?.expectedResponseCode ?? StatusCode.SUCCESS,
-        header: options?.header ?? undefined
+        header: options?.header ?? undefined,
       };
 
       const response = await this.httpClient.patch(`${route}`, body, {
         timeout: givenOptions.requestTimeout,
-        headers: givenOptions.header
+        headers: givenOptions.header,
       });
 
       if (response.status === givenOptions.expectedStatusCode) {
         return {
           statusCode: givenOptions.expectedResponseCode,
-          payload: await response.data
+          payload: await response.data,
+          cookies: response.headers["set-cookie"],
         } as Response<T>;
       }
       throw new AxiosError("INTERNAL:Unknown Error Occurred.");
@@ -153,24 +156,24 @@ export default class HttpService {
     if (axiosError.code === "ECONNREFUSED") {
       return {
         statusCode: StatusCode.NETWORK_ERROR,
-        message: "Cannot Connect to the Services."
+        message: "Cannot Connect to the Services.",
       };
     }
     if (axiosError.message.includes("INTERNAL:")) {
       return {
         statusCode: StatusCode.FAILURE,
-        message: axiosError.message.replaceAll("INTERNAL:", "")
+        message: axiosError.message.replaceAll("INTERNAL:", ""),
       } as Response<string>;
     }
 
     const errorResponseString = JSON.stringify(
-      (await axiosError.response?.data) as string
+      (await axiosError.response?.data) as string,
     );
     const errorResponse = JSON.parse(errorResponseString);
 
     return {
       statusCode: StatusCode[errorResponse["errorCode"]] ?? StatusCode.FAILURE,
-      message: errorResponse["message"]
+      message: errorResponse["message"],
     } as unknown as Response<string>;
   }
 }

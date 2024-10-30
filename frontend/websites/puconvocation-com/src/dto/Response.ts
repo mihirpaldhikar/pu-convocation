@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {StatusCode} from "@enums/index";
+import { StatusCode } from "@enums/index";
 
 interface ErrorResponse {
   statusCode: StatusCode;
@@ -21,6 +21,7 @@ interface ErrorResponse {
 interface SuccessResponse<T> {
   statusCode: StatusCode;
   payload: T;
+  cookies?: Readonly<string>;
 }
 
 export type Response<T> = SuccessResponse<T> | ErrorResponse;
