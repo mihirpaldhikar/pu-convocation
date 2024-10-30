@@ -1,3 +1,9 @@
+## 3.0.0-beta.1 (October 30, 2024)
+
+### Fixes:
+
+- Fix an issue in which the wrong RSA Public and Private Key Pair was used for generating Refresh Token.
+
 ## 3.0.0-canary.1 (October 25, 2024)
 
 ### Breaking Changes:
