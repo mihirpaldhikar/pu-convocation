@@ -11,12 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {NextRequest, NextResponse} from "next/server";
-import {routing} from "@i18n/routing";
+import { NextRequest, NextResponse } from "next/server";
+import { routing } from "@i18n/routing";
 import createMiddleware from "next-intl/middleware";
-import {Account, ProtectedRoute} from "@dto/index";
-import {PROTECTED_ROUTES} from "./protected_routes";
-import {parseCookie} from "@lib/cookie_utils";
+import { Account, ProtectedRoute } from "@dto/index";
+import { PROTECTED_ROUTES } from "./protected_routes";
+import { parseCookie } from "@lib/cookie_utils";
 
 const i18nMiddleware = createMiddleware(routing);
 
@@ -82,13 +82,8 @@ export default async function middleware(req: NextRequest) {
         if (
           matchedProtectedRoute !== null &&
           matchedProtectedRoute.requiredIAMPermissions !== null &&
-          // TODO:
-          //  Temporarily as we are using Node.js v18, the Set class do not have inbuilt intersection method.
-          //  So we need to do a workaround.
-          new Set(
-            [...matchedProtectedRoute.requiredIAMPermissions].filter(
-              (iamRole) => associatedRoles.has(iamRole),
-            ),
+          matchedProtectedRoute.requiredIAMPermissions.intersection(
+            associatedRoles,
           ).size === 0
         ) {
           const absoluteURL = new URL("/console", req.nextUrl.origin);
