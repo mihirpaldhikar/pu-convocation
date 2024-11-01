@@ -33,7 +33,7 @@ class KafkaService(
     private val consumer: KafkaConsumer<String, String>?
 
     init {
-        if (msk.offline) {
+        if (!msk.offline) {
             properties["bootstrap.servers"] = msk.brokers
             properties["security.protocol"] = "SASL_SSL"
             properties["sasl.mechanism"] = "AWS_MSK_IAM"
