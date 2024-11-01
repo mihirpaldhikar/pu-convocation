@@ -90,17 +90,7 @@ export default function AuthenticationForm({
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
-                  authController.getCurrentAccount().then((res) => {
-                    if (
-                      res.statusCode === StatusCode.SUCCESS &&
-                      "payload" in res &&
-                      typeof res.payload === "object"
-                    ) {
-                      router.push(
-                        redirect !== undefined ? redirect : "/console",
-                      );
-                    }
-                  });
+                  router.push(redirect !== undefined ? redirect : "/console");
                 } else if ("message" in response) {
                   toast({
                     title: "Authentication Failed",

@@ -104,15 +104,7 @@ export default function InvitationForm({
                 if (
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
-                  authController.getCurrentAccount().then((res) => {
-                    if (
-                      res.statusCode === StatusCode.SUCCESS &&
-                      "payload" in res &&
-                      typeof res.payload === "object"
-                    ) {
-                      router.push("/console");
-                    }
-                  });
+                  router.push("/console");
                 } else if ("message" in response) {
                   toast({
                     title: "Authentication Failed",

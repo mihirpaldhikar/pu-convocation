@@ -11,7 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { create as createPasskeyCredentials, get as getPublicCredentials } from "@github/webauthn-json";
+import {
+  create as createPasskeyCredentials,
+  get as getPublicCredentials,
+} from "@github/webauthn-json";
 import { Account, AccountInvitation, IAMPolicy, Response } from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import { HttpService } from "@services/index";
@@ -33,10 +36,10 @@ export default class AuthController {
   }
 
   public async getAccount(
-    identifier: string
+    identifier: string,
   ): Promise<Response<Account | string>> {
     return await this.httpService.get<Account>(
-      `${this.ACCOUNT_ROUTE}/${identifier}`
+      `${this.ACCOUNT_ROUTE}/${identifier}`,
     );
   }
 
@@ -45,14 +48,14 @@ export default class AuthController {
     iamOperations: Array<{
       id: string;
       operation: "ADD" | "REMOVE";
-    }>
+    }>,
   ): Promise<Response<Array<string> | string>> {
     return await this.httpService.post<Array<string>>(
       `${this.ACCOUNT_ROUTE}/updateIAMPolicies`,
       {
         uuid: uuid,
-        iamOperations: iamOperations
-      }
+        iamOperations: iamOperations,
+      },
     );
   }
 
@@ -60,129 +63,150 @@ export default class AuthController {
     invitationToken: string,
     displayName: string,
     username: string,
-    designation: string
+    designation: string,
   ): Promise<Response<string>> {
-    const handshakeResponse = await this.httpService.post<string>(
-      `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
-      {
-        username: username,
-        displayName: displayName,
-        designation: designation
-      }
-    );
-
-    if (
-      handshakeResponse.statusCode === StatusCode.SUCCESS &&
-      "payload" in handshakeResponse &&
-      typeof handshakeResponse.payload === "object"
-    ) {
-      const passkeyChallenge = handshakeResponse.payload;
-
-      const passkeyCredentials =
-        await createPasskeyCredentials(passkeyChallenge);
-
-      return await this.httpService.post(
-        `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
+    try {
+      const handshakeResponse = await this.httpService.post<string>(
+        `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
         {
-          identifier: username,
-          passkeyCredentials: JSON.stringify(passkeyCredentials)
+          username: username,
+          displayName: displayName,
+          designation: designation,
         },
-        {
-          expectedStatusCode: 201,
-          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL
-        }
       );
-    }
 
-    return handshakeResponse;
+      if (
+        handshakeResponse.statusCode === StatusCode.SUCCESS &&
+        "payload" in handshakeResponse &&
+        typeof handshakeResponse.payload === "object"
+      ) {
+        const passkeyChallenge = handshakeResponse.payload;
+
+        const passkeyCredentials =
+          await createPasskeyCredentials(passkeyChallenge);
+
+        return await this.httpService.post(
+          `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
+          {
+            identifier: username,
+            passkeyCredentials: JSON.stringify(passkeyCredentials),
+          },
+          {
+            expectedStatusCode: 201,
+            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+          },
+        );
+      }
+
+      return handshakeResponse;
+    } catch (error) {
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: "Authentication operation was cancelled.",
+      };
+    }
   }
 
   public async authenticate(identifier: string): Promise<Response<string>> {
-    const authenticationHandshake = await this.httpService.post<string>(
-      `${this.ACCOUNT_ROUTE}/authenticate`,
-      {
-        identifier: identifier
-      }
-    );
-
-    if (
-      authenticationHandshake.statusCode === StatusCode.SUCCESS &&
-      "payload" in authenticationHandshake &&
-      typeof authenticationHandshake.payload === "object"
-    ) {
-      const passkeyChallenge = authenticationHandshake.payload;
-      const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
-      return await this.httpService.post<string>(
-        `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
+    try {
+      const authenticationHandshake = await this.httpService.post<string>(
+        `${this.ACCOUNT_ROUTE}/authenticate`,
         {
           identifier: identifier,
-          passkeyCredentials: JSON.stringify(passkeyCredentials)
         },
-        {
-          expectedStatusCode: 200,
-          expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL
-        }
       );
-    }
 
-    return authenticationHandshake;
+      if (
+        authenticationHandshake.statusCode === StatusCode.SUCCESS &&
+        "payload" in authenticationHandshake &&
+        typeof authenticationHandshake.payload === "object"
+      ) {
+        const passkeyChallenge = authenticationHandshake.payload;
+        const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
+        return await this.httpService.post<string>(
+          `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
+          {
+            identifier: identifier,
+            passkeyCredentials: JSON.stringify(passkeyCredentials),
+          },
+          {
+            expectedStatusCode: 200,
+            expectedResponseCode: StatusCode.AUTHENTICATION_SUCCESSFUL,
+          },
+        );
+      }
+
+      return authenticationHandshake;
+    } catch (error) {
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: "Authentication operation was cancelled.",
+      };
+    }
   }
 
   public async registerPasskey(identifier: string): Promise<Response<string>> {
-    const handshakeRequest = await this.httpService.post<string>(
-      `${this.ACCOUNT_ROUTE}/passkeys/register`
-    );
-
-    if (
-      handshakeRequest.statusCode === StatusCode.SUCCESS &&
-      "payload" in handshakeRequest &&
-      typeof handshakeRequest.payload === "object"
-    ) {
-      const passkeyChallenge = handshakeRequest.payload;
-      const passkeyCredentials =
-        await createPasskeyCredentials(passkeyChallenge);
-
-      return await this.httpService.post(
-        `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
-        {
-          identifier: identifier,
-          passkeyCredentials: JSON.stringify(passkeyCredentials)
-        },
-        {
-          expectedStatusCode: 201,
-          expectedResponseCode: StatusCode.PASSKEY_REGISTERED
-        }
+    try {
+      const handshakeRequest = await this.httpService.post<string>(
+        `${this.ACCOUNT_ROUTE}/passkeys/register`,
       );
-    }
 
-    return handshakeRequest;
+      if (
+        handshakeRequest.statusCode === StatusCode.SUCCESS &&
+        "payload" in handshakeRequest &&
+        typeof handshakeRequest.payload === "object"
+      ) {
+        const passkeyChallenge = handshakeRequest.payload;
+        const passkeyCredentials =
+          await createPasskeyCredentials(passkeyChallenge);
+
+        return await this.httpService.post(
+          `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
+          {
+            identifier: identifier,
+            passkeyCredentials: JSON.stringify(passkeyCredentials),
+          },
+          {
+            expectedStatusCode: 201,
+            expectedResponseCode: StatusCode.PASSKEY_REGISTERED,
+          },
+        );
+      }
+
+      return handshakeRequest;
+    } catch (error) {
+      return {
+        statusCode: StatusCode.FAILURE,
+        message: "Passkey registration  was cancelled.",
+      };
+    }
   }
 
   public async sendAccountInvitations(
-    invitations: Array<AccountInvitation>
+    invitations: Array<AccountInvitation>,
   ): Promise<Response<never | string>> {
     return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
-        invites: invitations
+        invites: invitations,
       },
       {
-        expectedStatusCode: 201
-      }
+        expectedStatusCode: 201,
+      },
     );
   }
 
   public async getIAMPolicy(
-    invitations: Array<AccountInvitation>
+    invitations: Array<AccountInvitation>,
   ): Promise<Response<never | string>> {
     return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
-        invites: invitations
+        invites: invitations,
       },
       {
-        expectedStatusCode: 201
-      }
+        expectedStatusCode: 201,
+      },
     );
   }
 
@@ -190,7 +214,7 @@ export default class AuthController {
     Response<Array<IAMPolicy> | string>
   > {
     return await this.httpService.get<Array<IAMPolicy>>(
-      `${this.IAM_ROUTE}/allPolicies`
+      `${this.IAM_ROUTE}/allPolicies`,
     );
   }
 
