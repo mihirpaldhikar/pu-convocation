@@ -82,15 +82,16 @@ data class Environment(
             @JsonProperty("accessKeyId") val accessKeyId: String,
             @JsonProperty("secretAccessKey") val secretAccessKey: String,
             @JsonProperty("region") val region: String,
-            @JsonProperty("emailSQS") val emailSQS: SQS,
-            @JsonProperty("transactionSQS") val transactionSQS: SQS,
-            @JsonProperty("analyticsMSK") val analyticsMSK: MSK
+            @JsonProperty("sqs") val sqs: SQS,
+            @JsonProperty("msk") val msk: MSK
         ) {
             data class SQS(
-                @JsonProperty("url") val url: String,
+                @JsonProperty("emailQueue") val emailQueue: String,
+                @JsonProperty("transactionQueue") val transactionQueue: String,
             )
 
             data class MSK(
+                @JsonProperty("offline") val offline: Boolean,
                 @JsonProperty("brokers") val brokers: String,
             )
         }

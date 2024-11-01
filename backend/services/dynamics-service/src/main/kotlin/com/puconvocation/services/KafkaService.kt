@@ -13,6 +13,7 @@
 
 package com.puconvocation.services
 
+import com.puconvocation.Environment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.apache.kafka.clients.admin.AdminClient
@@ -24,28 +25,34 @@ import java.util.Properties
 import kotlin.collections.any
 
 class KafkaService(
-    brokers: String,
+    msk: Environment.Cloud.AWS.MSK,
 ) {
     private val properties = Properties()
-    private val kafkaAdmin: AdminClient
-    private val producer: KafkaProducer<String, String>
-    private val consumer: KafkaConsumer<String, String>
+    private val kafkaAdmin: AdminClient?
+    private val producer: KafkaProducer<String, String>?
+    private val consumer: KafkaConsumer<String, String>?
 
     init {
-        properties["bootstrap.servers"] = brokers
-        properties["security.protocol"] = "SASL_SSL"
-        properties["sasl.mechanism"] = "AWS_MSK_IAM"
-        properties["sasl.jaas.config"] = "software.amazon.msk.auth.iam.IAMLoginModule required;"
-        properties["sasl.client.callback.handler.class"] = "software.amazon.msk.auth.iam.IAMClientCallbackHandler"
-        properties["key.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
-        properties["value.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
-        properties["key.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
-        properties["value.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
-        properties["group.id"] = "analytics-consumer-group"
+        if (msk.offline) {
+            properties["bootstrap.servers"] = msk.brokers
+            properties["security.protocol"] = "SASL_SSL"
+            properties["sasl.mechanism"] = "AWS_MSK_IAM"
+            properties["sasl.jaas.config"] = "software.amazon.msk.auth.iam.IAMLoginModule required;"
+            properties["sasl.client.callback.handler.class"] = "software.amazon.msk.auth.iam.IAMClientCallbackHandler"
+            properties["key.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
+            properties["value.serializer"] = "org.apache.kafka.common.serialization.StringSerializer"
+            properties["key.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
+            properties["value.deserializer"] = "org.apache.kafka.common.serialization.StringDeserializer"
+            properties["group.id"] = "analytics-consumer-group"
 
-        kafkaAdmin = AdminClient.create(properties)
-        producer = KafkaProducer<String, String>(properties)
-        consumer = KafkaConsumer<String, String>(properties)
+            kafkaAdmin = AdminClient.create(properties)
+            producer = KafkaProducer<String, String>(properties)
+            consumer = KafkaConsumer<String, String>(properties)
+        } else {
+            kafkaAdmin = null
+            producer = null
+            consumer = null
+        }
     }
 
     fun createTopic(
@@ -53,7 +60,8 @@ class KafkaService(
         partitions: Int? = 2,
         replicationFactor: Short? = 2
     ): Boolean {
-        val existingTopics = kafkaAdmin.listTopics().names().get()
+        if (kafkaAdmin == null) return false
+        val existingTopics = kafkaAdmin!!.listTopics().names().get()
         if (existingTopics.any { it.equals(name, ignoreCase = true) }) {
             return false
         }
@@ -62,6 +70,7 @@ class KafkaService(
     }
 
     suspend fun produce(message: String) {
+        if (producer == null) return
         withContext(Dispatchers.IO) {
             producer.send(ProducerRecord(ANALYTICS_TOPIC, message)).get()
         }

@@ -62,7 +62,7 @@ object CoreModule {
 
         single<KafkaService> {
             KafkaService(
-                brokers = get<Environment>().cloud.aws.analyticsMSK.brokers
+                msk = get<Environment>().cloud.aws.msk
             )
         }
 

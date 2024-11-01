@@ -27,7 +27,7 @@ class MessageQueue(
         val messageRequest = SendMessageRequest {
             messageBody = message
             messageGroupId = groupId
-            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.emailSQS.url else awsConfig.transactionSQS.url
+            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.sqs.emailQueue else awsConfig.sqs.transactionQueue
         }
 
         sqsClient.sendMessage(messageRequest)
@@ -39,7 +39,7 @@ class MessageQueue(
     ) {
         val batchMessages = SendMessageBatchRequest {
             entries = messages
-            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.emailSQS.url else awsConfig.transactionSQS.url
+            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.sqs.emailQueue else awsConfig.sqs.transactionQueue
         }
 
         sqsClient.sendMessageBatch(batchMessages)
