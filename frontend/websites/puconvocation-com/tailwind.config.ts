@@ -13,6 +13,7 @@
 
 import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
+import typography from "@tailwindcss/typography";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 const config: Config = {
@@ -98,6 +99,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [tailwindAnimate],
+  plugins: [tailwindAnimate, typography],
 };
 export default config;
