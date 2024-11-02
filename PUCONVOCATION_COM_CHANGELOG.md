@@ -1,3 +1,15 @@
+## 3.0.0-beta.1 (November 2, 2024)
+
+### New:
+
+- Set Node.js 22 LTS as the required runtime version.
+
+### Fix:
+
+- Fix an issue in which the instruction page was not rendered with proper typography.
+- Fix an issue in which the authentication was not aborted when passkey checks were interrupted by the user.
+
+
 ## 3.0.0-canary.2 (October 29, 2024)
 
 ### Fix:
