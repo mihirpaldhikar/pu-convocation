@@ -14,7 +14,7 @@
 import { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
-import { PasskeyIcon } from "@icons/index";
+import { PasskeyIcon } from "@components/graphics";
 import { Button, Input, ProgressBar } from "@components/ui";
 import { useToast } from "@hooks/index";
 import { useTranslations } from "next-intl";

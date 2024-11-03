@@ -18,3 +18,4 @@ export { default as LeftGalleryFlags } from "./gallery_flags_left";
 export { default as RightGalleryFlags } from "./gallery_flags_right";
 export { default as GeographicalMap } from "./geographical_map";
 export { default as SpaceShip } from "./spaceship";
+export { default as PasskeyIcon } from "./passkey_icon";

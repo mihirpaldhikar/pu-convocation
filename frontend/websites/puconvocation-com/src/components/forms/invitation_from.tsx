@@ -13,7 +13,7 @@
 "use client";
 import { JSX, useState } from "react";
 import { StatusCode } from "@enums/StatusCode";
-import { PasskeyIcon } from "@icons/index";
+import { PasskeyIcon } from "@components/graphics";
 import {
   Button,
   Input,
