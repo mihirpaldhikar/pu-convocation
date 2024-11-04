@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX } from "react";
+import { Fragment, JSX, useState } from "react";
 import { useRemoteConfig } from "@hooks/index";
 import Image from "next/image";
 import { DynamicIcon } from "@components/graphics";
@@ -22,22 +22,26 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@components/ui";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 import { AssetsController } from "@controllers/index";
 import { convertToThumbnailUrl } from "@lib/image_utils";
+import RemoteConfigController from "@controllers/RemoteConfigController";
+import { Button } from "@components/ui";
 
 const assetsController = new AssetsController();
+const remoteConfigController = new RemoteConfigController();
 
 export default function GeneralSettingsPage(): JSX.Element {
   const { remoteConfig, dispatch } = useRemoteConfig();
+  const [saveMessage, setSaveMessage] = useState("");
 
   const {
     data: imageLibrary,
     isLoading: imageLibraryLoading,
-    refetch: fetchImageLibrary
+    refetch: fetchImageLibrary,
   } = useQuery({
     queryKey: ["imageLibrary"],
     enabled: false,
@@ -51,7 +55,19 @@ export default function GeneralSettingsPage(): JSX.Element {
         return response.payload;
       }
       return null;
-    }
+    },
+  });
+
+  const saveRemoteConfig = useMutation({
+    mutationFn: async () => {
+      const response =
+        await remoteConfigController.changeRemoteConfig(remoteConfig);
+      if (response.statusCode === StatusCode.SUCCESS) {
+        setSaveMessage("Images saved successfully!");
+      } else {
+        setSaveMessage("Failed to save images.");
+      }
+    },
   });
 
   return (
@@ -63,46 +79,44 @@ export default function GeneralSettingsPage(): JSX.Element {
           <div
             className={"grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"}
           >
-            {remoteConfig.images.carousel.map((image, index) => {
-              return (
-                <div key={image.url} className={"relative"}>
-                  <Image
-                    src={image.url}
-                    alt={image.description}
-                    width={500}
-                    height={250}
-                    placeholder={"blur"}
-                    blurDataURL={convertToThumbnailUrl(image.url)}
-                    className={"rounded-xl"}
-                  />
-                  <div className={"absolute right-0 top-0 z-10 p-2"}>
-                    <div
-                      className={
-                        "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
-                      }
-                      onClick={() => {
-                        const x = remoteConfig.images.carousel;
-                        x.splice(index, 1);
-                        dispatch({
-                          type: "SET_CONFIG",
-                          payload: {
-                            config: {
-                              ...remoteConfig,
-                              images: {
-                                ...remoteConfig.images,
-                                carousel: [...x]
-                              }
+            {remoteConfig.images.carousel.map((image, index) => (
+              <div key={image.url} className={"relative"}>
+                <Image
+                  src={image.url}
+                  alt={image.description}
+                  width={500}
+                  height={250}
+                  placeholder={"blur"}
+                  blurDataURL={convertToThumbnailUrl(image.url)}
+                  className={"rounded-xl"}
+                />
+                <div className={"absolute right-0 top-0 z-10 p-2"}>
+                  <div
+                    className={
+                      "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
+                    }
+                    onClick={() => {
+                      const updatedImages = [...remoteConfig.images.carousel];
+                      updatedImages.splice(index, 1);
+                      dispatch({
+                        type: "SET_CONFIG",
+                        payload: {
+                          config: {
+                            ...remoteConfig,
+                            images: {
+                              ...remoteConfig.images,
+                              carousel: updatedImages,
                             }
                           }
-                        });
-                      }}
-                    >
-                      <DynamicIcon icon={"XMarkIcon"} />
-                    </div>
+                        }
+                      });
+                    }}
+                  >
+                    <DynamicIcon icon={"XMarkIcon"} />
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
 
             <Dialog>
               <DialogTrigger
@@ -184,6 +198,19 @@ export default function GeneralSettingsPage(): JSX.Element {
           </div>
         </div>
       </section>
+
+      <div className="mt-5 flex justify-end">
+        <Button
+          onClick={() => saveRemoteConfig.mutate()}
+          className="bg-red-500 text-white hover:bg-red-600"
+        >
+          Save Images
+        </Button>
+      </div>
+
+      {saveMessage && (
+        <div className="mt-2 text-center text-green-600">{saveMessage}</div>
+      )}
     </div>
   );
 }
