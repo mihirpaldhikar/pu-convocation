@@ -29,6 +29,26 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: [
+      "@components/analytics",
+      "@components/attendee",
+      "@components/common",
+      "@components/forms",
+      "@components/graphics",
+      "@components/layouts",
+      "@components/ui",
+      "@controllers",
+      "@hooks",
+      "@dto",
+      "@enums",
+      "@fonts",
+      "@providers",
+      "@services",
+      "@i18n",
+      "@lib",
+    ],
+  },
 };
 
 const withBundleAnalyzer = bundleAnalyzer({
