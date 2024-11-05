@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@components/graphics";
@@ -37,6 +37,8 @@ export default function AuthenticationForm({
   const router = useRouter();
   const { toast } = useToast();
 
+  const [webauthnSupported, setWebauthnSupport] = useState<boolean>(true);
+
   const [authenticationPayload, setAuthenticationPayload] = useState<{
     identifier: string;
     submitting: boolean;
@@ -44,6 +46,22 @@ export default function AuthenticationForm({
     identifier: "",
     submitting: false,
   });
+
+  useEffect(() => {
+    setWebauthnSupport(!!window.PublicKeyCredential);
+  }, []);
+
+  if (!webauthnSupported) {
+    return (
+      <div className={"py-5"}>
+        <h4>
+          This browser currently lacks support for Passkeys. Please consider
+          using an alternative browser that supports this feature for enhanced
+          security.
+        </h4>
+      </div>
+    );
+  }
 
   return (
     <div className={"h-fit w-full rounded-3xl bg-white px-7 pb-20 lg:w-3/4"}>
