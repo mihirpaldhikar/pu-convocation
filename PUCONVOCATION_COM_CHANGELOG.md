@@ -1,3 +1,14 @@
+## 3.0.0-beta.2 (November 6, 2024)
+
+### Fixes:
+
+- Fix an issue in which there was a missing Webauthn API Compatibility Validation in Authentication. - [Issue #10](https://github.com/mihirpaldhikar/pu-convocation/issues/10)
+
+### Miscellaneous:
+
+- Reduce build output size by minimizing the overhead associated with barrel imports.
+
+
 ## 3.0.0-beta.1 (November 2, 2024)
 
 ### New:
