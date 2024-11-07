@@ -1,3 +1,15 @@
+## 3.0.0-beta.3 (November 7, 2024)
+
+### New:
+
+- Upgrade to Next.js v15.0.3 and React v19.0.0-rc-66855b96-20241106
+
+### Miscellaneous:
+
+- Add eslint-plugin-jsx-a11y to add linting support for accessibility issues.
+- Add React Compiler ESLint Plugin for linting errors associated with React best practices.
+- Remove deprecated APIs and replace it with new APIs provided by next-intl.
+
 ## 3.0.0-beta.2 (November 6, 2024)
 
 ### Fixes:
