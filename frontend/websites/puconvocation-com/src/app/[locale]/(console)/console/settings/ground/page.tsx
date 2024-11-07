@@ -34,7 +34,7 @@ export default function GroundSettingsPage(): JSX.Element {
   const seatsInEnclosure: Array<number> = remoteConfig.groundMappings.map(
     (enclosure) => {
       return totalEnclosureSeats(enclosure);
-    }
+    },
   );
 
   let totalSeats = 0;
@@ -49,6 +49,7 @@ export default function GroundSettingsPage(): JSX.Element {
         <h4>Total Seats: {totalSeats}</h4>
       </div>
       <div className={"space-y-5"}>
+        {/* eslint-disable-next-line react-compiler/react-compiler */}
         {remoteConfig.groundMappings.map((enclosure, index) => {
           return (
             <div
@@ -75,8 +76,8 @@ export default function GroundSettingsPage(): JSX.Element {
                         type: "SET_ENCLOSURE",
                         payload: {
                           index: index,
-                          enclosure: enclosure
-                        }
+                          enclosure: enclosure,
+                        },
                       });
                     }}
                   />
@@ -105,13 +106,15 @@ export default function GroundSettingsPage(): JSX.Element {
                             focused.current = `input-${enclosure.letter}-row-${index}`;
                           }}
                           onChange={(event) => {
-                            enclosure.rows[rIndex].letter = event.target.value;
+                            const mutatedEnclosure = { ...enclosure };
+                            mutatedEnclosure.rows[rIndex].letter =
+                              event.target.value;
                             dispatch({
                               type: "SET_ENCLOSURE",
                               payload: {
                                 index: index,
-                                enclosure: enclosure
-                              }
+                                enclosure: mutatedEnclosure,
+                              },
                             });
                           }}
                           className={
@@ -129,14 +132,14 @@ export default function GroundSettingsPage(): JSX.Element {
                       letter: "",
                       start: 0,
                       end: 0,
-                      reserved: []
+                      reserved: [],
                     });
                     dispatch({
                       type: "SET_ENCLOSURE",
                       payload: {
                         index: index,
-                        enclosure: enclosure
-                      }
+                        enclosure: enclosure,
+                      },
                     });
                   }}
                 >
@@ -152,13 +155,13 @@ export default function GroundSettingsPage(): JSX.Element {
             remoteConfig?.groundMappings.push({
               letter: "",
               entryDirection: "NONE",
-              rows: []
+              rows: [],
             });
             dispatch({
               type: "SET_CONFIG",
               payload: {
-                config: remoteConfig
-              }
+                config: remoteConfig,
+              },
             });
           }}
         >
