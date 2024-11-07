@@ -15,6 +15,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,5 +25,23 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 });
 
-const modules = [...compat.extends("next/core-web-vitals", "next", "prettier")];
+const modules = [
+  {
+    files: ["**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}"],
+    plugins: {
+      "jsx-a11y": jsxA11y,
+    },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    rules: {
+      "jsx-a11y/alt-text": "error",
+    },
+  },
+  ...compat.extends("next/core-web-vitals", "next", "prettier"),
+];
 export default modules;

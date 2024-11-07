@@ -147,6 +147,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.14.0(jiti@1.21.6))
+      eslint-plugin-jsx-a11y:
+        specifier: ^6.10.2
+        version: 6.10.2(eslint@9.14.0(jiti@1.21.6))
       postcss:
         specifier: ^8.4.47
         version: 8.4.47
