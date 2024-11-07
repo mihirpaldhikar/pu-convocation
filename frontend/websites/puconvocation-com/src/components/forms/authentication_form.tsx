@@ -12,7 +12,7 @@
  */
 "use client";
 import { JSX, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@i18n/index";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@components/graphics";
 import { Button, Input, ProgressBar } from "@components/ui";
