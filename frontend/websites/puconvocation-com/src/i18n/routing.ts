@@ -12,7 +12,7 @@
  */
 
 import { defineRouting } from "next-intl/routing";
-import { createSharedPathnamesNavigation } from "next-intl/navigation";
+import { createNavigation } from "next-intl/navigation";
 import config from "./config.json";
 
 interface Lang {
@@ -35,4 +35,4 @@ export const routing = defineRouting({
 });
 
 export const { Link, redirect, usePathname, useRouter } =
-  createSharedPathnamesNavigation(routing);
+  createNavigation(routing);
