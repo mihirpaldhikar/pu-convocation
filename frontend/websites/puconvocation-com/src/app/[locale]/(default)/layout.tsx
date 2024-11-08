@@ -14,8 +14,7 @@
 import type { Metadata } from "next";
 import "@app/globals.css";
 import { ReactNode } from "react";
-import { Toaster } from "@components/ui";
-import { Providers } from "@providers/index";
+import { Toaster, TooltipProvider } from "@components/ui";
 import { Footer, InstructionsBanner, Navbar } from "@components/common";
 import { getMessages } from "next-intl/server";
 import { AuthController, RemoteConfigController } from "@controllers/index";
@@ -23,6 +22,8 @@ import { StatusCode } from "@enums/StatusCode";
 import { cookies } from "next/headers";
 import { SYSTEM_FONT } from "@fonts/system_font";
 import { redirect } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import AuthProvider from "@providers/AuthProvider";
 
 export const metadata: Metadata = {
   title: "PU Convocation",
@@ -81,21 +82,27 @@ export default async function RootLayout({
       <body
         className={`min-h-screen font-sans antialiased ${SYSTEM_FONT.variable}`}
       >
-        <Providers
+        <NextIntlClientProvider
+          messages={translations}
           locale={locale}
-          translations={translations}
-          account={account}
+          timeZone={"Asia/Kolkata"}
         >
-          <div className={"flex min-h-dvh flex-col"}>
-            <Navbar />
-            <main className={`flex-1 pt-20`}>
-              <InstructionsBanner show={config?.instructions.show ?? false} />
-              {children}
-            </main>
-            <Toaster />
-          </div>
-          <Footer />
-        </Providers>
+          <AuthProvider account={account}>
+            <TooltipProvider>
+              <div className={"flex min-h-dvh flex-col"}>
+                <Navbar />
+                <main className={`flex-1 pt-20`}>
+                  <InstructionsBanner
+                    show={config?.instructions.show ?? false}
+                  />
+                  {children}
+                </main>
+                <Toaster />
+              </div>
+              <Footer />
+            </TooltipProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
