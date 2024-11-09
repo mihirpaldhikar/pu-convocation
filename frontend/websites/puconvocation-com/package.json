@@ -37,7 +37,7 @@
     "debounce": "^2.2.0",
     "input-otp": "^1.4.1",
     "js-cookie": "^3.0.5",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.456.0",
     "next": "15.0.3",
     "next-intl": "^3.25.0",
     "plaiceholder": "^3.0.0",
