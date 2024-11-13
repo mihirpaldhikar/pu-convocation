@@ -102,6 +102,16 @@ class AssetsController(
             }
         }
 
+        if (objectURL == null) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Cannot upload assets."
+                )
+            )
+        }
+
         if (assetType == AssetType.IMAGE) {
             generateThumbnail(objectURL)
         }
@@ -176,8 +186,6 @@ class AssetsController(
     private suspend fun generateThumbnail(imageURL: String) {
         val thumbnailGenerator = httpClient.get("$credentialsAuthority/api/generateThumbnail?imageURL=$imageURL")
         val base64Thumbnail = thumbnailGenerator.bodyAsText()
-
-        println(base64Thumbnail)
 
         val decodedThumbnail =
             Base64.decode(base64Thumbnail)

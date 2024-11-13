@@ -54,7 +54,7 @@ object CoreModule {
 
         single<CloudStorage> {
             CloudStorage(
-                gcp = get<Environment>().cloud.gcp,
+                aws = get<Environment>().cloud.aws,
                 mapper = get<ObjectMapper>(),
                 cache = get<CacheController>()
             )
@@ -91,7 +91,7 @@ object CoreModule {
                 cache = get<CacheController>(),
                 json = get<ObjectMapper>(),
                 jsonWebToken = get<JsonWebToken>(),
-                authServiceAddress = get<Environment>().service.companionServices.filter { it.serviceName == "auth-service" }
+                authServiceAddress = get<Environment>().service.companionServices.filter { it.address.contains("auth") }
                     .first().address,
                 currentServiceName = get<Environment>().service.name
             )

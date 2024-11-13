@@ -86,8 +86,8 @@ dependencies {
     // AWS SQS
     implementation("aws.sdk.kotlin:sqs:1.3.32")
 
-    // GCP Cloud Storage
-    implementation("com.google.cloud:google-cloud-storage:2.43.1")
+    // AWS S3
+    implementation("aws.sdk.kotlin:s3:1.3.71")
 
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-test-host")
