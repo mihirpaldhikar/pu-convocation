@@ -213,7 +213,7 @@ class IAMController(
 
         if (tokenClaims.isEmpty()) return false
 
-        if (companionServices.filter { it.serviceName == tokenClaims[0] }.isEmpty()) return false
+        if (companionServices.filter { it.address.split("@")[0] == tokenClaims[0] }.isEmpty()) return false
 
         val split = iamCheck.split("@")
         val role = split[0]
