@@ -13,12 +13,7 @@
 
 package com.puconvocation.controllers
 
-import com.puconvocation.commons.dto.AccountInvitations
-import com.puconvocation.commons.dto.AccountWithIAMRoles
-import com.puconvocation.commons.dto.AuthenticationCredentials
-import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewAccountFromInvitation
-import com.puconvocation.commons.dto.UpdateAccountIAMPoliciesRequest
+import com.puconvocation.commons.dto.*
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.entities.Invitation
@@ -29,6 +24,8 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.MessageQueue
+import com.puconvocation.services.MessageQueue.QueueType
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -39,7 +36,8 @@ class AccountController(
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
     private val iamController: IAMController,
-    private val cache: CacheController
+    private val cache: CacheController,
+    private val messageQueue: MessageQueue
 ) {
     suspend fun authenticate(credentials: AuthenticationCredentials): Result<Any, ErrorResponse> {
         val account = accountRepository.getAccount(credentials.identifier) ?: return Result.Error(
@@ -309,6 +307,8 @@ class AccountController(
             )
         }
 
+        val sender = accountRepository.getAccount(tokenClaims[0].replace("\"", ""))!!
+
         val allIAMRules = iamRepository.allPolicies()
 
         val allIAMRoleNames = allIAMRules.map { it.role }
@@ -367,8 +367,11 @@ class AccountController(
             }
 
             val invitationToken = jsonWebToken.generateInvitationToken(invitationId.toHexString())
-
-            println("INVITATION: $invitationToken")
+            messageQueue.sendMessage(
+                message = "{\"sender\":\"noreply@puconvocation.com\",\"receiver\":\"${invite.email}\",\"payload\":{\"senderName\":\"${sender.displayName}\",\"invitationToken\":\"${invitationToken}\"},\"replyTo\":\"${sender.email}\",\"templateId\":\"PUConvocationAccountInvitation\"}",
+                groupId = "email",
+                queueType = QueueType.EMAIL,
+            )
         }
 
         return Result.Success(
