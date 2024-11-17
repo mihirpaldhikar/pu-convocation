@@ -40,5 +40,6 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.651.1",
     "aws-lambda": "^1.0.7"
-  }
+  },
+  "packageManager": "pnpm@9.12.3"
 }
