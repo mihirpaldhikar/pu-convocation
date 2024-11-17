@@ -63,6 +63,14 @@ const navMenu: Array<NavMenu> = [
     requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
   },
   {
+    name: "Account Manager",
+    pathRegex: "^/console/accountmanager(/.*)?$",
+    route: "/accountmanager",
+    childRoutes: [],
+    icon: "SquaresPlusIcon",
+    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
+  },
+  {
     name: "Settings",
     pathRegex: "^/console/settings(/.*)?$",
     route: "/settings",
