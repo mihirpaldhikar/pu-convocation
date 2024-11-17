@@ -13,9 +13,10 @@
 
 "use client";
 
-import { createElement, Fragment, JSX } from "react";
+import { createElement, Fragment, JSX, useEffect } from "react";
 import { getBestTextColor } from "@lib/color_utils";
 import { useQuery } from "@tanstack/react-query";
+import { useFormikContext } from "formik";
 
 interface GroundMapperProps {
   activeEnclosure: string;
@@ -45,13 +46,21 @@ function extractIdentifier(str: string): string | null {
   return null;
 }
 
-function groundMapToSVG(
-  json: SVGElement[],
-  activeEnclosure: string,
-  activeColor: string,
-  onClickHandler: (id: string | null) => void,
-  modifier?: string,
-): JSX.Element {
+interface RenderMapToSVGProps {
+  json: SVGElement[];
+  activeEnclosure: string;
+  activeColor: string;
+  onClickHandler: (id: string | null) => void;
+  modifier?: string;
+}
+
+function RenderMapToSVG({
+  json,
+  activeEnclosure,
+  activeColor,
+  onClickHandler,
+  modifier,
+}: Readonly<RenderMapToSVGProps>): JSX.Element {
   const elementToJSX = (
     element: SVGElement,
     modifier?: string,
@@ -108,8 +117,9 @@ function groundMapToSVG(
           : className.trim();
 
     if (/^enclosure_(?!name:).*$/.test(properties?.id)) {
-      jsxAttributes.onClick = () =>
+      jsxAttributes.onClick = () => {
         onClickHandler(extractIdentifier(properties.id));
+      };
     }
 
     if (children.length === 0) {
@@ -131,6 +141,8 @@ export default function GroundMapper({
   className,
   onEnclosureClicked,
 }: GroundMapperProps): JSX.Element {
+  const { submitForm } = useFormikContext();
+
   const { data: ground, isLoading } = useQuery({
     queryKey: ["groundMapper"],
     queryFn: async () => {
@@ -141,15 +153,26 @@ export default function GroundMapper({
     },
   });
 
+  useEffect(() => {
+    return () => {
+      submitForm().then();
+    };
+  }, [submitForm]);
+
   if (isLoading) {
     return <Fragment />;
   }
 
-  return groundMapToSVG(
-    ground["children"],
-    activeEnclosure,
-    activeColor,
-    onEnclosureClicked,
-    className,
+  return (
+    <RenderMapToSVG
+      json={ground["children"]}
+      activeEnclosure={activeEnclosure}
+      activeColor={activeColor}
+      onClickHandler={async (id) => {
+        await submitForm();
+        onEnclosureClicked(id);
+      }}
+      modifier={className}
+    />
   );
 }
