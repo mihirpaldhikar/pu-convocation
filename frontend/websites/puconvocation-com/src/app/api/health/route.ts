@@ -11,8 +11,15 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as SeatMap } from "./seat_map";
-export { default as Ticket } from "./ticket";
-export { default as GroundMap } from "./ground_map";
-export { default as AttendeeTable } from "./attendee_table";
-export { default as AttendeeControlPlane } from "./attendee_controlplane";
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  return NextResponse.json(
+    {
+      message: "puconvocation.com is working!",
+    },
+    {
+      status: 200,
+    },
+  );
+}

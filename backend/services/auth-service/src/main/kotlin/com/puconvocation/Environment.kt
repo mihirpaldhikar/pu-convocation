@@ -26,13 +26,10 @@ data class Environment(
 
     data class Service(
         @JsonProperty("name") val name: String,
-        @JsonProperty("port") val port: Int,
-        @JsonProperty("address") val address: String,
         @JsonProperty("developmentMode") val developmentMode: Boolean,
         @JsonProperty("companionServices") val companionServices: Set<CompanionService>,
     ) {
         data class CompanionService(
-            @JsonProperty("serviceName") val serviceName: String,
             @JsonProperty("address") val address: String,
         )
     }
@@ -76,14 +73,14 @@ data class Environment(
 
     data class Cloud(
         @JsonProperty("aws") val aws: AWS,
-        @JsonProperty("gcp") val gcp: GCP
     ) {
         data class AWS(
             @JsonProperty("accessKeyId") val accessKeyId: String,
             @JsonProperty("secretAccessKey") val secretAccessKey: String,
             @JsonProperty("region") val region: String,
             @JsonProperty("sqs") val sqs: SQS,
-            @JsonProperty("msk") val msk: MSK
+            @JsonProperty("msk") val msk: MSK,
+            @JsonProperty("s3") val s3: S3
         ) {
             data class SQS(
                 @JsonProperty("emailQueue") val emailQueue: String,
@@ -94,11 +91,9 @@ data class Environment(
                 @JsonProperty("offline") val offline: Boolean,
                 @JsonProperty("brokers") val brokers: String,
             )
+            data class S3(
+                @JsonProperty("assets") val assets: String,
+            )
         }
-
-        data class GCP(
-            @JsonProperty("serviceAccount") val serviceAccount: String,
-            @JsonProperty("cloudStorage") val cloudStorage: String,
-        )
     }
 }

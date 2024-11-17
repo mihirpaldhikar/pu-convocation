@@ -14,7 +14,7 @@
 import { Fragment, JSX } from "react";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { SeatMap, Ticket, VenueMap } from "@components/attendee";
+import { GroundMap, SeatMap, Ticket } from "@components/attendee";
 import { SpaceShip } from "@components/graphics";
 import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
 import { Link } from "@i18n/routing";
@@ -78,7 +78,11 @@ export default async function AttendeePage({
               "flex h-full flex-col items-center justify-center space-y-6"
             }
           >
-            <VenueMap activeEnclosure={payload.attendee.allocation.enclosure} />
+            <GroundMap
+              className={"h-[500px] w-[350px] lg:h-[400px] lg:w-[400px]"}
+              activeColor={"#dc2626"}
+              activeEnclosure={payload.attendee.allocation.enclosure}
+            />
             <div className={"flex flex-col space-y-5"}>
               <div className={"flex flex-col space-y-2"}>
                 <div className={"flex w-full items-center space-x-2"}>

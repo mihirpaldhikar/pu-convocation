@@ -11,6 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
+"use client";
+
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { Account } from "@dto/index";
 
