@@ -1,3 +1,22 @@
+## 3.0.0-beta.4 (November 18, 2024)
+
+### New:
+
+- Disable default Next.js Image optimization because images are now well optimized by AWS Cloudfront.
+- Ground Map is now rendered dynamically by fetching details remotely from the CDN.
+- Add a route to check the health of the website.
+- Add a GroundMapper component to interact with the ground map inorder to view or update rows and seats.
+- Add Ground Map forms for updating the details such as rows, seats associated with an enclosure on the ground.
+
+### Fixes:
+
+- Remove subtle shadow in input component.
+
+### Miscellaneous:
+
+- Refactor console home page by moving AnalyticsSection and AttendeeSection components outside the default function inorder to prevent re-rendering if state inside the default function changes.
+- Remove unnecessary providers from the default path module.
+
 ## 3.0.0-beta.3 (November 7, 2024)
 
 ### New:
