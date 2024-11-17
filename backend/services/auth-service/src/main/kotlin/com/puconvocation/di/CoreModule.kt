@@ -13,6 +13,7 @@
 
 package com.puconvocation.di
 
+import aws.sdk.kotlin.services.sqs.SqsClient
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
@@ -20,6 +21,7 @@ import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.security.passkeys.PasskeyRelyingParty
+import com.puconvocation.services.MessageQueue
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
@@ -51,6 +53,19 @@ object CoreModule {
         single<CacheController> {
             CacheController(
                 pool = get<JedisPool>(),
+            )
+        }
+
+        single<SqsClient> {
+            SqsClient {
+                region = get<Environment>().cloud.aws.region
+            }
+        }
+
+        single {
+            MessageQueue(
+                sqsClient = get<SqsClient>(),
+                awsConfig = get<Environment>().cloud.aws
             )
         }
     }

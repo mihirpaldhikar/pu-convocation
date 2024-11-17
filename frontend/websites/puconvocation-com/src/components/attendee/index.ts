@@ -16,3 +16,4 @@ export { default as Ticket } from "./ticket";
 export { default as GroundMap } from "./ground_map";
 export { default as AttendeeTable } from "./attendee_table";
 export { default as AttendeeControlPlane } from "./attendee_controlplane";
+export { default as GroundMapper } from "./ground_mapper";

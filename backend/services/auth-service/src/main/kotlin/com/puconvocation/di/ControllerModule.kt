@@ -21,6 +21,7 @@ import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
 import com.puconvocation.database.mongodb.repositories.IAMRepository
 import com.puconvocation.security.jwt.JsonWebToken
+import com.puconvocation.services.MessageQueue
 import com.yubico.webauthn.RelyingParty
 import org.koin.dsl.module
 
@@ -44,6 +45,7 @@ object ControllerModule {
                 iamController = get<IAMController>(),
                 iamRepository = get<IAMRepository>(),
                 cache = get<CacheController>(),
+                messageQueue = get<MessageQueue>()
             )
         }
 

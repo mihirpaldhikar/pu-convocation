@@ -45,69 +45,28 @@ export default function VerificationPasscodeEmail(): JSX.Element {
                             <Img src={"https://assets.puconvocation.com/logos/full_university_logo.png"}
                                  className={"w-full"}/>
                             <Heading className={"text-red-600 text-center font-bold"}>
-                                {"{{convocationNumber}}"}<sup>th</sup> Convocation
+                                Convocation Account Invitation
                             </Heading>
                         </Section>
                         <Section>
                             <Text className={"text-xl font-bold"}>
-                                Hello {"{{studentName}}"}!
+                                Hello!
                             </Text>
                         </Section>
                         <Section>
                             <Text className={"font-normal"}>
-                                Congratulations on your remarkable achievement! Today marks the culmination of years
-                                of
-                                hard
-                                work, dedication, and unwavering perseverance. As you walk across the stage and
-                                receive
-                                your
-                                degree, know that Parul University beams with pride.
+                                You have been invited by {"{{senderName}}"} to create an account for Parul University
+                                Convocation Management System.
                             </Text>
                             <Text>
-                                Below is the verification code that you will need to share with your
-                                Faculty/Coordinator
-                                after scanning your
-                                Unique QR Code displayed on your Profile after which you will receive your Degree.
-                            </Text>
-                        </Section>
-                        <Section className={"flex flex-col items-center justify-center w-full tracking-wider"}>
-                            <Text
-                                className={"text-2xl bg-red-100 w-fit px-5 py-3 rounded-xl text-red-600 font-mono font-bold"}>
-                                {"{{verificationCode}}"}
+                                Click on the "Create Account" to create an account. The link will expire in 3 days.
                             </Text>
                         </Section>
                         <Section className={"my-5 flex flex-col items-center justify-center"}>
-                            <Button href={`{{passURL}}`}
-                                    className={"bg-yellow-300 text-black font-bold px-5 py-3 rounded-xl"}>
-                                View Your Pass
+                            <Button href={`https://puconvocation.com/authenticate?invitationToken={{invitationToken}}`}
+                                    className={"bg-red-600 text-white font-bold px-5 py-3 rounded-xl"}>
+                                Create Account
                             </Button>
-                        </Section>
-                        <Section>
-                            <Text>
-                                We've watched you grow, evolve, and blossom into the extraordinary individual you
-                                are
-                                today. From late-night study
-                                sessions in the library to lively debates in classrooms, your journey has been
-                                filled
-                                with unforgettable memories.
-                                We'll cherish the grand events that brought us all together - the vibrant cultural
-                                festivals, the exhilarating
-                                sports competitions, and the thought-provoking conferences.
-                            </Text>
-                            <Text>
-                                Parul University will miss your infectious energy, your inquisitive spirit, and your
-                                passion for learning. But as
-                                you embark on this exciting new chapter, remember that you'll always be a part of
-                                our
-                                family. Go forth and conquer
-                                the world, knowing that you carry with you the knowledge, skills, and values
-                                instilled
-                                in you during your time
-                                here.
-                            </Text>
-                            <Text>
-                                Congratulations once again, graduate! The future is yours to shape. Make us proud!
-                            </Text>
                         </Section>
                         <Section>
                             <Text>
@@ -133,13 +92,10 @@ export default function VerificationPasscodeEmail(): JSX.Element {
                                     href={"https://www.linkedin.com/in/suhani-shah-o13"}
                                     className={"text-red-600 font-bold underline"}>
                                     Suhani Shah
-                                </Link> {" "}
-                                for our seniors.
+                                </Link>
                             </Text>
                             <Text className={"text-center text-xs"}>
-                                This mail was sent to you because you are going to get your degree certificate. This
-                                mail contains the verification
-                                code required for the convocation.
+                                This mail was sent to you because you are invited to create an account by an authorized personal from Parul University Convocation Management System.
                             </Text>
                             <Text className={"text-center text-xs"}>
                                 This mail is machine generated. Please do not reply.

@@ -10,8 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "installForProduction": "cp package.json ./dist && cp package-lock.json ./dist && cd ./dist && npm install --omit=dev",
-    "build": "rollup -c && npm run installForProduction",
+    "installForProduction": "cp package.json ./dist && cp pnpm-lock.yaml ./dist && cd ./dist && pnpm install --prod",
+    "build": "rollup -c && pnpm run installForProduction",
     "execute": "rollup -c && node ./dist/index.js"
   },
   "repository": {
@@ -31,16 +31,17 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/aws-lambda": "^8.10.145",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.9.0",
     "prettier": "^3.3.3",
-    "rollup": "^4.22.4",
+    "rollup": "^4.27.2",
     "rollup-plugin-dts": "^6.1.1",
-    "tslib": "^2.7.0",
-    "typescript": "^5.6.2",
-    "typescript-eslint": "^8.5.0"
+    "tslib": "^2.8.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.14.0"
   },
   "dependencies": {
     "aws-lambda": "^1.0.7",
-    "mongodb": "^6.9.0"
-  }
+    "mongodb": "^6.10.0"
+  },
+  "packageManager": "pnpm@9.12.3"
 }
