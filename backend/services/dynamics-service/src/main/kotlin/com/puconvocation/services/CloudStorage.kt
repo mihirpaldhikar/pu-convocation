@@ -48,9 +48,10 @@ class CloudStorage(
                 it.putObject(PutObjectRequest {
                     bucket = aws.s3.assets
                     key = destinationPath
-                    body = ByteStream.fromInputStream(inputStream.inputStream())
+                    body = ByteStream.fromInputStream(inputStream.inputStream(), inputStream.inputStream().available().toLong())
                 })
             }
+            cache.invalidateWithPattern("cloudStorage:*")
             "https://assets.puconvocation.com/$destinationPath"
         } catch (e: Exception) {
             null

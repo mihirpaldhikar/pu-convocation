@@ -49,6 +49,7 @@
     "react-qr-code": "^2.0.15",
     "react-zxing": "^2.0.2",
     "recharts": "^2.13.3",
+    "sharp": "^0.33.5",
     "svg-parser": "^2.0.4",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
