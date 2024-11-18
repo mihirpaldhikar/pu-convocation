@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useState } from "react";
+import { Fragment, JSX, useState } from "react";
 import {
   Button,
   Card,
@@ -91,7 +91,9 @@ export default function AttendeeControlPlane({
             {remoteConfig?.attendees.locked ? "Unlock" : "Lock"}
           </Button>
         </div>
-        <div>
+        {remoteConfig.attendees.locked ? (
+          <Fragment />
+        ) : (
           <div
             className={
               "relative cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
@@ -117,7 +119,7 @@ export default function AttendeeControlPlane({
               </div>
             </div>
             <FilePicker
-              disabled={uploading}
+              disabled={remoteConfig.attendees.locked || uploading}
               allowedFileExtensions={".csv"}
               onFilePicked={async (file) => {
                 if (file !== null) {
@@ -145,7 +147,7 @@ export default function AttendeeControlPlane({
               }}
             />
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
