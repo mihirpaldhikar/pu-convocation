@@ -10,12 +10,20 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
 "use client";
-import { JSX, useRef } from "react";
+
+import { JSX, useRef, useState } from "react";
 import { useRemoteConfig } from "@hooks/index";
 import { Input } from "@components/ui";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "@components/ui";
 import { Enclosure } from "@dto/index";
+import { GroundMapper } from "@components/attendee";
 
 function totalEnclosureSeats(enclosure: Enclosure): number {
   let seats = 0;
@@ -28,8 +36,12 @@ function totalEnclosureSeats(enclosure: Enclosure): number {
 
 export default function GroundSettingsPage(): JSX.Element {
   const { remoteConfig, dispatch } = useRemoteConfig();
-
-  const focused = useRef<string>("");
+  const [selectedEnclosure, setSelectedEnclosure] = useState<string | null>(
+    null,
+  );
+  const [currentEnclosureIndex, setCurrentEnclosureIndex] = useState<
+    number | null
+  >(null);
 
   const seatsInEnclosure: Array<number> = remoteConfig.groundMappings.map(
     (enclosure) => {
@@ -38,136 +50,147 @@ export default function GroundSettingsPage(): JSX.Element {
   );
 
   let totalSeats = 0;
-
   seatsInEnclosure.forEach((enclosure) => {
     totalSeats += enclosure;
   });
 
+  const handleEnclosureClick = (id: string | null) => {
+    const index = remoteConfig.groundMappings.findIndex(
+      (enclosure) => enclosure.letter === id,
+    );
+    setSelectedEnclosure(id);
+    setCurrentEnclosureIndex(index >= 0 ? index : null);
+  };
+
+  const handleRowChange = (
+    enclosureIndex: number,
+    rowIndex: number,
+    field: "start" | "end",
+    value: number,
+  ) => {
+    const mutatedEnclosure = { ...remoteConfig.groundMappings[enclosureIndex] };
+    mutatedEnclosure.rows[rowIndex][field] = value;
+    dispatch({
+      type: "SET_ENCLOSURE",
+      payload: {
+        index: enclosureIndex,
+        enclosure: mutatedEnclosure,
+      },
+    });
+  };
+
   return (
-    <div className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}>
-      <div className={"flex items-center justify-end p-5"}>
-        <h4>Total Seats: {totalSeats}</h4>
-      </div>
-      <div className={"space-y-5"}>
-        {/* eslint-disable-next-line react-compiler/react-compiler */}
-        {remoteConfig.groundMappings.map((enclosure, index) => {
-          return (
-            <div
-              key={enclosure.letter}
-              className={"space-y-5 rounded-lg border px-5 py-3"}
-            >
-              <div>
-                <div
-                  className={"flex items-center space-x-3 text-lg font-bold"}
-                >
-                  <h4>Enclosure: </h4>
-                  <Input
-                    autoFocus={focused.current === `enclosure-input-${index}`}
-                    value={enclosure.letter}
-                    className={
-                      "w-fit border-none bg-gray-100 text-center shadow-none"
-                    }
-                    onClick={() => {
-                      focused.current = `enclosure-input-${index}`;
-                    }}
-                    onChange={(event) => {
-                      enclosure.letter = event.target.value;
-                      dispatch({
-                        type: "SET_ENCLOSURE",
-                        payload: {
-                          index: index,
-                          enclosure: enclosure,
-                        },
-                      });
-                    }}
+    <div className="min-h-screen w-full rounded-xl border bg-white px-4 py-5">
+      <section className="space-y-5">
+        {/* Header with Total Seats */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-2xl font-bold">Ground Settings</h3>
+            <h6 className="mt-1 text-sm font-light">
+              Manage the ground enclosures and seating configuration.
+            </h6>
+          </div>
+          <h4 className="mt-1 text-xl font-semibold">
+            Total Seats: {totalSeats}
+          </h4>
+        </div>
+
+        <div className="space-y-5">
+          <Card className="mx-auto max-w-6xl p-4">
+            <CardContent>
+              <div className="flex flex-col space-y-5 lg:flex-row lg:space-x-8 lg:space-y-0">
+                {/* Left col for SVG */}
+                <div className="w-full lg:w-1/2">
+                  <GroundMapper
+                    activeEnclosure={selectedEnclosure || ""}
+                    activeColor="black"
+                    onEnclosureClicked={handleEnclosureClick}
+                    className="h-[500px] w-full"
                   />
                 </div>
-                <p className={"text-xs font-medium text-gray-400"}>
-                  Seats: {seatsInEnclosure[index]}
-                </p>
-              </div>
-              <div className={"grid grid-cols-4 gap-4"}>
-                {enclosure.rows.map((enclosureRow, rIndex) => {
-                  return (
+
+                {/* Right col for inputs */}
+                <div className="w-full space-y-5 lg:w-1/2">
+                  {currentEnclosureIndex !== null &&
+                    remoteConfig.groundMappings[currentEnclosureIndex].rows.map(
+                      (row, rowIndex) => (
+                        <div
+                          key={`${row.letter}-${rowIndex}`}
+                          className="space-y-3 rounded-lg border p-4"
+                        >
+                          <h4 className="text-lg font-bold">
+                            Row: {row.letter}
+                          </h4>
+                          <div className="flex items-center justify-center space-x-4">
+                            <Input
+                              type="number"
+                              value={row.start}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  currentEnclosureIndex,
+                                  rowIndex,
+                                  "start",
+                                  parseInt(e.target.value, 10),
+                                )
+                              }
+                              className="w-[120px] px-3 py-2 text-center text-base"
+                              placeholder="Start"
+                            />
+                            <span>to</span>
+                            <Input
+                              type="number"
+                              value={row.end}
+                              onChange={(e) =>
+                                handleRowChange(
+                                  currentEnclosureIndex,
+                                  rowIndex,
+                                  "end",
+                                  parseInt(e.target.value, 10),
+                                )
+                              }
+                              className="w-[120px] px-3 py-2 text-center text-base"
+                              placeholder="End"
+                            />
+                          </div>
+                        </div>
+                      ),
+                    )}
+                  {/* Add Row Btn */}
+                  {currentEnclosureIndex !== null && (
                     <div
-                      key={`${enclosure.letter}-${enclosureRow.letter}`}
-                      className={"rounded-lg border px-5 py-3"}
+                      className="mt-4 cursor-pointer rounded-lg border px-5 py-3 text-center hover:bg-gray-100"
+                      onClick={() => {
+                        remoteConfig.groundMappings[
+                          currentEnclosureIndex
+                        ].rows.push({
+                          letter: "",
+                          start: 0,
+                          end: 0,
+                          reserved: [],
+                        });
+                        dispatch({
+                          type: "SET_ENCLOSURE",
+                          payload: {
+                            index: currentEnclosureIndex,
+                            enclosure:
+                              remoteConfig.groundMappings[
+                                currentEnclosureIndex
+                              ],
+                          },
+                        });
+                      }}
                     >
-                      <div
-                        className={"flex items-center space-x-3 font-semibold"}
-                      >
-                        <Input
-                          autoFocus={
-                            focused.current ===
-                            `input-${enclosure.letter}-row-${index}`
-                          }
-                          value={enclosureRow.letter}
-                          onClick={() => {
-                            focused.current = `input-${enclosure.letter}-row-${index}`;
-                          }}
-                          onChange={(event) => {
-                            const mutatedEnclosure = { ...enclosure };
-                            mutatedEnclosure.rows[rIndex].letter =
-                              event.target.value;
-                            dispatch({
-                              type: "SET_ENCLOSURE",
-                              payload: {
-                                index: index,
-                                enclosure: mutatedEnclosure,
-                              },
-                            });
-                          }}
-                          className={
-                            "w-fit border-none bg-red-100 text-center shadow-none"
-                          }
-                        />
-                      </div>
+                      <h6 className="text-sm font-medium text-gray-700">
+                        + Add Row
+                      </h6>
                     </div>
-                  );
-                })}
-                <div
-                  className={"cursor-pointer rounded-lg border px-5 py-3"}
-                  onClick={() => {
-                    enclosure.rows.push({
-                      letter: "",
-                      start: 0,
-                      end: 0,
-                      reserved: [],
-                    });
-                    dispatch({
-                      type: "SET_ENCLOSURE",
-                      payload: {
-                        index: index,
-                        enclosure: enclosure,
-                      },
-                    });
-                  }}
-                >
-                  <h6>Add Row</h6>
+                  )}
                 </div>
               </div>
-            </div>
-          );
-        })}
-        <div
-          className={"space-y-5 rounded-lg border px-5 py-3"}
-          onClick={() => {
-            remoteConfig?.groundMappings.push({
-              letter: "",
-              entryDirection: "NONE",
-              rows: [],
-            });
-            dispatch({
-              type: "SET_CONFIG",
-              payload: {
-                config: remoteConfig,
-              },
-            });
-          }}
-        >
-          Add new Enclosure
+            </CardContent>
+          </Card>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
