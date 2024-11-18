@@ -52,6 +52,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio")
     implementation("io.ktor:ktor-client-content-negotiation")
     implementation("io.ktor:ktor-serialization-jackson-jvm")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.1")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Koin Dependencies

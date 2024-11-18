@@ -14,9 +14,9 @@
 package com.puconvocation.di
 
 import aws.sdk.kotlin.services.sqs.SqsClient
-import aws.sdk.kotlin.services.sqs.SqsClient.Companion.invoke
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.puconvocation.Environment
 import com.puconvocation.controllers.CacheController
@@ -24,20 +24,14 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.serializers.ObjectIdDeserializer
 import com.puconvocation.serializers.ObjectIdSerializer
-import com.puconvocation.services.AuthService
-import com.puconvocation.services.CloudStorage
-import com.puconvocation.services.DistributedLock
-import com.puconvocation.services.KafkaService
-import com.puconvocation.services.LambdaService
-import com.puconvocation.services.MessageQueue
+import com.puconvocation.services.*
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.jackson.jackson
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.jackson.*
 import org.bson.types.ObjectId
 import org.koin.dsl.module
 import redis.clients.jedis.JedisPool
-import kotlin.collections.filter
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -45,7 +39,13 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 object CoreModule {
     val init = module {
         single<ObjectMapper> {
-            ObjectMapper()
+            val objectIdModule = SimpleModule()
+            objectIdModule.addSerializer(ObjectId::class.java, ObjectIdSerializer())
+            objectIdModule.addDeserializer(ObjectId::class.java, ObjectIdDeserializer())
+            val mapper = ObjectMapper()
+            mapper.registerModule(JavaTimeModule())
+            mapper.registerModule(objectIdModule)
+            mapper
         }
 
         single<Environment> {

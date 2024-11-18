@@ -14,13 +14,10 @@
 package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
 data class AccountWithIAMRoles(
-    @JsonSerialize(using = ObjectIdSerializer::class)
     @BsonId
     @JsonProperty("uuid")
     val uuid: ObjectId,
