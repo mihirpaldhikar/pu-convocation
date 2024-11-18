@@ -1,3 +1,19 @@
+## 1.0.0-beta.1 (November 18, 2024)
+
+### Breaking Changes:
+
+- Migrate from Google Cloud Storage to AWS S3. Also, remove GCP from Environment.kt along with redundant fields.
+- Update the attendee field in RemoteConfig entity to use timestamps for preventing unlocking of the lists before 3 days from when it was locked.
+
+### Fixes:
+
+- Fix the multipart deprecation warning in AttendeeController.uploadAttendees method.
+- Fix an issue in which a negation check was missing for an offline flag in Kafka Service.
+
+### Miscellaneous:
+
+- Refactor KafkaService.kt to skip initialization of kafka brokers if the offline flag is set.
+
 ## 1.0.0-canary.1 (October 25, 2024)
 
 > [!IMPORTANT]
