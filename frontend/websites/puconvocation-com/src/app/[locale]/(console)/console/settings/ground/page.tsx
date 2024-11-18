@@ -102,7 +102,7 @@ export default function GroundSettingsPage(): JSX.Element {
           <div className={"grid h-full grid-cols-1 gap-4 md:grid-cols-2"}>
             <div className={"flex flex-col items-center justify-center"}>
               <GroundMapper
-                className={"w-full"}
+                className={"max-h-[80vh] w-full"}
                 activeColor={"#dc2626"}
                 activeEnclosure={enclosureData.letter}
                 onEnclosureClicked={async (id) => {

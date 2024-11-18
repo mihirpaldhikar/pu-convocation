@@ -112,13 +112,13 @@ function RenderMapToSVG({
     jsxAttributes.className =
       tagName === "svg"
         ? modifier
-        : properties?.id.includes("enclosure")
+        : (properties.id ?? "").includes("enclosure")
           ? className.concat(" cursor-pointer")
           : className.trim();
 
-    if (/^enclosure_(?!name:).*$/.test(properties?.id)) {
+    if (/^enclosure_(?!name:).*$/.test(properties.id ?? "")) {
       jsxAttributes.onClick = () => {
-        onClickHandler(extractIdentifier(properties.id));
+        onClickHandler(extractIdentifier(properties.id ?? ""));
       };
     }
 
@@ -144,7 +144,7 @@ export default function GroundMapper({
   const { submitForm } = useFormikContext();
 
   const { data: ground, isLoading } = useQuery({
-    queryKey: ["groundMapper"],
+    queryKey: [`groundMapper`],
     queryFn: async () => {
       const response = await fetch(
         "https://assets.puconvocation.com/maps/ground.json",
