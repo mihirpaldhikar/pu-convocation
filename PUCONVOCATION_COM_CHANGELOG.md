@@ -1,3 +1,10 @@
+## 3.0.0-beta.5 (November 18, 2024)
+
+### New:
+
+- Add the ability to upload attendee data in CSV file format.
+
+
 ## 3.0.0-beta.4 (November 18, 2024)
 
 ### New:
