@@ -17,18 +17,21 @@ import { JSX } from "react";
 
 interface FilePickerProps {
   allowedFileExtensions: string;
+  disabled?: boolean;
   onFilePicked: (file: File | null) => void;
 }
 
 export default function FilePicker({
   allowedFileExtensions,
+  disabled,
   onFilePicked,
 }: Readonly<FilePickerProps>): JSX.Element {
   return (
-    <div className={"h-full w-full"}>
+    <div className={"h-full w-full cursor-pointer"}>
       <input
         type={"file"}
-        className={"h-full w-full opacity-0"}
+        disabled={disabled}
+        className={"h-full w-full cursor-pointer opacity-0"}
         accept={allowedFileExtensions}
         onChange={(state) => {
           if (state.target.files!.length !== 0) {

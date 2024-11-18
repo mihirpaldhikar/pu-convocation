@@ -11,7 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Attendee, AttendeeWithEnclosureMetadata, AttendeeWithPagination, Response } from "@dto/index";
+import {
+  Attendee,
+  AttendeeWithEnclosureMetadata,
+  AttendeeWithPagination,
+  Response,
+} from "@dto/index";
 import { HttpService } from "@services/index";
 
 export default class AttendeeController {
@@ -78,7 +83,6 @@ export default class AttendeeController {
   public async uploadAttendeeList(file: File): Promise<Response<string>> {
     const form = new FormData();
     form.append(file.name, file);
-
     return await this.httpService.post<string>(
       `${this.ATTENDEE_ROUTES}/upload`,
       form,
@@ -101,8 +105,8 @@ export default class AttendeeController {
 
   public async mutateAttendeeLock(
     locked: boolean,
-  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
-    return await this.httpService.post<AttendeeWithEnclosureMetadata>(
+  ): Promise<Response<any | string>> {
+    return await this.httpService.post<any>(
       `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
     );
   }

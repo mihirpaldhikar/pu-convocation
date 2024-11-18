@@ -142,9 +142,24 @@ export default function AttendeeTable({
                   <h4>Name: {selectedAttendee.studentName}</h4>
                   <h4>Department: {selectedAttendee.department}</h4>
                   <h4>Institute: {selectedAttendee.institute}</h4>
-                  <h4>Enclosure: {selectedAttendee.allocation.enclosure}</h4>
-                  <h4>Seat: {selectedAttendee.allocation.seat}</h4>
-                  <h4>Row: {selectedAttendee.allocation.row}</h4>
+                  <h4>
+                    Enclosure:{" "}
+                    {selectedAttendee.allocation.enclosure === "NULL"
+                      ? "Not Assigned"
+                      : selectedAttendee.allocation.enclosure}
+                  </h4>
+                  <h4>
+                    Seat:{" "}
+                    {selectedAttendee.allocation.seat === "NULL"
+                      ? "Not Assigned"
+                      : selectedAttendee.allocation.seat}
+                  </h4>
+                  <h4>
+                    Row:{" "}
+                    {selectedAttendee.allocation.row === "NULL"
+                      ? "Not Assigned"
+                      : selectedAttendee.allocation.row}
+                  </h4>
                 </div>
               )}
               <DialogFooter>
@@ -200,13 +215,19 @@ export default function AttendeeTable({
                       {a.institute}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.allocation.enclosure}
+                      {a.allocation.enclosure === "NULL"
+                        ? "Not Assigned"
+                        : a.allocation.enclosure}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.allocation.seat}
+                      {a.allocation.seat === "NULL"
+                        ? "Not Assigned"
+                        : a.allocation.seat}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.allocation.row}
+                      {a.allocation.row === "NULL"
+                        ? "Not Assigned"
+                        : a.allocation.row}
                     </td>
                   </tr>
                 ))}
