@@ -64,7 +64,7 @@ class RemoteConfigController(
             ),
             countdown = changeRemoteConfigRequest.countdown ?: currentConfig.countdown,
             groundMappings = changeRemoteConfigRequest.groundMappings ?: currentConfig.groundMappings,
-            attendeesLocked = currentConfig.attendeesLocked
+            attendees = currentConfig.attendees
         )
 
         val success = remoteConfigRepository.changeConfig(newConfig, currentConfig.id)

@@ -77,11 +77,11 @@ class RemoteConfigRepository(
         return newConfigAdded
     }
 
-    override suspend fun mutateAttendeeLock(lock: Boolean): Boolean {
+    override suspend fun mutateAttendeeLock(attendeeConfig: RemoteConfig.Attendees): Boolean {
         val acknowledged = configCollection.withDocumentClass<RemoteConfig>().updateOne(
             eq(RemoteConfig::active.name, true),
             Updates.combine(
-                Updates.set(RemoteConfig::attendeesLocked.name, lock),
+                Updates.set(RemoteConfig::attendees.name, attendeeConfig),
             )
         ).wasAcknowledged()
 

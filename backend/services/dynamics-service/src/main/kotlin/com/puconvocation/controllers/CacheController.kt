@@ -15,6 +15,7 @@ package com.puconvocation.controllers
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import redis.clients.jedis.JedisPool
+import redis.clients.jedis.params.ScanParams
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -48,6 +49,29 @@ class CacheController(
         localCache.invalidate(key)
         pool.resource.use { jedis ->
             jedis.del(key)
+        }
+    }
+
+    fun invalidateWithPattern(pattern: String) {
+        val matchingKeys = HashSet<String>()
+        val params = ScanParams()
+        params.match(pattern)
+
+        pool.resource.use { jedis ->
+            var nextCursor = "0"
+
+            do {
+                val scanResult = jedis.scan(nextCursor, params)
+                val keys = scanResult.result
+
+                matchingKeys.addAll(keys)
+            } while (nextCursor != "0")
+
+            if (matchingKeys.isNotEmpty()) {
+                matchingKeys.forEach { key ->
+                    invalidate(key)
+                }
+            }
         }
     }
 

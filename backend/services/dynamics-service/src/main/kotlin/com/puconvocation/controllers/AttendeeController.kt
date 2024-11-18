@@ -16,6 +16,7 @@ package com.puconvocation.controllers
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.database.mongodb.entities.Attendee
+import com.puconvocation.database.mongodb.entities.RemoteConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
 import com.puconvocation.enums.ResponseCode
@@ -24,14 +25,14 @@ import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.LambdaService
 import com.puconvocation.utils.Result
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.MultiPartData
-import io.ktor.http.content.PartData
-import io.ktor.utils.io.core.readBytes
-import io.ktor.utils.io.readBuffer
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.utils.io.*
+import io.ktor.utils.io.core.*
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class AttendeeController(
@@ -43,7 +44,7 @@ class AttendeeController(
     private val remoteConfigRepository: RemoteConfigRepository,
 ) {
     suspend fun getAttendee(identifier: String): Result<AttendeeWithEnclosureMetadata, ErrorResponse> {
-        if (!remoteConfigRepository.getConfig().attendeesLocked) {
+        if (!remoteConfigRepository.getConfig().attendees.locked) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.NotFound,
                 error = ErrorResponse(
@@ -101,7 +102,7 @@ class AttendeeController(
             )
         }
 
-        if (remoteConfigRepository.getConfig().attendeesLocked) {
+        if (remoteConfigRepository.getConfig().attendees.locked) {
             distributedLock.release("attendeeUploadLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -228,7 +229,22 @@ class AttendeeController(
             )
         }
 
-        if (lock == remoteConfigRepository.getConfig().attendeesLocked) {
+        if (remoteConfigRepository.getConfig().attendees.locked && ChronoUnit.DAYS.between(
+                remoteConfigRepository.getConfig().attendees.updatedAt,
+                LocalDateTime.now()
+            ) <= 3
+        ) {
+            distributedLock.release("attendeeLock")
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "Attendees List cannot be unlocked before 3 days of locking it."
+                )
+            )
+        }
+
+        if (lock == remoteConfigRepository.getConfig().attendees.locked) {
             distributedLock.release("attendeeLock")
             return Result.Error(
                 httpStatusCode = HttpStatusCode.BadRequest,
@@ -239,7 +255,12 @@ class AttendeeController(
             )
         }
 
-        val acknowledge = remoteConfigRepository.mutateAttendeeLock(lock)
+        val acknowledge = remoteConfigRepository.mutateAttendeeLock(
+            RemoteConfig.Attendees(
+                locked = lock,
+                updatedAt = LocalDateTime.now()
+            )
+        )
 
         if (!acknowledge) {
             distributedLock.release("attendeeLock")

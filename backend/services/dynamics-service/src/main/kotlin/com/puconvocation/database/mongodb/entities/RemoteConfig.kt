@@ -19,6 +19,7 @@ import com.puconvocation.enums.Direction
 import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
+import java.time.LocalDateTime
 
 data class RemoteConfig(
     @JsonSerialize(using = ObjectIdSerializer::class)
@@ -30,9 +31,14 @@ data class RemoteConfig(
     @JsonProperty("images") val images: Images,
     @JsonProperty("instructions") val instructions: Instructions,
     @JsonProperty("countdown") val countdown: Countdown,
-    @JsonProperty("attendeesLocked") val attendeesLocked: Boolean,
+    @JsonProperty("attendees") val attendees: Attendees,
     @JsonProperty("groundMappings") val groundMappings: MutableList<Enclosure>,
 ) {
+
+    data class Attendees(
+        @JsonProperty("locked") val locked: Boolean,
+        @JsonProperty("updatedAt") val updatedAt: LocalDateTime,
+    )
 
     data class Instructions(
         @JsonProperty("show") val show: Boolean,
@@ -64,7 +70,7 @@ data class RemoteConfig(
             @JsonProperty("letter") val letter: String,
             @JsonProperty("start") val start: Int,
             @JsonProperty("end") val end: Int,
-            @JsonProperty("reserved") val reserved: List<Int>,
+            @JsonProperty("reserved") val reserved: String,
         )
     }
 }

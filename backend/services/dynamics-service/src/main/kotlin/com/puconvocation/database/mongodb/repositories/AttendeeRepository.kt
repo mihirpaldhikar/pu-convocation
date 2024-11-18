@@ -99,7 +99,11 @@ class AttendeeRepository(
 
     override suspend fun uploadAttendees(attendee: List<Attendee>): Boolean {
         attendeesCollection.withDocumentClass<Attendee>().drop()
-        return attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
+        val acknowledge = attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
+        if (acknowledge) {
+            cache.invalidateWithPattern("attendeesWithPagination:*")
+        }
+        return acknowledge
     }
 
     override suspend fun setDegreeReceivedStatus(enrollmentNumber: String, status: Boolean): Boolean {

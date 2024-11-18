@@ -71,7 +71,10 @@ const defaultRemoteConfig: RemoteConfig = {
     document: "",
   },
   countdown: { show: false, endTime: 0 },
-  attendeesLocked: true,
+  attendees: {
+    locked: true,
+    updatedAt: "",
+  },
   groundMappings: [],
 };
 

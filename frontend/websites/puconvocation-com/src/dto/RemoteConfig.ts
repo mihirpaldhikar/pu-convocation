@@ -21,7 +21,10 @@ interface ImageMetadata {
 export default interface RemoteConfig {
   id: string;
   active: boolean;
-  attendeesLocked: boolean;
+  attendees: {
+    locked: boolean;
+    updatedAt: string;
+  };
   images: {
     carousel: Array<ImageMetadata>;
     aboutUs: ImageMetadata;

@@ -14,6 +14,7 @@
 package com.puconvocation.plugins
 
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.puconvocation.serializers.ObjectIdDeserializer
 import com.puconvocation.serializers.ObjectIdSerializer
 import io.ktor.serialization.jackson.*
@@ -28,6 +29,7 @@ fun Application.configureSerialization() {
     install(ContentNegotiation) {
         jackson {
             registerModule(module)
+            registerModule(JavaTimeModule())
         }
     }
 }
