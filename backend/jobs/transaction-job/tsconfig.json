@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "src",
+    "outDir": "dist",
+    "strictFunctionTypes": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "pretty": true,
+    "noEmit": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "composite": true,
+  },
+  "include": ["src/**/*", "eslint.config.js"],
+  "exclude": ["node_modules"]
+}
