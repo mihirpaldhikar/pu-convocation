@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {AttendeeDatasource} from "../datasource/index.js";
-import {Attendee} from "../entities/index.js";
-import {default as Database} from "../MongoDBConnector.js";
-import {Collection} from "mongodb";
+import { AttendeeDatasource } from "../datasource/index.js";
+import { Attendee } from "../entities/index.js";
+import { default as Database } from "../MongoDBConnector.js";
+import { Collection } from "mongodb";
 
 export default class AttendeeRepository implements AttendeeDatasource {
   private attendeeCollection: Collection<Attendee>;
@@ -25,7 +25,7 @@ export default class AttendeeRepository implements AttendeeDatasource {
 
   async getAttendee(enrollmentNumber: string): Promise<Attendee | null> {
     return await this.attendeeCollection.findOne({
-      enrollmentNumber: enrollmentNumber,
+      _id: enrollmentNumber,
     });
   }
 
