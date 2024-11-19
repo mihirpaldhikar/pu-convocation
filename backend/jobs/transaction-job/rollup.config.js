@@ -13,10 +13,11 @@
 
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
-import {nodeResolve} from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 
 const rollupConfiguration = [
   {
@@ -25,15 +26,17 @@ const rollupConfiguration = [
       dir: "dist",
       format: "cjs",
     },
-    external: ["@aws-sdk/client-sqs", "mongodb"],
+    external: ["@aws-sdk/client-sqs"],
     plugins: [
       peerDepsExternal(),
+      json(),
       replace({
         "process.env.NODE_ENV": JSON.stringify("production"),
       }),
       commonjs(),
       nodeResolve({
         preferBuiltins: true,
+        dedupe: ["mongodb"],
       }),
       typescript({
         declarationDir: "dist",
