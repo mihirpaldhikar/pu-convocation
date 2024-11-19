@@ -10,8 +10,9 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
+"use client";
 
-import { SquaresPlusIcon } from "@heroicons/react/24/solid";
+import { SquaresPlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   CardHeader,
@@ -19,8 +20,52 @@ import {
   CardDescription,
   CardContent,
 } from "@components/ui";
+import { useState } from "react";
 
 export default function AccountManager() {
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("read:Attendee");
+  const [error, setError] = useState("");
+  const [accounts, setAccounts] = useState([
+    {
+      uuid: "1",
+      username: "suhani",
+      email: "suhani@example.com",
+      iamRoles: ["read:Attendee"],
+    },
+  ]);
+
+  const handleAddAccount = () => {
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError("");
+    setAccounts([
+      ...accounts,
+      {
+        uuid: Date.now().toString(),
+        username: email.split("@")[0],
+        email,
+        iamRoles: [role],
+      },
+    ]);
+    setEmail("");
+    setRole("read:Attendee");
+  };
+
+  const handleRemoveAccount = (uuid: string) => {
+    setAccounts(accounts.filter((account) => account.uuid !== uuid));
+  };
+
+  const handleRoleChange = (uuid: string, newRole: string) => {
+    setAccounts(
+      accounts.map((account) =>
+        account.uuid === uuid ? { ...account, iamRoles: [newRole] } : account,
+      ),
+    );
+  };
+
   return (
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
       <div className="space-y-3">
@@ -32,19 +77,72 @@ export default function AccountManager() {
           View and manage the list of accounts for the convocation.
         </p>
       </div>
-      <div className="flex min-h-screen flex-col items-center">
-        <div className="mb-2 grid w-full grid-cols-1 gap-6 lg:grid-cols-1">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle>Accounts</CardTitle>
-              <CardDescription>
-                View detailed information of all accounts.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex h-full flex-col"></CardContent>
-          </Card>
-        </div>
-      </div>
+
+      {/* Add New Account */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Add New Account</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center space-x-4">
+              <input
+                type="email"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-grow rounded border border-gray-300 p-2 text-sm focus:outline-none"
+              />
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="rounded border border-gray-300 p-2 text-sm focus:outline-none"
+              >
+                <option value="read:Attendee">Read</option>
+                <option value="write:Attendee">Write</option>
+              </select>
+              <button
+                onClick={handleAddAccount}
+                className="rounded-lg bg-red-600 px-4 py-2 text-white"
+              >
+                Save
+              </button>
+            </div>
+            {error && <p className="text-xs text-red-600">{error}</p>}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Account List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Account List</CardTitle>
+          <CardDescription>
+            Manage existing accounts and their permissions.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {accounts.map((account) => (
+            <div key={account.uuid} className="flex items-center space-x-4">
+              <div className="flex-grow">
+                <p className="font-medium">{account.email}</p>
+                <p className="text-xs text-gray-500">{account.iamRoles[0]}</p>
+              </div>
+              <select
+                value={account.iamRoles[0]}
+                onChange={(e) => handleRoleChange(account.uuid, e.target.value)}
+                className="rounded border border-gray-300 p-2 text-sm focus:outline-none"
+              >
+                <option value="read:Attendee">Read</option>
+                <option value="write:Attendee">Write</option>
+              </select>
+              <button onClick={() => handleRemoveAccount(account.uuid)}>
+                <XMarkIcon className="h-6 w-6 text-black" />
+              </button>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
