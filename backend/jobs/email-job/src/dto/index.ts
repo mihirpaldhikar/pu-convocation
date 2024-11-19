@@ -11,4 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export type { default as EmailRequest } from "./EmailRequest.js";
+export type {
+  EmailRequest,
+  AccountCreationInvitationEmailRequest,
+  VerificationPasscodeEmailRequest,
+} from "./EmailRequest.js";

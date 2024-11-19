@@ -13,18 +13,30 @@
 
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
+import {nodeResolve} from "@rollup/plugin-node-resolve"
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import replace from '@rollup/plugin-replace';
+import commonjs from '@rollup/plugin-commonjs';
 
 const rollupConfiguration = [
     {
-        input: "./src/index.ts",
+        input: "./src/index.tsx",
         output: {
             dir: "dist",
-            format: "esm",
+            format: "cjs",
         },
         external: ["@aws-sdk/client-ses"],
         plugins: [
+            peerDepsExternal(),
+            replace({
+                'process.env.NODE_ENV': JSON.stringify('production'),
+            }),
+            commonjs(),
+            nodeResolve({
+                preferBuiltins: true,
+                dedupe: ["react", "react-dom"],
+            }),
             typescript({
-                tsconfig: "./tsconfig.json",
                 declarationDir: "dist",
                 outputToFilesystem: true,
                 exclude: ["**/tests/", "**/*.test.ts", "**/*.test.tsx"],
