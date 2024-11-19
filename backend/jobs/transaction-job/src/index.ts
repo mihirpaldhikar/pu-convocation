@@ -45,8 +45,18 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
       continue;
     }
 
+    const received = await attendeeRepository.updateAttendeeDegreeStatus(
+      transactionRequest.enrollmentNumber,
+      true,
+    );
+
+    if (!received) {
+      continue;
+    }
+
     const command = new SendMessageCommand({
       QueueUrl: EMAIL_QUEUE_URL,
+      MessageGroupId: "emails",
       MessageBody: JSON.stringify({
         type: "transaction",
         sender: "PU Convocation System <noreply@puconvocation.com>",
