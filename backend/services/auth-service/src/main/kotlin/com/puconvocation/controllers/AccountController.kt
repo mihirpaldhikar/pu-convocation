@@ -368,8 +368,8 @@ class AccountController(
 
             val invitationToken = jsonWebToken.generateInvitationToken(invitationId.toHexString())
             messageQueue.sendMessage(
-                message = "{\"sender\":\"noreply@puconvocation.com\",\"receiver\":\"${invite.email}\",\"payload\":{\"senderName\":\"${sender.displayName}\",\"invitationToken\":\"${invitationToken}\"},\"replyTo\":\"${sender.email}\",\"templateId\":\"PUConvocationAccountInvitation\"}",
-                groupId = "email",
+                message = "{\"type\":\"invitation\",\"sender\":\"PU Convocation System <noreply@puconvocation.com>\",\"recipient\":\"${invite.email}\",\"replyTo\":\"${sender.email}\",\"payload\":{\"senderName\":\"${if (sender.designation.isEmpty()) sender.displayName else sender.designation + " " + sender.displayName}\",\"invitationToken\":\"${invitationToken}\"}}",
+                groupId = "emails",
                 queueType = QueueType.EMAIL,
             )
         }
