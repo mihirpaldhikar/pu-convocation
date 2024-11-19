@@ -1,3 +1,11 @@
+## 1.0.0-beta.2 (November 19, 2024)
+
+### New:
+- Transaction Requests are now added to AWS SQS and processed by Lambda functions for higher throughput.
+
+### Fixes:
+- Fix an issue in which cache was not being invalidated after an object for uploaded to S3 bucket.
+
 ## 1.0.0-beta.1 (November 18, 2024)
 
 ### Breaking Changes:
