@@ -16,23 +16,20 @@ package com.puconvocation.controllers
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.TransactionRequest
 import com.puconvocation.database.mongodb.entities.Transaction
-import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
+import com.puconvocation.services.MessageQueue
 import com.puconvocation.utils.Result
-import io.ktor.http.HttpStatusCode
-import org.bson.types.ObjectId
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import io.ktor.http.*
 
 class TransactionController(
     private val transactionRepository: TransactionRepository,
-    private val attendeeRepository: AttendeeRepository,
     private val jsonWebToken: JsonWebToken,
     private val authService: AuthService,
+    private val messageQueue: MessageQueue
 ) {
     suspend fun insertTransaction(
         authorizationToken: String?,
@@ -56,8 +53,6 @@ class TransactionController(
             )
         }
 
-
-
         if (!authService.isAuthorized(
                 role = "write:Transaction",
                 principal = claims[0]
@@ -72,42 +67,16 @@ class TransactionController(
             )
         }
 
-        if (transactionRepository.transactionExists(transactionRequest.studentEnrollmentNumber)) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.NotImplemented,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
-                    message = "Transaction already exists."
-                )
-            )
-        }
-
-        val transaction = Transaction(
-            id = ObjectId().toHexString(),
-            approvedBy = claims[0],
-            studentEnrollmentNumber = transactionRequest.studentEnrollmentNumber,
-            timestamp = LocalDateTime.now(ZoneOffset.UTC).toInstant(ZoneOffset.UTC).toEpochMilli(),
+        messageQueue.sendMessage(
+            message = "{\"enrollmentNumber\":\"${transactionRequest.studentEnrollmentNumber}\",\"authorizedBy\":\"${claims[0]}\"}",
+            groupId = "transactions",
+            queueType = MessageQueue.QueueType.TRANSACTION
         )
-
-
-        val success = transactionRepository.insertTransaction(transaction)
-
-        if (!success) {
-            return Result.Error(
-                httpStatusCode = HttpStatusCode.NotImplemented,
-                error = ErrorResponse(
-                    errorCode = ResponseCode.REQUEST_NOT_FULFILLED,
-                    message = "Cannot confirm the transaction."
-                )
-            )
-        }
-
-        attendeeRepository.setDegreeReceivedStatus(transactionRequest.studentEnrollmentNumber, true)
 
         return Result.Success(
             hashMapOf(
                 "code" to ResponseCode.OK,
-                "message" to "Transaction Confirmed."
+                "message" to "Transaction has been added to the Queue."
             )
         )
 
