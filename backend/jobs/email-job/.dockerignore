@@ -1,0 +1,12 @@
+.git
+.idea
+.rollup.cache
+.vscode
+node_modules
+dist
+
+npm-debug.log
+
+.dockerignore
+.prettierignore
+Dockerfile

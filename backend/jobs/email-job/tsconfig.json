@@ -19,6 +19,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "composite": true,
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*", "eslint.config.js"],
   "exclude": ["node_modules"]

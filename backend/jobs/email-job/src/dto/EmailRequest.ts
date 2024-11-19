@@ -11,10 +11,30 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export default interface EmailRequest {
-  sender: string;
-  receiver: string;
-  payload: object;
-  replyTo: string;
-  templateId: string;
+export interface AccountCreationInvitationEmailRequest {
+  senderName: string;
+  invitationToken: string;
 }
+
+export interface VerificationPasscodeEmailRequest {
+  passcode: string;
+  passURL: string;
+  recipientName: string;
+  convocationNumber: string;
+}
+
+export type EmailRequest =
+  | {
+      type: "invitation";
+      sender: string;
+      recipient: string;
+      replyTo: string;
+      payload: AccountCreationInvitationEmailRequest;
+    }
+  | {
+      type: "passcode";
+      sender: string;
+      recipient: string;
+      replyTo: string;
+      payload: VerificationPasscodeEmailRequest;
+    };

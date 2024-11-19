@@ -11,24 +11,46 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {SQSEvent, SQSHandler} from "aws-lambda";
-import {EmailRequest} from "./dto/index.js";
-import {SendTemplatedEmailRequest, SES} from "@aws-sdk/client-ses";
+import { SQSEvent, SQSHandler } from "aws-lambda";
+import { EmailRequest } from "./dto/index.js";
+import { SendEmailCommandInput, SES } from "@aws-sdk/client-ses";
+import AccountCreationInvitationEmail from "./emails/account_invitation_email.js";
+import VerificationPasscodeEmail from "./emails/verification_passcode_email.js";
+import { render } from "@react-email/components";
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   const emailClient = new SES();
 
   for (const record of event.Records) {
     const emailRequest: EmailRequest = JSON.parse(record.body);
-    const template: SendTemplatedEmailRequest = {
-      Destination: {
-        ToAddresses: [emailRequest.receiver],
-      },
+    const email = await render(
+      emailRequest.type === "invitation"
+        ? AccountCreationInvitationEmail({ ...emailRequest.payload })
+        : VerificationPasscodeEmail({ ...emailRequest.payload }),
+    );
+
+    const params: SendEmailCommandInput = {
       Source: emailRequest.sender,
-      ReplyToAddresses: [emailRequest.replyTo],
-      Template: emailRequest.templateId,
-      TemplateData: JSON.stringify(emailRequest.payload),
+      Destination: {
+        ToAddresses: [emailRequest.recipient],
+      },
+      Message: {
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: email,
+          },
+        },
+        Subject: {
+          Charset: "UTF-8",
+          Data:
+            emailRequest.type === "invitation"
+              ? "Invitation for Parul University Convocation Account"
+              : `Verification Passcode for ${emailRequest.payload.convocationNumber}th Parul University Convocation`,
+        },
+      },
     };
-    await emailClient.sendTemplatedEmail(template);
+
+    await emailClient.sendEmail(params);
   }
 };
