@@ -79,13 +79,15 @@ export default function AccountManager() {
       </div>
 
       {/* Add New Account */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Add New Account</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div className="rounded-3xl border-none bg-card text-card-foreground shadow-none">
+        <div className="flex flex-col space-y-1.5 p-4 md:p-6">
+          <div className="font-semibold leading-none tracking-tight">
+            Add New Account
+          </div>
+        </div>
+        <div className="p-4 pt-0 md:p-6 md:pt-0">
           <div className="flex flex-col space-y-2">
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4">
               <input
                 type="email"
                 placeholder="Enter email"
@@ -110,8 +112,8 @@ export default function AccountManager() {
             </div>
             {error && <p className="text-xs text-red-600">{error}</p>}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Account List */}
       <Card>
@@ -123,7 +125,10 @@ export default function AccountManager() {
         </CardHeader>
         <CardContent className="space-y-4">
           {accounts.map((account) => (
-            <div key={account.uuid} className="flex items-center space-x-4">
+            <div
+              key={account.uuid}
+              className="flex flex-wrap items-center gap-4"
+            >
               <div className="flex-grow">
                 <p className="font-medium">{account.email}</p>
                 <p className="text-xs text-gray-500">{account.iamRoles[0]}</p>
