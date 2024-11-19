@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {SQSEvent, SQSHandler} from "aws-lambda";
-import {TransactionRequest} from "./database/dto/index.js";
-import {AttendeeRepository, TransactionRepository} from "./database/index.js";
-import {SendMessageCommand, SQSClient} from "@aws-sdk/client-sqs";
+import { SQSEvent, SQSHandler } from "aws-lambda";
+import { TransactionRequest } from "./database/dto/index.js";
+import { AttendeeRepository, TransactionRepository } from "./database/index.js";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   const transactionRepository = new TransactionRepository();
@@ -32,7 +32,8 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
       (await transactionRepository.transactionExists(
         transactionRequest.enrollmentNumber,
       )) ||
-      attendee === null
+      attendee === null ||
+      attendee.degreeReceived
     ) {
       continue;
     }
