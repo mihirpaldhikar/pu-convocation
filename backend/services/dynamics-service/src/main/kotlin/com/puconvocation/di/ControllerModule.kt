@@ -14,22 +14,15 @@
 package com.puconvocation.di
 
 import com.puconvocation.Environment
-import com.puconvocation.controllers.AnalyticsController
-import com.puconvocation.controllers.AssetsController
-import com.puconvocation.controllers.AttendeeController
-import com.puconvocation.controllers.RemoteConfigController
-import com.puconvocation.controllers.TransactionController
+import com.puconvocation.controllers.*
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.serializers.CSVSerializer
-import com.puconvocation.services.AuthService
-import com.puconvocation.services.CloudStorage
-import com.puconvocation.services.DistributedLock
-import com.puconvocation.services.LambdaService
-import io.ktor.client.HttpClient
+import com.puconvocation.services.*
+import io.ktor.client.*
 import org.koin.dsl.module
 
 object ControllerModule {
@@ -62,9 +55,9 @@ object ControllerModule {
         single<TransactionController> {
             TransactionController(
                 transactionRepository = get<TransactionRepository>(),
-                attendeeRepository = get<AttendeeRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 authService = get<AuthService>(),
+                messageQueue = get<MessageQueue>()
             )
         }
 
