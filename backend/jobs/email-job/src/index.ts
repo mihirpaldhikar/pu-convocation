@@ -17,6 +17,7 @@ import { SendEmailCommandInput, SES } from "@aws-sdk/client-ses";
 import AccountCreationInvitationEmail from "./emails/account_invitation_email.js";
 import VerificationPasscodeEmail from "./emails/verification_passcode_email.js";
 import { render } from "@react-email/components";
+import TransactionConfirmationEmail from "./emails/transaction_confirmation_email.js";
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
   const emailClient = new SES();
@@ -26,7 +27,9 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     const email = await render(
       emailRequest.type === "invitation"
         ? AccountCreationInvitationEmail({ ...emailRequest.payload })
-        : VerificationPasscodeEmail({ ...emailRequest.payload }),
+        : emailRequest.type === "transaction"
+          ? TransactionConfirmationEmail({ ...emailRequest.payload })
+          : VerificationPasscodeEmail({ ...emailRequest.payload }),
     );
 
     const params: SendEmailCommandInput = {
@@ -46,7 +49,9 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
           Data:
             emailRequest.type === "invitation"
               ? "Invitation for Parul University Convocation Account"
-              : `Verification Passcode for ${emailRequest.payload.convocationNumber}th Parul University Convocation`,
+              : emailRequest.type === "transaction"
+                ? `You have Received your Degree!`
+                : `Verification Passcode for ${emailRequest.payload.convocationNumber}th Parul University Convocation`,
         },
       },
     };
