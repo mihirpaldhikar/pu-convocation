@@ -148,6 +148,8 @@ class AttendeeController(
             )
         }
 
+
+        lambdaService.invoke("PUConvocationSeatAllocationJob")
         distributedLock.release("attendeeUploadLock")
 
         return Result.Success(
@@ -271,10 +273,6 @@ class AttendeeController(
                     message = "The Attendees List couldn't be ${if (lock) "locked" else "unlocked"}. Please try again later."
                 )
             )
-        }
-
-        if (lock) {
-            lambdaService.invoke("seatAllocationJob")
         }
 
         distributedLock.release("attendeeLock")
