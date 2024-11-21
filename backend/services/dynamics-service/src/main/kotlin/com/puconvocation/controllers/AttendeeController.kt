@@ -29,6 +29,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import org.apache.commons.io.FilenameUtils
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 import java.time.Duration
@@ -115,7 +116,7 @@ class AttendeeController(
 
         val part = multiPart.readPart()
         if (part !is PartData.FileItem ||
-            !part.originalFileName?.lowercase()?.contains(".csv")!!
+            !FilenameUtils.getExtension(part.originalFileName).equals("csv", ignoreCase = true)
         ) {
             distributedLock.release("attendeeUploadLock")
             return Result.Error(
