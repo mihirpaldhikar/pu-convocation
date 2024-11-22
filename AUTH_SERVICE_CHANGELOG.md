@@ -1,3 +1,20 @@
+## 3.0.0-beta.2 (November 19, 2024)
+
+### Breaking Changes:
+
+- Remove GCP from Environment.kt along with redundant fields.
+
+### New:
+
+- Add the ability to add an invitation request message in SQS so that invitation emails can be sent to the users by email-job.
+
+### Miscellaneous:
+
+- Refactor message string for sending invitation emails through AWS SQS to incorporate latest API changes.
+- Refactor Environment.kt by making it more explicit.
+- Upgrade Kotlin plugin to v2.0.21 and Ktor plugin to v3.0.1
+
+
 ## 3.0.0-beta.1 (October 30, 2024)
 
 ### Fixes:

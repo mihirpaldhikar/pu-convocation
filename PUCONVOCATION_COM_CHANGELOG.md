@@ -1,3 +1,15 @@
+## 3.0.0-beta.6 (November 19, 2024)
+
+### New:
+- Prevent rendering of Attendee Upload Option if the attendees are locked.
+- Add the ability to upload images in the Image Picker dialog.
+
+### Fixes:
+- Fix an issue in which an exception was thrown due to id being null in Interactive Ground Mapper.
+
+### Miscellaneous:
+- Refactor Image Picker into a separate component.
+
 ## 3.0.0-beta.5 (November 18, 2024)
 
 ### New:

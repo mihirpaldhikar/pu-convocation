@@ -1,8 +1,8 @@
 {
-  "name": "email-job",
-  "version": "1.1.0",
+  "name": "transaction-job",
+  "version": "1.0.0",
   "private": true,
-  "description": "Job responsible for sending transactional emails.",
+  "description": "This job is responsible for managing transactions.",
   "main": "index.js",
   "type": "module",
   "module": "dist/index.js",
@@ -10,15 +10,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "dev": "email dev --dir=src/emails"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mihirpaldhikar/pu-convocation.git"
   },
   "keywords": [
-    "Emails"
+    "Automation"
   ],
   "author": "Mihir Paldhikar",
   "license": "SEE LICENSE IN LICENSE.md",
@@ -28,16 +27,14 @@
   "homepage": "https://github.com/mihirpaldhikar/pu-convocation#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/aws-lambda": "^8.10.145",
     "@types/node": "^22.9.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
     "prettier": "^3.3.3",
-    "react-email": "^3.0.2",
     "rollup": "^4.27.2",
     "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -46,11 +43,12 @@
     "typescript-eslint": "^8.14.0"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.693.0",
-    "@react-email/components": "^0.0.28",
+    "@aws-sdk/client-sqs": "^3.693.0",
     "aws-lambda": "^1.0.7",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "date-fns": "^4.1.0",
+    "i": "^0.3.7",
+    "mongodb": "^6.10.0",
+    "npm": "^10.9.0"
   },
   "packageManager": "pnpm@9.12.3"
 }

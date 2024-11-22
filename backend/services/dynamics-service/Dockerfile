@@ -1,9 +1,9 @@
-FROM gradle:8-jdk11 AS build
+FROM gradle:8-jdk22-alpine AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle buildFatJar --no-daemon
 
-FROM amazoncorretto:11
+FROM amazoncorretto:22-alpine
 
 EXPOSE 8083
 

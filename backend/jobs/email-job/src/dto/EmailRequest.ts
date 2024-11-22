@@ -23,6 +23,11 @@ export interface VerificationPasscodeEmailRequest {
   convocationNumber: string;
 }
 
+export interface TransactionConfirmationEmailRequest {
+  transactionId: string;
+  recipientName: string;
+}
+
 export type EmailRequest =
   | {
       type: "invitation";
@@ -37,4 +42,11 @@ export type EmailRequest =
       recipient: string;
       replyTo: string;
       payload: VerificationPasscodeEmailRequest;
+    }
+  | {
+      type: "transaction";
+      sender: string;
+      recipient: string;
+      replyTo: string;
+      payload: TransactionConfirmationEmailRequest;
     };
