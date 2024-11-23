@@ -1,3 +1,13 @@
+## 1.0.0-beta.3 (November 23, 2024)
+
+### New:
+- Seats are now allocated after attendee data is uploaded instead of allocating seats when data is locked.
+- Upgrade to JDK v22 for building docker container image.
+
+### Miscellaneous:
+- Refactor AttendeeController.uploadAttendees method to check file extension with Apache FilenameUtils.
+- Add suspended property in AccountWithIAMRoles.kt
+
 ## 1.0.0-beta.2 (November 19, 2024)
 
 ### New:
