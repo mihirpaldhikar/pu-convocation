@@ -68,7 +68,7 @@ const navMenu: Array<NavMenu> = [
     route: "/accountmanager",
     childRoutes: [],
     icon: "SquaresPlusIcon",
-    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
+    requiredIAMRoles: new Set<string>(["write:Account"]),
   },
   {
     name: "Settings",

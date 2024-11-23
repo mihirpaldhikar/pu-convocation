@@ -124,7 +124,7 @@ export default function InvitationForm({
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
                   router.push("/console");
-                } else if ("message" in response) {
+                } else {
                   toast({
                     title: "Authentication Failed",
                     description: (response as ErrorResponse<string>).error,

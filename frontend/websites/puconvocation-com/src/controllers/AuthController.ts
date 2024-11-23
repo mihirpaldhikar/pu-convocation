@@ -60,7 +60,7 @@ export default class AuthController {
     try {
       const handshakeResponse =
         await this.httpService.post<CredentialCreationOptionsJSON>(
-          `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
+          `http://localhost:8081/accounts/new?invitationToken=${invitationToken}`,
           {
             username: username,
             displayName: displayName,
@@ -220,6 +220,19 @@ export default class AuthController {
   public async getAllAccounts(): Promise<Response<Array<Account>, string>> {
     return await this.httpService.get<Array<Account>>(
       `${this.ACCOUNT_ROUTE}/all`,
+    );
+  }
+
+  public async suspendAccount(
+    uuid: string,
+    suspend: boolean,
+  ): Promise<Response<string, string>> {
+    return await this.httpService.patch<string>(
+      `${this.ACCOUNT_ROUTE}/update`,
+      {
+        uuid: uuid,
+        suspended: suspend,
+      },
     );
   }
 }
