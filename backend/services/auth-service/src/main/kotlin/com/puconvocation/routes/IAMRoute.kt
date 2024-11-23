@@ -32,7 +32,7 @@ fun Routing.iamRoute(
 
         get("/allPolicies") {
             val authorizationToken = call.getSecurityTokens().authorizationToken
-            call.respond(iamController.allPolicies(authorizationToken))
+            call.sendResponse(iamController.allPolicies(authorizationToken))
         }
 
         get("/authorized") {
