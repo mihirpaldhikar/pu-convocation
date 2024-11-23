@@ -1,3 +1,8 @@
+## 3.0.0-beta.8 (November 23, 2024)
+
+### Fixes:
+- Fix an issue in which the sendInvitation method of AuthController.ts was calling the wrong API endpoint URL.
+
 ## 3.0.0-beta.7 (November 23, 2024)
 
 ### New:
