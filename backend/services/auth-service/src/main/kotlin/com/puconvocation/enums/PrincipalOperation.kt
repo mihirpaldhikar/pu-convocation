@@ -15,5 +15,6 @@ package com.puconvocation.enums
 
 enum class PrincipalOperation {
     ADD,
-    REMOVE
+    REMOVE,
+    NO_CHANGE
 }

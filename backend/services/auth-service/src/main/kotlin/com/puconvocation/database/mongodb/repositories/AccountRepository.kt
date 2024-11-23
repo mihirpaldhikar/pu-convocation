@@ -104,6 +104,7 @@ class AccountRepository(
                     displayName = account.displayName,
                     iamRoles = iamPolicies,
                     designation = account.designation,
+                    suspended = account.suspended,
                 )
             )
         }
@@ -134,6 +135,7 @@ class AccountRepository(
             displayName = account.displayName,
             iamRoles = iamRoles,
             designation = account.designation,
+            suspended = account.suspended,
         )
 
         cache.set(
@@ -151,7 +153,8 @@ class AccountRepository(
             Updates.combine(
                 Updates.set(Account::username.name, account.username),
                 Updates.set(Account::displayName.name, account.displayName),
-                Updates.set(Account::email.name, account.email),
+                Updates.set(Account::suspended.name, account.suspended),
+                Updates.set(Account::designation.name, account.designation),
                 Updates.set(Account::avatarURL.name, account.avatarURL),
             )
         ).wasAcknowledged()

@@ -13,11 +13,7 @@
 
 package com.puconvocation.routes
 
-import com.puconvocation.commons.dto.AccountInvitations
-import com.puconvocation.commons.dto.AuthenticationCredentials
-import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewAccountFromInvitation
-import com.puconvocation.commons.dto.UpdateAccountIAMPoliciesRequest
+import com.puconvocation.commons.dto.*
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.enums.ResponseCode
@@ -94,6 +90,13 @@ fun Routing.accountsRoute(
                 )
             )
             val result = accountController.accountDetails(authorizationToken, identifier)
+            call.sendResponse(result)
+        }
+
+        patch("/update") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val updateRequest = call.receive<AccountUpdateRequest>()
+            val result = accountController.updateAccount(authorizationToken, updateRequest)
             call.sendResponse(result)
         }
 

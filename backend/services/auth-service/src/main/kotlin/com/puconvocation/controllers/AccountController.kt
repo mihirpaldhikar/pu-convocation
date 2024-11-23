@@ -404,8 +404,9 @@ class AccountController(
         for (iam in updateAccountIAMPoliciesRequest.iamOperations) {
             val iamPolicy = iamRepository.getRule(iam.id)
             if (iamPolicy == null) continue;
-
-            if (iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.REMOVE) {
+            if (iam.operation === PrincipalOperation.NO_CHANGE) {
+                continue
+            } else if (iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.REMOVE) {
                 iamPolicy.principals.remove(updateAccountIAMPoliciesRequest.uuid)
             } else if (!iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.ADD) {
                 iamPolicy.principals.add(updateAccountIAMPoliciesRequest.uuid)
@@ -424,5 +425,69 @@ class AccountController(
             )
         )
 
+    }
+
+    suspend fun updateAccount(
+        authorizationToken: String?,
+        updateRequest: AccountUpdateRequest
+    ): Result<HashMap<String, Any>, ErrorResponse> {
+        val tokenClaims = jsonWebToken.getClaims(
+            token = authorizationToken,
+            tokenType = TokenType.AUTHORIZATION_TOKEN,
+            claims = listOf(JsonWebToken.UUID_CLAIM)
+        )
+
+        if (updateRequest.uuid !== null && updateRequest.uuid !== tokenClaims[0] && !iamController.isAuthorized(
+                role = "write:Account",
+                principal = tokenClaims[0],
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to other accounts."
+                )
+            )
+        }
+
+        var account = accountRepository.getAccount(updateRequest.uuid ?: tokenClaims[0])
+
+        if (account == null) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.NotFound,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.ACCOUNT_NOT_FOUND,
+                    message = "Account not found."
+                )
+            )
+        }
+
+        account = account.copy(
+            designation = updateRequest.designation ?: account.designation,
+            username = updateRequest.username ?: account.username,
+            displayName = updateRequest.displayName ?: account.displayName,
+            suspended = updateRequest.suspended ?: account.suspended,
+            avatarURL = updateRequest.avatarURL ?: account.avatarURL,
+        )
+
+        val acknowledge = accountRepository.updateAccount(account)
+
+        if (!acknowledge) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.InternalServerError,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                    message = "Account not updated."
+                )
+            )
+        }
+
+        return Result.Success(
+            hashMapOf(
+                "code" to ResponseCode.OK,
+                "message" to "Account updated successfully."
+            )
+        )
     }
 }
