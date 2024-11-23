@@ -60,7 +60,7 @@ export default class AuthController {
     try {
       const handshakeResponse =
         await this.httpService.post<CredentialCreationOptionsJSON>(
-          `http://localhost:8081/accounts/new?invitationToken=${invitationToken}`,
+          `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
           {
             username: username,
             displayName: displayName,
