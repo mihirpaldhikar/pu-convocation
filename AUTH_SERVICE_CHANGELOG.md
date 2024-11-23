@@ -1,3 +1,13 @@
+## 3.0.0-beta.3 (November 23, 2024)
+
+### New:
+- Upgrade to JDK v22 for building docker container image.
+- Add a route to update an account.
+
+### Fixes:
+- Fix an issue in which iam/allPolicies route was returning invalid response structure.
+
+
 ## 3.0.0-beta.2 (November 19, 2024)
 
 ### Breaking Changes:
