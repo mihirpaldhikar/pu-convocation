@@ -29,6 +29,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@i18n/routing";
 import { AuthController } from "@controllers/index";
+import { ErrorResponse } from "@dto/Response";
 
 const authController = new AuthController();
 
@@ -126,7 +127,7 @@ export default function InvitationForm({
                 } else if ("message" in response) {
                   toast({
                     title: "Authentication Failed",
-                    description: response.message,
+                    description: (response as ErrorResponse<string>).error,
                     duration: 5000,
                   });
                   setAuthenticationPayload((prevState) => {

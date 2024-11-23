@@ -72,31 +72,6 @@ export default function GroundSettingsPage(): JSX.Element {
     totalSeats += enclosure;
   });
 
-  const handleEnclosureClick = (id: string | null) => {
-    const index = remoteConfig.groundMappings.findIndex(
-      (enclosure) => enclosure.letter === id,
-    );
-    setSelectedEnclosure(id);
-    setCurrentEnclosureIndex(index >= 0 ? index : null);
-  };
-
-  const handleRowChange = (
-    enclosureIndex: number,
-    rowIndex: number,
-    field: "start" | "end",
-    value: number,
-  ) => {
-    const mutatedEnclosure = { ...remoteConfig.groundMappings[enclosureIndex] };
-    mutatedEnclosure.rows[rowIndex][field] = value;
-    dispatch({
-      type: "SET_ENCLOSURE",
-      payload: {
-        index: enclosureIndex,
-        enclosure: mutatedEnclosure,
-      },
-    });
-  };
-
   return (
     <div
       className={

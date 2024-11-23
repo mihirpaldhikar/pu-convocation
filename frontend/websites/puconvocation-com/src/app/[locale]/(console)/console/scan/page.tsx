@@ -58,11 +58,7 @@ export default function VerificationPage(): JSX.Element {
         attendeeService
           .getAttendeeFromVerificationToken(verificationToken)
           .then((result) => {
-            if (
-              result.statusCode === StatusCode.SUCCESS &&
-              "payload" in result &&
-              typeof result.payload === "object"
-            ) {
+            if (result.statusCode === StatusCode.SUCCESS) {
               setAttendee(result.payload);
             }
             setLoading(false);
@@ -180,13 +176,10 @@ export default function VerificationPage(): JSX.Element {
                                 attendee.enrollmentNumber,
                               );
 
-                            if (
-                              response.statusCode === StatusCode.FAILURE &&
-                              "message" in response
-                            ) {
+                            if (response.statusCode === StatusCode.FAILURE) {
                               toast({
                                 title: "Transaction Failed",
-                                description: response.message,
+                                description: response.error,
                                 duration: 5000,
                               });
                             } else {

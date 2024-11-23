@@ -62,18 +62,14 @@ export default async function RootLayout({
   }
 
   const config =
-    remoteConfigResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in remoteConfigResponse &&
-    typeof remoteConfigResponse.payload === "object"
+    remoteConfigResponse.statusCode === StatusCode.SUCCESS
       ? remoteConfigResponse.payload
       : null;
 
   const authResponse = await authController.getCurrentAccount();
 
   const account =
-    authResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in authResponse &&
-    typeof authResponse.payload === "object"
+    authResponse.statusCode === StatusCode.SUCCESS
       ? authResponse.payload
       : null;
 

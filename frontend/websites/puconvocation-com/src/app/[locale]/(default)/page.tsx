@@ -13,7 +13,11 @@
 
 import Image from "next/image";
 import { AboutUsBlob, Carousel } from "@components/common";
-import { Convocation, LeftGalleryFlags, RightGalleryFlags } from "@components/graphics";
+import {
+  Convocation,
+  LeftGalleryFlags,
+  RightGalleryFlags,
+} from "@components/graphics";
 import { Countdown } from "@components/layouts";
 import { Link } from "@i18n/routing";
 import { Button } from "@components/ui";
@@ -31,14 +35,10 @@ export default async function Home() {
   const pageTranslations = await getTranslations("pages.landingPage");
   const coreTranslations = await getTranslations("core");
 
-  if (
-    response.statusCode === StatusCode.SUCCESS &&
-    "payload" in response &&
-    typeof response.payload === "object"
-  ) {
-    const config = response.payload;
-    return config.countdown.show &&
-      config.countdown.endTime > new Date().getMilliseconds() ? (
+  if (response.statusCode === StatusCode.SUCCESS) {
+    const { countdown, images, instructions } = response.payload;
+    return countdown.show &&
+      countdown.endTime > new Date().getMilliseconds() ? (
       <section className={"flex min-h-dvh"}>
         <div
           className={
@@ -54,7 +54,7 @@ export default async function Home() {
           </h1>
           <Convocation fillColor={"#ef4444"} />
           <div className="h-22"></div>
-          <Countdown futureTimestamp={config.countdown.endTime} />
+          <Countdown futureTimestamp={countdown.endTime} />
         </div>
       </section>
     ) : (
@@ -63,11 +63,11 @@ export default async function Home() {
           <div className={"relative h-full"}>
             <Image
               alt={pageTranslations("heroImageDescription")}
-              src={config.images.hero.url}
+              src={images.hero.url}
               fill={true}
               sizes={"100vw"}
               placeholder={"blur"}
-              blurDataURL={convertToThumbnailUrl(config.images.hero.url)}
+              blurDataURL={convertToThumbnailUrl(images.hero.url)}
               style={{
                 maxWidth: "100vw",
                 maxHeight: "auto",
@@ -76,7 +76,7 @@ export default async function Home() {
             />
           </div>
           <div
-            className={`absolute inset-x-0 ${config.instructions.show ? "top-32" : "top-20"} z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]`}
+            className={`absolute inset-x-0 ${instructions.show ? "top-32" : "top-20"} z-10 flex h-[calc(50dvh-5rem)] flex-col items-center justify-center bg-black/60 text-white lg:h-[calc(100dvh-5rem)]`}
           >
             <h5 className={"text-3xl font-bold md:text-3xl lg:text-6xl"}>
               {pageTranslations.rich("welcomeText", {
@@ -116,15 +116,11 @@ export default async function Home() {
           </div>
           <div
             className={
-              "flex w-full items-center justify-center px-3 lg:pt-10 pb-10 lg:px-0"
+              "flex w-full items-center justify-center px-3 pb-10 lg:px-0 lg:pt-10"
             }
           >
             <div className={"w-full lg:w-2/3"}>
-              <Carousel
-                width={1920}
-                height={1080}
-                images={config.images.carousel}
-              />
+              <Carousel width={1920} height={1080} images={images.carousel} />
             </div>
           </div>
           <div className={"flex flex-col justify-between md:flex-row"}>
@@ -153,12 +149,12 @@ export default async function Home() {
             </div>
             <div className={"flex flex-1 justify-end px-3 py-3"}>
               <Image
-                src={config.images.aboutUs.url}
+                src={images.aboutUs.url}
                 alt={pageTranslations("aboutUs.title")}
                 width={1920}
                 height={1080}
                 placeholder={"blur"}
-                blurDataURL={convertToThumbnailUrl(config.images.aboutUs.url)}
+                blurDataURL={convertToThumbnailUrl(images.aboutUs.url)}
                 className={"rounded-lg"}
                 style={{
                   objectFit: "cover",

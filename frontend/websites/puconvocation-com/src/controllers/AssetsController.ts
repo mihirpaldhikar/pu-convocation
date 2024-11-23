@@ -27,7 +27,7 @@ export default class AssetsController {
 
   public async uploadImage(
     file: File,
-  ): Promise<Response<{ url: string } | string>> {
+  ): Promise<Response<{ url: string }, string>> {
     const form = new FormData();
     form.append(file.name, file);
     return this.httpService.post<{ url: string }>(
@@ -38,7 +38,7 @@ export default class AssetsController {
 
   public async uploadAvatar(
     file: File,
-  ): Promise<Response<{ url: string } | string>> {
+  ): Promise<Response<{ url: string }, string>> {
     const form = new FormData();
     form.append(file.name, file);
     return this.httpService.post<{ url: string }>(
@@ -49,7 +49,7 @@ export default class AssetsController {
 
   public async uploadDocument(
     file: File,
-  ): Promise<Response<{ url: string } | string>> {
+  ): Promise<Response<{ url: string }, string>> {
     const form = new FormData();
     form.append(file.name, file);
     return this.httpService.post<{ url: string }>(
@@ -60,7 +60,7 @@ export default class AssetsController {
 
   public async uploadInstructions(
     instructions: string,
-  ): Promise<Response<{ url: string } | string>> {
+  ): Promise<Response<{ url: string }, string>> {
     const blob = new Blob([instructions], { type: "text/plain" });
     const file = new File([blob], "instructions.txt", {
       type: "text/plain",
@@ -75,7 +75,7 @@ export default class AssetsController {
 
   public async uploadInstructionsSource(
     instructions: string,
-  ): Promise<Response<{ url: string } | string>> {
+  ): Promise<Response<{ url: string }, string>> {
     const blob = new Blob([instructions], { type: "text/plain" });
     const file = new File([blob], "instructions-source.txt", {
       type: "text/plain",
@@ -88,15 +88,15 @@ export default class AssetsController {
     );
   }
 
-  public async getImages(): Promise<Response<Array<string> | string>> {
+  public async getImages(): Promise<Response<Array<string>, string>> {
     return this.httpService.get<Array<string>>(`${this.ASSETS_ROUTE}/images`);
   }
 
-  public async getAvatars(): Promise<Response<Array<string> | string>> {
+  public async getAvatars(): Promise<Response<Array<string>, string>> {
     return this.httpService.get<Array<string>>(`${this.ASSETS_ROUTE}/avatars`);
   }
 
-  public async getDocuments(): Promise<Response<Array<string> | string>> {
+  public async getDocuments(): Promise<Response<Array<string>, string>> {
     return this.httpService.get<Array<string>>(
       `${this.ASSETS_ROUTE}/documents`,
     );

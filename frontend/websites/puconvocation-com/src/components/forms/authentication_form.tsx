@@ -20,6 +20,7 @@ import { useToast } from "@hooks/index";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { AuthController } from "@controllers/index";
+import { ErrorResponse } from "@dto/Response";
 
 const authController = new AuthController();
 
@@ -109,10 +110,10 @@ export default function AuthenticationForm({
                   response.statusCode === StatusCode.AUTHENTICATION_SUCCESSFUL
                 ) {
                   router.push(redirect !== undefined ? redirect : "/console");
-                } else if ("message" in response) {
+                } else {
                   toast({
                     title: "Authentication Failed",
-                    description: response.message,
+                    description: (response as ErrorResponse<string>).error,
                     duration: 5000,
                   });
                   setAuthenticationPayload((prevState) => {

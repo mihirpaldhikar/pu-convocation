@@ -32,14 +32,14 @@ export default class AttendeeController {
 
   public async getAttendee(
     identifier: string,
-  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+  ): Promise<Response<AttendeeWithEnclosureMetadata, string>> {
     return await this.httpService.get<AttendeeWithEnclosureMetadata>(
       `${this.ATTENDEE_ROUTES}/${identifier}`,
     );
   }
 
   public async getTotalAttendeesCount(): Promise<
-    Response<{ count: number } | string>
+    Response<{ count: number }, string>
   > {
     return await this.httpService.get<{ count: number }>(
       `${this.ATTENDEE_ROUTES}/totalCount`,
@@ -49,7 +49,7 @@ export default class AttendeeController {
   public async getAllAttendees(
     page: number,
     limit: number,
-  ): Promise<Response<AttendeeWithPagination | string>> {
+  ): Promise<Response<AttendeeWithPagination, string>> {
     const queryParams = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
@@ -62,7 +62,7 @@ export default class AttendeeController {
 
   public async searchAttendees(
     query: string,
-  ): Promise<Response<Array<Attendee> | string>> {
+  ): Promise<Response<Array<Attendee>, string>> {
     const queryParams = new URLSearchParams({
       query: query.trim(),
     });
@@ -74,13 +74,15 @@ export default class AttendeeController {
 
   public async getAttendeeFromVerificationToken(
     token: string,
-  ): Promise<Response<Attendee | string>> {
+  ): Promise<Response<Attendee, string>> {
     return await this.httpService.get<Attendee>(
       `${this.ATTENDEE_ROUTES}/verificationToken/${token}`,
     );
   }
 
-  public async uploadAttendeeList(file: File): Promise<Response<string>> {
+  public async uploadAttendeeList(
+    file: File,
+  ): Promise<Response<string, string>> {
     const form = new FormData();
     form.append(file.name, file);
     return await this.httpService.post<string>(
@@ -91,7 +93,7 @@ export default class AttendeeController {
 
   public async createTransaction(
     studentEnrollmentNumber: string,
-  ): Promise<Response<AttendeeWithEnclosureMetadata | string>> {
+  ): Promise<Response<AttendeeWithEnclosureMetadata, string>> {
     return await this.httpService.post<AttendeeWithEnclosureMetadata>(
       `${this.BASE_URL}/transactions/new`,
       {
@@ -105,7 +107,7 @@ export default class AttendeeController {
 
   public async mutateAttendeeLock(
     locked: boolean,
-  ): Promise<Response<any | string>> {
+  ): Promise<Response<any, string>> {
     return await this.httpService.post<any>(
       `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
     );

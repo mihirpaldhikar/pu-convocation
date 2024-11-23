@@ -50,11 +50,7 @@ export default function ImagePicker({
     enabled: true,
     queryFn: async () => {
       const response = await assetsController.getImages();
-      if (
-        response.statusCode === StatusCode.SUCCESS &&
-        "payload" in response &&
-        typeof response.payload === "object"
-      ) {
+      if (response.statusCode === StatusCode.SUCCESS) {
         return response.payload;
       }
       return null;

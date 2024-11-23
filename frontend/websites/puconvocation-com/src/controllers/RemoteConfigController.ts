@@ -26,13 +26,13 @@ export default class RemoteConfigController {
     this.httpService = new HttpService(this.BASE_URL, options);
   }
 
-  public async getRemoteConfig(): Promise<Response<RemoteConfig | string>> {
+  public async getRemoteConfig(): Promise<Response<RemoteConfig, string>> {
     return await this.httpService.get(`${this.CONFIG_ROUTE}/`);
   }
 
   public async changeRemoteConfig(
     remoteConfig: RemoteConfig,
-  ): Promise<Response<RemoteConfig | string>> {
+  ): Promise<Response<RemoteConfig, string>> {
     return await this.httpService.patch(
       `${this.CONFIG_ROUTE}/change`,
       remoteConfig,

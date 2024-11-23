@@ -13,15 +13,22 @@
 
 import { StatusCode } from "@enums/index";
 
-interface ErrorResponse {
-  statusCode: StatusCode;
-  message: string;
+export interface ErrorResponse<E> {
+  statusCode:
+    | StatusCode.FAILURE
+    | StatusCode.NETWORK_ERROR
+    | StatusCode.AUTHENTICATION_FAILED
+    | StatusCode.ATTENDEE_NOT_FOUND;
+  error: E;
 }
 
-interface SuccessResponse<T> {
-  statusCode: StatusCode;
-  payload: T;
+export interface SuccessResponse<S> {
+  statusCode:
+    | StatusCode.SUCCESS
+    | StatusCode.AUTHENTICATION_SUCCESSFUL
+    | StatusCode.PASSKEY_REGISTERED;
+  payload: S;
   cookies?: Readonly<string>;
 }
 
-export type Response<T> = SuccessResponse<T> | ErrorResponse;
+export type Response<S, E> = SuccessResponse<S> | ErrorResponse<E>;

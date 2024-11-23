@@ -12,9 +12,19 @@
  */
 
 import { JSX } from "react";
-import { PopularCountriesChart, TrafficOnDateChart, WeeklyTrafficChart } from "@components/analytics";
+import {
+  PopularCountriesChart,
+  TrafficOnDateChart,
+  WeeklyTrafficChart,
+} from "@components/analytics";
 import { DynamicIcon } from "@components/graphics";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnalyticsController } from "@controllers/index";
 import { cookies } from "next/headers";
@@ -48,23 +58,17 @@ export default async function AnalyticsPage(): Promise<JSX.Element> {
     await analyticsController.popularCountries();
 
   const dailyVisitors =
-    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in dailyVisitorAnalyticsResponse &&
-    typeof dailyVisitorAnalyticsResponse.payload === "object"
+    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
       ? dailyVisitorAnalyticsResponse.payload
       : [];
 
   const weeklyVisitors =
-    weeklyVisitorsAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in weeklyVisitorsAnalyticsResponse &&
-    typeof weeklyVisitorsAnalyticsResponse.payload === "object"
+    weeklyVisitorsAnalyticsResponse.statusCode === StatusCode.SUCCESS
       ? weeklyVisitorsAnalyticsResponse.payload
       : null;
 
   const popularCountries =
-    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in popularCountriesAnalyticsResponse &&
-    typeof popularCountriesAnalyticsResponse.payload === "object"
+    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
       ? popularCountriesAnalyticsResponse.payload
       : [];
 

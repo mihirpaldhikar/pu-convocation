@@ -77,16 +77,12 @@ async function AnalyticsSection({
     await analyticsController.popularCountries();
 
   const popularCountries =
-    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in popularCountriesAnalyticsResponse &&
-    typeof popularCountriesAnalyticsResponse.payload === "object"
+    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
       ? popularCountriesAnalyticsResponse.payload
       : [];
 
   const dailyVisitors =
-    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in dailyVisitorAnalyticsResponse &&
-    typeof dailyVisitorAnalyticsResponse.payload === "object"
+    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
       ? dailyVisitorAnalyticsResponse.payload
       : [];
 
@@ -155,9 +151,7 @@ async function AttendeesSection({
   const attendeesListResponse = await attendeeController.getAllAttendees(0, 10);
 
   const attendees =
-    attendeesListResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in attendeesListResponse &&
-    typeof attendeesListResponse.payload === "object"
+    attendeesListResponse.statusCode === StatusCode.SUCCESS
       ? attendeesListResponse.payload.attendees
       : [];
 
@@ -189,9 +183,7 @@ export default async function ConsolePage(): Promise<JSX.Element> {
   const authResponse = await authController.getCurrentAccount();
 
   const account =
-    authResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in authResponse &&
-    typeof authResponse.payload === "object"
+    authResponse.statusCode === StatusCode.SUCCESS
       ? authResponse.payload
       : null;
 

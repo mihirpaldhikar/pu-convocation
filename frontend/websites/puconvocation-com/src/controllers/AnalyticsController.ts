@@ -39,7 +39,7 @@ export default class AnalyticsController {
     );
   }
 
-  public async weeklyTraffic(): Promise<Response<WeeklyTraffic | string>> {
+  public async weeklyTraffic(): Promise<Response<WeeklyTraffic, string>> {
     return await this.httpService.get<WeeklyTraffic>(
       `${this.ANALYTICS_ROUTE}/weeklyTraffic?date=${this.getStartOfWeekDate(new Date())}`,
     );
@@ -49,19 +49,19 @@ export default class AnalyticsController {
     year: number,
     month: number,
     day: number,
-  ): Promise<Response<Array<Popular> | string>> {
+  ): Promise<Response<Array<Popular>, string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/trafficOnDate?date=${year}-${month}-${day}`,
     );
   }
 
-  public async popularLangs(): Promise<Response<Array<Popular> | string>> {
+  public async popularLangs(): Promise<Response<Array<Popular>, string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularLangs`,
     );
   }
 
-  public async popularCountries(): Promise<Response<Array<Popular> | string>> {
+  public async popularCountries(): Promise<Response<Array<Popular>, string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularCountries`,
     );
@@ -69,7 +69,7 @@ export default class AnalyticsController {
 
   public async popularStatesOfCountry(
     country: string,
-  ): Promise<Response<Array<Popular> | string>> {
+  ): Promise<Response<Array<Popular>, string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularStatesOfCountry?country=${country}`,
     );
@@ -78,7 +78,7 @@ export default class AnalyticsController {
   public async popularDistrictsWithInStateOfCountry(
     country: string,
     state: string,
-  ): Promise<Response<Array<Popular> | string>> {
+  ): Promise<Response<Array<Popular>, string>> {
     return await this.httpService.get<Array<Popular>>(
       `${this.ANALYTICS_ROUTE}/popularDistrictsWithInStateOfCountry?country=${country}&state=${state}`,
     );

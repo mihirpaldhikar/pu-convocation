@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { Fragment, JSX } from "react";
+import { JSX } from "react";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { GroundMap, SeatMap, Ticket } from "@components/attendee";
@@ -32,41 +32,8 @@ export default async function AttendeePage({
 
   const response = await attendeeService.getAttendee(identifier.toUpperCase());
 
-  if (
-    response.statusCode === StatusCode.ATTENDEE_NOT_FOUND &&
-    "message" in response
-  ) {
-    return (
-      <div className="flex h-fit items-center">
-        <div className="m-auto space-y-3 text-center">
-          <div className={"flex w-full items-center justify-center"}>
-            <SpaceShip />
-          </div>
-          <h3 className={"text-2xl font-bold text-gray-800"}>
-            Attendee Not Found!
-          </h3>
-          <p className={"pb-4 text-gray-600"}>
-            Please use{" "}
-            {identifier.length > 10 ? "CRR Number" : "Enrollment Number"} to
-            find your seat.
-          </p>
-          <Link
-            href={"/"}
-            className={"rounded-full bg-gray-900 px-5 py-2 text-white"}
-          >
-            Go Home
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (
-    response.statusCode === StatusCode.SUCCESS &&
-    "payload" in response &&
-    typeof response.payload === "object"
-  ) {
-    const payload = response.payload;
+  if (response.statusCode === StatusCode.SUCCESS) {
+    const { attendee, enclosureMetadata } = response.payload;
 
     return (
       <section
@@ -81,7 +48,7 @@ export default async function AttendeePage({
             <GroundMap
               className={"h-[500px] w-[350px] lg:h-[400px] lg:w-[400px]"}
               activeColor={"#dc2626"}
-              activeEnclosure={payload.attendee.allocation.enclosure}
+              activeEnclosure={attendee.allocation.enclosure}
             />
             <div className={"flex flex-col space-y-5"}>
               <div className={"flex flex-col space-y-2"}>
@@ -91,19 +58,19 @@ export default async function AttendeePage({
                 </div>
                 <h6
                   className={"pl-9 text-xs font-medium"}
-                  hidden={payload.enclosureMetadata.entryDirection === "NONE"}
+                  hidden={enclosureMetadata.entryDirection === "NONE"}
                 >
                   Enter from{" "}
                   <span className={"font-bold text-primary"}>
-                    {payload.enclosureMetadata.entryDirection}
+                    {enclosureMetadata.entryDirection}
                   </span>
                 </h6>
               </div>
               <SeatMap
-                enclosure={payload.enclosureMetadata}
+                enclosure={enclosureMetadata}
                 activeArrangement={{
-                  row: payload.attendee.allocation.row,
-                  seat: payload.attendee.allocation.seat,
+                  row: attendee.allocation.row,
+                  seat: attendee.allocation.seat,
                 }}
               />
             </div>
@@ -120,12 +87,34 @@ export default async function AttendeePage({
               <TicketIcon className={"size-7 text-primary"} />
               <h2 className={"text-xl font-bold"}>Pass</h2>
             </div>
-            <Ticket attendee={payload.attendee} />
+            <Ticket attendee={attendee} />
           </div>
         </div>
       </section>
     );
   }
 
-  return <Fragment />;
+  return (
+    <div className="flex h-fit items-center">
+      <div className="m-auto space-y-3 text-center">
+        <div className={"flex w-full items-center justify-center"}>
+          <SpaceShip />
+        </div>
+        <h3 className={"text-2xl font-bold text-gray-800"}>
+          Attendee Not Found!
+        </h3>
+        <p className={"pb-4 text-gray-600"}>
+          Please use{" "}
+          {identifier.length > 10 ? "CRR Number" : "Enrollment Number"} to find
+          your seat.
+        </p>
+        <Link
+          href={"/"}
+          className={"rounded-full bg-gray-900 px-5 py-2 text-white"}
+        >
+          Go Home
+        </Link>
+      </div>
+    </div>
+  );
 }
