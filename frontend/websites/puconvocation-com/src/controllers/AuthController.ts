@@ -13,9 +13,17 @@
 
 import {
   create as createPasskeyCredentials,
+  CredentialCreationOptionsJSON,
   get as getPublicCredentials,
 } from "@github/webauthn-json";
-import { Account, AccountInvitation, IAMPolicy, Response } from "@dto/index";
+import {
+  Account,
+  AccountInvitation,
+  ErrorResponse,
+  IAMPolicy,
+  Response,
+  UpdateAccountIAMPoliciesRequest,
+} from "@dto/index";
 import { StatusCode } from "@enums/StatusCode";
 import { HttpService } from "@services/index";
 
@@ -31,31 +39,15 @@ export default class AuthController {
     this.httpService = new HttpService(this.BASE_URL, options);
   }
 
-  public async getCurrentAccount(): Promise<Response<Account | string>> {
+  public async getCurrentAccount(): Promise<Response<Account, string>> {
     return await this.httpService.get<Account>(`${this.ACCOUNT_ROUTE}/`);
   }
 
   public async getAccount(
     identifier: string,
-  ): Promise<Response<Account | string>> {
+  ): Promise<Response<Account, string>> {
     return await this.httpService.get<Account>(
       `${this.ACCOUNT_ROUTE}/${identifier}`,
-    );
-  }
-
-  public async updateIAMPoliciesAssignedForAccount(
-    uuid: string,
-    iamOperations: Array<{
-      id: string;
-      operation: "ADD" | "REMOVE";
-    }>,
-  ): Promise<Response<Array<string> | string>> {
-    return await this.httpService.post<Array<string>>(
-      `${this.ACCOUNT_ROUTE}/updateIAMPolicies`,
-      {
-        uuid: uuid,
-        iamOperations: iamOperations,
-      },
     );
   }
 
@@ -64,22 +56,19 @@ export default class AuthController {
     displayName: string,
     username: string,
     designation: string,
-  ): Promise<Response<string>> {
+  ): Promise<Response<string, string>> {
     try {
-      const handshakeResponse = await this.httpService.post<string>(
-        `${this.ACCOUNT_ROUTE}/new?invitationToken=${invitationToken}`,
-        {
-          username: username,
-          displayName: displayName,
-          designation: designation,
-        },
-      );
+      const handshakeResponse =
+        await this.httpService.post<CredentialCreationOptionsJSON>(
+          `http://localhost:8081/accounts/new?invitationToken=${invitationToken}`,
+          {
+            username: username,
+            displayName: displayName,
+            designation: designation,
+          },
+        );
 
-      if (
-        handshakeResponse.statusCode === StatusCode.SUCCESS &&
-        "payload" in handshakeResponse &&
-        typeof handshakeResponse.payload === "object"
-      ) {
+      if (handshakeResponse.statusCode === StatusCode.SUCCESS) {
         const passkeyChallenge = handshakeResponse.payload;
 
         const passkeyCredentials =
@@ -98,30 +87,29 @@ export default class AuthController {
         );
       }
 
-      return handshakeResponse;
+      return <ErrorResponse<string>>handshakeResponse;
     } catch (error) {
       return {
         statusCode: StatusCode.FAILURE,
-        message: "Authentication operation was cancelled.",
+        error: "Authentication operation was cancelled.",
       };
     }
   }
 
-  public async authenticate(identifier: string): Promise<Response<string>> {
+  public async authenticate(
+    identifier: string,
+  ): Promise<Response<string, string>> {
     try {
-      const authenticationHandshake = await this.httpService.post<string>(
-        `${this.ACCOUNT_ROUTE}/authenticate`,
-        {
-          identifier: identifier,
-        },
-      );
+      const handshakeResponse =
+        await this.httpService.post<CredentialCreationOptionsJSON>(
+          `${this.ACCOUNT_ROUTE}/authenticate`,
+          {
+            identifier: identifier,
+          },
+        );
 
-      if (
-        authenticationHandshake.statusCode === StatusCode.SUCCESS &&
-        "payload" in authenticationHandshake &&
-        typeof authenticationHandshake.payload === "object"
-      ) {
-        const passkeyChallenge = authenticationHandshake.payload;
+      if (handshakeResponse.statusCode === StatusCode.SUCCESS) {
+        const passkeyChallenge = handshakeResponse.payload;
         const passkeyCredentials = await getPublicCredentials(passkeyChallenge);
         return await this.httpService.post<string>(
           `${this.ACCOUNT_ROUTE}/passkeys/validatePasskeyChallenge`,
@@ -135,32 +123,30 @@ export default class AuthController {
           },
         );
       }
-
-      return authenticationHandshake;
+      return <ErrorResponse<string>>handshakeResponse;
     } catch (error) {
       return {
         statusCode: StatusCode.FAILURE,
-        message: "Authentication operation was cancelled.",
+        error: "Authentication operation was cancelled.",
       };
     }
   }
 
-  public async registerPasskey(identifier: string): Promise<Response<string>> {
+  public async registerPasskey(
+    identifier: string,
+  ): Promise<Response<{ message: string }, string>> {
     try {
-      const handshakeRequest = await this.httpService.post<string>(
-        `${this.ACCOUNT_ROUTE}/passkeys/register`,
-      );
+      const handshakeResponse =
+        await this.httpService.post<CredentialCreationOptionsJSON>(
+          `${this.ACCOUNT_ROUTE}/passkeys/register`,
+        );
 
-      if (
-        handshakeRequest.statusCode === StatusCode.SUCCESS &&
-        "payload" in handshakeRequest &&
-        typeof handshakeRequest.payload === "object"
-      ) {
-        const passkeyChallenge = handshakeRequest.payload;
+      if (handshakeResponse.statusCode === StatusCode.SUCCESS) {
+        const passkeyChallenge = handshakeResponse.payload;
         const passkeyCredentials =
           await createPasskeyCredentials(passkeyChallenge);
 
-        return await this.httpService.post(
+        return await this.httpService.post<{ message: string }>(
           `${this.ACCOUNT_ROUTE}/passkeys/validateRegistrationChallenge`,
           {
             identifier: identifier,
@@ -173,18 +159,18 @@ export default class AuthController {
         );
       }
 
-      return handshakeRequest;
+      return <ErrorResponse<string>>handshakeResponse;
     } catch (error) {
       return {
         statusCode: StatusCode.FAILURE,
-        message: "Passkey registration  was cancelled.",
+        error: "Passkey registration  was cancelled.",
       };
     }
   }
 
   public async sendAccountInvitations(
     invitations: Array<AccountInvitation>,
-  ): Promise<Response<never | string>> {
+  ): Promise<Response<never, string>> {
     return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
@@ -198,7 +184,7 @@ export default class AuthController {
 
   public async getIAMPolicy(
     invitations: Array<AccountInvitation>,
-  ): Promise<Response<never | string>> {
+  ): Promise<Response<never, string>> {
     return await this.httpService.post<never>(
       `${this.ACCOUNT_ROUTE}/sendInvitations`,
       {
@@ -211,14 +197,42 @@ export default class AuthController {
   }
 
   public async getAllIAMPolicies(): Promise<
-    Response<Array<IAMPolicy> | string>
+    Response<Array<IAMPolicy>, string>
   > {
     return await this.httpService.get<Array<IAMPolicy>>(
       `${this.IAM_ROUTE}/allPolicies`,
     );
   }
 
-  public async signOut(): Promise<Response<string>> {
+  public async updateAccountIAMPolicies(
+    updateAccountIAMPoliciesRequest: UpdateAccountIAMPoliciesRequest,
+  ): Promise<Response<Array<string>, string>> {
+    return await this.httpService.post<Array<string>>(
+      `${this.ACCOUNT_ROUTE}/updateIAMPolicies`,
+      updateAccountIAMPoliciesRequest,
+    );
+  }
+
+  public async signOut(): Promise<Response<string, string>> {
     return await this.httpService.post(`${this.ACCOUNT_ROUTE}/signout`);
+  }
+
+  public async getAllAccounts(): Promise<Response<Array<Account>, string>> {
+    return await this.httpService.get<Array<Account>>(
+      `${this.ACCOUNT_ROUTE}/all`,
+    );
+  }
+
+  public async suspendAccount(
+    uuid: string,
+    suspend: boolean,
+  ): Promise<Response<string, string>> {
+    return await this.httpService.patch<string>(
+      `${this.ACCOUNT_ROUTE}/update`,
+      {
+        uuid: uuid,
+        suspended: suspend,
+      },
+    );
   }
 }

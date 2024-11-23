@@ -41,4 +41,8 @@ export const PROTECTED_ROUTES: Array<ProtectedRoute> = [
     pathRegex: /^\/console\/scan(\/.*)?$/,
     requiredIAMPermissions: new Set<string>(["write:Transaction"]),
   },
+  {
+    pathRegex: /^\/console\/accountmanager(\/.*)?$/,
+    requiredIAMPermissions: new Set<string>(["write:Account"]),
+  },
 ];

@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export type { Response } from "./Response";
+export type { Response, SuccessResponse, ErrorResponse } from "./Response";
 export type { default as Account } from "./Account";
 export type { default as Attendee } from "./Attendee";
 export type { default as AttendeeWithEnclosureMetadata } from "./AttendeeWithEnclosureMetadata";
@@ -23,4 +23,5 @@ export type { default as GeoMap } from "./GeoMap";
 export type { default as AccountInvitation } from "./AccountInvitation";
 export type { default as IAMPolicy } from "./IAMPolicy";
 export type { default as ProtectedRoute } from "./ProtectedRoute";
+export type { default as UpdateAccountIAMPoliciesRequest } from "./UpdateAccountIAMPoliciesRequest";
 export * from "./analytics/index";

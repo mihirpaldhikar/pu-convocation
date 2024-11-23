@@ -34,16 +34,19 @@ export default function AccountPage(): JSX.Element {
         <Button
           onClick={async () => {
             const response = await authService.registerPasskey(account.uuid!);
-            if ("message" in response) {
-              toast({
-                title:
-                  response.statusCode === StatusCode.PASSKEY_REGISTERED
-                    ? "Success"
-                    : "Failure",
-                description: response.message,
-                duration: 5000
-              });
-            }
+            toast({
+              title:
+                response.statusCode === StatusCode.PASSKEY_REGISTERED
+                  ? "Success"
+                  : "Failure",
+              description:
+                response.statusCode === StatusCode.FAILURE
+                  ? response.error
+                  : response.statusCode === StatusCode.PASSKEY_REGISTERED
+                    ? response.payload.message
+                    : "",
+              duration: 5000,
+            });
           }}
         >
           Register New Passkey

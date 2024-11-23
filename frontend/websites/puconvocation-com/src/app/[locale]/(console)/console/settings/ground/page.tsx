@@ -10,7 +10,6 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
 "use client";
 import { JSX, useState } from "react";
 import { useRemoteConfig } from "@hooks/index";
@@ -69,7 +68,6 @@ export default function GroundSettingsPage(): JSX.Element {
   );
 
   let totalSeats = 0;
-
   seatsInEnclosure.forEach((enclosure) => {
     totalSeats += enclosure;
   });
@@ -77,7 +75,7 @@ export default function GroundSettingsPage(): JSX.Element {
   return (
     <div
       className={
-        "flex h-[160vh] w-full flex-col rounded-xl border bg-white px-4 py-5 md:h-[90vh]"
+        "flex h-auto w-full flex-col rounded-xl border bg-white px-4 py-5 md:h-[130vh] md:overflow-hidden"
       }
     >
       <h3 className={"py-5 text-center text-2xl font-black"}>
@@ -102,7 +100,7 @@ export default function GroundSettingsPage(): JSX.Element {
           <div className={"grid h-full grid-cols-1 gap-4 md:grid-cols-2"}>
             <div className={"flex flex-col items-center justify-center"}>
               <GroundMapper
-                className={"max-h-[80vh] w-full"}
+                className={"h-full w-full"}
                 activeColor={"#dc2626"}
                 activeEnclosure={enclosureData.letter}
                 onEnclosureClicked={async (id) => {
@@ -142,7 +140,7 @@ export default function GroundSettingsPage(): JSX.Element {
                     {(arrayHelpers) => (
                       <div
                         className={
-                          "h-[60vh] w-full space-y-4 overflow-y-auto px-5"
+                          "h-[90vh] w-full space-y-4 overflow-y-auto px-5"
                         }
                       >
                         {values.rows.map((_row, index) => {

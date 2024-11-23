@@ -11,91 +11,92 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export {Input} from "./input";
-export {Button} from "./button";
+export { Input } from "./input";
+export { Button } from "./button";
 export {
-    Toast,
-    ToastAction,
-    ToastClose,
-    ToastDescription,
-    ToastProvider,
-    ToastTitle,
+  Toast,
+  ToastAction,
+  ToastClose,
+  ToastDescription,
+  ToastProvider,
+  ToastTitle,
 } from "./toast";
-export {Toaster} from "./toaster";
+export { Toaster } from "./toaster";
 export {
-    Popover,
-    PopoverAnchor,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
 } from "./popover";
-export {default as Logo} from "./logo";
-export {Avatar, AvatarFallback, AvatarImage} from "./avatar";
+export { default as Logo } from "./logo";
+export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 export {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "./tooltip";
 export {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetOverlay,
-    SheetPortal,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetOverlay,
+  SheetPortal,
+  SheetTitle,
+  SheetTrigger,
 } from "./sheet";
-export {AlertTitle, AlertDescription, Alert} from "./alert";
+export { AlertTitle, AlertDescription, Alert } from "./alert";
 export {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogOverlay,
-    DialogPortal,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 } from "./dialog";
 export {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectScrollDownButton,
-    SelectScrollUpButton,
-    SelectSeparator,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 } from "./select";
-export {Skeleton} from "./skeleton";
-export {default as ProgressBar} from "./progress_bar";
+export { Skeleton } from "./skeleton";
+export { default as ProgressBar } from "./progress_bar";
 export {
-    ChartContainer,
-    ChartStyle,
-    ChartLegend,
-    ChartLegendContent,
-    ChartTooltipContent,
-    ChartTooltip,
+  ChartContainer,
+  ChartStyle,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltipContent,
+  ChartTooltip,
 } from "./chart";
-export type {ChartConfig} from "./chart";
-export {default as FilePicker} from "./file_picker";
+export type { ChartConfig } from "./chart";
+export { default as FilePicker } from "./file_picker";
 export {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "./card";
 export {
-    InputOTP,
-    InputOTPGroup,
-    InputOTPSeparator,
-    InputOTPSlot,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
 } from "./input_otp";
+export { Checkbox } from "./checkbox";

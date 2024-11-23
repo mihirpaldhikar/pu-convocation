@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.enums
-
-enum class PrincipalOperation {
-    ADD,
-    REMOVE,
-    NO_CHANGE
+export default interface UpdateAccountIAMPoliciesRequest {
+  uuid: string;
+  iamOperations: Array<{
+    id: string;
+    operation: "ADD" | "REMOVE" | "NO_CHANGE";
+  }>;
 }

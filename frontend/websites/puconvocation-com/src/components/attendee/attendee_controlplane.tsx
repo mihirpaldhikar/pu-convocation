@@ -62,13 +62,10 @@ export default function AttendeeControlPlane({
               const response = await attendeeController.mutateAttendeeLock(
                 !remoteConfig.attendees.locked,
               );
-              if (
-                response.statusCode === StatusCode.FAILURE &&
-                "message" in response
-              ) {
+              if (response.statusCode === StatusCode.FAILURE) {
                 toast({
                   title: "Operation Failed",
-                  description: response.message,
+                  description: response.error,
                   duration: 5000,
                 });
               } else {
@@ -132,14 +129,11 @@ export default function AttendeeControlPlane({
                       queryKey: ["attendeesList"],
                     });
                     router.refresh();
-                  } else if (
-                    response.statusCode === StatusCode.FAILURE &&
-                    "message" in response
-                  ) {
+                  } else if (response.statusCode === StatusCode.FAILURE) {
                     setUploading(false);
                     toast({
                       title: "Upload Failed",
-                      description: response.message,
+                      description: response.error,
                       duration: 5000,
                     });
                   }

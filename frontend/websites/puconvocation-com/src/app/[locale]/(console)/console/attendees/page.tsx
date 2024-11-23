@@ -12,7 +12,13 @@
  */
 
 import { JSX } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui";
 import { UsersIcon } from "@heroicons/react/24/solid";
 import { AttendeeControlPlane, AttendeeTable } from "@components/attendee";
 import { AttendeeController } from "@controllers/index";
@@ -20,7 +26,7 @@ import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
 
 export default async function AttendeePage(): Promise<JSX.Element> {
-  const agentCookies = await cookies()
+  const agentCookies = await cookies();
 
   const attendeeController = new AttendeeController({
     cookies: agentCookies.toString(),
@@ -30,18 +36,14 @@ export default async function AttendeePage(): Promise<JSX.Element> {
     await attendeeController.getTotalAttendeesCount();
 
   const totalAttendeeCount =
-    totalAttendeeResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in totalAttendeeResponse &&
-    typeof totalAttendeeResponse.payload === "object"
+    totalAttendeeResponse.statusCode === StatusCode.SUCCESS
       ? totalAttendeeResponse.payload.count
       : 0;
 
   const attendeesListResponse = await attendeeController.getAllAttendees(0, 10);
 
   const attendees =
-    attendeesListResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in attendeesListResponse &&
-    typeof attendeesListResponse.payload === "object"
+    attendeesListResponse.statusCode === StatusCode.SUCCESS
       ? attendeesListResponse.payload.attendees
       : [];
 

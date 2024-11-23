@@ -68,21 +68,13 @@ export default function AttendeeTable({
       if (debouncedSearchQuery.length > 0) {
         const response =
           await attendeeController.searchAttendees(debouncedSearchQuery);
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
+        if (response.statusCode === StatusCode.SUCCESS) {
           return response.payload;
         }
         return [];
       } else {
         const response = await attendeeController.getAllAttendees(page, 10);
-        if (
-          response.statusCode === StatusCode.SUCCESS &&
-          "payload" in response &&
-          typeof response.payload === "object"
-        ) {
+        if (response.statusCode === StatusCode.SUCCESS) {
           return response.payload.attendees;
         }
         return [];
