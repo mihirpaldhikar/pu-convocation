@@ -1,3 +1,12 @@
+## 3.0.0-beta.7 (November 23, 2024)
+
+### New:
+- Add an Account Manager page for managing existing accounts and send invitations for new accounts.
+
+### Miscellaneous:
+- Remove unnecessary type checks and validations for Response DTO.
+- Improve layout sizes for a better UI.
+
 ## 3.0.0-beta.6 (November 19, 2024)
 
 ### New:
