@@ -37,6 +37,9 @@ data class AccountWithIAMRoles(
     @JsonProperty("avatarURL")
     val avatarURL: String,
 
+    @JsonProperty("suspended")
+    val suspended: Boolean,
+
     @JsonProperty("iamRoles")
     val iamRoles: List<String>,
 )
