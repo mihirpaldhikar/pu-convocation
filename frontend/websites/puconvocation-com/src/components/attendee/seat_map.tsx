@@ -33,36 +33,35 @@ export default function SeatMap({
         return (
           <div key={row.letter} className={"flex justify-center"}>
             <h5
-              className={`h-fit w-[25px] rounded-md px-2 py-1 text-center text-xs font-medium ${
+              className={`h-fit w-[2rem] rounded-md px-3 py-2 text-center text-xs font-bold ${
                 row.letter === activeArrangement.row
                   ? "border-red-700 bg-red-500 text-white"
-                  : "border-gray-300 bg-gray-200 text-gray-500"
+                  : "border border-gray-300 text-gray-500"
               }`}
             >
               {row.letter}
             </h5>
             <div
               className={
-                "mx-3 flex h-12 max-w-[350px]  justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
+                "mx-3 mt-0.5 flex h-12 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
               }
             >
               {Array.from(
                 { length: row.end - row.start + 1 },
-                (v, k) => k + row.start,
-              )
-                .reverse()
-                .map((seat) => {
-                  return (
-                    <Seat
-                      key={seat}
-                      number={seat}
-                      active={
-                        row.letter === activeArrangement.row &&
-                        seat === parseInt(activeArrangement.seat)
-                      }
-                    />
-                  );
-                })}
+                (_v, k) => k + row.start,
+              ).map((seat) => {
+                return (
+                  <Seat
+                    key={seat}
+                    number={seat}
+                    activeRow={row.letter === activeArrangement.row}
+                    active={
+                      row.letter === activeArrangement.row &&
+                      seat === parseInt(activeArrangement.seat)
+                    }
+                  />
+                );
+              })}
             </div>
           </div>
         );
