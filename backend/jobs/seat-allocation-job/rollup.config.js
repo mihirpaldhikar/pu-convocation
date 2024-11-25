@@ -13,18 +13,32 @@
 
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
+import replace from "@rollup/plugin-replace";
+import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 
 const rollupConfiguration = [
     {
         input: "./src/index.ts",
         output: {
             dir: "dist",
-            format: "esm",
+            format: "cjs",
         },
-        external: ["@aws-sdk/client-ses", "mongodb"],
         plugins: [
+            peerDepsExternal(),
+            json(),
+            replace({
+                "process.env.NODE_ENV": JSON.stringify("production"),
+                preventAssignment: true,
+            }),
+            commonjs(),
+            nodeResolve({
+                preferBuiltins: true,
+                dedupe: ["mongodb"],
+            }),
             typescript({
-                tsconfig: "./tsconfig.json",
                 declarationDir: "dist",
                 outputToFilesystem: true,
                 exclude: ["**/tests/", "**/*.test.ts", "**/*.test.tsx"],
