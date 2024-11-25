@@ -64,7 +64,7 @@ export const handler: Handler = async (event, context) => {
       for (let seat of Array.from(
         { length: row.end - row.start + 1 },
         (_, k) => k + row.start,
-      ).reverse()) {
+      )) {
         if (row.reserved.includes(seat.toString())) continue;
 
         await attendeeRepository.updateAttendeeAllocation({
