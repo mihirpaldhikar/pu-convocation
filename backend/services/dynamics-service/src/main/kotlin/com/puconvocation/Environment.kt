@@ -75,9 +75,6 @@ data class Environment(
         @JsonProperty("aws") val aws: AWS,
     ) {
         data class AWS(
-            @JsonProperty("accessKeyId") val accessKeyId: String,
-            @JsonProperty("secretAccessKey") val secretAccessKey: String,
-            @JsonProperty("region") val region: String,
             @JsonProperty("sqs") val sqs: SQS,
             @JsonProperty("msk") val msk: MSK,
             @JsonProperty("s3") val s3: S3

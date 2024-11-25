@@ -13,7 +13,6 @@
 
 package com.puconvocation.services
 
-import aws.sdk.kotlin.runtime.auth.credentials.StaticCredentialsProvider
 import aws.sdk.kotlin.services.s3.S3Client
 import aws.sdk.kotlin.services.s3.model.ListObjectsV2Request
 import aws.sdk.kotlin.services.s3.model.PutObjectRequest
@@ -33,18 +32,16 @@ class CloudStorage(
     private val mapper: ObjectMapper,
 ) {
 
+    private val s3Client = S3Client {
+        region = "ap-south-1"
+    }
+
     suspend fun uploadObject(
         destinationPath: String,
         inputStream: ByteArray,
     ): String? {
         return try {
-            S3Client {
-                region = aws.region
-                credentialsProvider = StaticCredentialsProvider.invoke {
-                    accessKeyId = aws.accessKeyId
-                    secretAccessKey = aws.secretAccessKey
-                }
-            }.use {
+            s3Client.use {
                 it.putObject(PutObjectRequest {
                     bucket = aws.s3.assets
                     key = destinationPath
@@ -65,13 +62,7 @@ class CloudStorage(
         }
         val objects = mutableListOf<String>()
 
-        S3Client {
-            region = aws.region
-            credentialsProvider = StaticCredentialsProvider.invoke {
-                accessKeyId = aws.accessKeyId
-                secretAccessKey = aws.secretAccessKey
-            }
-        }.use { s3Client ->
+        s3Client.use { s3Client ->
             try {
                 var request = ListObjectsV2Request {
                     bucket = aws.s3.assets

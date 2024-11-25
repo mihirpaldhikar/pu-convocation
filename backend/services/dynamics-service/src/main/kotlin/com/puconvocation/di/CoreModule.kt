@@ -105,7 +105,7 @@ object CoreModule {
 
         single<SqsClient> {
             SqsClient {
-                region = get<Environment>().cloud.aws.region
+                region = "ap-south-1"
             }
         }
 
