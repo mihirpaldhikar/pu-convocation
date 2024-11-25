@@ -52,7 +52,7 @@
     "recharts": "^2.13.3",
     "sharp": "^0.33.5",
     "svg-parser": "^2.0.4",
-    "tailwind-merge": "^2.5.4",
+    "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
