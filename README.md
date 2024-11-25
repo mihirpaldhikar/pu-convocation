@@ -27,7 +27,7 @@ seats based on the availability and taking into factors such as reserved spots.
 ## Runtime and SDKs
 
 - Node.js `v22.x`
-- Amazon Corretto `v11`
+- Amazon Corretto `v22`
 
 ## Recommendations
 
