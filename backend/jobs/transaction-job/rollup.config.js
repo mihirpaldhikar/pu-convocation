@@ -32,6 +32,7 @@ const rollupConfiguration = [
       json(),
       replace({
         "process.env.NODE_ENV": JSON.stringify("production"),
+        preventAssignment: true,
       }),
       commonjs(),
       nodeResolve({
