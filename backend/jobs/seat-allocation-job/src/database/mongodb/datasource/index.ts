@@ -12,4 +12,4 @@
  */
 
 export type { default as AttendeeDatasource } from "./AttendeeDatasource.js";
-export type { default as SystemConfigDatasource } from "./SystemConfigDatasource.js";
+export type { default as RemoteConfigDatasource } from "./RemoteConfigDatasource.js";

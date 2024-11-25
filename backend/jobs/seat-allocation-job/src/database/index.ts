@@ -13,4 +13,4 @@
 
 export type { Attendee, Enclosure } from "./mongodb/index.js";
 
-export { AttendeeRepository, SystemConfigRepository } from "./mongodb/index.js";
+export { AttendeeRepository, RemoteConfigRepository } from "./mongodb/index.js";

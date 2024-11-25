@@ -12,4 +12,4 @@
  */
 
 export { default as AttendeeRepository } from "./AttendeeRepository.js";
-export { default as SystemConfigRepository } from "./SystemConfigRepository.js";
+export { default as RemoteConfigRepository } from "./RemoteConfigRepository.js";

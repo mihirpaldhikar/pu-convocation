@@ -14,9 +14,10 @@
 import {Enclosure} from "../database/index.js";
 
 export function totalEnclosureSeats(enclosure: Enclosure): number {
-  let seats = 0;
-  for (let row of enclosure.rows) {
-    seats += row.end - row.start - row.reserved.length + 1;
-  }
-  return seats;
+    let seats = 0;
+    for (let row of enclosure.rows) {
+        const reserved = row.reserved.split(",").filter((r) => !isNaN(parseInt(r))).length;
+        seats += row.end - row.start - reserved + 1;
+    }
+    return seats;
 }

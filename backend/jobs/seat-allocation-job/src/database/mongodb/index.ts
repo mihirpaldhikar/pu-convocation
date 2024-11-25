@@ -14,5 +14,5 @@
 export type { Attendee, Enclosure } from "./entities/index.js";
 export {
   AttendeeRepository,
-  SystemConfigRepository,
+  RemoteConfigRepository,
 } from "./repositories/index.js";

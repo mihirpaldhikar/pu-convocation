@@ -11,19 +11,22 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {AttendeeRepository, SystemConfigRepository,} from "./database/index.js";
-import {totalEnclosureSeats} from "./utils/index.js";
-import {Handler} from "aws-lambda";
+import {
+  AttendeeRepository,
+  RemoteConfigRepository,
+} from "./database/index.js";
+import { totalEnclosureSeats } from "./utils/index.js";
+import { Handler } from "aws-lambda";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();
-  const systemConfigRepository = new SystemConfigRepository();
+  const remoteConfigRepository = new RemoteConfigRepository();
 
   const attendees = await attendeeRepository.getAttendees();
 
   let totalAttendees = attendees.length;
 
-  const enclosureMapping = await systemConfigRepository.enclosureMapping();
+  const enclosureMapping = await remoteConfigRepository.getGroundMappings();
   let totalSeats = 0;
   for (let enclosure of enclosureMapping) {
     totalSeats += totalEnclosureSeats(enclosure);
@@ -41,7 +44,11 @@ export const handler: Handler = async (event, context) => {
     }
 
     for (let row of enclosure.rows) {
-      const seats = row.end - row.start - row.reserved.length + 1;
+      const reserved = row.reserved
+        .split(",")
+        .filter((r) => !isNaN(parseInt(r))).length;
+
+      const seats = row.end - row.start - reserved + 1;
       const attendeesForCurrentRow = attendees.slice(
         allocatedSeats,
         allocatedSeats + seats,
@@ -58,7 +65,7 @@ export const handler: Handler = async (event, context) => {
         { length: row.end - row.start + 1 },
         (_, k) => k + row.start,
       ).reverse()) {
-        if (row.reserved.includes(seat)) continue;
+        if (row.reserved.includes(seat.toString())) continue;
 
         await attendeeRepository.updateAttendeeAllocation({
           ...attendeesForCurrentRow[i],
