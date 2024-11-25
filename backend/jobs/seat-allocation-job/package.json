@@ -1,6 +1,6 @@
 {
   "name": "seat-allocation-job",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "This job is responsible for allocating seats to attendees.",
   "main": "index.js",
