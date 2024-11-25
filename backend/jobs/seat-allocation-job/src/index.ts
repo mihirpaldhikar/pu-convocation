@@ -46,9 +46,9 @@ export const handler: Handler = async (event, context) => {
     for (let row of enclosure.rows) {
       const reserved = row.reserved
         .split(",")
-        .filter((r) => !isNaN(parseInt(r))).length;
+        .filter((r) => !isNaN(parseInt(r)));
 
-      const seats = row.end - row.start - reserved + 1;
+      const seats = row.end - row.start - reserved.length + 1;
       const attendeesForCurrentRow = attendees.slice(
         allocatedSeats,
         allocatedSeats + seats,
@@ -65,7 +65,7 @@ export const handler: Handler = async (event, context) => {
         { length: row.end - row.start + 1 },
         (_, k) => k + row.start,
       )) {
-        if (row.reserved.includes(seat.toString())) continue;
+        if (reserved.includes(seat.toString())) continue;
 
         await attendeeRepository.updateAttendeeAllocation({
           ...attendeesForCurrentRow[i],
