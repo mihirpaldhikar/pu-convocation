@@ -1,0 +1,44 @@
+name: Build and Deploy seat-allocation-job to AWS Lambda
+
+on:
+  push:
+    tags:
+      - "seat-allocation-job-v*"
+
+env:
+  DEPLOYMENT_ARN: ${{ secrets.DEPLOYMENT_ARN }}
+  REGION: ${{ secrets.REGION }}
+  DEPLOYMENT_NAME: seat-allocation-job
+
+jobs:
+  deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.DEPLOYMENT_ARN }}
+          aws-region: ${{ env.REGION }}
+
+      - name: Login to Amazon ECR Private
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        id: build-image
+        working-directory: ./backend/jobs/seat-allocation-job
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          REPOSITORY: puconvocation/${{ env.DEPLOYMENT_NAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
