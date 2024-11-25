@@ -10,9 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "installForProduction": "cp package.json ./dist && cp pnpm-lock.yaml ./dist && cd ./dist && pnpm install --prod",
-    "build": "rollup -c && pnpm run installForProduction",
-    "execute": "rollup -c && node ./dist/index.js"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
