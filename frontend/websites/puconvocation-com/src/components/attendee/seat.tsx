@@ -28,6 +28,7 @@ export default function Seat({
   return (
     <div className={"relative z-0 block h-5 w-5"}>
       <svg
+        id={active ? `active-${number}` : ""}
         width="24"
         height="28"
         viewBox="0 0 24 28"

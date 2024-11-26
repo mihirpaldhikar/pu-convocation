@@ -11,9 +11,13 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { JSX } from "react";
+"use client";
+
+import { JSX, useState } from "react";
 import { Enclosure } from "@dto/index";
 import Seat from "./seat";
+import { useInView } from "react-intersection-observer";
+import { smoothScrollLeftWithinDiv } from "@lib/attendee_utils";
 
 interface SeatMapProps {
   enclosure: Enclosure;
@@ -27,6 +31,26 @@ export default function SeatMap({
   enclosure,
   activeArrangement,
 }: SeatMapProps): JSX.Element {
+  const [activeRowScrolled, setActiveRowScrolled] = useState<boolean>(false);
+
+  const { ref } = useInView({
+    threshold: 1,
+    delay: 1000,
+    onChange: (inView) => {
+      if (!activeRowScrolled && inView) {
+        setActiveRowScrolled(true);
+        const rowContainer = document.getElementById(
+          activeArrangement.row,
+        ) as HTMLElement;
+        const activeSeat = document.getElementById(
+          `active-${activeArrangement.seat}`,
+        ) as HTMLElement;
+        const x = activeSeat.getBoundingClientRect().x;
+        smoothScrollLeftWithinDiv(rowContainer, x, 1000);
+      }
+    },
+  });
+
   return (
     <div className={"flex flex-col space-y-5"}>
       {enclosure.rows.map((row) => {
@@ -42,6 +66,8 @@ export default function SeatMap({
               {row.letter}
             </h5>
             <div
+              id={row.letter}
+              ref={row.letter === activeArrangement.row ? ref : undefined}
               className={
                 "mx-3 mt-0.5 flex h-12 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
               }
