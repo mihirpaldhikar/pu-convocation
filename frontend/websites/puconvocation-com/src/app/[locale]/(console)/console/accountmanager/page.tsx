@@ -24,6 +24,7 @@ import {
   CardHeader,
   CardTitle,
   Checkbox,
+  FilePicker,
   Input,
   Sheet,
   SheetClose,
@@ -45,6 +46,7 @@ import {
 } from "@dto/index";
 import { useToast } from "@hooks/useToast";
 import { Field, FieldArray, Form, Formik } from "formik";
+import csvParser, { ParseResult } from "papaparse";
 
 const authController = new AuthController();
 
@@ -393,6 +395,63 @@ export default function AccountManager() {
                                 );
                               },
                             )}
+                            <div
+                              className={
+                                "relative cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
+                              }
+                            >
+                              <div
+                                className={
+                                  "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-red-50"
+                                }
+                              >
+                                <div
+                                  className={
+                                    "flex h-full cursor-pointer flex-col items-center justify-center space-y-3"
+                                  }
+                                >
+                                  <div
+                                    className={"flex space-x-3 text-red-600"}
+                                  >
+                                    <DynamicIcon icon={"ArrowUpTrayIcon"} />
+                                    <h6 className={"font-medium"}>
+                                      Upload Account List
+                                    </h6>
+                                  </div>
+                                  <p className={"text-xs text-gray-500"}>
+                                    Drag or Click here to upload CSV File
+                                  </p>
+                                </div>
+                              </div>
+                              <FilePicker
+                                allowedFileExtensions={".csv"}
+                                onFilePicked={async (file) => {
+                                  if (file !== null) {
+                                    csvParser.parse(file as any, {
+                                      skipEmptyLines: true,
+                                      complete(
+                                        results: ParseResult<
+                                          Record<string, string>
+                                        >,
+                                      ) {
+                                        for (
+                                          let i = 1;
+                                          i < results.data.length;
+                                          i++
+                                        ) {
+                                          arrayHelpers.push({
+                                            email: results.data[i][0],
+                                            iamRoles: results.data[i][1]
+                                              .split(",")
+                                              .map((r) => r.trim()),
+                                          });
+                                        }
+                                      },
+                                    });
+                                  }
+                                }}
+                              />
+                            </div>
                             <div
                               className={"flex w-full justify-end space-x-4"}
                             >
