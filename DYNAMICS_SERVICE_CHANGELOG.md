@@ -1,3 +1,8 @@
+## 1.0.0-beta.4 (November 26, 2024)
+
+### Miscellaneous:
+- Remove redundant environmental variables from Environment.kt
+
 ## 1.0.0-beta.3 (November 23, 2024)
 
 ### New:
