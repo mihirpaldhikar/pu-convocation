@@ -1,3 +1,8 @@
+## 3.0.0-beta.9 (November 26, 2024)
+
+### Miscellaneous:
+- Refactor Seat Map to be rendered in ascending order instead of descending order. Also Refactor UI for active row.
+
 ## 3.0.0-beta.8 (November 23, 2024)
 
 ### Fixes:
