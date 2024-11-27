@@ -11,17 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {
-  AttendeeRepository,
-  RemoteConfigRepository,
-} from "./database/index.js";
-import { totalEnclosureSeats } from "./utils/index.js";
-import { Handler } from "aws-lambda";
-import {
-  SendMessageBatchCommand,
-  SendMessageBatchRequestEntry,
-  SQSClient,
-} from "@aws-sdk/client-sqs";
+import {AttendeeRepository, RemoteConfigRepository,} from "./database/index.js";
+import {totalEnclosureSeats} from "./utils/index.js";
+import {Handler} from "aws-lambda";
+import {SendMessageBatchCommand, SendMessageBatchRequestEntry, SQSClient,} from "@aws-sdk/client-sqs";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();

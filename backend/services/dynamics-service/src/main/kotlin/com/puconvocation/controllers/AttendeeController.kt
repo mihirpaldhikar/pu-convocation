@@ -276,6 +276,10 @@ class AttendeeController(
             )
         }
 
+        if (lock) {
+            lambdaService.invoke("PUConvocationSeatAllocationJob")
+        }
+
         distributedLock.release("attendeeLock")
 
         return Result.Success(

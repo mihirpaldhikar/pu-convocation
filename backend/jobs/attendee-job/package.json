@@ -1,5 +1,5 @@
 {
-  "name": "seat-allocation-job",
+  "name": "attendee-job",
   "version": "1.0.1",
   "private": true,
   "description": "This job is responsible for allocating seats to attendees.",

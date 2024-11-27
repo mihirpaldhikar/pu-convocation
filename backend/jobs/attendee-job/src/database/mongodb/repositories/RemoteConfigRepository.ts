@@ -11,10 +11,10 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { RemoteConfigDatasource } from "../datasource/index.js";
-import { Enclosure } from "../entities/index.js";
-import { Collection } from "mongodb";
-import { default as Database } from "../MongoDBConnector.js";
+import {RemoteConfigDatasource} from "../datasource/index.js";
+import {Enclosure} from "../entities/index.js";
+import {Collection} from "mongodb";
+import {default as Database} from "../MongoDBConnector.js";
 
 export default class RemoteConfigRepository implements RemoteConfigDatasource {
   private remoteConfigCollection: Collection<any>;
