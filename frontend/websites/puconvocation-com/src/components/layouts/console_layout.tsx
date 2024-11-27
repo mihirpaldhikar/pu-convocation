@@ -16,7 +16,6 @@ import { Fragment, JSX, ReactNode, useState } from "react";
 import { Button } from "@components/ui";
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Link, usePathname } from "@i18n/routing";
-import { DynamicIcon } from "@components/graphics";
 import { NavMenu } from "@dto/index";
 import { useAuth } from "@hooks/index";
 import Cookie from "js-cookie";
@@ -59,15 +58,17 @@ export default function ConsoleLayout({
                     : "bg-transparent hover:bg-gray-100"
                 } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
               >
-                <DynamicIcon
-                  icon={menu.icon}
-                  outline={!RegExp(menu.pathRegex).test(path)}
-                  className={
+                <div
+                  className={`size-5 ${
                     RegExp(menu.pathRegex).test(path)
                       ? "text-red-700"
                       : "text-black"
-                  }
-                />
+                  }`}
+                >
+                  {RegExp(menu.pathRegex).test(path)
+                    ? menu.activeIcon
+                    : menu.icon}
+                </div>
                 <span
                   className={`${collapsed ? "hidden" : "font-semibold"} transition-all duration-150 ease-in-out ${
                     RegExp(menu.pathRegex).test(path)
@@ -120,15 +121,17 @@ export default function ConsoleLayout({
                   : "bg-transparent hover:bg-gray-100"
               } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
             >
-              <DynamicIcon
-                icon={menu.icon}
-                outline={!RegExp(menu.pathRegex).test(path)}
-                className={
+              <div
+                className={`size-5 ${
                   RegExp(menu.pathRegex).test(path)
-                    ? "size-6 text-red-700"
-                    : "size-6 text-black"
-                }
-              />
+                    ? "text-red-700"
+                    : "text-black"
+                }`}
+              >
+                {RegExp(menu.pathRegex).test(path)
+                  ? menu.activeIcon
+                  : menu.icon}
+              </div>
             </Link>
           );
         })}

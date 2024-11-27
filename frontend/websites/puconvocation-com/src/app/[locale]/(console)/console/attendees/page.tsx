@@ -19,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui";
-import { UsersIcon } from "@heroicons/react/24/solid";
+import { AcademicCapIcon } from "@heroicons/react/24/solid";
 import { AttendeeControlPlane, AttendeeTable } from "@components/attendee";
 import { AttendeeController } from "@controllers/index";
 import { cookies } from "next/headers";
@@ -51,7 +51,7 @@ export default async function AttendeePage(): Promise<JSX.Element> {
     <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
       <div className="space-y-3">
         <h1 className="flex items-center text-2xl font-bold">
-          <UsersIcon className="mr-2 h-6 w-6 text-red-600" /> Attendees
+          <AcademicCapIcon className="mr-2 h-6 w-6 text-red-600" /> Attendees
         </h1>
         <p className="text-xs text-gray-600">
           View and manage the complete list of attendees for the convocation.

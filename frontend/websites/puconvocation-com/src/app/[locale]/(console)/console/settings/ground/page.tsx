@@ -25,7 +25,7 @@ import {
   CardTitle,
   Input,
 } from "@components/ui";
-import { DynamicIcon } from "@components/graphics";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 function nextChar(input: string): string {
   if (input.length === 1 && /\d/.test(input)) {
@@ -168,9 +168,8 @@ export default function GroundSettingsPage(): JSX.Element {
                                       arrayHelpers.remove(index);
                                     }}
                                   >
-                                    <DynamicIcon
-                                      icon={"XMarkIcon"}
-                                      className={"text-red-600"}
+                                    <XMarkIcon
+                                      className={"size-5 text-red-600"}
                                     />
                                   </div>
                                 </div>

@@ -17,7 +17,6 @@ import {
   TrafficOnDateChart,
   WeeklyTrafficChart,
 } from "@components/analytics";
-import { DynamicIcon } from "@components/graphics";
 import {
   Card,
   CardContent,
@@ -29,6 +28,7 @@ import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnalyticsController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
+import { ChartBarIcon } from "@heroicons/react/24/solid";
 
 const now = new Date();
 const year = Number(format(now, "yyyy"));
@@ -76,11 +76,7 @@ export default async function AnalyticsPage(): Promise<JSX.Element> {
     <div className={"flex min-h-screen flex-col space-y-10 p-4 md:p-10"}>
       <div className={"space-y-3"}>
         <h1 className={"text-2xl font-bold"}>
-          <DynamicIcon
-            icon={"ChartBarIcon"}
-            className={"inline-block size-6 fill-red-600"}
-            outline={false}
-          />{" "}
+          <ChartBarIcon className={"inline-block size-6 fill-red-600"} />{" "}
           Analytics
         </h1>
         <p className={"text-xs text-gray-600"}>

@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { SquaresPlusIcon } from "@heroicons/react/24/solid";
+import { UsersIcon } from "@heroicons/react/24/solid";
 import {
   Avatar,
   AvatarFallback,
@@ -38,7 +38,7 @@ import { AuthController } from "@controllers/index";
 import { useQuery } from "@tanstack/react-query";
 import { StatusCode } from "@enums/StatusCode";
 import { Fragment, useState } from "react";
-import { DynamicIcon, SpaceShip } from "@components/graphics";
+import { SpaceShip } from "@components/graphics";
 import {
   Account,
   AccountInvitation,
@@ -47,6 +47,7 @@ import {
 import { useToast } from "@hooks/useToast";
 import { Field, FieldArray, Form, Formik } from "formik";
 import csvParser, { ParseResult } from "papaparse";
+import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/outline";
 
 const authController = new AuthController();
 
@@ -266,8 +267,7 @@ export default function AccountManager() {
       <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
         <div className="space-y-3">
           <h1 className="flex items-center text-2xl font-bold">
-            <SquaresPlusIcon className="mr-2 h-6 w-6 text-red-600" /> Account
-            Manager
+            <UsersIcon className="mr-2 h-6 w-6 text-red-600" /> Account Manager
           </h1>
           <p className="text-xs text-gray-600">
             View and manage the list of accounts for the convocation.
@@ -432,7 +432,7 @@ export default function AccountManager() {
                                       "flex space-x-3 text-neutral-700"
                                     }
                                   >
-                                    <DynamicIcon icon={"ArrowUpTrayIcon"} />
+                                    <ArrowUpTrayIcon className={"size-5"} />
                                     <h6 className={"font-medium"}>
                                       Upload Account List
                                     </h6>
@@ -599,7 +599,7 @@ export default function AccountManager() {
                             });
                           }}
                         >
-                          <DynamicIcon icon={"PencilIcon"} />
+                          <PencilIcon className={"size-5"} />
                         </Button>
                       ) : (
                         <Fragment />

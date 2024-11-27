@@ -14,7 +14,6 @@
 import { Fragment, JSX, useState } from "react";
 import { useRemoteConfig } from "@hooks/index";
 import Image from "next/image";
-import { DynamicIcon } from "@components/graphics";
 import { convertToThumbnailUrl } from "@lib/image_utils";
 import { ImagePicker } from "@components/common";
 import {
@@ -24,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function GeneralSettingsPage(): JSX.Element {
   const { remoteConfig, dispatch } = useRemoteConfig();
@@ -114,7 +114,7 @@ export default function GeneralSettingsPage(): JSX.Element {
                             });
                           }}
                         >
-                          <DynamicIcon icon={"XMarkIcon"} />
+                          <XMarkIcon />
                         </div>
                       </div>
                     </div>
@@ -131,7 +131,7 @@ export default function GeneralSettingsPage(): JSX.Element {
                   }}
                 >
                   <div className={"rounded-full bg-red-300 p-4"}>
-                    <DynamicIcon icon={"PlusIcon"} className={"text-red-800"} />
+                    <PlusIcon className={"size-5 text-red-800"} />
                   </div>
                 </div>
               </div>

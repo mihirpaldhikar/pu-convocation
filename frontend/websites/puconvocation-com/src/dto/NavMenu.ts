@@ -11,13 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import * as Icons from "@heroicons/react/24/solid";
+import { ReactNode } from "react";
 
 export default interface NavMenu {
   name: string;
   route: string;
   pathRegex: string;
   childRoutes: Array<string>;
-  icon: keyof typeof Icons;
+  icon: ReactNode;
+  activeIcon: ReactNode;
   requiredIAMRoles: Set<string>;
 }

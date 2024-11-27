@@ -15,7 +15,7 @@ import { JSX, useState } from "react";
 import { Button, Input } from "@components/ui";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@i18n/routing";
-import { DynamicIcon } from "@components/graphics";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function IdentifierForm(): JSX.Element {
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function IdentifierForm(): JSX.Element {
         <p className={"text-lg font-semibold"}>
           {formTranslations("submitButton")}
         </p>
-        <DynamicIcon icon={"ChevronRightIcon"} className={"size-7"} />
+        <ChevronRightIcon className={"size-7"} />
       </Button>
     </form>
   );

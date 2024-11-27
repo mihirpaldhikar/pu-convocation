@@ -30,8 +30,7 @@ import {
   SheetTitle,
 } from "@components/ui";
 import { AttendeeController } from "@controllers/index";
-import { DynamicIcon } from "@components/graphics";
-import { CheckBadgeIcon } from "@heroicons/react/24/solid";
+import { CheckBadgeIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import { StatusCode } from "@enums/StatusCode";
 import { Attendee } from "@dto/index";
 
@@ -105,11 +104,7 @@ export default function VerificationPage(): JSX.Element {
                   "flex h-full w-full flex-col items-center justify-center space-y-5"
                 }
               >
-                <DynamicIcon
-                  icon={"XCircleIcon"}
-                  outline={false}
-                  className={"size-14 text-red-600"}
-                />
+                <XCircleIcon className={"size-14 text-red-600"} />
                 <h5 className={"text-lg font-semibold"}>Attendee Not Found!</h5>
               </div>
             ) : (

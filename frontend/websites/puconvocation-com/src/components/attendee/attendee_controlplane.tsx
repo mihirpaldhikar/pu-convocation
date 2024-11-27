@@ -24,9 +24,9 @@ import {
 import { useRemoteConfig, useToast } from "@hooks/index";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { DynamicIcon } from "@components/graphics";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 const attendeeController = new AttendeeController();
 
@@ -107,7 +107,7 @@ export default function AttendeeControlPlane({
                 }
               >
                 <div className={"flex space-x-3 text-neutral-700"}>
-                  <DynamicIcon icon={"ArrowUpTrayIcon"} />
+                  <ArrowUpTrayIcon className={"size-5"} />
                   <h6 className={"font-medium"}>Upload Attendee List</h6>
                 </div>
                 <p className={"text-xs text-gray-500"}>

@@ -15,7 +15,7 @@
 import { JSX } from "react";
 import { Button } from "@components/ui";
 import { Link, usePathname } from "@i18n/routing";
-import { DynamicIcon } from "@components/graphics";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 interface InstructionsBannerProps {
   show: boolean;
@@ -32,7 +32,7 @@ export default function InstructionsBanner({
       <h6>Important Instructions</h6>
       <Button asChild={true} className={"rounded-full bg-red-800"}>
         <Link href={"/instructions"}>
-          View <DynamicIcon icon={"ChevronRightIcon"} />
+          View <ChevronRightIcon className={"size-5"} />
         </Link>
       </Button>
     </div>

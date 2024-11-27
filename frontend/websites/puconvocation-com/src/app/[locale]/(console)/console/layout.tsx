@@ -26,6 +26,20 @@ import { cookies } from "next/headers";
 import RemoteConfigController from "@controllers/RemoteConfigController";
 import { SYSTEM_FONT } from "@fonts/system_font";
 import { redirect } from "next/navigation";
+import {
+  AcademicCapIcon as S_AcademicCapIcon,
+  ChartBarIcon as S_ChartBarIcon,
+  Cog6ToothIcon as S_Cog6ToothIcon,
+  HomeIcon as S_HomeIcon,
+  UsersIcon as S_UsersIcon,
+} from "@heroicons/react/24/solid";
+import {
+  AcademicCapIcon as O_AcademicCapIcon,
+  ChartBarIcon as O_ChartBarIcon,
+  Cog6ToothIcon as O_Cog6ToothIcon,
+  HomeIcon as O_HomeIcon,
+  UsersIcon as O_UsersIcon,
+} from "@heroicons/react/24/outline";
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",
@@ -43,7 +57,8 @@ const navMenu: Array<NavMenu> = [
     pathRegex: "^/console$",
     route: "",
     childRoutes: [],
-    icon: "HomeIcon",
+    icon: <O_HomeIcon />,
+    activeIcon: <S_HomeIcon />,
     requiredIAMRoles: new Set<string>([]),
   },
   {
@@ -51,7 +66,8 @@ const navMenu: Array<NavMenu> = [
     pathRegex: "^/console/analytics(/.*)?$",
     route: "/analytics",
     childRoutes: [],
-    icon: "ChartBarIcon",
+    icon: <O_ChartBarIcon />,
+    activeIcon: <S_ChartBarIcon />,
     requiredIAMRoles: new Set<string>(["read:Analytics"]),
   },
   {
@@ -59,7 +75,8 @@ const navMenu: Array<NavMenu> = [
     pathRegex: "^/console/attendees(/.*)?$",
     route: "/attendees",
     childRoutes: [],
-    icon: "UsersIcon",
+    icon: <O_AcademicCapIcon />,
+    activeIcon: <S_AcademicCapIcon />,
     requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
   },
   {
@@ -67,7 +84,8 @@ const navMenu: Array<NavMenu> = [
     pathRegex: "^/console/account/manager(/.*)?$",
     route: "/account/manager",
     childRoutes: [],
-    icon: "SquaresPlusIcon",
+    icon: <O_UsersIcon />,
+    activeIcon: <S_UsersIcon />,
     requiredIAMRoles: new Set<string>(["write:Account"]),
   },
   {
@@ -75,7 +93,8 @@ const navMenu: Array<NavMenu> = [
     pathRegex: "^/console/settings(/.*)?$",
     route: "/settings",
     childRoutes: ["/ground", "/instructions"],
-    icon: "Cog6ToothIcon",
+    icon: <O_Cog6ToothIcon />,
+    activeIcon: <S_Cog6ToothIcon />,
     requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
   },
 ];
