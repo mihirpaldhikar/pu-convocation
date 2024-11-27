@@ -25,19 +25,38 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configure AWS credentials
+        id: credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.DEPLOYMENT_ARN }}
           aws-region: ${{ env.REGION }}
+          output-credentials: true
 
       - name: Login to Amazon ECR Private
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Write credentials to file
+        run: |
+          if [ -d "${{ github.workspace }}/.aws" ]; then
+            echo "Folder 'aws' already exists. Skipping creation."
+          else
+            mkdir -p ${{ github.workspace }}/.aws
+          fi
+          echo "[default]" > ${{ github.workspace }}/.aws/credentials
+          echo "aws_access_key_id = ${{ steps.credentials.outputs.aws-access-key-id  }}" >> ${{ github.workspace }}/.aws/credentials
+          echo "aws_secret_access_key = ${{ steps.credentials.outputs.aws-secret-access-key }}" >> ${{ github.workspace }}/.aws/credentials
+          echo "aws_session_token = ${{ steps.credentials.outputs.aws-session-token }}" >> ${{ github.workspace }}/.aws/credentials
+
+
       - name: Download task definition
         run: |
-          mkdir .aws
-          aws ecs describe-task-definition --task-definition ${{ env.TASK }} --query taskDefinition > .aws/task-definition.json
+          if [ -d "${{ github.workspace }}/.aws" ]; then
+            echo "Folder 'aws' already exists. Skipping creation."
+          else
+            mkdir -p ${{ github.workspace }}/.aws
+          fi
+          aws ecs describe-task-definition --task-definition ${{ env.TASK }} --query taskDefinition > ${{ github.workspace }}/.aws/task-definition.json
 
 
       - name: 'Write Env File'
@@ -60,7 +79,7 @@ jobs:
           REPOSITORY: puconvocation/${{ env.SERVICE }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --secret id=aws,src=$HOME/.aws/credentials --build-arg cdn=${{ secrets.CDN }} -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build --secret id=aws,src=${{ github.workspace }}/.aws/credentials --build-arg cdn=${{ secrets.CDN }} -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
@@ -68,7 +87,7 @@ jobs:
         id: configure-task-definition
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: .aws/task-definition.json
+          task-definition: ${{ github.workspace }}/.aws/task-definition.json
           container-name: ${{ env.SERVICE }}
           image: ${{ steps.build-image.outputs.image }}
 
