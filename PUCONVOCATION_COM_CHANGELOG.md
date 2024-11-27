@@ -1,3 +1,30 @@
+## 3.0.0-beta.10 (November 27, 2024)
+
+### New:
+- Static assets are now served by CloudFront CDN instead of being served by the next.js server.
+- Disable powered by header to be sent with the response.
+- The seat map is now automatically scrolled to a target seat instead of manually scrolling the row.
+- Add the ability to upload a CSV file and parse it to fill an account invitation form.
+- Implement a button to remove an entry from account invitations form.
+- Add Link to university logo in authentication and account creation forms to navigate back home.
+- Add sanity checks for IAM Policies when a CSV file is uploaded to the Account Invitations form.
+- The Designation field is now optional while creating an account.
+
+### Fixes:
+- Fix color contrast for copyright notice in authenticate route.
+- Fix an issue in which the seat map was auto scrolling even when the target seat is viewport.
+- Fix an issue in which the Attendee Table was not following sitting arrangement hierarchy.
+
+### Miscellaneous:
+- Remove shadow from the checkbox.
+- Remove shadow from the select component.
+- Refactor component structure hierarchy of Account Manager Page.
+- Move Account Manager page from /accountmanager route to /account/manager route.
+- Rename Invitation From to AccountCreation From.
+- Improve UI consistency and visual hierarchy for the settings pages.
+- Temporarily remove instruction tab in settings.
+- Refactor Attendee Control-plane UI to match with the design system.
+
 ## 3.0.0-beta.9 (November 26, 2024)
 
 ### Miscellaneous:
