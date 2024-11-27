@@ -1,6 +1,16 @@
+## 3.0.0-beta.12 (November 28, 2024)
+
+### Miscellaneous:
+
+- The DynamicIcon component was removed to reduce the overall bundle size.
+- Refactor the Dialog component to comply with the design system.
+- Refactor console home page and analytics page to be rendered on a client instead of server rendered inorder to improve
+  performance.
+
 ## 3.0.0-beta.11 (November 27, 2024)
 
 ### New:
+
 - Static assets are now served by CloudFront CDN instead of being served by the next.js server.
 - Disable powered by header to be sent with the response.
 - The seat map is now automatically scrolled to a target seat instead of manually scrolling the row.
@@ -11,11 +21,13 @@
 - The Designation field is now optional while creating an account.
 
 ### Fixes:
+
 - Fix color contrast for copyright notice in authenticate route.
 - Fix an issue in which the seat map was auto scrolling even when the target seat is viewport.
 - Fix an issue in which the Attendee Table was not following sitting arrangement hierarchy.
 
 ### Miscellaneous:
+
 - Remove shadow from the checkbox.
 - Remove shadow from the select component.
 - Refactor component structure hierarchy of Account Manager Page.
@@ -28,32 +40,39 @@
 ## 3.0.0-beta.9 (November 26, 2024)
 
 ### Miscellaneous:
+
 - Refactor Seat Map to be rendered in ascending order instead of descending order. Also Refactor UI for active row.
 
 ## 3.0.0-beta.8 (November 23, 2024)
 
 ### Fixes:
+
 - Fix an issue in which the sendInvitation method of AuthController.ts was calling the wrong API endpoint URL.
 
 ## 3.0.0-beta.7 (November 23, 2024)
 
 ### New:
+
 - Add an Account Manager page for managing existing accounts and send invitations for new accounts.
 
 ### Miscellaneous:
+
 - Remove unnecessary type checks and validations for Response DTO.
 - Improve layout sizes for a better UI.
 
 ## 3.0.0-beta.6 (November 19, 2024)
 
 ### New:
+
 - Prevent rendering of Attendee Upload Option if the attendees are locked.
 - Add the ability to upload images in the Image Picker dialog.
 
 ### Fixes:
+
 - Fix an issue in which an exception was thrown due to id being null in Interactive Ground Mapper.
 
 ### Miscellaneous:
+
 - Refactor Image Picker into a separate component.
 
 ## 3.0.0-beta.5 (November 18, 2024)
@@ -61,7 +80,6 @@
 ### New:
 
 - Add the ability to upload attendee data in CSV file format.
-
 
 ## 3.0.0-beta.4 (November 18, 2024)
 
@@ -79,7 +97,8 @@
 
 ### Miscellaneous:
 
-- Refactor console home page by moving AnalyticsSection and AttendeeSection components outside the default function inorder to prevent re-rendering if state inside the default function changes.
+- Refactor console home page by moving AnalyticsSection and AttendeeSection components outside the default function
+  inorder to prevent re-rendering if state inside the default function changes.
 - Remove unnecessary providers from the default path module.
 
 ## 3.0.0-beta.3 (November 7, 2024)
@@ -98,12 +117,12 @@
 
 ### Fixes:
 
-- Fix an issue in which there was a missing Webauthn API Compatibility Validation in Authentication. - [Issue #10](https://github.com/mihirpaldhikar/pu-convocation/issues/10)
+- Fix an issue in which there was a missing Webauthn API Compatibility Validation in
+  Authentication. - [Issue #10](https://github.com/mihirpaldhikar/pu-convocation/issues/10)
 
 ### Miscellaneous:
 
 - Reduce build output size by minimizing the overhead associated with barrel imports.
-
 
 ## 3.0.0-beta.1 (November 2, 2024)
 
@@ -115,7 +134,6 @@
 
 - Fix an issue in which the instruction page was not rendered with proper typography.
 - Fix an issue in which the authentication was not aborted when passkey checks were interrupted by the user.
-
 
 ## 3.0.0-canary.2 (October 29, 2024)
 
@@ -192,7 +210,7 @@
 - Remove unnecessary initial account fetch while authenticating.
 - Refactor the next.config file to use TypeScript instead of Modular JS.
 - Refactor codebase to use an asynchronous way to access cookies inorder to comply with BREAKING-CHANGES made in Next.js
-  15.
+    15.
 - Refactor params and searchParams in props interfaces to use Promises inorder to comply with BREAKING-CHANGES made by
   next.js 15 for accessing params and searchParams.
 - Refactor middleware.ts to cache the account details, thus reducing api calls to the auth-service.
