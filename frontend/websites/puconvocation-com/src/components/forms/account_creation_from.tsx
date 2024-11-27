@@ -27,7 +27,7 @@ import {
 import { useToast } from "@hooks/index";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useRouter } from "@i18n/routing";
+import { Link, useRouter } from "@i18n/routing";
 import { AuthController } from "@controllers/index";
 import { ErrorResponse } from "@dto/Response";
 
@@ -83,17 +83,19 @@ export default function AccountCreationForm({
         <ProgressBar type={"linear"} />
       </div>
       <div className={"space-y-3 pt-20"}>
-        <Image
-          src={
-            "https://assets.puconvocation.com/logos/full_university_logo.svg"
-          }
-          fetchPriority={"high"}
-          priority={true}
-          alt={"Parul University"}
-          width={250}
-          height={150}
-          className={"h-auto w-64"}
-        />
+        <Link href="/">
+          <Image
+            src={
+              "https://assets.puconvocation.com/logos/full_university_logo.svg"
+            }
+            fetchPriority={"high"}
+            priority={true}
+            alt={"Parul University"}
+            width={250}
+            height={150}
+            className={"h-auto w-64"}
+          />
+        </Link>
         <div className={"grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-0"}>
           <div className={"space-y-3 pt-5"}>
             <h1 className={"text-3xl font-bold"}>

@@ -12,7 +12,7 @@
  */
 "use client";
 import { JSX, useEffect, useState } from "react";
-import { useRouter } from "@i18n/index";
+import { Link, useRouter } from "@i18n/index";
 import { StatusCode } from "@enums/StatusCode";
 import { PasskeyIcon } from "@components/graphics";
 import { Button, Input, ProgressBar } from "@components/ui";
@@ -72,17 +72,19 @@ export default function AuthenticationForm({
         <ProgressBar type={"linear"} />
       </div>
       <div className={"space-y-3 pt-20"}>
-        <Image
-          src={
-            "https://assets.puconvocation.com/logos/full_university_logo.svg"
-          }
-          fetchPriority={"high"}
-          priority={true}
-          alt={"Parul University"}
-          width={250}
-          height={150}
-          className={"h-auto w-64"}
-        />
+        <Link href="/">
+          <Image
+            src={
+              "https://assets.puconvocation.com/logos/full_university_logo.svg"
+            }
+            fetchPriority={"high"}
+            priority={true}
+            alt={"Parul University"}
+            width={250}
+            height={150}
+            className={"h-auto w-64"}
+          />
+        </Link>
         <div className={"grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-0"}>
           <div className={"space-y-3 pt-5"}>
             <h1 className={"text-3xl font-bold"}>
