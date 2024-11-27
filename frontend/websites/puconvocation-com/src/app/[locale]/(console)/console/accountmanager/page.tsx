@@ -275,13 +275,15 @@ export default function AccountManager() {
         </div>
 
         {/* Add New Account */}
-        <div className="rounded-3xl border-none bg-card text-card-foreground shadow-none">
-          <div className="flex flex-col space-y-1.5 p-4 md:p-6">
-            <div className="font-semibold leading-none tracking-tight">
-              Add New Account
-            </div>
-          </div>
-          <div className="p-4 pt-0 md:p-6 md:pt-0">
+        <Card>
+          <CardHeader>
+            <CardTitle>Send Invitations</CardTitle>
+            <CardDescription>
+              Add email addresses and select what operations should be allowed
+              for the user.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className={"px-3 lg:px-6"}>
             <div className="flex flex-col space-y-2">
               <Formik
                 initialValues={{
@@ -412,7 +414,7 @@ export default function AccountManager() {
                             )}
                             <div
                               className={
-                                "relative cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
+                                "relative my-3 cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
                               }
                             >
                               <div
@@ -468,7 +470,9 @@ export default function AccountManager() {
                               />
                             </div>
                             <div
-                              className={"flex w-full justify-end space-x-4"}
+                              className={
+                                "flex w-full justify-end space-x-4 pt-6"
+                              }
                             >
                               <Button
                                 variant={"secondary"}
@@ -508,18 +512,18 @@ export default function AccountManager() {
                 )}
               </Formik>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Account List */}
         <Card>
           <CardHeader>
-            <CardTitle>Account List</CardTitle>
+            <CardTitle>Accounts</CardTitle>
             <CardDescription>
               Manage existing accounts and their permissions.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-3 lg:px-6">
             {isLoading ? (
               <Fragment>
                 <Skeleton className={"h-10 w-full"}></Skeleton>
