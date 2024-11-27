@@ -17,13 +17,16 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM base AS builder
-ARG accessKey
-ARG secretKey
+
 ARG cdn
+
 RUN apk add --no-cache aws-cli
+
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
@@ -32,7 +35,9 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-RUN aws configure set aws_access_key_id $accessKey && aws configure set aws_secret_access_key $secretKey && aws s3 mv --recursive --cache-control='public, max-age=31536000, immutable' \
+RUN --mount=type=secret,id=aws \
+        AWS_SHARED_CREDENTIALS_FILE=/run/secrets/aws \
+    aws s3 mv --recursive --cache-control='public, max-age=31536000, immutable' \
            /app/.next/static s3://$cdn/_next/static
 
 # Production image, copy all the files and run next
