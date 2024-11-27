@@ -1,4 +1,4 @@
-## 1.0.0-beta.5 (November 27, 2024)
+## 1.0.0-beta.6 (November 27, 2024)
 
 ### Miscellaneous:
 
