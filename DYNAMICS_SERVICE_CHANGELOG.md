@@ -1,24 +1,35 @@
+## 1.0.0-beta.5 (November 27, 2024)
+
+### Miscellaneous:
+
+- Rename lambda invocation of seat-allocation-job to attendee-job to comply with the latest project changes.
+
 ## 1.0.0-beta.4 (November 26, 2024)
 
 ### Miscellaneous:
+
 - Remove redundant environmental variables from Environment.kt
 
 ## 1.0.0-beta.3 (November 23, 2024)
 
 ### New:
+
 - Seats are now allocated after attendee data is uploaded instead of allocating seats when data is locked.
 - Upgrade to JDK v22 for building docker container image.
 
 ### Miscellaneous:
+
 - Refactor AttendeeController.uploadAttendees method to check file extension with Apache FilenameUtils.
 - Add suspended property in AccountWithIAMRoles.kt
 
 ## 1.0.0-beta.2 (November 19, 2024)
 
 ### New:
+
 - Transaction Requests are now added to AWS SQS and processed by Lambda functions for higher throughput.
 
 ### Fixes:
+
 - Fix an issue in which cache was not being invalidated after an object for uploaded to S3 bucket.
 
 ## 1.0.0-beta.1 (November 18, 2024)
@@ -26,7 +37,8 @@
 ### Breaking Changes:
 
 - Migrate from Google Cloud Storage to AWS S3. Also, remove GCP from Environment.kt along with redundant fields.
-- Update the attendee field in RemoteConfig entity to use timestamps for preventing unlocking of the lists before 3 days from when it was locked.
+- Update the attendee field in RemoteConfig entity to use timestamps for preventing unlocking of the lists before 3 days
+  from when it was locked.
 
 ### Fixes:
 
@@ -60,7 +72,8 @@
 - Add Service Authorization to comply with the latest API changes in auth-service.
 - Fix an issue in which Pagination for Attendees List was not working as expected.
 - Fix missing Jackson Annotations for marshaling in ChangeRemoteConfigRequest.kt
-- Fix an issue in which SocketException with Broken Pipe Message was thrown due to missing implementation of connection closing.
+- Fix an issue in which SocketException with Broken Pipe Message was thrown due to missing implementation of connection
+  closing.
 - Fix Enclosure Typo in entities and DTO.
 
 ### Miscellaneous:
@@ -70,5 +83,6 @@
 - Refactor WebsiteConfig inorder to comply with the latest changes to Enclosure Mappings.
 - Refactor Repositories to manage cache instead of controllers.
 - Refactor AuthService to comply with the latest IAM policy changes.
-- Migrate from GSON to Jackson inorder to achieve better marshaling and unmarshalling performance of the entities and DTOs.
+- Migrate from GSON to Jackson inorder to achieve better marshaling and unmarshalling performance of the entities and
+  DTOs.
 - Refactor codebase to use the new Result construct for better communication between the layers.
