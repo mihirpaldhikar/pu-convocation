@@ -93,12 +93,12 @@ export default function AttendeeControlPlane({
         ) : (
           <div
             className={
-              "relative cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
+              "relative cursor-pointer rounded-xl border border-dashed border-neutral-600 py-7"
             }
           >
             <div
               className={
-                "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-red-50"
+                "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-neutral-50"
               }
             >
               <div
@@ -106,7 +106,7 @@ export default function AttendeeControlPlane({
                   "flex h-full cursor-pointer flex-col items-center justify-center space-y-3"
                 }
               >
-                <div className={"flex space-x-3 text-red-600"}>
+                <div className={"flex space-x-3 text-neutral-700"}>
                   <DynamicIcon icon={"ArrowUpTrayIcon"} />
                   <h6 className={"font-medium"}>Upload Attendee List</h6>
                 </div>
