@@ -391,6 +391,21 @@ export default function AccountManager() {
                                         })}
                                       </div>
                                     )}
+                                    <div
+                                      className={
+                                        "flex items-center justify-end"
+                                      }
+                                    >
+                                      <Button
+                                        type={"button"}
+                                        variant={"outline"}
+                                        onClick={() => {
+                                          arrayHelpers.remove(index);
+                                        }}
+                                      >
+                                        Remove
+                                      </Button>
+                                    </div>
                                   </div>
                                 );
                               },
