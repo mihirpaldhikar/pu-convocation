@@ -32,20 +32,21 @@ class CloudStorage(
     private val mapper: ObjectMapper,
 ) {
 
-    private val s3Client = S3Client {
-        region = "ap-south-1"
-    }
-
     suspend fun uploadObject(
         destinationPath: String,
         inputStream: ByteArray,
     ): String? {
         return try {
-            s3Client.use {
+            S3Client {
+                region = "ap-south-1"
+            }.use {
                 it.putObject(PutObjectRequest {
                     bucket = aws.s3.assets
                     key = destinationPath
-                    body = ByteStream.fromInputStream(inputStream.inputStream(), inputStream.inputStream().available().toLong())
+                    body = ByteStream.fromInputStream(
+                        inputStream.inputStream(),
+                        inputStream.inputStream().available().toLong()
+                    )
                 })
             }
             cache.invalidateWithPattern("cloudStorage:*")
@@ -62,7 +63,9 @@ class CloudStorage(
         }
         val objects = mutableListOf<String>()
 
-        s3Client.use { s3Client ->
+        S3Client {
+            region = "ap-south-1"
+        }.use { s3Client ->
             try {
                 var request = ListObjectsV2Request {
                     bucket = aws.s3.assets
