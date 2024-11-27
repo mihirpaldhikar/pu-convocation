@@ -19,7 +19,7 @@ export const PROTECTED_ROUTES: Array<ProtectedRoute> = [
     requiredIAMPermissions: null,
   },
   {
-    pathRegex: /^\/console\/account(\/.*)?$/,
+    pathRegex: /^\/console\/account$/,
     requiredIAMPermissions: null,
   },
   {
@@ -42,7 +42,7 @@ export const PROTECTED_ROUTES: Array<ProtectedRoute> = [
     requiredIAMPermissions: new Set<string>(["write:Transaction"]),
   },
   {
-    pathRegex: /^\/console\/accountmanager(\/.*)?$/,
+    pathRegex: /^\/console\/account\/manager(\/.*)?$/,
     requiredIAMPermissions: new Set<string>(["write:Account"]),
   },
 ];

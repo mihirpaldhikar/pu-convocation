@@ -64,8 +64,8 @@ const navMenu: Array<NavMenu> = [
   },
   {
     name: "Account Manager",
-    pathRegex: "^/console/accountmanager(/.*)?$",
-    route: "/accountmanager",
+    pathRegex: "^/console/account/manager(/.*)?$",
+    route: "/account/manager",
     childRoutes: [],
     icon: "SquaresPlusIcon",
     requiredIAMRoles: new Set<string>(["write:Account"]),
