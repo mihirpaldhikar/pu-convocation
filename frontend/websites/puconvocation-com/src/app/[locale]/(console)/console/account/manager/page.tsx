@@ -462,7 +462,12 @@ export default function AccountManager() {
                                             email: results.data[i][0],
                                             iamRoles: results.data[i][1]
                                               .split(",")
-                                              .map((r) => r.trim()),
+                                              .map((r) => r.trim())
+                                              .filter((r) =>
+                                                policies
+                                                  ?.map((p) => p.role)
+                                                  .includes(r),
+                                              ),
                                           });
                                         }
                                       },
