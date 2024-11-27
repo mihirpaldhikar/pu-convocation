@@ -17,7 +17,10 @@ import { JSX, useState } from "react";
 import { Enclosure } from "@dto/index";
 import Seat from "./seat";
 import { useInView } from "react-intersection-observer";
-import { smoothScrollLeftWithinDiv } from "@lib/attendee_utils";
+import {
+  isElementInViewport,
+  smoothScrollLeftWithinDiv,
+} from "@lib/attendee_utils";
 
 interface SeatMapProps {
   enclosure: Enclosure;
@@ -45,8 +48,10 @@ export default function SeatMap({
         const activeSeat = document.getElementById(
           `active-${activeArrangement.seat}`,
         ) as HTMLElement;
-        const x = activeSeat.getBoundingClientRect().x;
-        smoothScrollLeftWithinDiv(rowContainer, x, 1000);
+        if (!isElementInViewport(activeSeat, rowContainer)) {
+          const x = activeSeat.getBoundingClientRect().x;
+          smoothScrollLeftWithinDiv(rowContainer, x, 1000);
+        }
       }
     },
   });

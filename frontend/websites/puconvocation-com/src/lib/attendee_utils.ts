@@ -37,3 +37,18 @@ export function smoothScrollLeftWithinDiv(
 function easeInOutQuad(t: number): number {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 }
+
+export function isElementInViewport(
+  child: HTMLElement,
+  parent: HTMLElement,
+): boolean {
+  const childRect = child.getBoundingClientRect();
+  const parentRect = parent.getBoundingClientRect();
+
+  return (
+    childRect.top >= parentRect.top &&
+    childRect.left >= parentRect.left &&
+    childRect.bottom <= parentRect.bottom &&
+    childRect.right <= parentRect.right
+  );
+}
