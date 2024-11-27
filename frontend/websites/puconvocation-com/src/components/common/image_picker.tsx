@@ -73,7 +73,7 @@ export default function ImagePicker({
                 <div className={"relative flex-1 pr-10"}>
                   <div
                     className={
-                      "absolute right-10 top-[-1rem] rounded-2xl bg-black px-3 py-2 text-xs text-white"
+                      "absolute right-0 top-[-0.3rem] w-fit rounded-2xl bg-black px-3 py-2 text-xs text-white"
                     }
                   >
                     Upload
@@ -99,12 +99,12 @@ export default function ImagePicker({
           </DialogTitle>
           <DialogDescription
             asChild={true}
-            className={"max-h-72 w-full overflow-y-auto pt-10"}
+            className={"max-h-72 w-full overflow-y-auto pt-2"}
           >
             {imageLibraryLoading ? (
               <Fragment>Loading...</Fragment>
             ) : imageLibrary !== null && imageLibrary !== undefined ? (
-              <div className={"grid w-full grid-cols-3 gap-4"}>
+              <div className={"grid w-full grid-cols-2 gap-4 lg:grid-cols-3"}>
                 {imageLibrary.map((image) => {
                   return (
                     <DialogClose
