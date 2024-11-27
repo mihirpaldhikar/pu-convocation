@@ -13,7 +13,7 @@
 
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+import {nodeResolve} from "@rollup/plugin-node-resolve";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
@@ -26,6 +26,7 @@ const rollupConfiguration = [
             dir: "dist",
             format: "cjs",
         },
+        external: ["@aws-sdk/client-sqs"],
         plugins: [
             peerDepsExternal(),
             json(),

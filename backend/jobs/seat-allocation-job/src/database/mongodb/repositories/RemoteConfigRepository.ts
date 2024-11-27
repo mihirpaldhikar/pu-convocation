@@ -30,4 +30,12 @@ export default class RemoteConfigRepository implements RemoteConfigDatasource {
 
     return systemConfig.groundMappings;
   }
+
+  async isAttendeeListLocked(): Promise<boolean> {
+    const systemConfig = await this.remoteConfigCollection.findOne({
+      active: true,
+    });
+
+    return systemConfig.attendees.locked;
+  }
 }

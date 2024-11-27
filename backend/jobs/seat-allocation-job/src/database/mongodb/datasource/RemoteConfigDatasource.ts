@@ -15,4 +15,6 @@ import { Enclosure } from "../entities/index.js";
 
 export default interface RemoteConfigDatasource {
   getGroundMappings(): Promise<Array<Enclosure>>;
+
+  isAttendeeListLocked(): Promise<boolean>;
 }

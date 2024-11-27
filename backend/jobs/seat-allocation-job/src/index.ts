@@ -17,67 +17,110 @@ import {
 } from "./database/index.js";
 import { totalEnclosureSeats } from "./utils/index.js";
 import { Handler } from "aws-lambda";
+import {
+  SendMessageBatchCommand,
+  SendMessageBatchRequestEntry,
+  SQSClient,
+} from "@aws-sdk/client-sqs";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();
   const remoteConfigRepository = new RemoteConfigRepository();
 
+  const isAttendeeListLocked =
+    await remoteConfigRepository.isAttendeeListLocked();
   const attendees = await attendeeRepository.getAttendees();
 
-  let totalAttendees = attendees.length;
+  if (!isAttendeeListLocked) {
+    let totalAttendees = attendees.length;
 
-  const enclosureMapping = await remoteConfigRepository.getGroundMappings();
-  let totalSeats = 0;
-  for (let enclosure of enclosureMapping) {
-    totalSeats += totalEnclosureSeats(enclosure);
-  }
-
-  if (totalAttendees > totalSeats) {
-    return;
-  }
-
-  let allocatedSeats = 0;
-
-  for (let enclosure of enclosureMapping) {
-    if (totalAttendees === 0) {
-      break;
+    const enclosureMapping = await remoteConfigRepository.getGroundMappings();
+    let totalSeats = 0;
+    for (let enclosure of enclosureMapping) {
+      totalSeats += totalEnclosureSeats(enclosure);
     }
 
-    for (let row of enclosure.rows) {
-      const reserved = row.reserved
-        .split(",")
-        .filter((r) => !isNaN(parseInt(r)));
+    if (totalAttendees > totalSeats) {
+      return;
+    }
 
-      const seats = row.end - row.start - reserved.length + 1;
-      const attendeesForCurrentRow = attendees.slice(
-        allocatedSeats,
-        allocatedSeats + seats,
-      );
+    let allocatedSeats = 0;
 
-      totalAttendees -= attendeesForCurrentRow.length;
-
-      if (attendeesForCurrentRow.length === 0) {
+    for (let enclosure of enclosureMapping) {
+      if (totalAttendees === 0) {
         break;
       }
 
-      let i = 0;
-      for (let seat of Array.from(
-        { length: row.end - row.start + 1 },
-        (_, k) => k + row.start,
-      )) {
-        if (reserved.includes(seat.toString())) continue;
+      for (let row of enclosure.rows) {
+        const reserved = row.reserved
+          .split(",")
+          .filter((r) => !isNaN(parseInt(r)));
 
-        await attendeeRepository.updateAttendeeAllocation({
-          ...attendeesForCurrentRow[i],
-          allocation: {
-            enclosure: enclosure.letter,
-            seat: seat.toString(),
-            row: row.letter,
-          },
-        });
-        ++i;
+        const seats = row.end - row.start - reserved.length + 1;
+        const attendeesForCurrentRow = attendees.slice(
+          allocatedSeats,
+          allocatedSeats + seats,
+        );
+
+        totalAttendees -= attendeesForCurrentRow.length;
+
+        if (attendeesForCurrentRow.length === 0) {
+          break;
+        }
+
+        let i = 0;
+        for (let seat of Array.from(
+          { length: row.end - row.start + 1 },
+          (_, k) => k + row.start,
+        )) {
+          if (reserved.includes(seat.toString())) continue;
+
+          await attendeeRepository.updateAttendeeAllocation({
+            ...attendeesForCurrentRow[i],
+            allocation: {
+              enclosure: enclosure.letter,
+              seat: seat.toString(),
+              row: row.letter,
+            },
+          });
+          ++i;
+        }
+        allocatedSeats += seats;
       }
-      allocatedSeats += seats;
+    }
+  } else {
+    const sqsClient = new SQSClient();
+    const EMAIL_QUEUE_URL = process.env.EMAIL_QUEUE_URL!!;
+    const BATCH_SIZE = 10;
+
+    for (let i = 0; i < attendees.length; i += BATCH_SIZE) {
+      const attendeeBatch = attendees.splice(i, i + BATCH_SIZE);
+      const messageBatch: Array<SendMessageBatchRequestEntry> = [];
+      for (let attendee of attendeeBatch) {
+        messageBatch.push({
+          Id: attendee._id,
+          MessageGroupId: "emails",
+          MessageBody: JSON.stringify({
+            type: "passcode",
+            sender: "PU Convocation System <noreply@puconvocation.com>",
+            recipient: `${attendee._id}@paruluniversity.ac.in`,
+            replyTo: "admin@puconvocation.com",
+            payload: {
+              passcode: attendee.verificationCode,
+              passURL: `https://puconvocation.com/attendee/${attendee._id}`,
+              recipientName: attendee.studentName,
+              convocationNumber: "8",
+            },
+          }),
+        });
+      }
+
+      await sqsClient.send(
+        new SendMessageBatchCommand({
+          QueueUrl: EMAIL_QUEUE_URL,
+          Entries: messageBatch,
+        }),
+      );
     }
   }
 };
