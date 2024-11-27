@@ -33,13 +33,13 @@ import { ErrorResponse } from "@dto/Response";
 
 const authController = new AuthController();
 
-interface InvitationFormProps {
+interface AccountCreationFormProps {
   invitationToken: string;
 }
 
-export default function InvitationForm({
+export default function AccountCreationForm({
   invitationToken,
-}: Readonly<InvitationFormProps>): JSX.Element {
+}: Readonly<AccountCreationFormProps>): JSX.Element {
   const formTranslations = useTranslations("components.forms.invitationForm");
 
   const router = useRouter();

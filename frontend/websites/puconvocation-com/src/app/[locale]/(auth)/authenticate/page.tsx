@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 import { JSX } from "react";
-import { AuthenticationForm, InvitationFrom } from "@components/forms";
+import { AccountCreationForm, AuthenticationForm } from "@components/forms";
 import { getTranslations } from "next-intl/server";
 import { LanguageSelector } from "@components/common";
 
@@ -39,7 +39,7 @@ export default async function AuthenticationPage({
         ) ? (
           <AuthenticationForm redirect={redirect} />
         ) : (
-          <InvitationFrom invitationToken={invitationToken} />
+          <AccountCreationForm invitationToken={invitationToken} />
         )}
         <LanguageSelector />
         <div className={"text-center"}>

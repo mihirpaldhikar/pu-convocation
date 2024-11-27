@@ -13,4 +13,4 @@
 
 export { default as IdentifierForm } from "./identifier_form";
 export { default as AuthenticationForm } from "./authentication_form";
-export { default as InvitationFrom } from "./invitation_from";
+export { default as AccountCreationForm } from "./account_creation_from";
