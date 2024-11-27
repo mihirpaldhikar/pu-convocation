@@ -34,7 +34,7 @@ export default function SettingsLayout({
   const path = usePathname();
 
   return (
-    <div className="flex min-h-screen flex-col space-y-10 p-4 md:p-10">
+    <div className="flex min-h-screen flex-col p-4 md:p-10">
       {/* Header */}
       <div className="space-y-3">
         <h1 className="flex items-center text-2xl font-bold">
@@ -46,7 +46,7 @@ export default function SettingsLayout({
       </div>
 
       {/* Tabs */}
-      <div className="flex w-full items-center justify-evenly space-x-4 rounded-xl border bg-white p-1">
+      <div className="mb-3 mt-7 flex w-full items-center justify-evenly space-x-4 rounded-2xl bg-white p-1">
         {tabs.map((tab) => (
           <Link
             key={tab.name}
@@ -55,7 +55,7 @@ export default function SettingsLayout({
               path === `/console/settings${tab.route}`
                 ? "bg-red-100 text-red-800"
                 : "text-gray-500 hover:bg-gray-200"
-            } flex w-full items-center justify-center rounded-lg p-1 font-semibold transition-all duration-200`}
+            } flex w-full items-center justify-center rounded-xl p-1 font-semibold transition-all duration-200`}
           >
             {tab.name}
           </Link>
@@ -63,7 +63,7 @@ export default function SettingsLayout({
       </div>
 
       {/* Content */}
-      <div className="pt-5">{children}</div>
+      <div className="">{children}</div>
     </div>
   );
 }

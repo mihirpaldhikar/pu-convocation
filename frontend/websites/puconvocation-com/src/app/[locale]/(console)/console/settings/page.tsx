@@ -17,6 +17,13 @@ import Image from "next/image";
 import { DynamicIcon } from "@components/graphics";
 import { convertToThumbnailUrl } from "@lib/image_utils";
 import { ImagePicker } from "@components/common";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@components/ui";
 
 export default function GeneralSettingsPage(): JSX.Element {
   const { remoteConfig, dispatch } = useRemoteConfig();
@@ -54,77 +61,84 @@ export default function GeneralSettingsPage(): JSX.Element {
           }
         }}
       />
-      <div
-        className={"min-h-screen w-full rounded-xl border bg-white px-4 py-5"}
-      >
-        <section className={"space-y-5"}>
-          <h3 className={"text-2xl font-bold"}>Images</h3>
-          <div className={"space-y-5"}>
-            <h4 className={"font-xl font-semibold"}>Carousel</h4>
-            <div
-              className={"grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"}
-            >
-              {remoteConfig.images.carousel.map((image, index) => {
-                return (
-                  <div
-                    key={image.url.concat(Math.random().toString())}
-                    className={"relative"}
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.description}
-                      width={500}
-                      height={250}
-                      placeholder={"blur"}
-                      blurDataURL={convertToThumbnailUrl(image.url)}
-                      className={"rounded-xl"}
-                    />
-                    <div className={"absolute right-0 top-0 z-10 p-2"}>
-                      <div
-                        className={
-                          "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
-                        }
-                        onClick={() => {
-                          const x = remoteConfig.images.carousel;
-                          x.splice(index, 1);
-                          dispatch({
-                            type: "SET_CONFIG",
-                            payload: {
-                              config: {
-                                ...remoteConfig,
-                                images: {
-                                  ...remoteConfig.images,
-                                  carousel: [...x],
-                                },
-                              },
-                            },
-                          });
-                        }}
-                      >
-                        <DynamicIcon icon={"XMarkIcon"} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
+      <Card>
+        <CardHeader>
+          <CardTitle>Images</CardTitle>
+          <CardDescription>
+            Customize images shown on the home page.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <section className={"space-y-5"}>
+            <div className={"space-y-5"}>
+              <h6>Carousel</h6>
               <div
                 className={
-                  "flex min-h-60 w-[22.4rem] cursor-pointer items-center justify-center rounded-xl bg-red-100"
+                  "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                 }
-                onClick={async () => {
-                  setSelectedImageSection("carousel");
-                  setShowImagePicker(true);
-                }}
               >
-                <div className={"rounded-full bg-red-300 p-4"}>
-                  <DynamicIcon icon={"PlusIcon"} className={"text-red-800"} />
+                {remoteConfig.images.carousel.map((image, index) => {
+                  return (
+                    <div
+                      key={image.url.concat(Math.random().toString())}
+                      className={"relative"}
+                    >
+                      <Image
+                        src={image.url}
+                        alt={image.description}
+                        width={500}
+                        height={250}
+                        placeholder={"blur"}
+                        blurDataURL={convertToThumbnailUrl(image.url)}
+                        className={"rounded-xl"}
+                      />
+                      <div className={"absolute right-0 top-0 z-10 p-2"}>
+                        <div
+                          className={
+                            "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
+                          }
+                          onClick={() => {
+                            const x = remoteConfig.images.carousel;
+                            x.splice(index, 1);
+                            dispatch({
+                              type: "SET_CONFIG",
+                              payload: {
+                                config: {
+                                  ...remoteConfig,
+                                  images: {
+                                    ...remoteConfig.images,
+                                    carousel: [...x],
+                                  },
+                                },
+                              },
+                            });
+                          }}
+                        >
+                          <DynamicIcon icon={"XMarkIcon"} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div
+                  className={
+                    "flex min-h-60 w-[22.4rem] cursor-pointer items-center justify-center rounded-xl bg-red-100"
+                  }
+                  onClick={async () => {
+                    setSelectedImageSection("carousel");
+                    setShowImagePicker(true);
+                  }}
+                >
+                  <div className={"rounded-full bg-red-300 p-4"}>
+                    <DynamicIcon icon={"PlusIcon"} className={"text-red-800"} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      </div>
+          </section>
+        </CardContent>
+      </Card>
     </Fragment>
   );
 }

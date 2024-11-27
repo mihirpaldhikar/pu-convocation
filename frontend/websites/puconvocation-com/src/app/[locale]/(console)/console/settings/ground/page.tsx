@@ -16,7 +16,15 @@ import { useRemoteConfig } from "@hooks/index";
 import { Enclosure } from "@dto/index";
 import { GroundMapper } from "@components/attendee";
 import { Field, FieldArray, Form, Formik } from "formik";
-import { Button, Input } from "@components/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+} from "@components/ui";
 import { DynamicIcon } from "@components/graphics";
 
 function nextChar(input: string): string {
@@ -73,118 +81,105 @@ export default function GroundSettingsPage(): JSX.Element {
   });
 
   return (
-    <div
-      className={
-        "flex h-auto w-full flex-col rounded-xl border bg-white px-4 py-5 md:h-[130vh] md:overflow-hidden"
-      }
-    >
-      <h3 className={"py-5 text-center text-2xl font-black"}>
-        Total Seats are {totalSeats}
-      </h3>
-      <Formik
-        enableReinitialize={true}
-        initialValues={enclosureData}
-        onSubmit={(values) => {
-          dispatch({
-            type: "SET_ENCLOSURE",
-            payload: {
-              index: remoteConfig.groundMappings.findIndex(
-                (e) => e.letter === values.letter,
-              )!!,
-              enclosure: values,
-            },
-          });
-        }}
-      >
-        {({ values, handleSubmit }) => (
-          <div className={"grid h-full grid-cols-1 gap-4 md:grid-cols-2"}>
-            <div className={"flex flex-col items-center justify-center"}>
-              <GroundMapper
-                className={"h-full w-full"}
-                activeColor={"#dc2626"}
-                activeEnclosure={enclosureData.letter}
-                onEnclosureClicked={async (id) => {
-                  if (id !== null) {
-                    setEnclosureData(
-                      remoteConfig.groundMappings.find(
-                        (e) => e.letter === id,
-                      )!!,
-                    );
-                  }
-                }}
-              />
-            </div>
-            <div>
-              <div className={"rounded-xl border py-4"}>
-                <Form>
-                  <div
-                    className={
-                      "mx-3 mb-5 flex items-center justify-between rounded-2xl bg-red-100 px-4 py-5 text-white"
+    <Card>
+      <CardHeader>
+        <CardTitle>Ground Mappings</CardTitle>
+        <CardDescription>
+          There are total of {totalSeats} seats available on the ground.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className={"px-3 lg:px-5"}>
+        <Formik
+          enableReinitialize={true}
+          initialValues={enclosureData}
+          onSubmit={(values) => {
+            dispatch({
+              type: "SET_ENCLOSURE",
+              payload: {
+                index: remoteConfig.groundMappings.findIndex(
+                  (e) => e.letter === values.letter,
+                )!!,
+                enclosure: values,
+              },
+            });
+          }}
+        >
+          {({ values, handleSubmit }) => (
+            <div className={"grid h-full grid-cols-1 gap-4 md:grid-cols-2"}>
+              <div className={"flex flex-col items-center justify-center"}>
+                <GroundMapper
+                  className={"h-full w-full"}
+                  activeColor={"#dc2626"}
+                  activeEnclosure={enclosureData.letter}
+                  onEnclosureClicked={async (id) => {
+                    if (id !== null) {
+                      setEnclosureData(
+                        remoteConfig.groundMappings.find(
+                          (e) => e.letter === id,
+                        )!!,
+                      );
                     }
-                  >
-                    <div>
-                      <h4 className={"text-xl font-bold text-red-600"}>
-                        Enclosure: {values.letter}
-                      </h4>
-                      <p className={"text-xs text-black"}>
-                        Enter from: {values.entryDirection}
-                      </p>
+                  }}
+                />
+              </div>
+              <div>
+                <div className={"rounded-xl border py-4"}>
+                  <Form>
+                    <div
+                      className={
+                        "mx-3 mb-5 flex items-center justify-between rounded-2xl bg-red-100 px-4 py-5 text-white"
+                      }
+                    >
+                      <div>
+                        <h4 className={"text-xl font-bold text-red-600"}>
+                          Enclosure: {values.letter}
+                        </h4>
+                        <p className={"text-xs text-black"}>
+                          Enter from: {values.entryDirection}
+                        </p>
+                      </div>
+                      <div>
+                        <p className={"font-medium text-black"}>
+                          Seats: {totalEnclosureSeats(values)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className={"font-medium text-black"}>
-                        Seats: {totalEnclosureSeats(values)}
-                      </p>
-                    </div>
-                  </div>
-                  <FieldArray name={"rows"}>
-                    {(arrayHelpers) => (
-                      <div
-                        className={
-                          "h-[90vh] w-full space-y-4 overflow-y-auto px-5"
-                        }
-                      >
-                        {values.rows.map((_row, index) => {
-                          return (
-                            <div
-                              key={index}
-                              className={
-                                "relative space-y-3 rounded-2xl border px-3 py-2"
-                              }
-                            >
-                              <div className={"absolute right-0 top-0 p-3"}>
-                                <div
-                                  className={
-                                    "cursor-pointer rounded-full bg-red-100 p-1"
-                                  }
-                                  onClick={() => {
-                                    arrayHelpers.remove(index);
-                                  }}
-                                >
-                                  <DynamicIcon
-                                    icon={"XMarkIcon"}
-                                    className={"text-red-600"}
-                                  />
-                                </div>
-                              </div>
+                    <FieldArray name={"rows"}>
+                      {(arrayHelpers) => (
+                        <div
+                          className={
+                            "h-[90vh] w-full space-y-4 overflow-y-auto px-3 lg:px-5"
+                          }
+                        >
+                          {values.rows.map((_row, index) => {
+                            return (
                               <div
+                                key={index}
                                 className={
-                                  "flex w-full items-center justify-center"
+                                  "relative space-y-3 rounded-2xl border px-3 py-2"
                                 }
                               >
-                                <Field name={`rows[${index}].letter`}>
-                                  {({ field }: { field: any }) => (
-                                    <Input
-                                      {...field}
-                                      className={"w-20 text-center"}
+                                <div className={"absolute right-0 top-0 p-3"}>
+                                  <div
+                                    className={
+                                      "cursor-pointer rounded-full bg-red-100 p-1"
+                                    }
+                                    onClick={() => {
+                                      arrayHelpers.remove(index);
+                                    }}
+                                  >
+                                    <DynamicIcon
+                                      icon={"XMarkIcon"}
+                                      className={"text-red-600"}
                                     />
-                                  )}
-                                </Field>
-                              </div>
-                              <div
-                                className={"flex items-center justify-between"}
-                              >
-                                <div>
-                                  <Field name={`rows[${index}].start`}>
+                                  </div>
+                                </div>
+                                <div
+                                  className={
+                                    "flex w-full items-center justify-center"
+                                  }
+                                >
+                                  <Field name={`rows[${index}].letter`}>
                                     {({ field }: { field: any }) => (
                                       <Input
                                         {...field}
@@ -195,59 +190,76 @@ export default function GroundSettingsPage(): JSX.Element {
                                 </div>
                                 <div
                                   className={
-                                    "mx-3 h-0.5 flex-1 rounded-full bg-red-300"
+                                    "flex items-center justify-between"
                                   }
-                                ></div>
-                                <div>
-                                  <Field name={`rows[${index}].end`}>
+                                >
+                                  <div>
+                                    <Field name={`rows[${index}].start`}>
+                                      {({ field }: { field: any }) => (
+                                        <Input
+                                          {...field}
+                                          className={"w-20 text-center"}
+                                        />
+                                      )}
+                                    </Field>
+                                  </div>
+                                  <div
+                                    className={
+                                      "mx-3 h-0.5 flex-1 rounded-full bg-red-300"
+                                    }
+                                  ></div>
+                                  <div>
+                                    <Field name={`rows[${index}].end`}>
+                                      {({ field }: { field: any }) => (
+                                        <Input
+                                          {...field}
+                                          className={"w-20 text-center"}
+                                        />
+                                      )}
+                                    </Field>
+                                  </div>
+                                </div>
+                                <div className={"flex items-center space-x-3"}>
+                                  <h6>Reserved: </h6>
+                                  <Field name={`rows[${index}].reserved`}>
                                     {({ field }: { field: any }) => (
-                                      <Input
-                                        {...field}
-                                        className={"w-20 text-center"}
-                                      />
+                                      <Input {...field} />
                                     )}
                                   </Field>
                                 </div>
                               </div>
-                              <div className={"flex items-center space-x-3"}>
-                                <h6>Reserved: </h6>
-                                <Field name={`rows[${index}].reserved`}>
-                                  {({ field }: { field: any }) => (
-                                    <Input {...field} />
-                                  )}
-                                </Field>
-                              </div>
-                            </div>
-                          );
-                        })}
-                        <Button
-                          className={"w-full"}
-                          type={"button"}
-                          onClick={() => {
-                            handleSubmit();
-                            arrayHelpers.push({
-                              letter: nextChar(
-                                values.rows.length === 0
-                                  ? "0"
-                                  : values.rows[values.rows.length - 1].letter,
-                              ),
-                              start: 0,
-                              end: 0,
-                              reserved: [],
-                            });
-                          }}
-                        >
-                          Add Row
-                        </Button>
-                      </div>
-                    )}
-                  </FieldArray>
-                </Form>
+                            );
+                          })}
+                          <Button
+                            className={"w-full"}
+                            type={"button"}
+                            onClick={() => {
+                              handleSubmit();
+                              arrayHelpers.push({
+                                letter: nextChar(
+                                  values.rows.length === 0
+                                    ? "0"
+                                    : values.rows[values.rows.length - 1]
+                                        .letter,
+                                ),
+                                start: 0,
+                                end: 0,
+                                reserved: [],
+                              });
+                            }}
+                          >
+                            Add Row
+                          </Button>
+                        </div>
+                      )}
+                    </FieldArray>
+                  </Form>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </Formik>
-    </div>
+          )}
+        </Formik>
+      </CardContent>
+    </Card>
   );
 }
