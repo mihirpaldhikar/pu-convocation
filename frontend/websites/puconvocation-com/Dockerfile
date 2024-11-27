@@ -17,6 +17,10 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM base AS builder
+ARG accessKey
+ARG secretKey
+ARG cdn
+RUN apk add --no-cache aws-cli
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -27,6 +31,9 @@ RUN \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
+
+RUN aws configure set aws_access_key_id $accessKey && aws configure set aws_secret_access_key $secretKey && aws s3 mv --recursive --cache-control='public, max-age=31536000, immutable' \
+           /app/.next/static s3://$cdn/_next/static
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -47,7 +54,6 @@ RUN chown nextjs:nodejs .next
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
