@@ -192,8 +192,7 @@ export default function InvitationForm({
                   disabled={
                     authenticationPayload.submitting ||
                     authenticationPayload.displayName.length === 0 ||
-                    authenticationPayload.username.length === 0 ||
-                    authenticationPayload.designation.length === 0
+                    authenticationPayload.username.length === 0
                   }
                   type={"submit"}
                   className={`flex w-full space-x-3 bg-red-600 py-5 transition-all duration-300 hover:bg-red-700`}
