@@ -24,7 +24,6 @@ import com.puconvocation.serializers.CSVSerializer
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.DistributedLock
 import com.puconvocation.services.LambdaService
-import com.puconvocation.utils.Result
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.utils.io.*
@@ -150,7 +149,7 @@ class AttendeeController(
         }
 
 
-        lambdaService.invoke("PUConvocationSeatAllocationJob")
+        lambdaService.invoke("PUConvocationAttendeeJob")
         distributedLock.release("attendeeUploadLock")
 
         return Result.Success(
@@ -277,7 +276,7 @@ class AttendeeController(
         }
 
         if (lock) {
-            lambdaService.invoke("PUConvocationSeatAllocationJob")
+            lambdaService.invoke("PUConvocationAttendeeJob")
         }
 
         distributedLock.release("attendeeLock")
