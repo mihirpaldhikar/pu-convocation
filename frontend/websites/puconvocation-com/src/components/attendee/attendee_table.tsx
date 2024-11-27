@@ -141,16 +141,16 @@ export default function AttendeeTable({
                       : selectedAttendee.allocation.enclosure}
                   </h4>
                   <h4>
-                    Seat:{" "}
-                    {selectedAttendee.allocation.seat === "NULL"
-                      ? "Not Assigned"
-                      : selectedAttendee.allocation.seat}
-                  </h4>
-                  <h4>
                     Row:{" "}
                     {selectedAttendee.allocation.row === "NULL"
                       ? "Not Assigned"
                       : selectedAttendee.allocation.row}
+                  </h4>
+                  <h4>
+                    Seat:{" "}
+                    {selectedAttendee.allocation.seat === "NULL"
+                      ? "Not Assigned"
+                      : selectedAttendee.allocation.seat}
                   </h4>
                 </div>
               )}
@@ -180,10 +180,10 @@ export default function AttendeeTable({
                     Enclosure
                   </th>
                   <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
-                    Seat
+                    Row
                   </th>
                   <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
-                    Row
+                    Seat
                   </th>
                 </tr>
               </thead>
@@ -212,14 +212,14 @@ export default function AttendeeTable({
                         : a.allocation.enclosure}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.allocation.seat === "NULL"
-                        ? "Not Assigned"
-                        : a.allocation.seat}
-                    </td>
-                    <td className="hidden px-4 py-2 lg:table-cell">
                       {a.allocation.row === "NULL"
                         ? "Not Assigned"
                         : a.allocation.row}
+                    </td>
+                    <td className="hidden px-4 py-2 lg:table-cell">
+                      {a.allocation.seat === "NULL"
+                        ? "Not Assigned"
+                        : a.allocation.seat}
                     </td>
                   </tr>
                 ))}
