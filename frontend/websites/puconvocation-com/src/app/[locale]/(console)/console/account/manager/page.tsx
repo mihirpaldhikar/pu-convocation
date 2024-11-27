@@ -414,12 +414,12 @@ export default function AccountManager() {
                             )}
                             <div
                               className={
-                                "relative my-3 cursor-pointer rounded-xl border border-dashed border-red-600 py-7"
+                                "relative my-3 cursor-pointer rounded-xl border border-dashed border-neutral-600 py-7"
                               }
                             >
                               <div
                                 className={
-                                  "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-red-50"
+                                  "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-neutral-50"
                                 }
                               >
                                 <div
@@ -428,7 +428,9 @@ export default function AccountManager() {
                                   }
                                 >
                                   <div
-                                    className={"flex space-x-3 text-red-600"}
+                                    className={
+                                      "flex space-x-3 text-neutral-700"
+                                    }
                                   >
                                     <DynamicIcon icon={"ArrowUpTrayIcon"} />
                                     <h6 className={"font-medium"}>
@@ -493,6 +495,9 @@ export default function AccountManager() {
                                 Add
                               </Button>
                               <Button
+                                className={
+                                  "bg-red-600 hover:bg-red-700 disabled:bg-red-400"
+                                }
                                 type={"submit"}
                                 disabled={
                                   values.invitations.length === 0 ||
@@ -573,6 +578,7 @@ export default function AccountManager() {
                       {account.username !== "mihirpaldhikar" &&
                       account.username !== "suhanishah" ? (
                         <Button
+                          variant={"secondary"}
                           size={"icon"}
                           onClick={() => {
                             setShowSheet(true);
