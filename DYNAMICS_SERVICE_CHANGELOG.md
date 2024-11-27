@@ -1,3 +1,9 @@
+## 1.0.0-beta.7 (November 28, 2024)
+
+### Fixes:
+
+- Fix an issue in which AWS S3 sdk was closing connection.
+
 ## 1.0.0-beta.6 (November 27, 2024)
 
 ### Miscellaneous:
