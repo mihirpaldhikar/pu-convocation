@@ -1,14 +1,14 @@
-name: Build and Deploy seat-allocation-job to AWS Lambda
+name: Build and Deploy attendee-job to AWS Lambda
 
 on:
   push:
     tags:
-      - "seat-allocation-job-v*"
+      - "attendee-job-v*"
 
 env:
   DEPLOYMENT_ARN: ${{ secrets.DEPLOYMENT_ARN }}
   REGION: ${{ secrets.REGION }}
-  DEPLOYMENT_NAME: seat-allocation-job
+  DEPLOYMENT_NAME: attendee-job
 
 jobs:
   deploy:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR
         id: build-image
-        working-directory: ./backend/jobs/seat-allocation-job
+        working-directory: ./backend/jobs/attendee-job
         env:
           REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           REPOSITORY: puconvocation/${{ env.DEPLOYMENT_NAME }}
