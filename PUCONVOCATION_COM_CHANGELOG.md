@@ -1,4 +1,4 @@
-## 3.0.0-beta.10 (November 27, 2024)
+## 3.0.0-beta.11 (November 27, 2024)
 
 ### New:
 - Static assets are now served by CloudFront CDN instead of being served by the next.js server.
