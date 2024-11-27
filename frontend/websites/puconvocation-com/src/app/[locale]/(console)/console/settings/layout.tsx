@@ -25,7 +25,6 @@ const tabs: Array<{
 }> = [
   { name: "General", route: "" },
   { name: "Ground", route: "/ground" },
-  { name: "Instructions", route: "/instructions" },
 ];
 
 export default function SettingsLayout({
