@@ -37,7 +37,7 @@ RUN \
 
 RUN --mount=type=secret,id=aws \
         AWS_SHARED_CREDENTIALS_FILE=/run/secrets/aws \
-    aws s3 mv --recursive --cache-control='public, max-age=31536000, immutable' \
+    aws s3 mv --recursive --cache-control='public, max-age=31536000, immutable' --region=ap-south-1 \
            /app/.next/static s3://$cdn/_next/static
 
 # Production image, copy all the files and run next
