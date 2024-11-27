@@ -20,6 +20,7 @@ const i18n = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  poweredByHeader: false,
   reactStrictMode: true,
   images: {
     unoptimized: true,
@@ -48,6 +49,7 @@ const nextConfig: NextConfig = {
       "@services",
       "@i18n",
       "@lib",
+      "react-zxing",
     ],
   },
 };
