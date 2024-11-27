@@ -10,7 +10,7 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
+"use client";
 import { Fragment, JSX } from "react";
 import { Link } from "@i18n/routing";
 import {
@@ -19,72 +19,58 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Skeleton,
 } from "@components/ui";
-import {
-  AnalyticsController,
-  AttendeeController,
-  AuthController,
-} from "@controllers/index";
-import { cookies } from "next/headers";
+import { AnalyticsController, AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { format } from "date-fns";
-import dynamic from "next/dynamic";
-import { Account } from "@dto/index";
+import { useAuth } from "@hooks/index";
+import { useQuery } from "@tanstack/react-query";
+import {
+  PopularCountriesChart,
+  TrafficOnDateChart,
+} from "@components/analytics";
+import { AttendeeTable } from "@components/attendee";
 
 const now = new Date();
 const year = Number(format(now, "yyyy"));
 const month = Number(format(now, "MM"));
 const day = Number(format(now, "dd"));
 
-interface ProtectedSectionProps {
-  account: Account | null;
-  cookies: string;
-}
+function AnalyticsSection() {
+  const analyticsController = new AnalyticsController();
 
-async function AnalyticsSection({
-  account,
-  cookies,
-}: Readonly<ProtectedSectionProps>) {
-  if (account === null || !account?.iamRoles.includes("read:Analytics")) {
-    return <Fragment />;
-  }
+  const {
+    data: dailyVisitors,
+    isLoading: dailyVisitorsLoading,
+    isError: dailyVisitorsError,
+  } = useQuery({
+    queryKey: ["dailyVisitorsAnalytics"],
+    queryFn: async () => {
+      const dailyVisitorAnalyticsResponse =
+        await analyticsController.trafficOnDate(year, month, day);
 
-  const PopularCountriesChart = dynamic(
-    () => import("@components/analytics/popular_countries_chart"),
-    {
-      loading: () => <p>Loading...</p>,
+      return dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
+        ? dailyVisitorAnalyticsResponse.payload
+        : [];
     },
-  );
-
-  const TrafficOnDateChart = dynamic(
-    () => import("@components/analytics/traffic_on_date_chart"),
-    {
-      loading: () => <p>Loading...</p>,
-    },
-  );
-
-  const analyticsController = new AnalyticsController({
-    cookies: cookies,
   });
 
-  const dailyVisitorAnalyticsResponse = await analyticsController.trafficOnDate(
-    year,
-    month,
-    day,
-  );
+  const {
+    data: popularCountries,
+    isLoading: popularCountriesLoading,
+    isError: popularCountriesError,
+  } = useQuery({
+    queryKey: ["popularCountriesAnalytics"],
+    queryFn: async () => {
+      const popularCountriesAnalyticsResponse =
+        await analyticsController.popularCountries();
 
-  const popularCountriesAnalyticsResponse =
-    await analyticsController.popularCountries();
-
-  const popularCountries =
-    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
-      ? popularCountriesAnalyticsResponse.payload
-      : [];
-
-  const dailyVisitors =
-    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
-      ? dailyVisitorAnalyticsResponse.payload
-      : [];
+      return popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
+        ? popularCountriesAnalyticsResponse.payload
+        : [];
+    },
+  });
 
   return (
     <section>
@@ -105,10 +91,16 @@ async function AnalyticsSection({
             <CardTitle className="text-red-600">Demographics</CardTitle>
           </CardHeader>
           <CardContent className="h-full py-5">
-            <PopularCountriesChart
-              analytics={popularCountries}
-              showLegends={false}
-            />
+            {popularCountriesLoading ? (
+              <Skeleton className="h-64 w-full" />
+            ) : popularCountriesError || popularCountries === undefined ? (
+              <Fragment />
+            ) : (
+              <PopularCountriesChart
+                analytics={popularCountries}
+                showLegends={false}
+              />
+            )}
           </CardContent>
         </Card>
 
@@ -118,7 +110,13 @@ async function AnalyticsSection({
             <CardTitle className="text-red-600">Traffic</CardTitle>
           </CardHeader>
           <CardContent className="h-full pt-2">
-            <TrafficOnDateChart analytics={dailyVisitors} />
+            {dailyVisitorsLoading ? (
+              <Skeleton className="h-64 w-full" />
+            ) : dailyVisitorsError || dailyVisitors === undefined ? (
+              <Fragment />
+            ) : (
+              <TrafficOnDateChart analytics={dailyVisitors} />
+            )}
           </CardContent>
         </Card>
       </div>
@@ -126,34 +124,26 @@ async function AnalyticsSection({
   );
 }
 
-async function AttendeesSection({
-  account,
-  cookies,
-}: Readonly<ProtectedSectionProps>) {
-  if (
-    account === null ||
-    (!account?.iamRoles.includes("write:Attendee") &&
-      !account?.iamRoles.includes("read:Attendee"))
-  ) {
-    return <Fragment />;
-  }
-  const AttendeeTable = dynamic(
-    () => import("@components/attendee/attendee_table"),
-    {
-      loading: () => <p>Loading...</p>,
+function AttendeesSection() {
+  const attendeeController = new AttendeeController();
+
+  const {
+    data: attendees,
+    isLoading: attendeesLoading,
+    isError: attendeesError,
+  } = useQuery({
+    queryKey: ["homeAttendees"],
+    queryFn: async () => {
+      const attendeesListResponse = await attendeeController.getAllAttendees(
+        0,
+        10,
+      );
+
+      return attendeesListResponse.statusCode === StatusCode.SUCCESS
+        ? attendeesListResponse.payload.attendees
+        : [];
     },
-  );
-
-  const attendeeController = new AttendeeController({
-    cookies: cookies,
   });
-
-  const attendeesListResponse = await attendeeController.getAllAttendees(0, 10);
-
-  const attendees =
-    attendeesListResponse.statusCode === StatusCode.SUCCESS
-      ? attendeesListResponse.payload.attendees
-      : [];
 
   return (
     <section>
@@ -166,31 +156,42 @@ async function AttendeesSection({
       <Card>
         <CardHeader></CardHeader>
         <CardContent>
-          <AttendeeTable initialAttendees={attendees} />
+          {attendeesLoading ? (
+            <div className={"space-y-3"}>
+              <Skeleton className={"h-10 w-full"}></Skeleton>
+              <Skeleton className={"h-10 w-full"}></Skeleton>
+              <Skeleton className={"h-10 w-full"}></Skeleton>
+              <Skeleton className={"h-10 w-full"}></Skeleton>
+            </div>
+          ) : attendeesError || attendees === undefined ? (
+            <Fragment />
+          ) : (
+            <AttendeeTable initialAttendees={attendees} />
+          )}
         </CardContent>
       </Card>
     </section>
   );
 }
 
-export default async function ConsolePage(): Promise<JSX.Element> {
-  const agentCookies = await cookies();
+export default function ConsolePage(): JSX.Element {
+  const { account } = useAuth();
 
-  const authController = new AuthController({
-    cookies: agentCookies.toString(),
-  });
-
-  const authResponse = await authController.getCurrentAccount();
-
-  const account =
-    authResponse.statusCode === StatusCode.SUCCESS
-      ? authResponse.payload
-      : null;
+  if (account === null) return <Fragment />;
 
   return (
     <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
-      <AnalyticsSection account={account} cookies={agentCookies.toString()} />
-      <AttendeesSection account={account} cookies={agentCookies.toString()} />
+      {account.iamRoles.includes("read:Analytics") ? (
+        <AnalyticsSection />
+      ) : (
+        <Fragment />
+      )}
+      {account.iamRoles.includes("write:Attendee") ||
+      account.iamRoles.includes("read:Attendee") ? (
+        <AttendeesSection />
+      ) : (
+        <Fragment />
+      )}
     </div>
   );
 }

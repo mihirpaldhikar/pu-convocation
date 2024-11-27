@@ -10,8 +10,8 @@
  * treaties. Unauthorized copying or distribution of this software
  * is a violation of these laws and could result in severe penalties.
  */
-
-import { JSX } from "react";
+"use client";
+import { Fragment, JSX } from "react";
 import {
   PopularCountriesChart,
   TrafficOnDateChart,
@@ -23,12 +23,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Skeleton,
 } from "@components/ui";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { AnalyticsController } from "@controllers/index";
-import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
 import { ChartBarIcon } from "@heroicons/react/24/solid";
+import { useQuery } from "@tanstack/react-query";
 
 const now = new Date();
 const year = Number(format(now, "yyyy"));
@@ -38,39 +39,56 @@ const day = Number(format(now, "dd"));
 const startOfCurrentWeek = startOfWeek(now);
 const endOfCurrentWeek = endOfWeek(now);
 
-export default async function AnalyticsPage(): Promise<JSX.Element> {
-  const agentCookies = await cookies();
+const analyticsController = new AnalyticsController();
 
-  const analyticsController = new AnalyticsController({
-    cookies: agentCookies.toString(),
+export default function AnalyticsPage(): JSX.Element {
+  const {
+    data: dailyVisitors,
+    isLoading: dailyVisitorsLoading,
+    isError: dailyVisitorsError,
+  } = useQuery({
+    queryKey: ["dailyVisitorsAnalytics"],
+    queryFn: async () => {
+      const dailyVisitorAnalyticsResponse =
+        await analyticsController.trafficOnDate(year, month, day);
+
+      return dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
+        ? dailyVisitorAnalyticsResponse.payload
+        : [];
+    },
   });
 
-  const dailyVisitorAnalyticsResponse = await analyticsController.trafficOnDate(
-    year,
-    month,
-    day,
-  );
+  const {
+    data: popularCountries,
+    isLoading: popularCountriesLoading,
+    isError: popularCountriesError,
+  } = useQuery({
+    queryKey: ["popularCountriesAnalytics"],
+    queryFn: async () => {
+      const popularCountriesAnalyticsResponse =
+        await analyticsController.popularCountries();
 
-  const weeklyVisitorsAnalyticsResponse =
-    await analyticsController.weeklyTraffic();
+      return popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
+        ? popularCountriesAnalyticsResponse.payload
+        : [];
+    },
+  });
 
-  const popularCountriesAnalyticsResponse =
-    await analyticsController.popularCountries();
+  const {
+    data: weeklyVisitors,
+    isLoading: weeklyVisitorsLoading,
+    isError: weeklyVisitorsError,
+  } = useQuery({
+    queryKey: ["weeklyVisitorsAnalytics"],
+    queryFn: async () => {
+      const weeklyVisitorsAnalyticsResponse =
+        await analyticsController.weeklyTraffic();
 
-  const dailyVisitors =
-    dailyVisitorAnalyticsResponse.statusCode === StatusCode.SUCCESS
-      ? dailyVisitorAnalyticsResponse.payload
-      : [];
-
-  const weeklyVisitors =
-    weeklyVisitorsAnalyticsResponse.statusCode === StatusCode.SUCCESS
-      ? weeklyVisitorsAnalyticsResponse.payload
-      : null;
-
-  const popularCountries =
-    popularCountriesAnalyticsResponse.statusCode === StatusCode.SUCCESS
-      ? popularCountriesAnalyticsResponse.payload
-      : [];
+      return weeklyVisitorsAnalyticsResponse.statusCode === StatusCode.SUCCESS
+        ? weeklyVisitorsAnalyticsResponse.payload
+        : null;
+    },
+  });
 
   return (
     <div className={"flex min-h-screen flex-col space-y-10 p-4 md:p-10"}>
@@ -93,7 +111,15 @@ export default async function AnalyticsPage(): Promise<JSX.Element> {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <TrafficOnDateChart analytics={dailyVisitors} />
+          {dailyVisitorsLoading ? (
+            <Skeleton className="h-64 w-full" />
+          ) : dailyVisitorsError ||
+            dailyVisitors === undefined ||
+            dailyVisitors === null ? (
+            <Fragment />
+          ) : (
+            <TrafficOnDateChart analytics={dailyVisitors} />
+          )}
         </CardContent>
       </Card>
       <div className={"grid grid-cols-1 gap-4 md:grid-cols-2"}>
@@ -108,7 +134,13 @@ export default async function AnalyticsPage(): Promise<JSX.Element> {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <WeeklyTrafficChart analytics={weeklyVisitors} />
+            {weeklyVisitorsLoading ? (
+              <Skeleton className="h-64 w-full" />
+            ) : weeklyVisitorsError || weeklyVisitors === undefined ? (
+              <Fragment />
+            ) : (
+              <WeeklyTrafficChart analytics={weeklyVisitors} />
+            )}
           </CardContent>
         </Card>
 
@@ -120,7 +152,16 @@ export default async function AnalyticsPage(): Promise<JSX.Element> {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <PopularCountriesChart analytics={popularCountries} />
+            {popularCountriesLoading ? (
+              <Skeleton className="h-64 w-full" />
+            ) : popularCountriesError || popularCountries === undefined ? (
+              <Fragment />
+            ) : (
+              <PopularCountriesChart
+                analytics={popularCountries}
+                showLegends={true}
+              />
+            )}
           </CardContent>
         </Card>
       </div>

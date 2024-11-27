@@ -20,10 +20,10 @@ interface PopularCountriesChartProps {
   showLegends?: boolean;
 }
 
-export default async function PopularCountriesChart({
+export default function PopularCountriesChart({
   showLegends = true,
   analytics,
-}: Readonly<PopularCountriesChartProps>): Promise<JSX.Element> {
+}: Readonly<PopularCountriesChartProps>): JSX.Element {
   return (
     <div className={"space-y-5"}>
       <GeographicalMap

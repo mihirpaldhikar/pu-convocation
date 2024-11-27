@@ -11,9 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { JSX } from "react";
+"use client";
+import { Fragment, JSX } from "react";
 import { cn } from "@lib/utils";
 import { GeoMap } from "@dto/index";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@components/ui";
 
 interface GeographicalMapProps {
   mapType: "world";
@@ -23,20 +26,38 @@ interface GeographicalMapProps {
   highlightColor?: string;
 }
 
-export default async function GeographicalMap({
+export default function GeographicalMap({
   mapType,
   viewBox,
   className,
   highlight = [],
   highlightColor = "#dc2626",
-}: GeographicalMapProps): Promise<JSX.Element> {
-  const response = await fetch(
-    `https://assets.puconvocation.com/maps/${mapType}.json`,
-    {
-      cache: "force-cache",
+}: GeographicalMapProps): JSX.Element {
+  const {
+    data: geoMap,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: [`geographicalMap-${mapType}`],
+    queryFn: async () => {
+      const response = await fetch(
+        `https://assets.puconvocation.com/maps/${mapType}.json`,
+        {
+          cache: "force-cache",
+        },
+      );
+      return (await response.json()) as GeoMap[];
     },
-  );
-  const geoMap = (await response.json()) as GeoMap[];
+  });
+
+  if (geoMap === undefined || isError) {
+    return <Fragment />;
+  }
+
+  if (isLoading) {
+    return <Skeleton className={"h-full w-full"} />;
+  }
+
   return (
     <svg
       viewBox={viewBox}
