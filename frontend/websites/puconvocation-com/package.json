@@ -10,9 +10,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "node .next/standalone/server.js",
     "lint": "next lint",
-    "optimizedDev": "pnpm build && pnpm start",
     "productionBundleAnalysis": "ANALYZE=true next build"
   },
   "dependencies": {
