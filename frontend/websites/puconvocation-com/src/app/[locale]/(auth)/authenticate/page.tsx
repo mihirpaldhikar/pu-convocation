@@ -43,7 +43,7 @@ export default async function AuthenticationPage({
         )}
         <LanguageSelector />
         <div className={"text-center"}>
-          <p className={"text-xs text-gray-500"}>
+          <p className={"text-xs text-gray-700"}>
             &copy; {new Date().getFullYear()} {coreTranslations("copyright")}
           </p>
         </div>
