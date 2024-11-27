@@ -60,7 +60,7 @@ jobs:
           REPOSITORY: puconvocation/${{ env.SERVICE }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build --build-arg accessKey="${{ secrets.AWS_ACCESS_KEY_ID }}"  --build-arg secretKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}" --build-arg cdn="${{ secrets.CDN }}" -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build --secret id=aws,src=$HOME/.aws/credentials --build-arg cdn=${{ secrets.CDN }} -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           echo "image=$REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
