@@ -54,8 +54,8 @@ importers:
         specifier: ^1.1.4
         version: 1.1.4(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
       '@tanstack/react-query':
-        specifier: ^5.61.4
-        version: 5.61.4(react@19.0.0-rc-66855b96-20241106)
+        specifier: ^5.61.5
+        version: 5.61.5(react@19.0.0-rc-66855b96-20241106)
       axios:
         specifier: ^1.7.8
         version: 1.7.8
@@ -145,8 +145,8 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6
       '@types/node':
-        specifier: ^22.10.0
-        version: 22.10.0
+        specifier: ^22.10.1
+        version: 22.10.1
       '@types/papaparse':
         specifier: ^5.3.15
         version: 5.3.15
@@ -1011,11 +1011,11 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20'
 
-  '@tanstack/query-core@5.61.4':
-    resolution: {integrity: sha512-rsnemyhPvEG4ViZe0R2UQDM8NgQS/BNC5/Gf9RTs0TKN5thUhPUwnL2anWG4jxAGKFyDfvG7PXbx6MRq3hxi1w==}
+  '@tanstack/query-core@5.61.5':
+    resolution: {integrity: sha512-iG5vqurEOEbv+paP6kW3zPENa99kSIrd1THISJMaTwVlJ+N5yjVDNOUwp9McK2DWqWCXM3v13ubBbAyhxT78UQ==}
 
-  '@tanstack/react-query@5.61.4':
-    resolution: {integrity: sha512-Nh5+0V4fRVShSeDHFTVvzJrvwTdafIvqxyZUrad71kJWL7J+J5Wrd/xcHTWfSL1mR/9eoufd2roXOpL3F16ECA==}
+  '@tanstack/react-query@5.61.5':
+    resolution: {integrity: sha512-rjy8aqPgBBEz/rjJnpnuhi8TVkVTorMUsJlM3lMvrRb5wK6yzfk34Er0fnJ7w/4qyF01SnXsLB/QsTBsLF5PaQ==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -1079,8 +1079,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@22.10.0':
-    resolution: {integrity: sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==}
+  '@types/node@22.10.1':
+    resolution: {integrity: sha512-qKgsUwfHZV2WCWLAnVP1JqnpE6Im6h3Y0+fYgMTasNQ7V++CBX5OT1as0g0f+OyubbFqhf6XVNIsmN4IIhEgGQ==}
 
   '@types/papaparse@5.3.15':
     resolution: {integrity: sha512-JHe6vF6x/8Z85nCX4yFdDslN11d+1pr12E526X8WAfhadOeaOTx5AuIkvDKIBopfvlzpzkdMx4YyvSKCM9oqtw==}
@@ -1550,8 +1550,8 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  electron-to-chromium@1.5.65:
-    resolution: {integrity: sha512-PWVzBjghx7/wop6n22vS2MLU8tKGd4Q91aCEGhG/TYmW6PP5OcSXcdnxTe1NNt0T66N8D6jxh4kC8UsdzOGaIw==}
+  electron-to-chromium@1.5.66:
+    resolution: {integrity: sha512-pI2QF6+i+zjPbqRzJwkMvtvkdI7MjVbSh2g8dlMguDJIXEPw+kwasS1Jl+YGPEBfGVxsVgGUratAKymPdPo2vQ==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -3079,8 +3079,8 @@ packages:
     resolution: {integrity: sha512-K4jVyjnBdgvc86Y6BkaLZEN933SwYOuBFkdmBu9ZfkcAbdVbpITnDmjvZ/aQjRXQrv5EPkTnD1s39GiiqbngCw==}
     engines: {node: '>= 0.4'}
 
-  which-typed-array@1.1.15:
-    resolution: {integrity: sha512-oV0jmFtUky6CXfkqehVvBP/LSWJ2sy4vWMioiENyJLePrBO/yKyV9OyJySfAKosh+RYkIl5zJCNZ8/4JncrpdA==}
+  which-typed-array@1.1.16:
+    resolution: {integrity: sha512-g+N+GAWiRj66DngFwHvISJd+ITsyphZvD1vChfVg6cEdnzy53GzB3oy0fUNlvhz7H7+MiqhYr26qxQShCpKTTQ==}
     engines: {node: '>= 0.4'}
 
   which@2.0.2:
@@ -3965,11 +3965,11 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.4.15
 
-  '@tanstack/query-core@5.61.4': {}
+  '@tanstack/query-core@5.61.5': {}
 
-  '@tanstack/react-query@5.61.4(react@19.0.0-rc-66855b96-20241106)':
+  '@tanstack/react-query@5.61.5(react@19.0.0-rc-66855b96-20241106)':
     dependencies:
-      '@tanstack/query-core': 5.61.4
+      '@tanstack/query-core': 5.61.5
       react: 19.0.0-rc-66855b96-20241106
 
   '@types/d3-array@3.2.1': {}
@@ -4029,13 +4029,13 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@22.10.0':
+  '@types/node@22.10.1':
     dependencies:
       undici-types: 6.20.0
 
   '@types/papaparse@5.3.15':
     dependencies:
-      '@types/node': 22.10.0
+      '@types/node': 22.10.1
 
   '@types/prop-types@15.7.13': {}
 
@@ -4298,7 +4298,7 @@ snapshots:
   browserslist@4.24.2:
     dependencies:
       caniuse-lite: 1.0.30001684
-      electron-to-chromium: 1.5.65
+      electron-to-chromium: 1.5.66
       node-releases: 2.0.18
       update-browserslist-db: 1.1.1(browserslist@4.24.2)
 
@@ -4518,7 +4518,7 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  electron-to-chromium@1.5.65: {}
+  electron-to-chromium@1.5.66: {}
 
   emoji-regex@8.0.0: {}
 
@@ -4576,7 +4576,7 @@ snapshots:
       typed-array-byte-offset: 1.0.3
       typed-array-length: 1.0.7
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.16
 
   es-define-property@1.0.0:
     dependencies:
@@ -5196,7 +5196,7 @@ snapshots:
 
   is-typed-array@1.1.13:
     dependencies:
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.16
 
   is-weakmap@2.0.2: {}
 
@@ -6409,7 +6409,7 @@ snapshots:
       isarray: 2.0.5
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.2
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.16
 
   which-collection@1.0.2:
     dependencies:
@@ -6418,7 +6418,7 @@ snapshots:
       is-weakmap: 2.0.2
       is-weakset: 2.0.3
 
-  which-typed-array@1.1.15:
+  which-typed-array@1.1.16:
     dependencies:
       available-typed-arrays: 1.0.7
       call-bind: 1.0.7
