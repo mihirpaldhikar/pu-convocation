@@ -1,3 +1,8 @@
+## 1.0.0-beta.8 (November 28, 2024)
+
+### Breaking Changes:
+- Refactor IAM related operations to comply with latest changes made in auth-service.
+
 ## 1.0.0-beta.7 (November 28, 2024)
 
 ### Fixes:
