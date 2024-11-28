@@ -15,62 +15,67 @@
 
 import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { intervalToDuration } from "date-fns";
+import { Skeleton } from "@components/ui";
 
 interface CountDownProps {
   futureTimestamp: number;
 }
 
-function convertTimestampToDHMS(timestampInSeconds: number): {
-  remainingDays: string;
-  remainingHours: string;
-  remainingMinutes: string;
-  remainingSeconds: string;
-} {
-  const totalSeconds = Math.floor(timestampInSeconds);
-
-  const days = Math.floor(totalSeconds / (24 * 60 * 60));
-  const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60));
-  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
-  const seconds = totalSeconds % 60;
-
-  const formattedDays = days < 10 ? `0${days}` : days.toString();
-  const formattedHours = hours < 10 ? `0${hours}` : hours.toString();
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
-  const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds.toString();
-
-  return {
-    remainingDays: formattedDays,
-    remainingHours: formattedHours,
-    remainingMinutes: formattedMinutes,
-    remainingSeconds: formattedSeconds,
-  };
+function padZero(num: number) {
+  return num.toString().padStart(2, "0");
 }
 
 export default function CountDown({
   futureTimestamp,
 }: Readonly<CountDownProps>): JSX.Element {
   const router = useRouter();
-  const [timeRemaining, setTimeRemaining] = useState(
-    futureTimestamp - Date.now() / 1000,
-  );
+  const [remainingTime, setRemainingTime] = useState("");
 
   useEffect(() => {
-    const timerInterval = setInterval(() => {
-      setTimeRemaining((prevTime) => {
-        if (prevTime === 0) {
-          clearInterval(timerInterval);
-          router.refresh();
-          return 0;
-        } else {
-          return prevTime - 1;
-        }
-      });
+    const interval = setInterval(() => {
+      const now = new Date();
+      const futureDate = new Date(futureTimestamp);
+
+      const duration = intervalToDuration({ start: now, end: futureDate });
+      const { days, hours, minutes, seconds } = duration;
+      const timeLeft = `${padZero(days ?? 0)}:${padZero(hours ?? 0)}:${padZero(minutes ?? 0)}:${padZero(seconds ?? 0)}`;
+      if (timeLeft === "00:00:00:00") {
+        clearInterval(interval);
+        router.refresh();
+      }
+      setRemainingTime(timeLeft);
     }, 1000);
 
-    return () => clearInterval(timerInterval);
-  }, [router]);
+    return () => clearInterval(interval);
+  }, [futureTimestamp]);
 
-  const time = convertTimestampToDHMS(timeRemaining);
+  if (remainingTime === "") {
+    return (
+      <div
+        className={"flex items-center justify-between space-x-4 lg:space-x-20"}
+      >
+        <div className={"space-y-4"}>
+          <Skeleton className={"size-20"} />
+          <Skeleton className={"h-5 w-20"} />
+        </div>
+        <div className={"space-y-4"}>
+          <Skeleton className={"size-20"} />
+          <Skeleton className={"h-5 w-20"} />
+        </div>
+        <div className={"space-y-4"}>
+          <Skeleton className={"size-20"} />
+          <Skeleton className={"h-5 w-20"} />
+        </div>
+        <div className={"space-y-4"}>
+          <Skeleton className={"size-20"} />
+          <Skeleton className={"h-5 w-20"} />
+        </div>
+      </div>
+    );
+  }
+
+  const [days, hours, minutes, seconds] = remainingTime.split(":");
 
   return (
     <div
@@ -80,26 +85,22 @@ export default function CountDown({
     >
       <div className={"flex flex-col items-center justify-center"}>
         <h1 className={"text-3xl font-black text-red-600 lg:text-6xl"}>
-          {time.remainingDays}
+          {days}
         </h1>
         <h2 className={"text-xl font-bold lg:text-3xl"}>Days</h2>
       </div>
       <div className={"flex flex-col items-center justify-center"}>
-        <h1 className={"text-3xl font-black lg:text-6xl"}>
-          {time.remainingHours}
-        </h1>
+        <h1 className={"text-3xl font-black lg:text-6xl"}>{hours}</h1>
         <h2 className={"text-xl font-bold lg:text-3xl"}>Hours</h2>
       </div>
       <div className={"flex flex-col items-center justify-center"}>
         <h1 className={"text-3xl font-black text-red-600 lg:text-6xl"}>
-          {time.remainingMinutes}
+          {minutes}
         </h1>
         <h2 className={"text-xl font-bold lg:text-3xl"}>Minutes</h2>
       </div>
       <div className={"flex flex-col items-center justify-center"}>
-        <h1 className={"text-3xl font-black lg:text-6xl"}>
-          {time.remainingSeconds}
-        </h1>
+        <h1 className={"text-3xl font-black lg:text-6xl"}>{seconds}</h1>
         <h2 className={"text-xl font-bold lg:text-3xl"}>Seconds</h2>
       </div>
     </div>

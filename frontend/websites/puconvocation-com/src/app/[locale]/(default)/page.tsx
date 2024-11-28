@@ -37,21 +37,21 @@ export default async function Home() {
 
   if (response.statusCode === StatusCode.SUCCESS) {
     const { countdown, images, instructions } = response.payload;
-    return countdown.show &&
-      countdown.endTime > new Date().getMilliseconds() ? (
-      <section className={"flex min-h-dvh"}>
+    return countdown.show && countdown.endTime > new Date().getTime() ? (
+      <section className={"flex min-h-[80dvh]"}>
         <div
           className={
             "m-auto flex flex-col items-center justify-center space-y-10"
           }
         >
-          <h1 className={"text-2xl font-black md:text-5xl lg:text-3xl"}>
-            {coreTranslations.rich("styledUniversityName", {
-              highlight: (chunks) => (
-                <span className={"text-red-600"}>{chunks}</span>
-              ),
-            })}
-          </h1>
+          <Image
+            src={
+              "https://assets.puconvocation.com/logos/full_university_logo.png"
+            }
+            alt={"Parul University Convocation"}
+            width={400}
+            height={300}
+          />
           <Convocation fillColor={"#ef4444"} />
           <div className="h-22"></div>
           <Countdown futureTimestamp={countdown.endTime} />
