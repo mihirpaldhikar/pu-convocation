@@ -12,7 +12,7 @@
  */
 
 export default interface IAMPolicy {
-  role: string;
+  policy: string;
   description: string;
   principals: Set<string>;
 }

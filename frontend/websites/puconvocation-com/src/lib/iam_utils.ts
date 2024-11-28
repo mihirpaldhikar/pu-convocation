@@ -11,14 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import { ReactNode } from "react";
+export function isAuthorized(
+  policy: string,
+  assignedPolicies: string[],
+): Readonly<boolean> {
+  const split = policy.split(":");
+  const operation = split[0];
+  const entity = split[1];
 
-export default interface NavMenu {
-  name: string;
-  route: string;
-  pathRegex: string;
-  childRoutes: Array<string>;
-  icon: ReactNode;
-  activeIcon: ReactNode;
-  requiredIAMPolicy: string | null;
+  if (operation == "read") {
+    return (
+      assignedPolicies.includes(`write:${entity}`) ||
+      assignedPolicies.includes(`read:${entity}`)
+    );
+  } else {
+    return assignedPolicies.includes(`write:${entity}`);
+  }
 }

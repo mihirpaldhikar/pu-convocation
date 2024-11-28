@@ -40,6 +40,7 @@ import {
   HomeIcon as O_HomeIcon,
   UsersIcon as O_UsersIcon,
 } from "@heroicons/react/24/outline";
+import IAMPolicies from "@configs/IAMPolicies";
 
 export const metadata: Metadata = {
   title: "Console | PU Convocation",
@@ -59,7 +60,7 @@ const navMenu: Array<NavMenu> = [
     childRoutes: [],
     icon: <O_HomeIcon />,
     activeIcon: <S_HomeIcon />,
-    requiredIAMRoles: new Set<string>([]),
+    requiredIAMPolicy: null,
   },
   {
     name: "Analytics",
@@ -68,7 +69,7 @@ const navMenu: Array<NavMenu> = [
     childRoutes: [],
     icon: <O_ChartBarIcon />,
     activeIcon: <S_ChartBarIcon />,
-    requiredIAMRoles: new Set<string>(["read:Analytics"]),
+    requiredIAMPolicy: IAMPolicies.READ_ANALYTICS,
   },
   {
     name: "Attendees",
@@ -77,7 +78,7 @@ const navMenu: Array<NavMenu> = [
     childRoutes: [],
     icon: <O_AcademicCapIcon />,
     activeIcon: <S_AcademicCapIcon />,
-    requiredIAMRoles: new Set<string>(["read:Attendee", "write:Attendee"]),
+    requiredIAMPolicy: IAMPolicies.READ_ATTENDEES,
   },
   {
     name: "Account Manager",
@@ -86,7 +87,7 @@ const navMenu: Array<NavMenu> = [
     childRoutes: [],
     icon: <O_UsersIcon />,
     activeIcon: <S_UsersIcon />,
-    requiredIAMRoles: new Set<string>(["write:Account"]),
+    requiredIAMPolicy: IAMPolicies.READ_ACCOUNTS,
   },
   {
     name: "Settings",
@@ -95,7 +96,7 @@ const navMenu: Array<NavMenu> = [
     childRoutes: ["/ground", "/instructions"],
     icon: <O_Cog6ToothIcon />,
     activeIcon: <S_Cog6ToothIcon />,
-    requiredIAMRoles: new Set<string>(["write:WebsiteConfig"]),
+    requiredIAMPolicy: IAMPolicies.READ_REMOTE_CONFIG,
   },
 ];
 
@@ -129,16 +130,12 @@ export default async function RootLayout({
   }
 
   const account =
-    authResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in authResponse &&
-    typeof authResponse.payload === "object"
+    authResponse.statusCode === StatusCode.SUCCESS
       ? authResponse.payload
       : null;
 
   const remoteConfig =
-    remoteConfigResponse.statusCode === StatusCode.SUCCESS &&
-    "payload" in remoteConfigResponse &&
-    typeof remoteConfigResponse.payload === "object"
+    remoteConfigResponse.statusCode === StatusCode.SUCCESS
       ? remoteConfigResponse.payload
       : null;
 

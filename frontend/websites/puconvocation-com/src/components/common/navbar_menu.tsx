@@ -28,6 +28,8 @@ import {
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { AuthController } from "@controllers/index";
+import { isAuthorized } from "@lib/iam_utils";
+import IAMPolicies from "@configs/IAMPolicies";
 
 const authController = new AuthController();
 
@@ -53,7 +55,7 @@ export default function NavbarMenu(): JSX.Element {
           <Fragment>
             <Button
               asChild={true}
-              className={`${!account.iamRoles.includes("write:Transaction") ? "hidden" : ""} rounded-full`}
+              className={`${!isAuthorized(IAMPolicies.WRITE_TRANSACTIONS, account.assignedIAMPolicies) ? "hidden" : ""} rounded-full`}
             >
               <Link href={"/console/scan"}>
                 <QrCodeIcon className={"mr-3 size-5"} />

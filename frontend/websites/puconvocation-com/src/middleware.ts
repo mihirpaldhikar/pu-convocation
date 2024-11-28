@@ -17,6 +17,7 @@ import createMiddleware from "next-intl/middleware";
 import { Account, ProtectedRoute } from "@dto/index";
 import { PROTECTED_ROUTES } from "./protected_routes";
 import { parseCookie } from "@lib/cookie_utils";
+import { isAuthorized } from "@lib/iam_utils";
 
 const i18nMiddleware = createMiddleware(routing);
 
@@ -50,10 +51,6 @@ export default async function middleware(req: NextRequest) {
           headers: {
             Cookie: req.cookies.toString(),
           },
-          cache: "force-cache",
-          next: {
-            revalidate: 3600,
-          },
         },
       );
 
@@ -77,14 +74,14 @@ export default async function middleware(req: NextRequest) {
         }
 
         const account = (await authenticationResponse.json()) as Account;
-        const associatedRoles = new Set<string>(account.iamRoles);
 
         if (
           matchedProtectedRoute !== null &&
-          matchedProtectedRoute.requiredIAMPermissions !== null &&
-          matchedProtectedRoute.requiredIAMPermissions.intersection(
-            associatedRoles,
-          ).size === 0
+          matchedProtectedRoute.requiredIAMPolicy !== null &&
+          !isAuthorized(
+            matchedProtectedRoute.requiredIAMPolicy,
+            account.assignedIAMPolicies,
+          )
         ) {
           const absoluteURL = new URL("/console", req.nextUrl.origin);
           return NextResponse.redirect(absoluteURL.toString());

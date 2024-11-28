@@ -13,5 +13,5 @@
 
 export default interface ProtectedRoute {
   pathRegex: RegExp;
-  requiredIAMPermissions: Set<string> | null;
+  requiredIAMPolicy: string | null;
 }

@@ -62,7 +62,7 @@ export default function SettingsLayout({
       </div>
 
       {/* Content */}
-      <div className="">{children}</div>
+      <div>{children}</div>
     </div>
   );
 }

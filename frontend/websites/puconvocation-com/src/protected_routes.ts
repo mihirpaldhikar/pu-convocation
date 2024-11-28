@@ -12,37 +12,35 @@
  */
 
 import { ProtectedRoute } from "@dto/index";
+import IAMPolicies from "@configs/IAMPolicies";
 
 export const PROTECTED_ROUTES: Array<ProtectedRoute> = [
   {
     pathRegex: /^\/console$/,
-    requiredIAMPermissions: null,
+    requiredIAMPolicy: null,
   },
   {
     pathRegex: /^\/console\/account$/,
-    requiredIAMPermissions: null,
+    requiredIAMPolicy: null,
   },
   {
     pathRegex: /^\/console\/analytics(\/.*)?$/,
-    requiredIAMPermissions: new Set<string>(["read:Analytics"]),
+    requiredIAMPolicy: IAMPolicies.READ_ANALYTICS,
   },
   {
     pathRegex: /^\/console\/attendees(\/.*)?$/,
-    requiredIAMPermissions: new Set<string>([
-      "read:Attendee",
-      "write:Attendee",
-    ]),
+    requiredIAMPolicy: IAMPolicies.READ_ATTENDEES,
   },
   {
     pathRegex: /^\/console\/settings(\/.*)?$/,
-    requiredIAMPermissions: new Set<string>(["write:WebsiteConfig"]),
+    requiredIAMPolicy: IAMPolicies.READ_REMOTE_CONFIG,
   },
   {
     pathRegex: /^\/console\/scan(\/.*)?$/,
-    requiredIAMPermissions: new Set<string>(["write:Transaction"]),
+    requiredIAMPolicy: IAMPolicies.WRITE_TRANSACTIONS,
   },
   {
     pathRegex: /^\/console\/account\/manager(\/.*)?$/,
-    requiredIAMPermissions: new Set<string>(["write:Account"]),
+    requiredIAMPolicy: IAMPolicies.READ_ACCOUNTS,
   },
 ];

@@ -14,7 +14,7 @@
 import type { Metadata } from "next";
 import "@app/globals.css";
 import { ReactNode } from "react";
-import { Toaster, TooltipProvider } from "@components/ui";
+import { Toaster } from "@components/ui";
 import { Footer, InstructionsBanner, Navbar } from "@components/common";
 import { getMessages } from "next-intl/server";
 import { AuthController, RemoteConfigController } from "@controllers/index";
@@ -84,19 +84,15 @@ export default async function RootLayout({
           timeZone={"Asia/Kolkata"}
         >
           <AuthProvider account={account}>
-            <TooltipProvider>
-              <div className={"flex min-h-dvh flex-col"}>
-                <Navbar />
-                <main className={`flex-1 pt-20`}>
-                  <InstructionsBanner
-                    show={config?.instructions.show ?? false}
-                  />
-                  {children}
-                </main>
-                <Toaster />
-              </div>
-              <Footer />
-            </TooltipProvider>
+            <div className={"flex min-h-dvh flex-col"}>
+              <Navbar />
+              <main className={`flex-1 pt-20`}>
+                <InstructionsBanner show={config?.instructions.show ?? false} />
+                {children}
+              </main>
+              <Toaster />
+            </div>
+            <Footer />
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

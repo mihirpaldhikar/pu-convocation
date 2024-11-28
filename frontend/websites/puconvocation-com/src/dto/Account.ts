@@ -19,5 +19,5 @@ export default interface Account {
   email: string;
   avatarURL: string;
   suspended: boolean;
-  iamRoles: Array<string>;
+  assignedIAMPolicies: Array<string>;
 }

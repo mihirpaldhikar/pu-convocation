@@ -31,6 +31,8 @@ import {
   TrafficOnDateChart,
 } from "@components/analytics";
 import { AttendeeTable } from "@components/attendee";
+import IAMPolicies from "@configs/IAMPolicies";
+import { isAuthorized } from "@lib/iam_utils";
 
 const now = new Date();
 const year = Number(format(now, "yyyy"));
@@ -181,13 +183,12 @@ export default function ConsolePage(): JSX.Element {
 
   return (
     <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
-      {account.iamRoles.includes("read:Analytics") ? (
+      {isAuthorized(IAMPolicies.READ_ANALYTICS, account.assignedIAMPolicies) ? (
         <AnalyticsSection />
       ) : (
         <Fragment />
       )}
-      {account.iamRoles.includes("write:Attendee") ||
-      account.iamRoles.includes("read:Attendee") ? (
+      {isAuthorized(IAMPolicies.READ_ATTENDEES, account.assignedIAMPolicies) ? (
         <AttendeesSection />
       ) : (
         <Fragment />

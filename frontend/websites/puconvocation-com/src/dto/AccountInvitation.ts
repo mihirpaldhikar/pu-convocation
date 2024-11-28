@@ -13,5 +13,5 @@
 
 export default interface AccountInvitation {
   email: string;
-  iamRoles: Array<string>;
+  assignedIAMPolicies: Array<string>;
 }

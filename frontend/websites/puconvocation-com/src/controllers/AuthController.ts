@@ -182,25 +182,9 @@ export default class AuthController {
     );
   }
 
-  public async getIAMPolicy(
-    invitations: Array<AccountInvitation>,
-  ): Promise<Response<never, string>> {
-    return await this.httpService.post<never>(
-      `${this.ACCOUNT_ROUTE}/sendInvitations`,
-      {
-        invites: invitations,
-      },
-      {
-        expectedStatusCode: 201,
-      },
-    );
-  }
-
-  public async getAllIAMPolicies(): Promise<
-    Response<Array<IAMPolicy>, string>
-  > {
+  public async getIAMPolicies(): Promise<Response<Array<IAMPolicy>, string>> {
     return await this.httpService.get<Array<IAMPolicy>>(
-      `${this.IAM_ROUTE}/allPolicies`,
+      `${this.IAM_ROUTE}/policies/all`,
     );
   }
 

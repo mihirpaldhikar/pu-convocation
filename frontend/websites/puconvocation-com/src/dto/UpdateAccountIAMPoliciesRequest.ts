@@ -13,8 +13,8 @@
 
 export default interface UpdateAccountIAMPoliciesRequest {
   uuid: string;
-  iamOperations: Array<{
-    id: string;
+  iamPolicyOperations: Array<{
+    policy: string;
     operation: "ADD" | "REMOVE" | "NO_CHANGE";
   }>;
 }

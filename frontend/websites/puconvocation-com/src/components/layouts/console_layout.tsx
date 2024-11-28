@@ -19,6 +19,7 @@ import { Link, usePathname } from "@i18n/routing";
 import { NavMenu } from "@dto/index";
 import { useAuth } from "@hooks/index";
 import Cookie from "js-cookie";
+import { isAuthorized } from "@lib/iam_utils";
 
 interface ConsoleLayoutProps {
   children: ReactNode;
@@ -37,8 +38,6 @@ export default function ConsoleLayout({
 
   if (account === null) return <Fragment />;
 
-  const accountIamRoles = new Set<string>(account?.iamRoles ?? []);
-
   return (
     <div className={`flex-1 pt-20 lg:flex`}>
       <aside
@@ -56,7 +55,15 @@ export default function ConsoleLayout({
                   new RegExp(menu.pathRegex).test(path)
                     ? "bg-red-100"
                     : "bg-transparent hover:bg-gray-100"
-                } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 transition-all duration-150 ease-in-out`}
+                } ${collapsed ? "rounded-full p-3" : "rounded-br-full py-3 pl-5"} ${
+                  menu.requiredIAMPolicy === null ||
+                  isAuthorized(
+                    menu.requiredIAMPolicy,
+                    account.assignedIAMPolicies,
+                  )
+                    ? "flex"
+                    : "hidden"
+                } space-x-4 transition-all duration-150 ease-in-out`}
               >
                 <div
                   className={`size-5 ${
@@ -119,7 +126,15 @@ export default function ConsoleLayout({
                 RegExp(menu.pathRegex).test(path)
                   ? "bg-red-100"
                   : "bg-transparent hover:bg-gray-100"
-              } ${menu.requiredIAMRoles.intersection(accountIamRoles).size > 0 || menu.requiredIAMRoles.size === 0 ? "flex" : "hidden"} space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
+              } ${
+                menu.requiredIAMPolicy === null ||
+                isAuthorized(
+                  menu.requiredIAMPolicy,
+                  account.assignedIAMPolicies,
+                )
+                  ? "flex"
+                  : "hidden"
+              } space-x-4 rounded-full p-3 transition-all duration-150 ease-in-out`}
             >
               <div
                 className={`size-5 ${

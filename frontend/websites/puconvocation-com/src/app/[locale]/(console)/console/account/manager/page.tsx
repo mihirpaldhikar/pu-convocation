@@ -74,10 +74,10 @@ export default function AccountManager() {
     },
   });
 
-  const { data: policies } = useQuery({
+  const { data: iamPolicies } = useQuery({
     queryKey: ["allPolicies"],
     queryFn: async () => {
-      const response = await authController.getAllIAMPolicies();
+      const response = await authController.getIAMPolicies();
       if (response.statusCode === StatusCode.SUCCESS) {
         return response.payload;
       }
@@ -142,17 +142,17 @@ export default function AccountManager() {
                         }}
                       />
                     </div>
-                    {policies !== undefined ? (
+                    {iamPolicies !== undefined ? (
                       <div
                         className={
                           "flex flex-col items-start space-y-5 rounded-xl border px-2 py-3"
                         }
                       >
                         <h6 className={"text-lg font-medium"}>Permissions</h6>
-                        {policies.map((policy) => {
+                        {iamPolicies.map((iamPolicy) => {
                           return (
                             <div
-                              key={policy.role}
+                              key={iamPolicy.policy}
                               className={
                                 "flex w-full items-center justify-between"
                               }
@@ -161,41 +161,44 @@ export default function AccountManager() {
                                 className={"flex flex-1 flex-col items-start"}
                               >
                                 <p className={"font-mono text-black"}>
-                                  {policy.role}
+                                  {iamPolicy.policy}
                                 </p>
                                 <span className={"text-xs"}>
-                                  {policy.description}
+                                  {iamPolicy.description}
                                 </span>
                               </div>
                               <Checkbox
                                 className={"size-5"}
-                                checked={selectedAccount.iamRoles.includes(
-                                  policy.role,
+                                checked={selectedAccount.assignedIAMPolicies.includes(
+                                  iamPolicy.policy,
                                 )}
                                 onCheckedChange={(checked: boolean) => {
                                   setSelectedAccount((prevState) => {
                                     if (prevState === null) return null;
                                     return {
                                       ...prevState,
-                                      iamRoles: checked
-                                        ? [...prevState.iamRoles, policy.role]
-                                        : prevState.iamRoles.filter(
-                                            (p) => p !== policy.role,
+                                      assignedIAMPolicies: checked
+                                        ? [
+                                            ...prevState.assignedIAMPolicies,
+                                            iamPolicy.policy,
+                                          ]
+                                        : prevState.assignedIAMPolicies.filter(
+                                            (p) => p !== iamPolicy.policy,
                                           ),
                                     };
                                   });
                                   const changedPolicyIndex =
-                                    assignedIAMPolicies?.iamOperations.indexOf(
-                                      assignedIAMPolicies?.iamOperations.filter(
-                                        (p) => p.id === policy.role,
+                                    assignedIAMPolicies?.iamPolicyOperations.indexOf(
+                                      assignedIAMPolicies?.iamPolicyOperations.filter(
+                                        (p) => p.policy === iamPolicy.policy,
                                       )[0],
                                     );
                                   const newPolicies = [
-                                    ...assignedIAMPolicies?.iamOperations,
+                                    ...assignedIAMPolicies?.iamPolicyOperations,
                                   ];
                                   if (changedPolicyIndex === -1) {
                                     newPolicies.push({
-                                      id: policy.role,
+                                      policy: iamPolicy.policy,
                                       operation: checked ? "ADD" : "REMOVE",
                                     });
                                   } else {
@@ -206,7 +209,7 @@ export default function AccountManager() {
                                     if (prevState === null) return null;
                                     return {
                                       ...prevState,
-                                      iamOperations: [...newPolicies],
+                                      iamPolicyOperations: [...newPolicies],
                                     };
                                   });
                                 }}
@@ -330,33 +333,33 @@ export default function AccountManager() {
                                         />
                                       )}
                                     </Field>
-                                    {policies && (
+                                    {iamPolicies && (
                                       <div
                                         className={
                                           "grid w-full grid-cols-1 gap-7 px-2 py-4 md:grid-cols-2"
                                         }
                                       >
-                                        {policies.map((policy) => {
+                                        {iamPolicies.map((iamPolicy) => {
                                           return (
                                             <div
-                                              key={policy.role}
+                                              key={iamPolicy.policy}
                                               className={
                                                 "flex items-center justify-between"
                                               }
                                             >
                                               <div>
-                                                <h6>{policy.role}</h6>
+                                                <h6>{iamPolicy.policy}</h6>
                                                 <p
                                                   className={
                                                     "text-xs text-gray-500"
                                                   }
                                                 >
-                                                  {policy.description}
+                                                  {iamPolicy.description}
                                                 </p>
                                               </div>
                                               <Checkbox
-                                                checked={invitation.iamRoles.includes(
-                                                  policy.role,
+                                                checked={invitation.assignedIAMPolicies.includes(
+                                                  iamPolicy.policy,
                                                 )}
                                                 onCheckedChange={(
                                                   checked: boolean,
@@ -366,9 +369,9 @@ export default function AccountManager() {
                                                       index,
                                                       {
                                                         ...invitation,
-                                                        iamRoles: [
-                                                          ...invitation.iamRoles,
-                                                          policy.role,
+                                                        assignedIAMPolicies: [
+                                                          ...invitation.assignedIAMPolicies,
+                                                          iamPolicy.policy,
                                                         ],
                                                       },
                                                     );
@@ -376,10 +379,11 @@ export default function AccountManager() {
                                                     const updates = {
                                                       ...invitation,
                                                     };
-                                                    updates.iamRoles =
-                                                      updates.iamRoles.filter(
+                                                    updates.assignedIAMPolicies =
+                                                      updates.assignedIAMPolicies.filter(
                                                         (p) =>
-                                                          p !== policy.role,
+                                                          p !==
+                                                          iamPolicy.policy,
                                                       );
                                                     arrayHelpers.replace(
                                                       index,
@@ -460,12 +464,14 @@ export default function AccountManager() {
                                         ) {
                                           arrayHelpers.push({
                                             email: results.data[i][0],
-                                            iamRoles: results.data[i][1]
+                                            assignedIAMPolicies: results.data[
+                                              i
+                                            ][1]
                                               .split(",")
                                               .map((r) => r.trim())
                                               .filter((r) =>
-                                                policies
-                                                  ?.map((p) => p.role)
+                                                iamPolicies
+                                                  ?.map((p) => p.policy)
                                                   .includes(r),
                                               ),
                                           });
@@ -493,7 +499,7 @@ export default function AccountManager() {
                                 onClick={() => {
                                   arrayHelpers.push({
                                     email: "",
-                                    iamRoles: [],
+                                    assignedIAMPolicies: [],
                                   });
                                 }}
                               >
@@ -590,12 +596,13 @@ export default function AccountManager() {
                             setSelectedAccount(account);
                             setAssignedIAMPolicies({
                               uuid: account.uuid,
-                              iamOperations: account.iamRoles.map((r) => {
-                                return {
-                                  id: r,
-                                  operation: "NO_CHANGE",
-                                };
-                              }),
+                              iamPolicyOperations:
+                                account.assignedIAMPolicies.map((r) => {
+                                  return {
+                                    policy: r,
+                                    operation: "NO_CHANGE",
+                                  };
+                                }),
                             });
                           }}
                         >
