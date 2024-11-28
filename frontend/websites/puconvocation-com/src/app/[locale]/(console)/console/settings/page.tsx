@@ -12,7 +12,7 @@
  */
 "use client";
 import { Fragment, JSX, useState } from "react";
-import { useRemoteConfig } from "@hooks/index";
+import { useAuth, useRemoteConfig } from "@hooks/index";
 import Image from "next/image";
 import { convertToThumbnailUrl } from "@lib/image_utils";
 import { ImagePicker } from "@components/common";
@@ -24,8 +24,11 @@ import {
   CardTitle,
 } from "@components/ui";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { isAuthorized } from "@lib/iam_utils";
+import IAMPolicies from "@configs/IAMPolicies";
 
 export default function GeneralSettingsPage(): JSX.Element {
+  const { account } = useAuth();
   const { remoteConfig, dispatch } = useRemoteConfig();
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [selectedImageSection, setSelectedImageSection] = useState<
@@ -92,48 +95,62 @@ export default function GeneralSettingsPage(): JSX.Element {
                         blurDataURL={convertToThumbnailUrl(image.url)}
                         className={"rounded-xl"}
                       />
-                      <div className={"absolute right-0 top-0 z-10 p-2"}>
-                        <div
-                          className={
-                            "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
-                          }
-                          onClick={() => {
-                            const x = remoteConfig.images.carousel;
-                            x.splice(index, 1);
-                            dispatch({
-                              type: "SET_CONFIG",
-                              payload: {
-                                config: {
-                                  ...remoteConfig,
-                                  images: {
-                                    ...remoteConfig.images,
-                                    carousel: [...x],
+                      {isAuthorized(
+                        IAMPolicies.WRITE_REMOTE_CONFIG,
+                        account!!.assignedIAMPolicies,
+                      ) ? (
+                        <div className={"absolute right-0 top-0 z-10 p-2"}>
+                          <div
+                            className={
+                              "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
+                            }
+                            onClick={() => {
+                              const x = remoteConfig.images.carousel;
+                              x.splice(index, 1);
+                              dispatch({
+                                type: "SET_CONFIG",
+                                payload: {
+                                  config: {
+                                    ...remoteConfig,
+                                    images: {
+                                      ...remoteConfig.images,
+                                      carousel: [...x],
+                                    },
                                   },
                                 },
-                              },
-                            });
-                          }}
-                        >
-                          <XMarkIcon />
+                              });
+                            }}
+                          >
+                            <XMarkIcon className={"size-5"} />
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <Fragment />
+                      )}
                     </div>
                   );
                 })}
 
-                <div
-                  className={
-                    "flex min-h-60 w-[22.4rem] cursor-pointer items-center justify-center rounded-xl bg-red-100"
-                  }
-                  onClick={async () => {
-                    setSelectedImageSection("carousel");
-                    setShowImagePicker(true);
-                  }}
-                >
-                  <div className={"rounded-full bg-red-300 p-4"}>
-                    <PlusIcon className={"size-5 text-red-800"} />
+                {isAuthorized(
+                  IAMPolicies.WRITE_REMOTE_CONFIG,
+                  account!!.assignedIAMPolicies,
+                ) ? (
+                  <div
+                    className={
+                      "flex min-h-60 w-[22.4rem] cursor-pointer items-center justify-center rounded-xl bg-red-100"
+                    }
+                    onClick={async () => {
+                      setSelectedImageSection("carousel");
+                      setShowImagePicker(true);
+                    }}
+                  >
+                    <div className={"rounded-full bg-red-300 p-4"}>
+                      <PlusIcon className={"size-5 text-red-800"} />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <Fragment />
+                )}
               </div>
             </div>
           </section>
