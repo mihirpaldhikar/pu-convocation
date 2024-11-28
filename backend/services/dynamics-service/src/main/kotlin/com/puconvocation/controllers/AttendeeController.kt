@@ -297,7 +297,7 @@ class AttendeeController(
         limit: Int
     ): Result<HashMap<String, Any>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = IAMPolicies.READ_ANALYTICS,
+                role = IAMPolicies.READ_ATTENDEES,
                 principal = authorizationToken
             )
         ) {
@@ -320,7 +320,7 @@ class AttendeeController(
 
     suspend fun searchAttendees(authorizationToken: String?, query: String): Result<List<Attendee>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = IAMPolicies.READ_ANALYTICS,
+                role = IAMPolicies.READ_ATTENDEES,
                 principal = authorizationToken
             )
         ) {
