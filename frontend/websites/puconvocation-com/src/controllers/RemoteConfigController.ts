@@ -33,9 +33,11 @@ export default class RemoteConfigController {
   public async changeRemoteConfig(
     remoteConfig: RemoteConfig,
   ): Promise<Response<RemoteConfig, string>> {
-    return await this.httpService.patch(
-      `${this.CONFIG_ROUTE}/change`,
-      remoteConfig,
-    );
+    return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
+      images: remoteConfig.images,
+      countdown: remoteConfig.countdown,
+      groundMappings: remoteConfig.groundMappings,
+      showInstructions: remoteConfig.instructions.show,
+    });
   }
 }

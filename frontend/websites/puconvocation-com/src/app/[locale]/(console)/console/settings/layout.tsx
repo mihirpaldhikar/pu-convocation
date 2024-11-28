@@ -40,7 +40,7 @@ export default function SettingsLayout({
           <Cog6ToothIcon className="mr-2 h-6 w-6 fill-red-600" /> Settings
         </h1>
         <p className="text-xs text-gray-600">
-          Manage your preferences and configure your account settings here.
+          Manage your preferences and configure system settings here.
         </p>
       </div>
 
