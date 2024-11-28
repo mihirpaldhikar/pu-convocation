@@ -21,12 +21,14 @@ import {
   CardTitle,
   FilePicker,
 } from "@components/ui";
-import { useRemoteConfig, useToast } from "@hooks/index";
+import { useAuth, useRemoteConfig, useToast } from "@hooks/index";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { isAuthorized } from "@lib/iam_utils";
+import IAMPolicies from "@configs/IAMPolicies";
 
 const attendeeController = new AttendeeController();
 
@@ -38,6 +40,7 @@ export default function AttendeeControlPlane({
   totalAttendeeCount,
 }: Readonly<AttendeeControllerProps>): JSX.Element {
   const { remoteConfig, dispatch: dispatchRemoteConfig } = useRemoteConfig();
+  const { account } = useAuth();
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -57,38 +60,49 @@ export default function AttendeeControlPlane({
           <span className="text-5xl font-bold text-red-600">
             {totalAttendeeCount}
           </span>
-          <Button
-            onClick={async () => {
-              const response = await attendeeController.mutateAttendeeLock(
-                !remoteConfig.attendees.locked,
-              );
-              if (response.statusCode === StatusCode.FAILURE) {
-                toast({
-                  title: "Operation Failed",
-                  description: response.error,
-                  duration: 5000,
-                });
-              } else {
-                dispatchRemoteConfig({
-                  type: "SET_CONFIG",
-                  payload: {
-                    config: {
-                      ...remoteConfig,
-                      attendees: {
-                        ...remoteConfig.attendees,
-                        locked: !remoteConfig.attendees.locked,
+          {isAuthorized(
+            IAMPolicies.WRITE_ATTENDEES,
+            account!!.assignedIAMPolicies,
+          ) ? (
+            <Button
+              onClick={async () => {
+                const response = await attendeeController.mutateAttendeeLock(
+                  !remoteConfig.attendees.locked,
+                );
+                if (response.statusCode === StatusCode.FAILURE) {
+                  toast({
+                    title: "Operation Failed",
+                    description: response.error,
+                    duration: 5000,
+                  });
+                } else {
+                  dispatchRemoteConfig({
+                    type: "SET_CONFIG",
+                    payload: {
+                      config: {
+                        ...remoteConfig,
+                        attendees: {
+                          ...remoteConfig.attendees,
+                          locked: !remoteConfig.attendees.locked,
+                        },
                       },
                     },
-                  },
-                });
-              }
-            }}
-            className="bg-red-600 text-white hover:bg-red-700"
-          >
-            {remoteConfig?.attendees.locked ? "Unlock" : "Lock"}
-          </Button>
+                  });
+                }
+              }}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {remoteConfig?.attendees.locked ? "Unlock" : "Lock"}
+            </Button>
+          ) : (
+            <Fragment />
+          )}
         </div>
-        {remoteConfig.attendees.locked ? (
+        {remoteConfig.attendees.locked ||
+        !isAuthorized(
+          IAMPolicies.WRITE_ATTENDEES,
+          account!!.assignedIAMPolicies,
+        ) ? (
           <Fragment />
         ) : (
           <div
