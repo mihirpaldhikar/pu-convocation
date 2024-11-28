@@ -1,3 +1,14 @@
+## 3.0.0-beta.13 (November 28, 2024)
+
+### Breaking Changes:
+- Refactor IAM Related operations to comply with latest changes made in auth-service which streamlines the Access Management.
+
+### New:
+- Add IAM checks to Image Picker to check if user is authorized to upload images.
+- Add IAM checks to the Account Manager page to render contents and add restrictions based on authorization.
+- Add IAM checks to the Attendee Control-plane.
+- Add validations in the account invitations form.
+
 ## 3.0.0-beta.12 (November 28, 2024)
 
 ### Miscellaneous:
