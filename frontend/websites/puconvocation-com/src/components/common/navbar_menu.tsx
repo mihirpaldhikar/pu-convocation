@@ -137,11 +137,12 @@ export default function NavbarMenu(): JSX.Element {
                     </PopoverClose>
                   </div>
                   <PopoverClose asChild={true}>
-                    <Button
-                      asChild={true}
-                      className={`${path.includes("console") ? "hidden" : ""}`}
-                    >
-                      <Link href={"/console"}>Console</Link>
+                    <Button asChild={true}>
+                      {path.includes("console") ? (
+                        <Link href={"/"}>Landing Page</Link>
+                      ) : (
+                        <Link href={"/console"}>Console</Link>
+                      )}
                     </Button>
                   </PopoverClose>
                 </div>
