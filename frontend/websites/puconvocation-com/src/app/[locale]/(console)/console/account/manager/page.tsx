@@ -48,10 +48,14 @@ import { useToast } from "@hooks/useToast";
 import { Field, FieldArray, Form, Formik } from "formik";
 import csvParser, { ParseResult } from "papaparse";
 import { ArrowUpTrayIcon, PencilIcon } from "@heroicons/react/24/outline";
+import { isAuthorized } from "@lib/iam_utils";
+import IAMPolicies from "@configs/IAMPolicies";
+import { useAuth } from "@hooks/index";
 
 const authController = new AuthController();
 
 export default function AccountManager() {
+  const { account: currentAccount } = useAuth();
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [assignedIAMPolicies, setAssignedIAMPolicies] =
     useState<UpdateAccountIAMPoliciesRequest | null>(null);
@@ -84,6 +88,8 @@ export default function AccountManager() {
       return [];
     },
   });
+
+  if (currentAccount === null) return <Fragment />;
 
   return (
     <Fragment>
@@ -278,346 +284,366 @@ export default function AccountManager() {
         </div>
 
         {/* Add New Account */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Send Invitations</CardTitle>
-            <CardDescription>
-              Add email addresses and select what operations should be allowed
-              for the user.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className={"px-3 lg:px-6"}>
-            <div className="flex flex-col space-y-2">
-              <Formik
-                initialValues={{
-                  invitations: [] as Array<AccountInvitation>,
-                }}
-                onSubmit={async ({ invitations }) => {
-                  const response =
-                    await authController.sendAccountInvitations(invitations);
-                  if (response.statusCode === StatusCode.FAILURE) {
-                    toast({
-                      title: "Invitations Failed",
-                      description: response.error,
-                      duration: 5000,
-                    });
-                  } else {
-                    toast({
-                      title: "Invitations Sent",
-                      description: `Successfully sent ${invitations.length} invitation(s).`,
-                      duration: 5000,
-                    });
-                  }
-                }}
-              >
-                {({ values }) => (
-                  <div className={"space-y-5"}>
-                    <Form>
-                      <FieldArray name={"invitations"}>
-                        {(arrayHelpers) => (
-                          <div className={"space-y-3"}>
-                            {values.invitations.map(
-                              (invitation: AccountInvitation, index) => {
-                                return (
-                                  <div
-                                    key={index}
-                                    className={"rounded-xl border px-2 py-3"}
-                                  >
-                                    <Field name={`invitations[${index}].email`}>
-                                      {({ field }: { field: any }) => (
-                                        <Input
-                                          {...field}
-                                          placeholder={"Email..."}
-                                          type={"email"}
-                                          className={"w-full"}
-                                        />
+        {isAuthorized(
+          IAMPolicies.WRITE_ACCOUNTS,
+          currentAccount.assignedIAMPolicies,
+        ) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Send Invitations</CardTitle>
+              <CardDescription>
+                Add email addresses and select what operations should be allowed
+                for the user.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className={"px-3 lg:px-6"}>
+              <div className="flex flex-col space-y-2">
+                <Formik
+                  initialValues={{
+                    invitations: [] as Array<AccountInvitation>,
+                  }}
+                  onSubmit={async ({ invitations }) => {
+                    const response =
+                      await authController.sendAccountInvitations(invitations);
+                    if (response.statusCode === StatusCode.FAILURE) {
+                      toast({
+                        title: "Invitations Failed",
+                        description: response.error,
+                        duration: 5000,
+                      });
+                    } else {
+                      toast({
+                        title: "Invitations Sent",
+                        description: `Successfully sent ${invitations.length} invitation(s).`,
+                        duration: 5000,
+                      });
+                    }
+                  }}
+                >
+                  {({ values }) => (
+                    <div className={"space-y-5"}>
+                      <Form>
+                        <FieldArray name={"invitations"}>
+                          {(arrayHelpers) => (
+                            <div className={"space-y-3"}>
+                              {values.invitations.map(
+                                (invitation: AccountInvitation, index) => {
+                                  return (
+                                    <div
+                                      key={index}
+                                      className={"rounded-xl border px-2 py-3"}
+                                    >
+                                      <Field
+                                        name={`invitations[${index}].email`}
+                                      >
+                                        {({ field }: { field: any }) => (
+                                          <Input
+                                            {...field}
+                                            placeholder={"Email..."}
+                                            type={"email"}
+                                            className={"w-full"}
+                                          />
+                                        )}
+                                      </Field>
+                                      {iamPolicies && (
+                                        <div
+                                          className={
+                                            "grid w-full grid-cols-1 gap-7 px-2 py-4 md:grid-cols-2"
+                                          }
+                                        >
+                                          {iamPolicies.map((iamPolicy) => {
+                                            return (
+                                              <div
+                                                key={iamPolicy.policy}
+                                                className={
+                                                  "flex items-center justify-between"
+                                                }
+                                              >
+                                                <div>
+                                                  <h6>{iamPolicy.policy}</h6>
+                                                  <p
+                                                    className={
+                                                      "text-xs text-gray-500"
+                                                    }
+                                                  >
+                                                    {iamPolicy.description}
+                                                  </p>
+                                                </div>
+                                                <Checkbox
+                                                  checked={invitation.assignedIAMPolicies.includes(
+                                                    iamPolicy.policy,
+                                                  )}
+                                                  onCheckedChange={(
+                                                    checked: boolean,
+                                                  ) => {
+                                                    if (checked) {
+                                                      arrayHelpers.replace(
+                                                        index,
+                                                        {
+                                                          ...invitation,
+                                                          assignedIAMPolicies: [
+                                                            ...invitation.assignedIAMPolicies,
+                                                            iamPolicy.policy,
+                                                          ],
+                                                        },
+                                                      );
+                                                    } else {
+                                                      const updates = {
+                                                        ...invitation,
+                                                      };
+                                                      updates.assignedIAMPolicies =
+                                                        updates.assignedIAMPolicies.filter(
+                                                          (p) =>
+                                                            p !==
+                                                            iamPolicy.policy,
+                                                        );
+                                                      arrayHelpers.replace(
+                                                        index,
+                                                        updates,
+                                                      );
+                                                    }
+                                                  }}
+                                                />
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
                                       )}
-                                    </Field>
-                                    {iamPolicies && (
                                       <div
                                         className={
-                                          "grid w-full grid-cols-1 gap-7 px-2 py-4 md:grid-cols-2"
+                                          "flex items-center justify-end"
                                         }
                                       >
-                                        {iamPolicies.map((iamPolicy) => {
-                                          return (
-                                            <div
-                                              key={iamPolicy.policy}
-                                              className={
-                                                "flex items-center justify-between"
-                                              }
-                                            >
-                                              <div>
-                                                <h6>{iamPolicy.policy}</h6>
-                                                <p
-                                                  className={
-                                                    "text-xs text-gray-500"
-                                                  }
-                                                >
-                                                  {iamPolicy.description}
-                                                </p>
-                                              </div>
-                                              <Checkbox
-                                                checked={invitation.assignedIAMPolicies.includes(
-                                                  iamPolicy.policy,
-                                                )}
-                                                onCheckedChange={(
-                                                  checked: boolean,
-                                                ) => {
-                                                  if (checked) {
-                                                    arrayHelpers.replace(
-                                                      index,
-                                                      {
-                                                        ...invitation,
-                                                        assignedIAMPolicies: [
-                                                          ...invitation.assignedIAMPolicies,
-                                                          iamPolicy.policy,
-                                                        ],
-                                                      },
-                                                    );
-                                                  } else {
-                                                    const updates = {
-                                                      ...invitation,
-                                                    };
-                                                    updates.assignedIAMPolicies =
-                                                      updates.assignedIAMPolicies.filter(
-                                                        (p) =>
-                                                          p !==
-                                                          iamPolicy.policy,
-                                                      );
-                                                    arrayHelpers.replace(
-                                                      index,
-                                                      updates,
-                                                    );
-                                                  }
-                                                }}
-                                              />
-                                            </div>
-                                          );
-                                        })}
+                                        <Button
+                                          type={"button"}
+                                          variant={"outline"}
+                                          onClick={() => {
+                                            arrayHelpers.remove(index);
+                                          }}
+                                        >
+                                          Remove
+                                        </Button>
                                       </div>
-                                    )}
-                                    <div
-                                      className={
-                                        "flex items-center justify-end"
-                                      }
-                                    >
-                                      <Button
-                                        type={"button"}
-                                        variant={"outline"}
-                                        onClick={() => {
-                                          arrayHelpers.remove(index);
-                                        }}
-                                      >
-                                        Remove
-                                      </Button>
                                     </div>
-                                  </div>
-                                );
-                              },
-                            )}
-                            <div
-                              className={
-                                "relative my-3 cursor-pointer rounded-xl border border-dashed border-neutral-600 py-7"
-                              }
-                            >
+                                  );
+                                },
+                              )}
                               <div
                                 className={
-                                  "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-neutral-50"
+                                  "relative my-3 cursor-pointer rounded-xl border border-dashed border-neutral-600 py-7"
                                 }
                               >
                                 <div
                                   className={
-                                    "flex h-full cursor-pointer flex-col items-center justify-center space-y-3"
+                                    "absolute right-0 top-0 h-full w-full cursor-pointer rounded-xl bg-neutral-50"
                                   }
                                 >
                                   <div
                                     className={
-                                      "flex space-x-3 text-neutral-700"
+                                      "flex h-full cursor-pointer flex-col items-center justify-center space-y-3"
                                     }
                                   >
-                                    <ArrowUpTrayIcon className={"size-5"} />
-                                    <h6 className={"font-medium"}>
-                                      Upload Account List
-                                    </h6>
+                                    <div
+                                      className={
+                                        "flex space-x-3 text-neutral-700"
+                                      }
+                                    >
+                                      <ArrowUpTrayIcon className={"size-5"} />
+                                      <h6 className={"font-medium"}>
+                                        Upload Account List
+                                      </h6>
+                                    </div>
+                                    <p className={"text-xs text-gray-500"}>
+                                      Drag or Click here to upload CSV File
+                                    </p>
                                   </div>
-                                  <p className={"text-xs text-gray-500"}>
-                                    Drag or Click here to upload CSV File
-                                  </p>
                                 </div>
-                              </div>
-                              <FilePicker
-                                allowedFileExtensions={".csv"}
-                                onFilePicked={async (file) => {
-                                  if (file !== null) {
-                                    csvParser.parse(file as any, {
-                                      skipEmptyLines: true,
-                                      complete(
-                                        results: ParseResult<
-                                          Record<string, string>
-                                        >,
-                                      ) {
-                                        for (
-                                          let i = 1;
-                                          i < results.data.length;
-                                          i++
+                                <FilePicker
+                                  allowedFileExtensions={".csv"}
+                                  onFilePicked={async (file) => {
+                                    if (file !== null) {
+                                      csvParser.parse(file as any, {
+                                        skipEmptyLines: true,
+                                        complete(
+                                          results: ParseResult<
+                                            Record<string, string>
+                                          >,
                                         ) {
-                                          arrayHelpers.push({
-                                            email: results.data[i][0],
-                                            assignedIAMPolicies: results.data[
-                                              i
-                                            ][1]
-                                              .split(",")
-                                              .map((r) => r.trim())
-                                              .filter((r) =>
-                                                iamPolicies
-                                                  ?.map((p) => p.policy)
-                                                  .includes(r),
-                                              ),
-                                          });
-                                        }
-                                      },
-                                    });
-                                  }
-                                }}
-                              />
-                            </div>
-                            <div
-                              className={
-                                "flex w-full justify-end space-x-4 pt-6"
-                              }
-                            >
-                              <Button
-                                variant={"secondary"}
-                                disabled={
-                                  values.invitations.length > 0 &&
-                                  values.invitations[
-                                    values.invitations.length - 1
-                                  ].email === ""
-                                }
-                                type={"button"}
-                                onClick={() => {
-                                  arrayHelpers.push({
-                                    email: "",
-                                    assignedIAMPolicies: [],
-                                  });
-                                }}
-                              >
-                                Add
-                              </Button>
-                              <Button
+                                          for (
+                                            let i = 1;
+                                            i < results.data.length;
+                                            i++
+                                          ) {
+                                            arrayHelpers.push({
+                                              email: results.data[i][0],
+                                              assignedIAMPolicies: results.data[
+                                                i
+                                              ][1]
+                                                .split(",")
+                                                .map((r) => r.trim())
+                                                .filter((r) =>
+                                                  iamPolicies
+                                                    ?.map((p) => p.policy)
+                                                    .includes(r),
+                                                ),
+                                            });
+                                          }
+                                        },
+                                      });
+                                    }
+                                  }}
+                                />
+                              </div>
+                              <div
                                 className={
-                                  "bg-red-600 hover:bg-red-700 disabled:bg-red-400"
-                                }
-                                type={"submit"}
-                                disabled={
-                                  values.invitations.length === 0 ||
-                                  values.invitations.filter(
-                                    (i) => i.email === "",
-                                  ).length !== 0
+                                  "flex w-full justify-end space-x-4 pt-6"
                                 }
                               >
-                                Send Invitations
-                              </Button>
+                                <Button
+                                  variant={"secondary"}
+                                  disabled={
+                                    values.invitations.length > 0 &&
+                                    values.invitations[
+                                      values.invitations.length - 1
+                                    ].email === ""
+                                  }
+                                  type={"button"}
+                                  onClick={() => {
+                                    arrayHelpers.push({
+                                      email: "",
+                                      assignedIAMPolicies: [],
+                                    });
+                                  }}
+                                >
+                                  Add
+                                </Button>
+                                <Button
+                                  className={
+                                    "bg-red-600 hover:bg-red-700 disabled:bg-red-400"
+                                  }
+                                  type={"submit"}
+                                  disabled={
+                                    values.invitations.length === 0 ||
+                                    values.invitations.filter(
+                                      (i) => i.email === "",
+                                    ).length !== 0
+                                  }
+                                >
+                                  Send Invitations
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </FieldArray>
-                    </Form>
-                  </div>
-                )}
-              </Formik>
-            </div>
-          </CardContent>
-        </Card>
+                          )}
+                        </FieldArray>
+                      </Form>
+                    </div>
+                  )}
+                </Formik>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Fragment />
+        )}
 
         {/* Account List */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Accounts</CardTitle>
-            <CardDescription>
-              Manage existing accounts and their permissions.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 px-3 lg:px-6">
-            {isLoading ? (
-              <Fragment>
-                <Skeleton className={"h-10 w-full"}></Skeleton>
-                <Skeleton className={"h-10 w-full"}></Skeleton>
-                <Skeleton className={"h-10 w-full"}></Skeleton>
-                <Skeleton className={"h-10 w-full"}></Skeleton>
-              </Fragment>
-            ) : isError || accounts === undefined ? (
-              <div
-                className={"flex w-full flex-col items-center justify-center"}
-              >
-                <SpaceShip />
-                <h4 className={"text-xl font-bold text-red-600"}>Ohhh!</h4>
-                <h5 className={"text-lg font-medium"}>An Error Occurred.</h5>
-              </div>
-            ) : (
-              <div className={"space-y-3"}>
-                {accounts.map((account) => {
-                  return (
-                    <div
-                      key={account.uuid}
-                      className={
-                        "flex items-center justify-between rounded-xl border px-2 py-3"
-                      }
-                    >
-                      <div className={"flex items-center space-x-3"}>
-                        <Avatar
-                          className={`${account.username === "mihirpaldhikar" || account.username === "suhanishah" ? "border-2 border-red-600" : ""}`}
-                        >
-                          <AvatarImage src={account.avatarURL} />
-                          <AvatarFallback className={"text-xl"}>
-                            {account.displayName.substring(0, 1)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h6 className={"font-medium"}>
-                            {account.designation.length !== 0
-                              ? account.designation.concat(" ")
-                              : ""}{" "}
-                            {account.displayName}
-                          </h6>
-                          <p className={"text-xs text-gray-600"}>
-                            {account.email}
-                          </p>
+        {isAuthorized(
+          IAMPolicies.READ_ACCOUNTS,
+          currentAccount.assignedIAMPolicies,
+        ) ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Accounts</CardTitle>
+              <CardDescription>
+                Manage existing accounts and their permissions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 px-3 lg:px-6">
+              {isLoading ? (
+                <Fragment>
+                  <Skeleton className={"h-10 w-full"}></Skeleton>
+                  <Skeleton className={"h-10 w-full"}></Skeleton>
+                  <Skeleton className={"h-10 w-full"}></Skeleton>
+                  <Skeleton className={"h-10 w-full"}></Skeleton>
+                </Fragment>
+              ) : isError || accounts === undefined ? (
+                <div
+                  className={"flex w-full flex-col items-center justify-center"}
+                >
+                  <SpaceShip />
+                  <h4 className={"text-xl font-bold text-red-600"}>Ohhh!</h4>
+                  <h5 className={"text-lg font-medium"}>An Error Occurred.</h5>
+                </div>
+              ) : (
+                <div className={"space-y-3"}>
+                  {accounts.map((account) => {
+                    return (
+                      <div
+                        key={account.uuid}
+                        className={
+                          "flex items-center justify-between rounded-xl border px-2 py-3"
+                        }
+                      >
+                        <div className={"flex items-center space-x-3"}>
+                          <Avatar
+                            className={`${account.username === "mihirpaldhikar" || account.username === "suhanishah" ? "border-2 border-red-600" : ""}`}
+                          >
+                            <AvatarImage src={account.avatarURL} />
+                            <AvatarFallback className={"text-xl"}>
+                              {account.displayName.substring(0, 1)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h6 className={"font-medium"}>
+                              {account.designation.length !== 0
+                                ? account.designation.concat(" ")
+                                : ""}{" "}
+                              {account.displayName}
+                            </h6>
+                            <p className={"text-xs text-gray-600"}>
+                              {account.email}
+                            </p>
+                          </div>
                         </div>
+                        {isAuthorized(
+                          IAMPolicies.WRITE_ACCOUNTS,
+                          currentAccount.assignedIAMPolicies,
+                        ) &&
+                        account.username !== "mihirpaldhikar" &&
+                        account.username !== "suhanishah" ? (
+                          <Button
+                            variant={"secondary"}
+                            size={"icon"}
+                            onClick={() => {
+                              setShowSheet(true);
+                              setSelectedAccount(account);
+                              setAssignedIAMPolicies({
+                                uuid: account.uuid,
+                                iamPolicyOperations:
+                                  account.assignedIAMPolicies.map((r) => {
+                                    return {
+                                      policy: r,
+                                      operation: "NO_CHANGE",
+                                    };
+                                  }),
+                              });
+                            }}
+                          >
+                            <PencilIcon className={"size-5"} />
+                          </Button>
+                        ) : (
+                          <Fragment />
+                        )}
                       </div>
-                      {account.username !== "mihirpaldhikar" &&
-                      account.username !== "suhanishah" ? (
-                        <Button
-                          variant={"secondary"}
-                          size={"icon"}
-                          onClick={() => {
-                            setShowSheet(true);
-                            setSelectedAccount(account);
-                            setAssignedIAMPolicies({
-                              uuid: account.uuid,
-                              iamPolicyOperations:
-                                account.assignedIAMPolicies.map((r) => {
-                                  return {
-                                    policy: r,
-                                    operation: "NO_CHANGE",
-                                  };
-                                }),
-                            });
-                          }}
-                        >
-                          <PencilIcon className={"size-5"} />
-                        </Button>
-                      ) : (
-                        <Fragment />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Fragment />
+        )}
       </div>
     </Fragment>
   );
