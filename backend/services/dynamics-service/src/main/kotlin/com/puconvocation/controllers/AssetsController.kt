@@ -14,6 +14,7 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.enums.AssetType
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -21,16 +22,15 @@ import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.AuthService
 import com.puconvocation.services.CloudStorage
 import com.puconvocation.utils.Result
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.MultiPartData
-import io.ktor.http.content.PartData
-import io.ktor.utils.io.core.readBytes
-import io.ktor.utils.io.readBuffer
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.utils.io.*
+import io.ktor.utils.io.core.*
 import org.apache.commons.io.FilenameUtils
-import java.util.UUID
+import java.util.*
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -51,7 +51,7 @@ class AssetsController(
         fileName: String?
     ): Result<HashMap<String, String>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "write:Assets",
+                role = IAMPolicies.WRITE_ASSETS,
                 principal = authorizationToken
             )
         ) {
@@ -162,13 +162,10 @@ class AssetsController(
     }
 
     suspend fun getObjectsInFolder(authorizationToken: String?, folder: String): Result<List<String>, ErrorResponse> {
-        if ((!authService.isAuthorized(
-                role = "write:Assets",
+        if (!authService.isAuthorized(
+                role = IAMPolicies.READ_ASSETS,
                 principal = authorizationToken
-            ) || (!authService.isAuthorized(
-                role = "read:Assets",
-                principal = authorizationToken
-            )))
+            )
         ) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Forbidden,

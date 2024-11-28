@@ -16,11 +16,12 @@ package com.puconvocation.controllers
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.Popular
 import com.puconvocation.commons.dto.WeeklyTraffic
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.repositories.AnalyticsRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.services.AuthService
 import com.puconvocation.utils.Result
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -34,7 +35,7 @@ class AnalyticsController(
         weekStartDate: String
     ): Result<WeeklyTraffic, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -75,7 +76,7 @@ class AnalyticsController(
         date: String
     ): Result<List<Popular>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -111,7 +112,7 @@ class AnalyticsController(
 
     suspend fun popularLang(authorizationToken: String?): Result<List<Popular>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -131,7 +132,7 @@ class AnalyticsController(
 
     suspend fun popularCountries(authorizationToken: String?): Result<List<Popular>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -154,7 +155,7 @@ class AnalyticsController(
         countryCode: String
     ): Result<List<Popular>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -178,7 +179,7 @@ class AnalyticsController(
         state: String
     ): Result<List<Popular>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Analytics",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {

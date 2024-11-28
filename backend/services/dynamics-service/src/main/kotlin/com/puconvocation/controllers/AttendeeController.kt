@@ -15,6 +15,7 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
 import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.entities.Attendee
 import com.puconvocation.database.mongodb.entities.RemoteConfig
 import com.puconvocation.database.mongodb.repositories.AttendeeRepository
@@ -77,7 +78,7 @@ class AttendeeController(
     ): Result<HashMap<String, Any>, ErrorResponse> {
 
         if (!authService.isAuthorized(
-                role = "write:Attendee",
+                role = IAMPolicies.WRITE_ATTENDEES,
                 principal = authorizationToken
             )
         ) {
@@ -173,7 +174,7 @@ class AttendeeController(
         token: String
     ): Result<Attendee, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Attendee",
+                role = IAMPolicies.READ_ATTENDEES,
                 principal = authorizationToken
             )
         ) {
@@ -207,7 +208,7 @@ class AttendeeController(
         lock: Boolean
     ): Result<HashMap<String, Any>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "write:Attendee",
+                role = IAMPolicies.WRITE_ATTENDEES,
                 principal = authorizationToken
             )
         ) {
@@ -296,7 +297,7 @@ class AttendeeController(
         limit: Int
     ): Result<HashMap<String, Any>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Attendee",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {
@@ -319,7 +320,7 @@ class AttendeeController(
 
     suspend fun searchAttendees(authorizationToken: String?, query: String): Result<List<Attendee>, ErrorResponse> {
         if (!authService.isAuthorized(
-                role = "read:Attendee",
+                role = IAMPolicies.READ_ANALYTICS,
                 principal = authorizationToken
             )
         ) {

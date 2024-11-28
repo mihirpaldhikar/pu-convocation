@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
-data class AccountWithIAMRoles(
+data class AccountWithIAMPolicies(
     @BsonId
     @JsonProperty("uuid")
     val uuid: ObjectId,
@@ -40,6 +40,6 @@ data class AccountWithIAMRoles(
     @JsonProperty("suspended")
     val suspended: Boolean,
 
-    @JsonProperty("iamRoles")
-    val iamRoles: List<String>,
+    @JsonProperty("assignedIAMPolicies")
+    val assignedIAMPolicies: List<String>,
 )

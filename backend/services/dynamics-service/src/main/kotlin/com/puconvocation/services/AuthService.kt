@@ -15,13 +15,13 @@ package com.puconvocation.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.puconvocation.commons.dto.AccountWithIAMRoles
+import com.puconvocation.commons.dto.AccountWithIAMPolicies
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
 import io.ktor.client.*
-import io.ktor.client.call.body
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import org.bson.types.ObjectId
 
@@ -46,7 +46,7 @@ class AuthService(
                 cache.get(CachedKeys.accountWithIAMRolesKey(principal))
 
             return if (cachedRulesForAccount != null) {
-                json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles.contains(role)
+                json.readValue<AccountWithIAMPolicies>(cachedRulesForAccount).assignedIAMPolicies.contains(role)
             } else {
                 isOperationAllowed(principal, role)
             }
@@ -63,7 +63,7 @@ class AuthService(
             cache.get(CachedKeys.accountWithIAMRolesKey(claims[0]))
 
         return if (cachedRulesForAccount != null) {
-            val roles = json.readValue<AccountWithIAMRoles>(cachedRulesForAccount).iamRoles
+            val roles = json.readValue<AccountWithIAMPolicies>(cachedRulesForAccount).assignedIAMPolicies
             if (operation == "read") {
                 roles.contains("write:$iam") ||
                         roles.contains("read:$iam")
@@ -77,7 +77,7 @@ class AuthService(
     }
 
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
-        val response = client.get("${authServiceAddress.split("@")[1]}/iam/authorized") {
+        val response = client.get("${authServiceAddress.split("@")[1]}/iam/polices/authorized") {
             header("X-IAM-CHECK", "$rule@$uuid")
             header("Service-Authorization-Token", jsonWebToken.generateServiceAuthorizationToken(currentServiceName))
         }

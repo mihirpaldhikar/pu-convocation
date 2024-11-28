@@ -15,6 +15,7 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ChangeRemoteConfigRequest
 import com.puconvocation.commons.dto.ErrorResponse
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.entities.RemoteConfig
 import com.puconvocation.database.mongodb.repositories.RemoteConfigRepository
 import com.puconvocation.enums.ResponseCode
@@ -39,7 +40,7 @@ class RemoteConfigController(
     ): Result<HashMap<String, Any>, ErrorResponse> {
 
         if (!authService.isAuthorized(
-                role = "write:WebsiteConfig",
+                role = IAMPolicies.WRITE_REMOTE_CONFIG,
                 principal = authorizationToken
             )
         ) {

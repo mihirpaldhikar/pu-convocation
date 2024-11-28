@@ -15,6 +15,7 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.commons.dto.TransactionRequest
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.entities.Transaction
 import com.puconvocation.database.mongodb.repositories.TransactionRepository
 import com.puconvocation.enums.ResponseCode
@@ -54,7 +55,7 @@ class TransactionController(
         }
 
         if (!authService.isAuthorized(
-                role = "write:Transaction",
+                role = IAMPolicies.WRITE_TRANSACTIONS,
                 principal = claims[0]
             )
         ) {
