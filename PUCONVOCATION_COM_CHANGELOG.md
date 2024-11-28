@@ -1,3 +1,19 @@
+## 3.0.0-beta.14 (November 28, 2024)
+
+### New:
+- Add IAM Checks to the general settings page.
+- Add form Validations and IAM checks to the ground settings page.
+- Implement Navigation to Landing Page from Console NavBar.
+- Add the ability to update system settings.
+- Add required credits in the footer.
+
+### Fixes:
+- Fix an issue in which the redirection after successful authentication was not working as expected.
+
+### Miscellaneous:
+- Refactor the attendee page layout to render a ground map more prominently.
+- Refactor the countdown component to use the date-fns library to compute remaining time.
+
 ## 3.0.0-beta.13 (November 28, 2024)
 
 ### Breaking Changes:
