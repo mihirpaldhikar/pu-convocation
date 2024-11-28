@@ -1,3 +1,8 @@
+## 3.0.0-beta.5 (November 28, 2024)
+
+### Breaking Changes:
+- Refactor IAM Policies-related operations to streamline the Access Management.
+
 ## 3.0.0-beta.4 (November 26, 2024)
 
 ### Miscellaneous:
