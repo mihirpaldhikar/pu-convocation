@@ -14,10 +14,10 @@
 import { JSX } from "react";
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
-import { GroundMap, SeatMap, Ticket } from "@components/attendee";
 import { SpaceShip } from "@components/graphics";
-import { MapPinIcon, TicketIcon } from "@heroicons/react/24/solid";
 import { Link } from "@i18n/routing";
+import { GroundMap, SeatMap, Ticket } from "@components/attendee";
+import { AcademicCapIcon, MapPinIcon } from "@heroicons/react/24/solid";
 
 const attendeeService: AttendeeController = new AttendeeController();
 
@@ -36,58 +36,87 @@ export default async function AttendeePage({
     const { attendee, enclosureMetadata } = response.payload;
 
     return (
-      <section
-        className={"grid grid-cols-1 gap-10 px-3 pt-5 lg:grid-cols-2 lg:pt-10"}
-      >
-        <div className={"order-2 flex-1 lg:order-1 lg:min-h-screen"}>
-          <div
-            className={
-              "flex h-full flex-col items-center justify-center space-y-6"
-            }
-          >
+      <section className={"pb-10"}>
+        <div className={"hidden min-h-[85dvh] grid-cols-2 lg:grid"}>
+          <div className={"flex items-center"}>
             <GroundMap
-              className={"h-[500px] w-[350px] lg:h-[400px] lg:w-[400px]"}
-              activeColor={"#dc2626"}
+              className={"max-h-[85dvh]"}
               activeEnclosure={attendee.allocation.enclosure}
+              activeColor={"#dc2626"}
             />
-            <div className={"flex flex-col space-y-5"}>
-              <div className={"flex flex-col space-y-2"}>
-                <div className={"flex w-full items-center space-x-2"}>
-                  <MapPinIcon className={"w-7 text-primary"} />
-                  <h2 className={"text-xl font-bold"}>Seat Map</h2>
+          </div>
+          <div className={"space-y-10"}>
+            <div>
+              <div className={"flex items-center space-x-2 py-5"}>
+                <AcademicCapIcon className={"size-8 text-red-600"} />
+                <h4 className={"text-xl font-bold"}>Your Info</h4>
+              </div>
+              <Ticket attendee={attendee} />
+            </div>
+            <div>
+              <div className={"flex items-center space-x-2 pb-10 pt-5"}>
+                <MapPinIcon className={"size-8 text-red-600"} />
+                <div className={"space-y-3"}>
+                  <h4 className={"text-xl font-bold"}>Seat Map</h4>
+                  <h6 className={"text-xs text-gray-500"}>
+                    Enter from{" "}
+                    <span
+                      className={
+                        "rounded-xl bg-red-100 px-3 py-1 font-medium text-red-600"
+                      }
+                    >
+                      {enclosureMetadata.entryDirection}
+                    </span>
+                  </h6>
                 </div>
-                <h6
-                  className={"pl-9 text-xs font-medium"}
-                  hidden={enclosureMetadata.entryDirection === "NONE"}
-                >
-                  Enter from{" "}
-                  <span className={"font-bold text-primary"}>
-                    {enclosureMetadata.entryDirection}
-                  </span>
-                </h6>
               </div>
               <SeatMap
                 enclosure={enclosureMetadata}
-                activeArrangement={{
-                  row: attendee.allocation.row,
-                  seat: attendee.allocation.seat,
-                }}
+                activeArrangement={attendee.allocation}
               />
             </div>
-            <div className={"flex flex-col space-y-5 pt-0 md:pt-10"}></div>
           </div>
         </div>
-        <div
-          className={
-            "order-1 flex flex-1 flex-col items-center pt-7 lg:order-2 lg:min-h-screen lg:pt-10"
-          }
-        >
-          <div className={"flex w-full flex-col space-y-5"}>
-            <div className={"flex w-full items-center space-x-2"}>
-              <TicketIcon className={"size-7 text-primary"} />
-              <h2 className={"text-xl font-bold"}>Pass</h2>
+        <div className={"grid min-h-dvh grid-cols-1 px-3 lg:hidden"}>
+          <div>
+            <div>
+              <div className={"flex items-center space-x-2 py-5"}>
+                <AcademicCapIcon className={"size-8 text-red-600"} />
+                <h4 className={"text-xl font-bold"}>Your Info</h4>
+              </div>
+              <Ticket attendee={attendee} />
             </div>
-            <Ticket attendee={attendee} />
+          </div>
+          <div>
+            <div>
+              <GroundMap
+                className={"max-h-[60dvh] max-w-[90dvw]"}
+                activeEnclosure={attendee.allocation.enclosure}
+                activeColor={"#dc2626"}
+              />
+            </div>
+            <div>
+              <div className={"flex items-center space-x-2 pb-10 pt-5"}>
+                <MapPinIcon className={"size-8 text-red-600"} />
+                <div className={"space-y-3"}>
+                  <h4 className={"text-xl font-bold"}>Seat Map</h4>
+                  <h6 className={"text-xs text-gray-500"}>
+                    Enter from{" "}
+                    <span
+                      className={
+                        "rounded-xl bg-red-100 px-3 py-1 font-medium text-red-600"
+                      }
+                    >
+                      {enclosureMetadata.entryDirection}
+                    </span>
+                  </h6>
+                </div>
+              </div>
+              <SeatMap
+                enclosure={enclosureMetadata}
+                activeArrangement={attendee.allocation}
+              />
+            </div>
           </div>
         </div>
       </section>

@@ -60,7 +60,7 @@ export default function SeatMap({
     <div className={"flex flex-col space-y-5"}>
       {enclosure.rows.map((row) => {
         return (
-          <div key={row.letter} className={"flex justify-center"}>
+          <div key={row.letter} className={"flex"}>
             <h5
               className={`h-fit w-[2rem] rounded-md px-3 py-2 text-center text-xs font-bold ${
                 row.letter === activeArrangement.row
