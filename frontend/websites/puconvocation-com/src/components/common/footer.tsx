@@ -76,6 +76,41 @@ export default async function Footer(): Promise<JSX.Element> {
               ),
             })}
           </p>
+          <p className={"font-semibold"}>
+            {coreTranslations.rich("credits.supportedBy", {
+              s1: (chunks) => (
+                <Link
+                  target={"_blank"}
+                  href={"https://www.linkedin.com/in/sumitra-menaria-0bab23123"}
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
+              ),
+              s2: (chunks) => (
+                <Link
+                  target={"_blank"}
+                  href={"https://www.linkedin.com/in/er-mohit-68a447a0"}
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
+          <p className={"font-semibold"}>
+            {coreTranslations.rich("credits.ideaBy", {
+              i1: (chunks) => (
+                <Link
+                  target={"_blank"}
+                  href={"https://www.linkedin.com/in/manish-rahevar-b08a87108"}
+                  className={"text-red-800 underline"}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </section>
         <section>
           <LanguageSelector />
