@@ -13,21 +13,21 @@
 
 package com.puconvocation.database.mongodb.datasources
 
-import com.puconvocation.database.mongodb.entities.IAMRole
+import com.puconvocation.database.mongodb.entities.IAMPolicy
 
-interface IAMDatasource {
-    suspend fun createNewRule(rule: IAMRole): Boolean
+interface IAMPolicyDatasource {
+    suspend fun createNewPolicy(rule: IAMPolicy): Boolean
 
-    suspend fun getRule(name: String): IAMRole?
+    suspend fun getPolicy(name: String): IAMPolicy?
 
-    suspend fun allPolicies(): List<IAMRole>
+    suspend fun allPolicies(): List<IAMPolicy>
 
-    suspend fun getAccountsForRule(rule: String): List<String>
+    suspend fun getAccountsForPolicy(policyName: String): List<String>
 
-    suspend fun listRulesForAccount(accountId: String): List<String>
+    suspend fun listPoliciesForAccount(uuid: String): List<String>
 
-    suspend fun isRuleAllowedForAccount(ruleName: String, accountId: String): Boolean
+    suspend fun isAuthorized(policyName: String, uuid: String): Boolean
 
-    suspend fun updateRule(rule: IAMRole): Boolean
+    suspend fun updatePolicy(policy: IAMPolicy): Boolean
 
 }

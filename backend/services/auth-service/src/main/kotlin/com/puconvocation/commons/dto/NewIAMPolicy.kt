@@ -11,19 +11,12 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.database.mongodb.entities
+package com.puconvocation.commons.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.bson.codecs.pojo.annotations.BsonId
 
-data class IAMRole(
-    @JsonProperty("role")
-    @BsonId
-    val role: String,
-
-    @JsonProperty("description")
-    val description: String,
-
-    @JsonProperty("principals")
-    val principals: MutableSet<String>
+data class NewIAMPolicy(
+    @JsonProperty("policy") val policy: String,
+    @JsonProperty("description") val description: String,
+    @JsonProperty("principals") val principals: MutableSet<String>,
 )

@@ -13,7 +13,7 @@
 
 package com.puconvocation.database.mongodb.datasources
 
-import com.puconvocation.commons.dto.AccountWithIAMRoles
+import com.puconvocation.commons.dto.AccountWithIAMPolicies
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.security.dao.FidoCredential
@@ -25,9 +25,9 @@ interface AccountDatasource {
 
     suspend fun getAccount(identifier: String): Account?
 
-    suspend fun getAllAccounts(): List<AccountWithIAMRoles>
+    suspend fun getAllAccounts(): List<AccountWithIAMPolicies>
 
-    suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMRoles?
+    suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMPolicies?
 
     suspend fun updateAccount(account: Account): Boolean
 

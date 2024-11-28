@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.database.mongodb.repositories.IAMPolicyRepository
 import org.koin.dsl.module
 
 object RepositoriesModule {
@@ -27,12 +27,12 @@ object RepositoriesModule {
                 database = get<MongoDatabase>(),
                 cache = get<CacheController>(),
                 mapper = get<ObjectMapper>(),
-                iamRepository = get<IAMRepository>()
+                iamRepository = get<IAMPolicyRepository>()
             )
         }
 
-        single<IAMRepository> {
-            IAMRepository(database = get<MongoDatabase>())
+        single<IAMPolicyRepository> {
+            IAMPolicyRepository(database = get<MongoDatabase>())
         }
     }
 }

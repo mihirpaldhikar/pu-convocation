@@ -16,10 +16,10 @@ package com.puconvocation.di
 import com.puconvocation.Environment
 import com.puconvocation.controllers.AccountController
 import com.puconvocation.controllers.CacheController
-import com.puconvocation.controllers.IAMController
+import com.puconvocation.controllers.IAMPolicyController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.database.mongodb.repositories.IAMPolicyRepository
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.MessageQueue
 import com.yubico.webauthn.RelyingParty
@@ -27,10 +27,10 @@ import org.koin.dsl.module
 
 object ControllerModule {
     val init = module {
-        single<IAMController> {
-            IAMController(
+        single<IAMPolicyController> {
+            IAMPolicyController(
                 accountRepository = get<AccountRepository>(),
-                iamRepository = get<IAMRepository>(),
+                iamRepository = get<IAMPolicyRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 cacheController = get<CacheController>(),
                 companionServices = get<Environment>().service.companionServices
@@ -42,8 +42,8 @@ object ControllerModule {
                 accountRepository = get<AccountRepository>(),
                 jsonWebToken = get<JsonWebToken>(),
                 passkeyController = get<PasskeyController>(),
-                iamController = get<IAMController>(),
-                iamRepository = get<IAMRepository>(),
+                iamPolicyController = get<IAMPolicyController>(),
+                iamRepository = get<IAMPolicyRepository>(),
                 cache = get<CacheController>(),
                 messageQueue = get<MessageQueue>()
             )

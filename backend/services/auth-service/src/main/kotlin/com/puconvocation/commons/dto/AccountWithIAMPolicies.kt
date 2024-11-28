@@ -19,7 +19,7 @@ import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
 
-data class AccountWithIAMRoles(
+data class AccountWithIAMPolicies(
     @JsonSerialize(using = ObjectIdSerializer::class)
     @BsonId
     @JsonProperty("uuid")
@@ -43,6 +43,6 @@ data class AccountWithIAMRoles(
     @JsonProperty("suspended")
     val suspended: Boolean,
 
-    @JsonProperty("iamRoles")
-    val iamRoles: List<String>,
+    @JsonProperty("assignedIAMPolicies")
+    val assignedIAMPolicies: List<String>,
 )

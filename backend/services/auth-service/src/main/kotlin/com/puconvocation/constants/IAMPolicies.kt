@@ -11,12 +11,11 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.commons.dto
+package com.puconvocation.constants
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
-data class NewIAMRole(
-    @JsonProperty("role") val role: String,
-    @JsonProperty("description") val description: String,
-    @JsonProperty("principals") val principals: MutableSet<String>,
-)
+object IAMPolicies {
+    const val WRITE_IAM_POLICIES = "write:iamPolicies"
+    const val READ_IAM_POLICIES = "read:iamPolicies"
+    const val WRITE_ACCOUNTS = "write:accounts"
+    const val READ_ACCOUNTS = "read:accounts"
+}

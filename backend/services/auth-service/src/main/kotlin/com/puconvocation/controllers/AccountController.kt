@@ -15,10 +15,11 @@ package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.*
 import com.puconvocation.constants.CachedKeys
+import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.entities.Account
 import com.puconvocation.database.mongodb.entities.Invitation
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.database.mongodb.repositories.IAMPolicyRepository
 import com.puconvocation.enums.PrincipalOperation
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
@@ -32,10 +33,10 @@ import org.bson.types.ObjectId
 
 class AccountController(
     private val accountRepository: AccountRepository,
-    private val iamRepository: IAMRepository,
+    private val iamRepository: IAMPolicyRepository,
     private val jsonWebToken: JsonWebToken,
     private val passkeyController: PasskeyController,
-    private val iamController: IAMController,
+    private val iamPolicyController: IAMPolicyController,
     private val cache: CacheController,
     private val messageQueue: MessageQueue
 ) {
@@ -137,7 +138,7 @@ class AccountController(
         }
 
         for (iamRoles in invitation.roles) {
-            var rule = iamRepository.getRule(iamRoles)
+            var rule = iamRepository.getPolicy(iamRoles)
 
             if (rule != null) {
                 val principals = rule.principals
@@ -145,7 +146,7 @@ class AccountController(
                 rule = rule.copy(
                     principals = principals
                 )
-                iamRepository.updateRule(rule)
+                iamRepository.updatePolicy(rule)
             }
         }
         val result = passkeyController.startPasskeyRegistration(account.username)
@@ -223,9 +224,9 @@ class AccountController(
     suspend fun accountDetails(
         authorizationToken: String?,
         identifier: String
-    ): Result<AccountWithIAMRoles, ErrorResponse> {
-        if (!iamController.isAuthorized(
-                role = "read:Account",
+    ): Result<AccountWithIAMPolicies, ErrorResponse> {
+        if (!iamPolicyController.isAuthorized(
+                policy = IAMPolicies.READ_ACCOUNTS,
                 principal = authorizationToken,
             )
         ) {
@@ -252,9 +253,9 @@ class AccountController(
         )
     }
 
-    suspend fun getAllAccounts(authorizationToken: String?): Result<List<AccountWithIAMRoles>, ErrorResponse> {
-        if (!iamController.isAuthorized(
-                role = "read:Account",
+    suspend fun getAllAccounts(authorizationToken: String?): Result<List<AccountWithIAMPolicies>, ErrorResponse> {
+        if (!iamPolicyController.isAuthorized(
+                policy = IAMPolicies.READ_ACCOUNTS,
                 principal = authorizationToken,
             )
         ) {
@@ -293,8 +294,8 @@ class AccountController(
         }
 
 
-        if (!iamController.isAuthorized(
-                role = "write:Account",
+        if (!iamPolicyController.isAuthorized(
+                policy = IAMPolicies.WRITE_ACCOUNTS,
                 principal = tokenClaims[0],
             )
         ) {
@@ -311,7 +312,7 @@ class AccountController(
 
         val allIAMRules = iamRepository.allPolicies()
 
-        val allIAMRoleNames = allIAMRules.map { it.role }
+        val allIAMRoleNames = allIAMRules.map { it.policy }
 
         for (invite: AccountInvitations.Invite in accountInvitations.invites) {
             if (accountRepository.findInvitation(invite.email) != null) {
@@ -332,12 +333,12 @@ class AccountController(
                     )
                 )
 
-                for (iamRole: String in invite.iamRoles) {
+                for (iamRole: String in invite.assignedIAMPolicies) {
                     if (!allIAMRoleNames.contains(iamRole)) {
                         return Result.Error(
                             httpStatusCode = HttpStatusCode.NotFound,
                             error = ErrorResponse(
-                                errorCode = ResponseCode.RULE_NOT_FOUND,
+                                errorCode = ResponseCode.IAM_POLICY_NOT_FOUND,
                                 message = "$iamRole does not exist."
                             )
                         )
@@ -352,7 +353,7 @@ class AccountController(
                 Invitation(
                     id = invitationId,
                     email = invite.email,
-                    roles = invite.iamRoles,
+                    roles = invite.assignedIAMPolicies,
                 )
             )
 
@@ -387,8 +388,8 @@ class AccountController(
         authorizationToken: String?,
         updateAccountIAMPoliciesRequest: UpdateAccountIAMPoliciesRequest
     ): Result<HashMap<String, Any>, ErrorResponse> {
-        if (!iamController.isAuthorized(
-                role = "write:Account",
+        if (!iamPolicyController.isAuthorized(
+                policy = IAMPolicies.WRITE_ACCOUNTS,
                 principal = authorizationToken,
             )
         ) {
@@ -401,10 +402,10 @@ class AccountController(
             )
         }
 
-        for (iam in updateAccountIAMPoliciesRequest.iamOperations) {
-            val iamPolicy = iamRepository.getRule(iam.id)
+        for (iam in updateAccountIAMPoliciesRequest.iamPolicyOperations) {
+            val iamPolicy = iamRepository.getPolicy(iam.policy)
             if (iamPolicy == null) continue;
-            if (iam.operation === PrincipalOperation.NO_CHANGE) {
+            if (iam.policy === IAMPolicies.WRITE_IAM_POLICIES || iam.operation === PrincipalOperation.NO_CHANGE) {
                 continue
             } else if (iamPolicy.principals.contains(updateAccountIAMPoliciesRequest.uuid) && iam.operation === PrincipalOperation.REMOVE) {
                 iamPolicy.principals.remove(updateAccountIAMPoliciesRequest.uuid)
@@ -412,7 +413,7 @@ class AccountController(
                 iamPolicy.principals.add(updateAccountIAMPoliciesRequest.uuid)
             }
 
-            iamRepository.updateRule(iamPolicy)
+            iamRepository.updatePolicy(iamPolicy)
         }
 
         cache.invalidate(CachedKeys.accountKey(updateAccountIAMPoliciesRequest.uuid))
@@ -437,8 +438,8 @@ class AccountController(
             claims = listOf(JsonWebToken.UUID_CLAIM)
         )
 
-        if (updateRequest.uuid !== null && updateRequest.uuid !== tokenClaims[0] && !iamController.isAuthorized(
-                role = "write:Account",
+        if (updateRequest.uuid !== null && updateRequest.uuid !== tokenClaims[0] && !iamPolicyController.isAuthorized(
+                policy = IAMPolicies.WRITE_ACCOUNTS,
                 principal = tokenClaims[0],
             )
         ) {

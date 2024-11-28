@@ -14,21 +14,20 @@
 package com.puconvocation.plugins
 
 import com.puconvocation.controllers.AccountController
-import com.puconvocation.controllers.IAMController
+import com.puconvocation.controllers.IAMPolicyController
 import com.puconvocation.controllers.PasskeyController
 import com.puconvocation.routes.accountsRoute
 import com.puconvocation.routes.iamRoute
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.response.respondText
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.java.KoinJavaComponent
 
 fun Application.configureRouting() {
     val accountController by KoinJavaComponent.inject<AccountController>(AccountController::class.java)
     val passkeyController by KoinJavaComponent.inject<PasskeyController>(PasskeyController::class.java)
-    val iamController by KoinJavaComponent.inject<IAMController>(IAMController::class.java)
+    val iamPolicyController by KoinJavaComponent.inject<IAMPolicyController>(IAMPolicyController::class.java)
 
     routing {
         get("/health") {
@@ -39,7 +38,7 @@ fun Application.configureRouting() {
             )
         }
         iamRoute(
-            iamController = iamController,
+            iamPolicyController = iamPolicyController,
         )
         accountsRoute(
             accountController = accountController,

@@ -15,11 +15,12 @@ package com.puconvocation.controllers
 
 import com.puconvocation.Environment
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewIAMRole
+import com.puconvocation.commons.dto.NewIAMPolicy
 import com.puconvocation.constants.CachedKeys
-import com.puconvocation.database.mongodb.entities.IAMRole
+import com.puconvocation.constants.IAMPolicies
+import com.puconvocation.database.mongodb.entities.IAMPolicy
 import com.puconvocation.database.mongodb.repositories.AccountRepository
-import com.puconvocation.database.mongodb.repositories.IAMRepository
+import com.puconvocation.database.mongodb.repositories.IAMPolicyRepository
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.enums.TokenType
 import com.puconvocation.security.jwt.JsonWebToken
@@ -27,17 +28,17 @@ import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
 
-class IAMController(
+class IAMPolicyController(
     private val accountRepository: AccountRepository,
-    private val iamRepository: IAMRepository,
+    private val iamRepository: IAMPolicyRepository,
     private val jsonWebToken: JsonWebToken,
     private val cacheController: CacheController,
     private val companionServices: Set<Environment.Service.CompanionService>
 
 ) {
-    suspend fun getRule(authorizationToken: String?, name: String): Result<IAMRole, ErrorResponse> {
+    suspend fun getPolicy(authorizationToken: String?, name: String): Result<IAMPolicy, ErrorResponse> {
         if (!isAuthorized(
-                role = "read:IAMRoles",
+                policy = IAMPolicies.READ_IAM_POLICIES,
                 principal = authorizationToken,
             )
         ) {
@@ -51,10 +52,10 @@ class IAMController(
         }
 
 
-        val rule = iamRepository.getRule(name) ?: return Result.Error(
+        val rule = iamRepository.getPolicy(name) ?: return Result.Error(
             httpStatusCode = HttpStatusCode.NotFound,
             error = ErrorResponse(
-                errorCode = ResponseCode.RULE_NOT_FOUND,
+                errorCode = ResponseCode.IAM_POLICY_NOT_FOUND,
                 message = "Rule $name not found",
             )
         )
@@ -64,9 +65,9 @@ class IAMController(
         )
     }
 
-    suspend fun allPolicies(authorizationToken: String?): Result<List<IAMRole>, ErrorResponse> {
+    suspend fun allPolicies(authorizationToken: String?): Result<List<IAMPolicy>, ErrorResponse> {
         if (!isAuthorized(
-                role = "read:IAMRoles",
+                policy = IAMPolicies.READ_IAM_POLICIES,
                 principal = authorizationToken,
             )
         ) {
@@ -86,7 +87,7 @@ class IAMController(
 
     suspend fun createRule(
         authorizationToken: String?,
-        newIAMRoleRequest: NewIAMRole
+        newIAMPolicyRequest: NewIAMPolicy
     ): Result<HashMap<String, Any>, ErrorResponse> {
         val tokenClaims = jsonWebToken.getClaims(
             token = authorizationToken,
@@ -106,7 +107,7 @@ class IAMController(
         }
 
         if (!isAuthorized(
-                role = "write:IAMRoles",
+                policy = IAMPolicies.WRITE_IAM_POLICIES,
                 principal = tokenClaims[0],
             )
         ) {
@@ -114,22 +115,22 @@ class IAMController(
                 httpStatusCode = HttpStatusCode.Forbidden,
                 error = ErrorResponse(
                     errorCode = ResponseCode.NOT_PERMITTED,
-                    message = "You don't have privilege to create new rules."
+                    message = "You don't have privilege to create new policy."
                 )
             )
         }
 
-        if (iamRepository.getRule(newIAMRoleRequest.role) != null) {
+        if (iamRepository.getPolicy(newIAMPolicyRequest.policy) != null) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.Conflict,
                 error = ErrorResponse(
-                    errorCode = ResponseCode.RULE_EXISTS,
-                    message = "Rule ${newIAMRoleRequest.role} already exists",
+                    errorCode = ResponseCode.IAM_POLICY_EXISTS,
+                    message = "Policy ${newIAMPolicyRequest.policy} already exists",
                 )
             )
         }
 
-        for (account: String in newIAMRoleRequest.principals) {
+        for (account: String in newIAMPolicyRequest.principals) {
             if (!accountRepository.accountExists(account)) {
                 return Result.Error(
                     httpStatusCode = HttpStatusCode.NotFound,
@@ -145,20 +146,20 @@ class IAMController(
 
         }
 
-        val rule = IAMRole(
-            role = newIAMRoleRequest.role,
-            description = newIAMRoleRequest.description,
-            principals = newIAMRoleRequest.principals
+        val policy = IAMPolicy(
+            policy = newIAMPolicyRequest.policy,
+            description = newIAMPolicyRequest.description,
+            principals = newIAMPolicyRequest.principals
         )
 
-        val isSuccess = iamRepository.createNewRule(rule)
+        val isSuccess = iamRepository.createNewPolicy(policy)
 
         if (!isSuccess) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.InternalServerError,
                 error = ErrorResponse(
                     errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                    message = "Failed to create a rule",
+                    message = "Failed to create IAM Policy.",
                 )
             )
         }
@@ -166,13 +167,13 @@ class IAMController(
         return Result.Success(
             httpStatusCode = HttpStatusCode.Created,
             data = hashMapOf(
-                "code" to ResponseCode.RULE_CREATED,
-                "message" to "Successfully created a rule",
+                "code" to ResponseCode.IAM_POLICY_CREATED,
+                "message" to "Successfully created IAM Policy.",
             )
         )
     }
 
-    suspend fun isAuthorized(role: String, principal: String?): Boolean {
+    suspend fun isAuthorized(policy: String, principal: String?): Boolean {
 
         if (principal == null) return false
 
@@ -190,21 +191,21 @@ class IAMController(
             jwtClaims[0]
         }
 
-        val separator = role.split(":")
+        val separator = policy.split(":")
         val operation = separator[0]
-        val policy = separator[1]
+        val entity = separator[1]
 
         val account = accountRepository.getAccountWithIAMRoles(actualPrincipal) ?: return false
 
         return if (operation == "read") {
-            account.iamRoles.contains("write:$policy") ||
-                    account.iamRoles.contains("read:$policy")
+            account.assignedIAMPolicies.contains("write:$entity") ||
+                    account.assignedIAMPolicies.contains("read:$entity")
         } else {
-            account.iamRoles.contains("write:$policy")
+            account.assignedIAMPolicies.contains("write:$entity")
         }
     }
 
-    suspend fun serviceAuthorizationCheck(serviceAuthorizationToken: String?, iamCheck: String): Boolean {
+    suspend fun serviceAuthorizationCheck(serviceAuthorizationToken: String?, policyWithPrincipal: String): Boolean {
         val tokenClaims = jsonWebToken.getClaims(
             token = serviceAuthorizationToken,
             tokenType = TokenType.SERVICE_AUTHORIZATION_TOKEN,
@@ -213,13 +214,12 @@ class IAMController(
 
         if (tokenClaims.isEmpty()) return false
 
-        if (companionServices.filter { it.address.split("@")[0] == tokenClaims[0] }.isEmpty()) return false
+        if (companionServices.none { it.address.split("@")[0] == tokenClaims[0] }) return false
 
-        val split = iamCheck.split("@")
-        val role = split[0]
+        val split = policyWithPrincipal.split("@")
+        val policy = split[0]
         val principal = split[1]
 
-        return isAuthorized(role, principal)
+        return isAuthorized(policy, principal)
     }
-
 }

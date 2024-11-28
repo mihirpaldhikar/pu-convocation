@@ -19,7 +19,7 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import com.puconvocation.commons.dto.AccountWithIAMRoles
+import com.puconvocation.commons.dto.AccountWithIAMPolicies
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasources.AccountDatasource
@@ -35,7 +35,7 @@ import java.time.temporal.ChronoUnit
 
 class AccountRepository(
     database: MongoDatabase,
-    private val iamRepository: IAMRepository,
+    private val iamRepository: IAMPolicyRepository,
     private val cache: CacheController,
     private val mapper: ObjectMapper,
 ) : AccountDatasource {
@@ -88,21 +88,21 @@ class AccountRepository(
         return account
     }
 
-    override suspend fun getAllAccounts(): List<AccountWithIAMRoles> {
+    override suspend fun getAllAccounts(): List<AccountWithIAMPolicies> {
         val accounts = accountCollection.find().toList()
 
-        val accountWithIAMPolicies = mutableListOf<AccountWithIAMRoles>()
+        val accountWithIAMPolicies = mutableListOf<AccountWithIAMPolicies>()
 
         for (account in accounts) {
-            val iamPolicies = iamRepository.listRulesForAccount(account.uuid.toHexString())
+            val iamPolicies = iamRepository.listPoliciesForAccount(account.uuid.toHexString())
             accountWithIAMPolicies.add(
-                AccountWithIAMRoles(
+                AccountWithIAMPolicies(
                     uuid = account.uuid,
                     email = account.email,
                     username = account.username,
                     avatarURL = account.avatarURL,
                     displayName = account.displayName,
-                    iamRoles = iamPolicies,
+                    assignedIAMPolicies = iamPolicies,
                     designation = account.designation,
                     suspended = account.suspended,
                 )
@@ -112,11 +112,11 @@ class AccountRepository(
         return accountWithIAMPolicies
     }
 
-    override suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMRoles? {
+    override suspend fun getAccountWithIAMRoles(identifier: String): AccountWithIAMPolicies? {
         val cacheAccount = cache.get(CachedKeys.accountWithIAMRolesKey(identifier))
 
         if (cacheAccount != null) {
-            return mapper.readValue<AccountWithIAMRoles>(cacheAccount)
+            return mapper.readValue<AccountWithIAMPolicies>(cacheAccount)
         }
 
         val account = getAccount(identifier) ?: return null
@@ -125,15 +125,15 @@ class AccountRepository(
             return null
         }
 
-        val iamRoles = iamRepository.listRulesForAccount(account.uuid.toHexString())
+        val iamRoles = iamRepository.listPoliciesForAccount(account.uuid.toHexString())
 
-        val computedAccount = AccountWithIAMRoles(
+        val computedAccount = AccountWithIAMPolicies(
             uuid = account.uuid,
             email = account.email,
             username = account.username,
             avatarURL = account.avatarURL,
             displayName = account.displayName,
-            iamRoles = iamRoles,
+            assignedIAMPolicies = iamRoles,
             designation = account.designation,
             suspended = account.suspended,
         )

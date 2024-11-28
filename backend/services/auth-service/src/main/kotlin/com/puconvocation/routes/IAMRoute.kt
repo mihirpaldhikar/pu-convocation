@@ -14,8 +14,8 @@
 package com.puconvocation.routes
 
 import com.puconvocation.commons.dto.ErrorResponse
-import com.puconvocation.commons.dto.NewIAMRole
-import com.puconvocation.controllers.IAMController
+import com.puconvocation.commons.dto.NewIAMPolicy
+import com.puconvocation.controllers.IAMPolicyController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
@@ -26,49 +26,51 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.iamRoute(
-    iamController: IAMController,
+    iamPolicyController: IAMPolicyController,
 ) {
     route("/iam") {
 
-        get("/allPolicies") {
-            val authorizationToken = call.getSecurityTokens().authorizationToken
-            call.sendResponse(iamController.allPolicies(authorizationToken))
-        }
+        route("/policies") {
 
-        get("/authorized") {
-            val serviceAuthorizationToken = call.request.headers["Service-Authorization-Token"]
-            val iamHeader = call.request.headers["X-IAM-CHECK"]
-            if (iamHeader.isNullOrBlank()) {
-                return@get call.respond(false)
-            }
-            call.respond(iamController.serviceAuthorizationCheck(serviceAuthorizationToken, iamHeader))
-        }
-
-        route("/{name}") {
-
-            get("/") {
+            get("/all") {
                 val authorizationToken = call.getSecurityTokens().authorizationToken
-                val rule = call.parameters["name"] ?: return@get call.sendResponse(
-                    Result.Error(
-                        httpStatusCode = HttpStatusCode.BadRequest,
-                        error = ErrorResponse(
-                            errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
-                            message = "Please provide a rule name."
+                call.sendResponse(iamPolicyController.allPolicies(authorizationToken))
+            }
+
+            get("/authorized") {
+                val serviceAuthorizationToken = call.request.headers["Service-Authorization-Token"]
+                val iamHeader = call.request.headers["X-IAM-CHECK"]
+                if (iamHeader.isNullOrBlank()) {
+                    return@get call.respond(false)
+                }
+                call.respond(iamPolicyController.serviceAuthorizationCheck(serviceAuthorizationToken, iamHeader))
+            }
+
+            route("/{name}") {
+
+                get("/") {
+                    val authorizationToken = call.getSecurityTokens().authorizationToken
+                    val rule = call.parameters["name"] ?: return@get call.sendResponse(
+                        Result.Error(
+                            httpStatusCode = HttpStatusCode.BadRequest,
+                            error = ErrorResponse(
+                                errorCode = ResponseCode.REQUEST_NOT_COMPLETED,
+                                message = "Please provide a rule name."
+                            )
                         )
                     )
-                )
-                val result = iamController.getRule(authorizationToken, rule)
+                    val result = iamPolicyController.getPolicy(authorizationToken, rule)
+                    call.sendResponse(result)
+                }
+            }
+
+            post("/create") {
+                val authorizationToken = call.getSecurityTokens().authorizationToken
+                val rule = call.receive<NewIAMPolicy>()
+                val result = iamPolicyController.createRule(authorizationToken, rule)
                 call.sendResponse(result)
             }
         }
-
-        post("/create") {
-            val authorizationToken = call.getSecurityTokens().authorizationToken
-            val rule = call.receive<NewIAMRole>()
-            val result = iamController.createRule(authorizationToken, rule)
-            call.sendResponse(result)
-        }
-
 
     }
 }

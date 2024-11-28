@@ -20,6 +20,6 @@ data class AccountInvitations(
 ) {
     data class Invite(
         @JsonProperty("email") val email: String,
-        @JsonProperty("iamRoles") val iamRoles: List<String>,
+        @JsonProperty("assignedIAMPolicies") val assignedIAMPolicies: List<String>,
     )
 }

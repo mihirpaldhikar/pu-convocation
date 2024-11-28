@@ -11,17 +11,19 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-package com.puconvocation.commons.dto
+package com.puconvocation.database.mongodb.entities
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.puconvocation.enums.PrincipalOperation
+import org.bson.codecs.pojo.annotations.BsonId
 
-data class UpdateAccountIAMPoliciesRequest(
-    @JsonProperty("uuid") val uuid: String,
-    @JsonProperty("iamPolicyOperations") val iamPolicyOperations: List<IAMPolicyOperation>
-) {
-    data class IAMPolicyOperation(
-        @JsonProperty("policy") val policy: String,
-        @JsonProperty("operation") val operation: PrincipalOperation,
-    )
-}
+data class IAMPolicy(
+    @JsonProperty("policy")
+    @BsonId
+    val policy: String,
+
+    @JsonProperty("description")
+    val description: String,
+
+    @JsonProperty("principals")
+    val principals: MutableSet<String>
+)
