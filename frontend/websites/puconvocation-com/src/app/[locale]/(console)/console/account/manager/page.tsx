@@ -54,6 +54,18 @@ import { useAuth } from "@hooks/index";
 
 const authController = new AuthController();
 
+function validateEmail(value: string) {
+  let error;
+  if (!value) {
+    error = "Required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    error = "Invalid email address";
+  } else if (!/^[a-zA-Z0-9._%+-]+@paruluniversity\.ac\.in$/.test(value)) {
+    error = "Email must be associated with paruluniversity.ac.in";
+  }
+  return error;
+}
+
 export default function AccountManager() {
   const { account: currentAccount } = useAuth();
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
@@ -302,6 +314,15 @@ export default function AccountManager() {
                   initialValues={{
                     invitations: [] as Array<AccountInvitation>,
                   }}
+                  validate={(values) => {
+                    const errors: any = {};
+                    if (values.invitations.length === 0) {
+                      errors.minimumLength =
+                        "Please enter at least one account invitation.";
+                    }
+
+                    return errors;
+                  }}
                   onSubmit={async ({ invitations }) => {
                     const response =
                       await authController.sendAccountInvitations(invitations);
@@ -320,7 +341,7 @@ export default function AccountManager() {
                     }
                   }}
                 >
-                  {({ values }) => (
+                  {({ values, errors, touched }) => (
                     <div className={"space-y-5"}>
                       <Form>
                         <FieldArray name={"invitations"}>
@@ -335,14 +356,35 @@ export default function AccountManager() {
                                     >
                                       <Field
                                         name={`invitations[${index}].email`}
+                                        validate={validateEmail}
                                       >
                                         {({ field }: { field: any }) => (
-                                          <Input
-                                            {...field}
-                                            placeholder={"Email..."}
-                                            type={"email"}
-                                            className={"w-full"}
-                                          />
+                                          <Fragment>
+                                            <Input
+                                              {...field}
+                                              placeholder={"Email..."}
+                                              type={"email"}
+                                              className={"w-full"}
+                                            />
+                                            {touched.invitations &&
+                                              touched.invitations[index] &&
+                                              errors.invitations &&
+                                              errors.invitations[index] && (
+                                                <p
+                                                  className={
+                                                    "py-1 text-xs text-red-800"
+                                                  }
+                                                >
+                                                  {
+                                                    (
+                                                      errors.invitations[
+                                                        index
+                                                      ] as any
+                                                    ).email
+                                                  }
+                                                </p>
+                                              )}
+                                          </Fragment>
                                         )}
                                       </Field>
                                       {iamPolicies && (
@@ -360,7 +402,9 @@ export default function AccountManager() {
                                                 }
                                               >
                                                 <div>
-                                                  <h6>{iamPolicy.policy}</h6>
+                                                  <h6 className={"font-mono"}>
+                                                    {iamPolicy.policy}
+                                                  </h6>
                                                   <p
                                                     className={
                                                       "text-xs text-gray-500"
