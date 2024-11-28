@@ -11,8 +11,8 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { JSX, useState } from "react";
-import { useRemoteConfig } from "@hooks/index";
+import { Fragment, JSX, useState } from "react";
+import { useAuth, useRemoteConfig } from "@hooks/index";
 import { Enclosure } from "@dto/index";
 import { GroundMapper } from "@components/attendee";
 import { Field, FieldArray, Form, Formik } from "formik";
@@ -26,6 +26,8 @@ import {
   Input,
 } from "@components/ui";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { isAuthorized } from "@lib/iam_utils";
+import IAMPolicies from "@configs/IAMPolicies";
 
 function nextChar(input: string): string {
   if (input.length === 1 && /\d/.test(input)) {
@@ -65,6 +67,7 @@ function totalEnclosureSeats(enclosure: Enclosure): number {
 
 export default function GroundSettingsPage(): JSX.Element {
   const { remoteConfig, dispatch } = useRemoteConfig();
+  const { account } = useAuth();
   const seatsInEnclosure: Array<number> = remoteConfig.groundMappings.map(
     (enclosure) => {
       return totalEnclosureSeats(enclosure);
@@ -93,15 +96,17 @@ export default function GroundSettingsPage(): JSX.Element {
           enableReinitialize={true}
           initialValues={enclosureData}
           onSubmit={(values) => {
-            dispatch({
-              type: "SET_ENCLOSURE",
-              payload: {
-                index: remoteConfig.groundMappings.findIndex(
-                  (e) => e.letter === values.letter,
-                )!!,
-                enclosure: values,
-              },
-            });
+            if (!remoteConfig.attendees.locked) {
+              dispatch({
+                type: "SET_ENCLOSURE",
+                payload: {
+                  index: remoteConfig.groundMappings.findIndex(
+                    (e) => e.letter === values.letter,
+                  )!!,
+                  enclosure: values,
+                },
+              });
+            }
           }}
         >
           {({ values, handleSubmit }) => (
@@ -160,18 +165,26 @@ export default function GroundSettingsPage(): JSX.Element {
                                 }
                               >
                                 <div className={"absolute right-0 top-0 p-3"}>
-                                  <div
-                                    className={
-                                      "cursor-pointer rounded-full bg-red-100 p-1"
-                                    }
-                                    onClick={() => {
-                                      arrayHelpers.remove(index);
-                                    }}
-                                  >
-                                    <XMarkIcon
-                                      className={"size-5 text-red-600"}
-                                    />
-                                  </div>
+                                  {!remoteConfig.attendees.locked &&
+                                  isAuthorized(
+                                    IAMPolicies.WRITE_REMOTE_CONFIG,
+                                    account!!.assignedIAMPolicies,
+                                  ) ? (
+                                    <div
+                                      className={
+                                        "cursor-pointer rounded-full bg-red-100 p-1"
+                                      }
+                                      onClick={() => {
+                                        arrayHelpers.remove(index);
+                                      }}
+                                    >
+                                      <XMarkIcon
+                                        className={"size-5 text-red-600"}
+                                      />
+                                    </div>
+                                  ) : (
+                                    <Fragment />
+                                  )}
                                 </div>
                                 <div
                                   className={
@@ -183,6 +196,13 @@ export default function GroundSettingsPage(): JSX.Element {
                                       <Input
                                         {...field}
                                         className={"w-20 text-center"}
+                                        disabled={
+                                          remoteConfig.attendees.locked ||
+                                          !isAuthorized(
+                                            IAMPolicies.WRITE_REMOTE_CONFIG,
+                                            account!!.assignedIAMPolicies,
+                                          )
+                                        }
                                       />
                                     )}
                                   </Field>
@@ -197,7 +217,15 @@ export default function GroundSettingsPage(): JSX.Element {
                                       {({ field }: { field: any }) => (
                                         <Input
                                           {...field}
+                                          type={"number"}
                                           className={"w-20 text-center"}
+                                          disabled={
+                                            remoteConfig.attendees.locked ||
+                                            !isAuthorized(
+                                              IAMPolicies.WRITE_REMOTE_CONFIG,
+                                              account!!.assignedIAMPolicies,
+                                            )
+                                          }
                                         />
                                       )}
                                     </Field>
@@ -212,7 +240,15 @@ export default function GroundSettingsPage(): JSX.Element {
                                       {({ field }: { field: any }) => (
                                         <Input
                                           {...field}
+                                          type={"number"}
                                           className={"w-20 text-center"}
+                                          disabled={
+                                            remoteConfig.attendees.locked ||
+                                            !isAuthorized(
+                                              IAMPolicies.WRITE_REMOTE_CONFIG,
+                                              account!!.assignedIAMPolicies,
+                                            )
+                                          }
                                         />
                                       )}
                                     </Field>
@@ -222,7 +258,16 @@ export default function GroundSettingsPage(): JSX.Element {
                                   <h6>Reserved: </h6>
                                   <Field name={`rows[${index}].reserved`}>
                                     {({ field }: { field: any }) => (
-                                      <Input {...field} />
+                                      <Input
+                                        {...field}
+                                        disabled={
+                                          remoteConfig.attendees.locked ||
+                                          !isAuthorized(
+                                            IAMPolicies.WRITE_REMOTE_CONFIG,
+                                            account!!.assignedIAMPolicies,
+                                          )
+                                        }
+                                      />
                                     )}
                                   </Field>
                                 </div>
@@ -232,6 +277,13 @@ export default function GroundSettingsPage(): JSX.Element {
                           <Button
                             className={"w-full"}
                             type={"button"}
+                            disabled={
+                              remoteConfig.attendees.locked ||
+                              !isAuthorized(
+                                IAMPolicies.WRITE_REMOTE_CONFIG,
+                                account!!.assignedIAMPolicies,
+                              )
+                            }
                             onClick={() => {
                               handleSubmit();
                               arrayHelpers.push({
