@@ -26,7 +26,7 @@ const rollupConfiguration = [
             dir: "dist",
             format: "cjs",
         },
-        external: ["@aws-sdk/client-sqs"],
+        external: ["@aws-sdk/client-sqs", "@aws-sdk/client-s3"],
         plugins: [
             peerDepsExternal(),
             json(),

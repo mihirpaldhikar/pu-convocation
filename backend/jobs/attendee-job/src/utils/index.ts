@@ -12,3 +12,4 @@
  */
 
 export { totalEnclosureSeats } from "./EnclosureUtils.js";
+export { jsonToCSV } from "./CSVUtils.js";

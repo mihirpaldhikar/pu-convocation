@@ -11,10 +11,20 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {AttendeeRepository, RemoteConfigRepository,} from "./database/index.js";
-import {totalEnclosureSeats} from "./utils/index.js";
-import {Handler} from "aws-lambda";
-import {SendMessageBatchCommand, SendMessageBatchRequestEntry, SQSClient,} from "@aws-sdk/client-sqs";
+import { Handler } from "aws-lambda";
+import {
+  Attendee,
+  AttendeeRepository,
+  RemoteConfigRepository,
+} from "./database/index.js";
+import { jsonToCSV, totalEnclosureSeats } from "./utils/index.js";
+import {
+  SendMessageBatchCommand,
+  SendMessageBatchRequestEntry,
+  SQSClient,
+} from "@aws-sdk/client-sqs";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { UUID } from "mongodb";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();
@@ -26,6 +36,8 @@ export const handler: Handler = async (event, context) => {
 
   if (!isAttendeeListLocked) {
     let totalAttendees = attendees.length;
+
+    const attendeesCSVInput: Array<Attendee> = [];
 
     const enclosureMapping = await remoteConfigRepository.getGroundMappings();
     let totalSeats = 0;
@@ -67,20 +79,41 @@ export const handler: Handler = async (event, context) => {
           (_, k) => k + row.start,
         )) {
           if (reserved.includes(seat.toString())) continue;
-
-          await attendeeRepository.updateAttendeeAllocation({
+          const a = {
             ...attendeesForCurrentRow[i],
             allocation: {
               enclosure: enclosure.letter,
               seat: seat.toString(),
               row: row.letter,
             },
-          });
+          };
+          await attendeeRepository.updateAttendeeAllocation(a);
+          attendeesCSVInput.push(a);
           ++i;
         }
         allocatedSeats += seats;
       }
     }
+
+    const attendeesCSV = jsonToCSV(
+      attendeesCSVInput,
+      ["verificationCode", "verificationToken", "degreeReceived"],
+      {
+        _id: "enrollmentNumber",
+      },
+    );
+    const s3Client = new S3Client();
+
+    const fileName = new UUID().toString().replace(/-/g, "");
+
+    const uploadParams = {
+      Bucket: "assets.puconvocation.com",
+      Key: `documents/${fileName}.csv`,
+      Body: attendeesCSV,
+      ContentType: "text/csv",
+    };
+
+    await s3Client.send(new PutObjectCommand(uploadParams));
   } else {
     const sqsClient = new SQSClient();
     const EMAIL_QUEUE_URL = process.env.EMAIL_QUEUE_URL!!;
