@@ -74,6 +74,7 @@ const defaultRemoteConfig: RemoteConfig = {
   attendees: {
     locked: true,
     updatedAt: "",
+    csvFile: "",
   },
   groundMappings: [],
 };

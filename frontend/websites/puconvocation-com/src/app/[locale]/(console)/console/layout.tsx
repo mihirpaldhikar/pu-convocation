@@ -14,7 +14,7 @@
 import type { Metadata } from "next";
 import "@app/globals.css";
 import { Fragment, ReactNode } from "react";
-import { Toaster } from "@components/ui";
+import { Toaster, TooltipProvider } from "@components/ui";
 import { Providers, RemoteConfigProvider } from "@providers/index";
 import { Navbar } from "@components/common";
 import { ConsoleLayout } from "@components/layouts";
@@ -153,18 +153,20 @@ export default async function RootLayout({
             account={account}
           >
             <RemoteConfigProvider remoteConfig={remoteConfig}>
-              <div className={"flex h-screen flex-col"}>
-                <Navbar />
-                <ConsoleLayout
-                  sidebarCollapsed={
-                    agentCookies.get("sidebarCollapsed")?.value === "true"
-                  }
-                  navMenu={navMenu}
-                >
-                  {children}
-                </ConsoleLayout>
-                <Toaster />
-              </div>
+              <TooltipProvider>
+                <div className={"flex h-screen flex-col"}>
+                  <Navbar />
+                  <ConsoleLayout
+                    sidebarCollapsed={
+                      agentCookies.get("sidebarCollapsed")?.value === "true"
+                    }
+                    navMenu={navMenu}
+                  >
+                    {children}
+                  </ConsoleLayout>
+                  <Toaster />
+                </div>
+              </TooltipProvider>
             </RemoteConfigProvider>
           </Providers>
         )}

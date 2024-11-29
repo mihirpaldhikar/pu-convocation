@@ -23,6 +23,9 @@ import {
   DialogTitle,
   Input,
   ProgressBar,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@components/ui";
 import {
   ChevronLeftIcon,
@@ -32,8 +35,10 @@ import {
 import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { Attendee } from "@dto/index";
-import { useDebounce } from "@hooks/index";
+import { useDebounce, useRemoteConfig } from "@hooks/index";
 import { SpaceShip } from "@components/graphics";
+import { Link } from "@i18n/routing";
+import { DownloadIcon } from "@radix-ui/react-icons";
 
 const attendeeController = new AttendeeController();
 
@@ -46,6 +51,7 @@ export default function AttendeeTable({
   totalAttendeeCount,
   initialAttendees,
 }: Readonly<AttendeeTableProps>): JSX.Element {
+  const { remoteConfig } = useRemoteConfig();
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -92,16 +98,30 @@ export default function AttendeeTable({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="min-w-1/3 max-w-2/3 flex items-center pb-5">
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="Search Attendees..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500" />
+      <div className={"flex items-center justify-between"}>
+        <div className="min-w-1/3 max-w-2/3 flex items-center pb-5">
+          <div className="relative flex">
+            <Input
+              type="text"
+              placeholder="Search Attendees..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500" />
+          </div>
+        </div>
+        <div>
+          <Button asChild={true} variant={"secondary"}>
+            <Link href={remoteConfig.attendees.csvFile} download={true}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <DownloadIcon />
+                </TooltipTrigger>
+                <TooltipContent>Download Attendee CSV File</TooltipContent>
+              </Tooltip>
+            </Link>
+          </Button>
         </div>
       </div>
 

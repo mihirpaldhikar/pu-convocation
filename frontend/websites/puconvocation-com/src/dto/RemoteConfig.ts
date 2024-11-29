@@ -24,6 +24,7 @@ export default interface RemoteConfig {
   attendees: {
     locked: boolean;
     updatedAt: string;
+    csvFile: string;
   };
   images: {
     carousel: Array<ImageMetadata>;
