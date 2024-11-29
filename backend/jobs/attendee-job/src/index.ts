@@ -57,6 +57,9 @@ export const handler: Handler = async (event, context) => {
       }
 
       for (let row of enclosure.rows) {
+        if (totalAttendees === 0) {
+          break;
+        }
         const reserved = row.reserved
           .split(",")
           .filter((r) => !isNaN(parseInt(r)));
@@ -67,8 +70,6 @@ export const handler: Handler = async (event, context) => {
           allocatedSeats + seats,
         );
 
-        totalAttendees -= attendeesForCurrentRow.length;
-
         if (attendeesForCurrentRow.length === 0) {
           break;
         }
@@ -78,6 +79,9 @@ export const handler: Handler = async (event, context) => {
           { length: row.end - row.start + 1 },
           (_, k) => k + row.start,
         )) {
+          if (totalAttendees === 0) {
+            break;
+          }
           if (reserved.includes(seat.toString())) continue;
           const a = {
             ...attendeesForCurrentRow[i],
@@ -89,6 +93,7 @@ export const handler: Handler = async (event, context) => {
           };
           await attendeeRepository.updateAttendeeAllocation(a);
           attendeesCSVInput.push(a);
+          totalAttendees -= 1;
           ++i;
         }
         allocatedSeats += seats;
