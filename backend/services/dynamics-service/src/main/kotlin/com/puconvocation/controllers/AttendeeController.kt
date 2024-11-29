@@ -262,7 +262,8 @@ class AttendeeController(
         val acknowledge = remoteConfigRepository.mutateAttendeeLock(
             RemoteConfig.Attendees(
                 locked = lock,
-                updatedAt = LocalDateTime.now()
+                updatedAt = LocalDateTime.now(),
+                csvFile = remoteConfigRepository.getConfig().attendees.csvFile,
             )
         )
 

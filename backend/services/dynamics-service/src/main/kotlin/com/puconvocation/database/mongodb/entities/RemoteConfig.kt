@@ -38,6 +38,7 @@ data class RemoteConfig(
     data class Attendees(
         @JsonProperty("locked") val locked: Boolean,
         @JsonProperty("updatedAt") val updatedAt: LocalDateTime,
+        @JsonProperty("csvFile") val csvFile: String,
     )
 
     data class Instructions(
