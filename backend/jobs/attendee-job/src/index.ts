@@ -119,6 +119,9 @@ export const handler: Handler = async (event, context) => {
     };
 
     await s3Client.send(new PutObjectCommand(uploadParams));
+    await remoteConfigRepository.updateAttendeeCSVFileURL(
+      `https://assets.puconvocation.com/documents/${fileName}.csv`,
+    );
   } else {
     const sqsClient = new SQSClient();
     const EMAIL_QUEUE_URL = process.env.EMAIL_QUEUE_URL!!;
