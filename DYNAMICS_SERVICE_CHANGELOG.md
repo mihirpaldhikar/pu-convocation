@@ -1,3 +1,8 @@
+## 1.0.0-beta.9 (November 30, 2024)
+
+### Miscellaneous:
+- Add csvFile field in RemoteConfig.Attendee entity to comply with latest Database model changes.
+
 ## 1.0.0-beta.8 (November 28, 2024)
 
 ### Breaking Changes:
