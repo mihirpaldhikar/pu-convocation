@@ -30,6 +30,7 @@ const rollupConfiguration = [
             peerDepsExternal(),
             replace({
                 'process.env.NODE_ENV': JSON.stringify('production'),
+                preventAssignment: true,
             }),
             commonjs(),
             nodeResolve({
