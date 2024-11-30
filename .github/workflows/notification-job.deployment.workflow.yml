@@ -1,14 +1,14 @@
-name: Build and Deploy email-job to AWS Lambda
+name: Build and Deploy notification-job to AWS Lambda
 
 on:
   push:
     tags:
-      - "email-job-v*"
+      - "notification-job-v*"
 
 env:
   DEPLOYMENT_ARN: ${{ secrets.DEPLOYMENT_ARN }}
   REGION: ${{ secrets.REGION }}
-  DEPLOYMENT_NAME: email-job
+  DEPLOYMENT_NAME: notification-job
 
 jobs:
   deploy:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Build, tag, and push docker image to Amazon ECR
         id: build-image
-        working-directory: ./backend/jobs/email-job
+        working-directory: ./backend/jobs/notification-job
         env:
           REGISTRY: ${{ steps.ecr-login.outputs.registry }}
           REPOSITORY: puconvocation/${{ env.DEPLOYMENT_NAME }}
