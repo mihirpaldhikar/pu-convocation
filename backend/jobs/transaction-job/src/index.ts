@@ -20,7 +20,7 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
   const transactionRepository = new TransactionRepository();
   const attendeeRepository = new AttendeeRepository();
   const sqsClient = new SQSClient();
-  const EMAIL_QUEUE_URL = process.env.EMAIL_QUEUE_URL!!;
+  const NOTIFICATION_QUEUE_URL = process.env.NOTIFICATION_QUEUE_URL!!;
 
   for (const record of event.Records) {
     const transactionRequest: TransactionRequest = JSON.parse(record.body);
@@ -55,7 +55,7 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
     }
 
     const command = new SendMessageCommand({
-      QueueUrl: EMAIL_QUEUE_URL,
+      QueueUrl: NOTIFICATION_QUEUE_URL,
       MessageGroupId: "emails",
       MessageBody: JSON.stringify({
         type: "transaction",
