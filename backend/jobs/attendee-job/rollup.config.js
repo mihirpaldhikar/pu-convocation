@@ -37,7 +37,7 @@ const rollupConfiguration = [
             commonjs(),
             nodeResolve({
                 preferBuiltins: true,
-                dedupe: ["mongodb"],
+                dedupe: ["mongodb", "archiver-zip-encrypted"],
             }),
             typescript({
                 declarationDir: "dist",
