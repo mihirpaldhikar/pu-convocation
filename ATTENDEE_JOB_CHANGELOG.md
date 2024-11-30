@@ -1,3 +1,14 @@
+## 2.2.0 (November 30, 2024)
+
+### New:
+- Add the ability to encrypt attendee data saved as CSV format with AES256 encryption standard.
+
+### Fixes:
+- Fix an issue in which the zip-encryption was not use ES6+ imports scheme.
+
+### Miscellaneous:
+- Refactor creating zip logic into a separate function inorder to support TypeScript.
+
 ## 2.1.0 (November 29, 2024)
 
 ### New:
