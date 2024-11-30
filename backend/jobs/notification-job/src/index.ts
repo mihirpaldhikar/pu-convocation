@@ -12,7 +12,7 @@
  */
 
 import { SQSEvent, SQSHandler } from "aws-lambda";
-import { EmailRequest } from "./dto/index.js";
+import { NotificationRequest } from "./dto/index.js";
 import { SendEmailCommandInput, SES } from "@aws-sdk/client-ses";
 import AccountCreationInvitationEmail from "./emails/account_invitation_email.js";
 import VerificationPasscodeEmail from "./emails/verification_passcode_email.js";
@@ -23,19 +23,19 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
   const emailClient = new SES();
 
   for (const record of event.Records) {
-    const emailRequest: EmailRequest = JSON.parse(record.body);
+    const notificationRequest: NotificationRequest = JSON.parse(record.body);
     const email = await render(
-      emailRequest.type === "invitation"
-        ? AccountCreationInvitationEmail({ ...emailRequest.payload })
-        : emailRequest.type === "transaction"
-          ? TransactionConfirmationEmail({ ...emailRequest.payload })
-          : VerificationPasscodeEmail({ ...emailRequest.payload }),
+      notificationRequest.type === "invitation"
+        ? AccountCreationInvitationEmail({ ...notificationRequest.payload })
+        : notificationRequest.type === "transaction"
+          ? TransactionConfirmationEmail({ ...notificationRequest.payload })
+          : VerificationPasscodeEmail({ ...notificationRequest.payload }),
     );
 
     const params: SendEmailCommandInput = {
-      Source: emailRequest.sender,
+      Source: notificationRequest.sender,
       Destination: {
-        ToAddresses: [emailRequest.recipient],
+        ToAddresses: [notificationRequest.recipient],
       },
       Message: {
         Body: {
@@ -47,11 +47,11 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
         Subject: {
           Charset: "UTF-8",
           Data:
-            emailRequest.type === "invitation"
+            notificationRequest.type === "invitation"
               ? "Invitation for Parul University Convocation Account"
-              : emailRequest.type === "transaction"
+              : notificationRequest.type === "transaction"
                 ? `You have Received your Degree!`
-                : `Verification Passcode for ${emailRequest.payload.convocationNumber}th Parul University Convocation`,
+                : `Verification Passcode for ${notificationRequest.payload.convocationNumber}th Parul University Convocation`,
         },
       },
     };

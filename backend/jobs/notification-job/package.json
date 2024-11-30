@@ -1,8 +1,8 @@
 {
-  "name": "email-job",
+  "name": "notification-job",
   "version": "1.1.0",
   "private": true,
-  "description": "Job responsible for sending transactional emails.",
+  "description": "Job responsible for sending notifications.",
   "main": "index.js",
   "type": "module",
   "module": "dist/index.js",
@@ -18,7 +18,9 @@
     "url": "git+https://github.com/mihirpaldhikar/pu-convocation.git"
   },
   "keywords": [
-    "Emails"
+    "Emails",
+    "Notifications",
+    "Messages"
   ],
   "author": "Mihir Paldhikar",
   "license": "SEE LICENSE IN LICENSE.md",

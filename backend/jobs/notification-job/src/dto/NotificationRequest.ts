@@ -28,7 +28,7 @@ export interface TransactionConfirmationEmailRequest {
   recipientName: string;
 }
 
-export type EmailRequest =
+export type NotificationRequest =
   | {
       type: "invitation";
       sender: string;

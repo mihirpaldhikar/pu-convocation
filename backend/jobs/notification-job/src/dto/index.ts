@@ -12,7 +12,7 @@
  */
 
 export type {
-  EmailRequest,
+  NotificationRequest,
   AccountCreationInvitationEmailRequest,
   VerificationPasscodeEmailRequest,
-} from "./EmailRequest.js";
+} from "./NotificationRequest.js";

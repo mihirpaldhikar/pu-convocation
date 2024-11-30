@@ -26,7 +26,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-import { TransactionConfirmationEmailRequest } from "../dto/EmailRequest.js";
+import { TransactionConfirmationEmailRequest } from "../dto/NotificationRequest.js";
 
 export default function TransactionConfirmationEmail({
   recipientName,
