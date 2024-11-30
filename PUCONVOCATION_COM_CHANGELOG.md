@@ -1,3 +1,8 @@
+## 3.0.0-beta.15 (November 30, 2024)
+
+### New:
+- Add the ability to download attendee data in csv file format from the console if the user is authorized.
+
 ## 3.0.0-beta.14 (November 28, 2024)
 
 ### New:
