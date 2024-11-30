@@ -80,7 +80,7 @@ data class Environment(
             @JsonProperty("s3") val s3: S3
         ) {
             data class SQS(
-                @JsonProperty("emailQueue") val emailQueue: String,
+                @JsonProperty("notificationQueue") val notificationQueue: String,
                 @JsonProperty("transactionQueue") val transactionQueue: String,
             )
 
