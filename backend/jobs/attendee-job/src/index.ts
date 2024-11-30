@@ -25,7 +25,7 @@ import {
 } from "@aws-sdk/client-sqs";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { UUID } from "mongodb";
-import archiver, { Format } from "archiver";
+import { createZippedBufferWithPassword } from "./utils/ZIPUtils.js";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();
@@ -112,25 +112,11 @@ export const handler: Handler = async (event, context) => {
 
     const fileName = new UUID().toString().replace(/-/g, "");
 
-    archiver.registerFormat("zip-encrypted", require("archiver-zip-encrypted"));
-
-    const archive = archiver("zip-encrypted" as Format, {
-      zlib: { level: 9 },
-      // @ts-ignore
-      encryptionMethod: "aes256",
-      password: process.env.ATTENDEE_ZIP_PASSWORD,
-    });
-
-    archive.append(attendeesCSV, { name: "attendees.csv" });
-
-    await archive.finalize();
-
-    const archiveBuffer = await new Promise<Buffer>((resolve, reject) => {
-      const chunks: any[] = [];
-      archive.on("data", (chunk) => chunks.push(chunk));
-      archive.on("end", () => resolve(Buffer.concat(chunks)));
-      archive.on("error", (err) => reject(err));
-    });
+    const archiveBuffer = await createZippedBufferWithPassword(
+      attendeesCSV,
+      "attendees.csv",
+      process.env.ATTENDEE_ZIP_PASSWORD!!,
+    );
 
     const uploadParams = {
       Bucket: "assets.puconvocation.com",
