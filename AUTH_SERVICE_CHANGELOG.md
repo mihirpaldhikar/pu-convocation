@@ -1,3 +1,11 @@
+## 3.0.0-beta.6 (November 30, 2024)
+
+### Breaking Changes:
+- Rename Email Queue to Notification Queue inorder to send notifications through multiple channels instead of only sending emails.
+
+### New:
+- Upgrade to Kotlin version 2.1.0
+
 ## 3.0.0-beta.5 (November 28, 2024)
 
 ### Breaking Changes:
