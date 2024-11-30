@@ -131,7 +131,7 @@ export const handler: Handler = async (event, context) => {
     );
   } else {
     const sqsClient = new SQSClient();
-    const EMAIL_QUEUE_URL = process.env.EMAIL_QUEUE_URL!!;
+    const NOTIFICATION_QUEUE_URL = process.env.NOTIFICATION_QUEUE_URL!!;
     const BATCH_SIZE = 10;
 
     for (let i = 0; i < attendees.length; i += BATCH_SIZE) {
@@ -158,7 +158,7 @@ export const handler: Handler = async (event, context) => {
 
       await sqsClient.send(
         new SendMessageBatchCommand({
-          QueueUrl: EMAIL_QUEUE_URL,
+          QueueUrl: NOTIFICATION_QUEUE_URL,
           Entries: messageBatch,
         }),
       );
