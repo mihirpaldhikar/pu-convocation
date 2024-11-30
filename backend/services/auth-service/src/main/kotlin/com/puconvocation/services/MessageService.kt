@@ -23,11 +23,11 @@ class MessageQueue(
     private val sqsClient: SqsClient,
     private val awsConfig: Environment.Cloud.AWS
 ) {
-    suspend fun sendMessage(message: String, groupId: String, queueType: QueueType) {
+    suspend fun sendMessage(message: String, groupId: String) {
         val messageRequest = SendMessageRequest {
             messageBody = message
             messageGroupId = groupId
-            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.sqs.emailQueue else awsConfig.sqs.transactionQueue
+            queueUrl = awsConfig.sqs.notificationQueue
         }
 
         sqsClient.sendMessage(messageRequest)
@@ -35,18 +35,12 @@ class MessageQueue(
 
     suspend fun sendBatchMessages(
         messages: MutableList<SendMessageBatchRequestEntry>,
-        queueType: QueueType
     ) {
         val batchMessages = SendMessageBatchRequest {
             entries = messages
-            queueUrl = if (queueType == QueueType.EMAIL) awsConfig.sqs.emailQueue else awsConfig.sqs.transactionQueue
+            queueUrl = awsConfig.sqs.notificationQueue
         }
 
         sqsClient.sendMessageBatch(batchMessages)
-    }
-
-    enum class QueueType {
-        EMAIL,
-        TRANSACTION
     }
 }

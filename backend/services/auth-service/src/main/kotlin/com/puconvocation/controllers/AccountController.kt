@@ -26,7 +26,6 @@ import com.puconvocation.enums.TokenType
 import com.puconvocation.security.dao.SecurityToken
 import com.puconvocation.security.jwt.JsonWebToken
 import com.puconvocation.services.MessageQueue
-import com.puconvocation.services.MessageQueue.QueueType
 import com.puconvocation.utils.Result
 import io.ktor.http.*
 import org.bson.types.ObjectId
@@ -371,7 +370,6 @@ class AccountController(
             messageQueue.sendMessage(
                 message = "{\"type\":\"invitation\",\"sender\":\"PU Convocation System <noreply@puconvocation.com>\",\"recipient\":\"${invite.email}\",\"replyTo\":\"${sender.email}\",\"payload\":{\"senderName\":\"${if (sender.designation.isEmpty()) sender.displayName else sender.designation + " " + sender.displayName}\",\"invitationToken\":\"${invitationToken}\"}}",
                 groupId = "emails",
-                queueType = QueueType.EMAIL,
             )
         }
 
