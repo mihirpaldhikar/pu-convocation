@@ -12,7 +12,10 @@
  */
 import archiver, { ArchiverOptions } from "archiver";
 
-archiver.registerFormat("zip-encrypted", require("archiver-zip-encrypted"));
+// @ts-ignore
+import zipEncryption from "archiver-zip-encrypted";
+
+archiver.registerFormat("zip-encrypted", zipEncryption);
 
 export async function createZippedBufferWithPassword(
   data: string,
