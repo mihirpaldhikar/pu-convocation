@@ -290,9 +290,9 @@ export default function GroundSettingsPage(): JSX.Element {
                                     : values.rows[values.rows.length - 1]
                                         .letter,
                                 ),
-                                start: 0,
-                                end: 0,
-                                reserved: [],
+                                start: 1,
+                                end: 10,
+                                reserved: "",
                               });
                             }}
                           >
