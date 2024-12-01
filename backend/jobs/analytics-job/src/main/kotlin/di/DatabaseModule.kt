@@ -23,7 +23,7 @@ object DatabaseModule {
         single<MongoDatabase> {
             MongoDBConnector(
                 connectionURL = get<Environment>().mongoDBConnectionURL,
-                database = get<Environment>().mongoDBName
+                database = get<Environment>().databaseName
             ).connectToDatabase()
         }
     }

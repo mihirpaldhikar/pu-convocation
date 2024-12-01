@@ -15,12 +15,8 @@ package com.puconvocation
 
 
 class Environment {
-    val developmentMode: Boolean = System.getenv("DEVELOPMENT_MODE").toBoolean()
-
-    val testIP: String = System.getenv("TEST_IP").toString()
-
     val mongoDBConnectionURL = System.getenv("MONGO_DB_CONNECTION_URL").toString()
-    val mongoDBName = System.getenv("MONGO_DB_NAME").toString()
+    val databaseName = System.getenv("MONGO_DB_NAME").toString()
 
     val kafkaBrokers = System.getenv("KAFKA_BROKERS").toString()
 }

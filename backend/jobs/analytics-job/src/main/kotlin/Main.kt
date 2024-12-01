@@ -44,8 +44,6 @@ fun main(): Unit = runBlocking {
         )
     }
 
-    val environment by KoinJavaComponent.inject<Environment>(Environment::class.java)
-
     val kafkaService by KoinJavaComponent.inject<KafkaService>(KafkaService::class.java)
     val consumer = kafkaService.getConsumer()
 
@@ -70,11 +68,7 @@ fun main(): Unit = runBlocking {
                 val message = queue.poll()
                 if (message != null) {
                     val data = message.split(";")
-                    val ip = if (environment.developmentMode) {
-                        environment.testIP
-                    } else {
-                        data[3]
-                    }
+                    val ip = data[3]
                     val ipDetails = ipTable.getDetails(ip)
                     if (ipDetails != null) {
                         val analyticsLog = AnalyticsLog(
