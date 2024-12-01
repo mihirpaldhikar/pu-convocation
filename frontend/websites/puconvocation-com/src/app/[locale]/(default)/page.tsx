@@ -26,6 +26,8 @@ import { getTranslations } from "next-intl/server";
 import { RemoteConfigController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { convertToThumbnailUrl } from "@lib/image_utils";
+import GuestFlagleft from "@components/graphics/guest_flag_left";
+import GuestFlagRight from "@components/graphics/guest_flag_right";
 
 const remoteConfig = new RemoteConfigController();
 
@@ -162,6 +164,28 @@ export default async function Home() {
               />
             </div>
           </div>
+        </div>
+        {/* Chief guests Section */}
+        <div className={"mb-8 flex justify-between"}>
+          <GuestFlagleft />
+          <h2
+            className={
+              "flex items-center space-x-2 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
+            }
+          >
+            <span>Chief Guests</span>
+          </h2>
+          <GuestFlagRight />
+        </div>
+        <div className={"flex justify-center px-3 py-3"}>
+          <Image
+            src="https://assets.puconvocation.com/images/341801f602444fc88d1c1b04e0727eea.avif"
+            alt="Chief Guests Image"
+            width={800}
+            height={600}
+            className={"rounded-xl"}
+            style={{ objectFit: "cover" }}
+          />
         </div>
       </section>
     );
