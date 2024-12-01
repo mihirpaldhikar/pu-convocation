@@ -20,13 +20,8 @@ import com.puconvocation.services.KafkaService
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.plugins.origin
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.route
+import io.ktor.http.*
+import io.ktor.server.routing.*
 
 fun Route.analyticsRoute(
     analyticsController: AnalyticsController,
@@ -35,11 +30,22 @@ fun Route.analyticsRoute(
     route("/analytics") {
         post("/telemetry") {
             val analyticsHeader = call.request.headers["x-telemetry"]
+            val forwardedHeader = call.request.headers["X-Forwarded-For"]
 
-            if (analyticsHeader != null) {
-                kafkaService.produce("$analyticsHeader;${call.request.origin.remoteAddress}")
+            if (forwardedHeader != null && analyticsHeader != null) {
+                println("SUHANI")
+                val ipList = forwardedHeader.split(",").map { it.trim() }
+                val clientIP = ipList.lastOrNull()
+                if (clientIP != null) {
+                    kafkaService.produce("$analyticsHeader;${clientIP}")
+                }
             }
-            call.respondText("Recorded")
+            call.sendResponse(
+                Result.Success(
+                    httpStatusCode = HttpStatusCode.OK,
+                    data = "Recorded"
+                )
+            )
         }
 
         get("/weeklyTraffic") {

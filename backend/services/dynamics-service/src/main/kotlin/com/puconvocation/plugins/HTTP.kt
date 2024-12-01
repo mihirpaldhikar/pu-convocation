@@ -54,6 +54,7 @@ fun Application.configureHTTP() {
         allowHeader("x-analytics")
         allowHeader("x-telemetry")
         allowHeader("Service-Authorization-Token")
+        allowHeader("X-Forwarded-For")
 
         if (environment.service.developmentMode) {
             allowHost("localhost:3000", listOf("http", "https"))
