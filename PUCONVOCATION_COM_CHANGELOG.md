@@ -1,3 +1,8 @@
+## 3.0.0-rc.4 (December 2, 2024)
+
+### New:
+- Add the ability to send telemetry for analytics.
+
 ## 3.0.0-rc.3 (December 2, 2024)
 
 ### Fixes:
