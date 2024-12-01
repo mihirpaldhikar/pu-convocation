@@ -48,7 +48,7 @@ export default function CountDown({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [futureTimestamp]);
+  }, [futureTimestamp, router]);
 
   if (remainingTime === "") {
     return (
