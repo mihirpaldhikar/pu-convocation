@@ -65,4 +65,8 @@ object CachedKeys {
     fun objectsOfFolderKey(folderName: String): String {
         return "cloudStorage:$folderName"
     }
+
+    fun attendeesInEnclosureKey(enclosure: String): String {
+        return "attendeesInEnclosure:$enclosure"
+    }
 }

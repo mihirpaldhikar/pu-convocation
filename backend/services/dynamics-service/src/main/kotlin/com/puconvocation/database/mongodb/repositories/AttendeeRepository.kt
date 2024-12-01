@@ -15,8 +15,11 @@ package com.puconvocation.database.mongodb.repositories
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.mongodb.client.model.Aggregates
+import com.mongodb.client.model.Aggregates.*
+import com.mongodb.client.model.BsonField
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Projections.*
+import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Updates
 import com.mongodb.client.model.search.FuzzySearchOptions
 import com.mongodb.client.model.search.SearchOperator
@@ -25,12 +28,14 @@ import com.mongodb.client.model.search.SearchPath
 import com.mongodb.kotlin.client.coroutine.MongoCollection
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
+import com.puconvocation.commons.dto.AttendeesInEnclosure
 import com.puconvocation.constants.CachedKeys
 import com.puconvocation.controllers.CacheController
 import com.puconvocation.database.mongodb.datasources.AttendeeDatasource
 import com.puconvocation.database.mongodb.entities.Attendee
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
+import org.bson.Document
 import java.time.Duration
 
 class AttendeeRepository(
@@ -162,7 +167,7 @@ class AttendeeRepository(
     }
 
     override suspend fun searchAttendees(query: String): List<Attendee> {
-        val aggregationPipeline = Aggregates.search(
+        val aggregationPipeline = search(
             SearchOperator.compound().filter(
                 listOf(
                     SearchOperator.text(
@@ -177,9 +182,75 @@ class AttendeeRepository(
         return attendeesCollection.withDocumentClass<Attendee>().aggregate(
             listOf(
                 aggregationPipeline,
-                Aggregates.limit(10)
+                limit(10)
             )
         ).toList()
     }
+
+    override suspend fun attendeesInEnclosure(enclosure: String): AttendeesInEnclosure {
+        val cachedData = cache.get(CachedKeys.attendeesInEnclosureKey(enclosure))
+        if (cachedData != null) {
+            return mapper.readValue<AttendeesInEnclosure>(cachedData)
+        }
+        val pipeline = listOf(
+            match(eq("allocation.enclosure", enclosure)),
+            sort(ascending("allocation.row", "allocation.seat")),
+            group(
+                Document("enclosure", "\$allocation.enclosure")
+                    .append("row", "\$allocation.row"),
+                BsonField(
+                    "attendees", Document(
+                        "\$push", Document()
+                            .append("enrollmentNumber", "\$_id")
+                            .append("convocationId", "\$convocationId")
+                            .append("seat", "\$allocation.seat")
+                    )
+                )
+            ),
+            group(
+                "\$_id.enclosure",
+                BsonField(
+                    "rows", Document(
+                        "\$push", Document("row", "\$_id.row")
+                            .append("attendees", "\$attendees")
+                    )
+                )
+            ),
+            project(
+                fields(
+                    excludeId(),
+                    include("enclosure", "rows")
+                )
+            )
+        )
+        val resultsFlow = attendeesCollection.aggregate<Document>(pipeline)
+        val results = resultsFlow.toList()
+        if (results.isEmpty()) {
+            return AttendeesInEnclosure(
+                enclosure = enclosure,
+                rows = emptyList()
+            )
+        }
+        val bson = results.first()
+        val rows = bson.getList("rows", Document::class.java).map { rowDoc ->
+            val row = rowDoc.getString("row")
+
+            val attendees = rowDoc.getList("attendees", Document::class.java).map { attendeeDoc ->
+                AttendeesInEnclosure.Attendee(
+                    enrollmentNumber = attendeeDoc.getString("enrollmentNumber"),
+                    convocationId = attendeeDoc.getString("convocationId"),
+                    seat = attendeeDoc.getString("seat")
+                )
+            }
+
+            AttendeesInEnclosure.Row(row = row, attendees = attendees)
+        }
+
+        val finalResult = AttendeesInEnclosure(enclosure = enclosure, rows = rows)
+
+        cache.set(CachedKeys.attendeesInEnclosureKey(enclosure), mapper.writeValueAsString(finalResult))
+        return finalResult
+    }
+
 
 }

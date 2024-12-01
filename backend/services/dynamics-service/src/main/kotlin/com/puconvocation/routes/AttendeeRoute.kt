@@ -19,13 +19,8 @@ import com.puconvocation.enums.ResponseCode
 import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
-import io.ktor.server.request.receiveMultipart
-import io.ktor.server.routing.Routing
-import io.ktor.server.routing.get
-import io.ktor.server.routing.post
-import io.ktor.server.routing.route
-import kotlin.text.toBooleanStrictOrNull
-import kotlin.text.toInt
+import io.ktor.server.request.*
+import io.ktor.server.routing.*
 
 fun Routing.attendeesRoute(
     attendeeController: AttendeeController
@@ -108,6 +103,19 @@ fun Routing.attendeesRoute(
                 )
             val result = attendeeController.mutateAttendeeLock(authorizationToken, locked)
             call.sendResponse(result)
+        }
+
+        get("/enclosure/{enclosure}") {
+            val authorizationToken = call.getSecurityTokens().authorizationToken
+            val enclosure = call.parameters["enclosure"] ?: return@get call.sendResponse(
+                Result.Error(
+                    ErrorResponse(
+                        errorCode = ResponseCode.INVALID_OR_NULL_IDENTIFIER,
+                        message = "Please provide a valid enclosure."
+                    )
+                )
+            )
+            call.sendResponse(attendeeController.attendeesInEnclosure(authorizationToken, enclosure))
         }
     }
 }

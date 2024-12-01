@@ -14,6 +14,7 @@
 package com.puconvocation.controllers
 
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
+import com.puconvocation.commons.dto.AttendeesInEnclosure
 import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.constants.IAMPolicies
 import com.puconvocation.database.mongodb.entities.Attendee
@@ -338,6 +339,29 @@ class AttendeeController(
         val matchedAttendees = attendeeRepository.searchAttendees(query)
 
         return Result.Success(matchedAttendees)
+    }
+
+    suspend fun attendeesInEnclosure(
+        authorizationToken: String?,
+        enclosure: String
+    ): Result<AttendeesInEnclosure, ErrorResponse> {
+        if (!authService.isAuthorized(
+                role = IAMPolicies.READ_ATTENDEES,
+                principal = authorizationToken
+            )
+        ) {
+            return Result.Error(
+                httpStatusCode = HttpStatusCode.Forbidden,
+                error = ErrorResponse(
+                    errorCode = ResponseCode.NOT_PERMITTED,
+                    message = "You don't have privilege to view attendee details."
+                )
+
+            )
+        }
+        return Result.Success(
+            attendeeRepository.attendeesInEnclosure(enclosure)
+        )
     }
 
 }

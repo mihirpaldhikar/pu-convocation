@@ -14,6 +14,7 @@
 package com.puconvocation.database.mongodb.datasources
 
 import com.puconvocation.commons.dto.AttendeeWithEnclosureMetadata
+import com.puconvocation.commons.dto.AttendeesInEnclosure
 import com.puconvocation.database.mongodb.entities.Attendee
 
 interface AttendeeDatasource {
@@ -32,4 +33,6 @@ interface AttendeeDatasource {
     suspend fun getAttendees(page: Int, limit: Int): HashMap<String, Any>
 
     suspend fun searchAttendees(query: String): List<Attendee>
+
+    suspend fun attendeesInEnclosure(enclosure: String): AttendeesInEnclosure
 }
