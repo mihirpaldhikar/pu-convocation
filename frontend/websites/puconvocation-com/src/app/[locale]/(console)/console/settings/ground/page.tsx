@@ -29,33 +29,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { isAuthorized } from "@lib/iam_utils";
 import IAMPolicies from "@configs/IAMPolicies";
 
-function nextChar(input: string): string {
-  if (input.length === 1 && /\d/.test(input)) {
-    const num = parseInt(input, 10);
-    return (num + 1).toString();
-  }
-  let result = input.split("");
-  let i = result.length - 1;
-
-  while (i >= 0) {
-    const char = result[i];
-    if (char === "Z") {
-      result[i] = "A";
-    } else {
-      result[i] = String.fromCharCode(char.charCodeAt(0) + 1);
-      break;
-    }
-
-    i--;
-  }
-
-  if (result[0] === "A" && result.length === input.length) {
-    result = ["A"].concat(result);
-  }
-
-  return result.join("");
-}
-
 function totalEnclosureSeats(enclosure: Enclosure): number {
   let seats = 0;
   for (const row of enclosure.rows) {
@@ -284,14 +257,22 @@ export default function GroundSettingsPage(): JSX.Element {
                             onClick={() => {
                               handleSubmit();
                               arrayHelpers.push({
-                                letter: nextChar(
+                                letter:
                                   values.rows.length === 0
-                                    ? "0"
-                                    : values.rows[values.rows.length - 1]
-                                        .letter,
-                                ),
+                                    ? "1"
+                                    : !isNaN(
+                                          parseInt(
+                                            values.rows[values.rows.length - 1]
+                                              .letter,
+                                          ),
+                                        )
+                                      ? `${parseInt(values.rows[values.rows.length - 1].letter) + 1}`
+                                      : "",
                                 start: 1,
-                                end: 10,
+                                end:
+                                  values.rows.length === 0
+                                    ? 10
+                                    : values.rows[values.rows.length - 1].end,
                                 reserved: "",
                               });
                             }}
