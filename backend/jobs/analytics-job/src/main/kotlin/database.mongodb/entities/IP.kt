@@ -18,8 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class IP(
-    @JsonProperty("from") val from: Long,
-    @JsonProperty("to") val to: Long,
+    @JsonProperty("ipFrom") val ipFrom: Long,
+    @JsonProperty("ipTo") val ipTo: Long,
     @JsonProperty("countryCode") val countryCode: String,
     @JsonProperty("country") val country: String,
     @JsonProperty("region") val region: String,
@@ -27,5 +27,5 @@ data class IP(
     @JsonProperty("latitude") val latitude: Double,
     @JsonProperty("longitude") val longitude: Double,
     @JsonProperty("zipcode") val zipcode: String,
-    @JsonProperty("timezone") val timezone: String,
+    @JsonProperty("timezone") val timeZone: String,
 )

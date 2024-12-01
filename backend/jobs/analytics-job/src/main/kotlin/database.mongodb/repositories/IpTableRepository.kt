@@ -30,8 +30,8 @@ class IpTableRepository(
     override suspend fun getDetails(ip: String): IP? {
         val targetIP = ipToLong(ip)
         val filters = Filters.and(
-            Filters.lte(IP::from.name, targetIP),
-            Filters.gte(IP::to.name, targetIP)
+            Filters.lte(IP::ipFrom.name, targetIP),
+            Filters.gte(IP::ipTo.name, targetIP)
         )
         return ipTable.withDocumentClass<IP>().find(filters).firstOrNull()
     }
