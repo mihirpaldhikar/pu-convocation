@@ -1,4 +1,7 @@
-## 1.0.0-rc.5 (December 2, 2024)
+## 1.0.0-rc.6 (December 2, 2024)
+
+### Fixes:
+- Fix missing import statements.
 
 ### Miscellaneous:
 - Remove print statements.
