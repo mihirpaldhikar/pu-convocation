@@ -96,6 +96,9 @@ export default async function Home() {
                 "flex items-center space-x-3 pb-5 pt-3 lg:space-x-6 lg:pt-4"
               }
             >
+              <h1 className={"text-4xl font-bold md:text-5xl lg:text-8xl"}>
+                8<sup>th</sup>
+              </h1>
               <h1 className={"text-4xl font-black md:text-5xl lg:text-8xl"}>
                 PU
               </h1>
