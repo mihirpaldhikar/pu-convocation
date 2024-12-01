@@ -21,6 +21,7 @@ import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
 import io.ktor.server.routing.*
+import com.puconvocation.utils.Result
 
 fun Route.analyticsRoute(
     analyticsController: AnalyticsController,
