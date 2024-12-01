@@ -1,3 +1,9 @@
+## 3.0.0-rc.2 (December 1, 2024)
+
+### New:
+- Implement an aerial view feature in the Attendee Console, allowing authenticated users to visualize the seating arrangement from a top-down perspective.
+- Add the ability to highlight reserved seats in Seat Map, along with legends specifying the difference.
+
 ## 3.0.0-rc.1 (December 1, 2024)
 
 #### This is Release Candidate 1
