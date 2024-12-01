@@ -1,3 +1,10 @@
+## 1.0.0-rc.1 (December 1, 2024)
+
+#### This is Release Candidate 1
+
+### Fixes:
+- Fix an issue in which the RemoteConfig entity was not in-sync with the latest changes made with API calls.
+
 ## 1.0.0-beta.10 (November 30, 2024)
 
 ### Breaking Changes:
