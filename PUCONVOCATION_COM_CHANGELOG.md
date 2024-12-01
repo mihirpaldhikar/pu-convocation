@@ -1,3 +1,8 @@
+## 3.0.0-rc.5 (December 2, 2024)
+
+### Fixes:
+- Fix an issue in which all the rows of the enclosure were rendered instead of only rendering rows relative to attendee's row.
+
 ## 3.0.0-rc.4 (December 2, 2024)
 
 ### New:
