@@ -16,11 +16,10 @@ import { JSX } from "react";
 export default function GuestFlagleft(): JSX.Element {
   return (
     <svg
-      width="571"
-      height="265"
       viewBox="0 0 571 265"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={"h-[150px] w-[645px] md:h-[275px]"}
     >
       <path
         d="M320.506 110.302L325.999 107.949L327.909 121.271L323.722 122.42L320.506 110.302Z"

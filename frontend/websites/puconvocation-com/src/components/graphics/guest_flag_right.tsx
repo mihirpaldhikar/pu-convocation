@@ -16,11 +16,10 @@ import { JSX } from "react";
 export default function GuestFlagRight(): JSX.Element {
   return (
     <svg
-      width="527"
-      height="254"
       viewBox="0 0 527 254"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={"h-[150px] w-[600px] md:h-[275px]"}
     >
       <mask
         id="mask0_900_3688"
