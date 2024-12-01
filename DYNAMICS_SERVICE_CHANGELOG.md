@@ -1,3 +1,8 @@
+## 1.0.0-rc.5 (December 2, 2024)
+
+### Miscellaneous:
+- Remove print statements.
+
 ## 1.0.0-rc.4 (December 2, 2024)
 
 ### Fixes:
