@@ -57,7 +57,6 @@ class RemoteConfigController(
         val currentConfig = remoteConfigRepository.getConfig()
 
         val newConfig = currentConfig.copy(
-            id = ObjectId(),
             active = true,
             images = changeRemoteConfigRequest.images ?: currentConfig.images,
             instructions = currentConfig.instructions.copy(

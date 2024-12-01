@@ -59,22 +59,21 @@ class RemoteConfigRepository(
 
     override suspend fun changeConfig(
         remoteConfig: RemoteConfig,
-        oldConfigId: ObjectId
+        configId: ObjectId
     ): Boolean {
-        val newConfigAdded =
-            configCollection.withDocumentClass<RemoteConfig>().insertOne(remoteConfig).wasAcknowledged()
-
-        val markOldConfigInactive = configCollection.withDocumentClass<RemoteConfig>().updateOne(
-            eq("_id", oldConfigId),
+        val acknowledged = configCollection.withDocumentClass<RemoteConfig>().updateOne(
+            eq("_id", configId),
             Updates.combine(
-                Updates.set(RemoteConfig::active.name, false),
+                Updates.set(RemoteConfig::images.name, remoteConfig.images),
+                Updates.set(RemoteConfig::instructions.name, remoteConfig.instructions),
+                Updates.set(RemoteConfig::countdown.name, remoteConfig.countdown),
+                Updates.set(RemoteConfig::attendees.name, remoteConfig.attendees),
+                Updates.set(RemoteConfig::groundMappings.name, remoteConfig.groundMappings),
             )
         ).wasAcknowledged()
 
-        if (newConfigAdded && markOldConfigInactive) {
-            cache.invalidate(CachedKeys.remoteConfigKey())
-        }
-        return newConfigAdded
+        cache.invalidate(CachedKeys.remoteConfigKey())
+        return acknowledged
     }
 
     override suspend fun mutateAttendeeLock(attendeeConfig: RemoteConfig.Attendees): Boolean {
