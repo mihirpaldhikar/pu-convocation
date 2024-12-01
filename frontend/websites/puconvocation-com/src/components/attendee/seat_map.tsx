@@ -59,6 +59,10 @@ export default function SeatMap({
   return (
     <div className={"flex flex-col space-y-5"}>
       {enclosure.rows.map((row) => {
+        const reserved = row.reserved
+          .split(",")
+          .filter((r) => !isNaN(parseInt(r)));
+
         return (
           <div key={row.letter} className={"flex"}>
             <h5
@@ -85,6 +89,7 @@ export default function SeatMap({
                   <Seat
                     key={seat}
                     number={seat}
+                    reserved={reserved.includes(seat.toString())}
                     activeRow={row.letter === activeArrangement.row}
                     active={
                       row.letter === activeArrangement.row &&
@@ -97,10 +102,22 @@ export default function SeatMap({
           </div>
         );
       })}
-      <h3 className={"text-xs font-medium text-gray-500"}>
-        If your seat is not visible in the Seat Map, Please scroll the
-        Highlighted row.
-      </h3>
+      <div className={"space-y-5 text-xs font-medium text-gray-500"}>
+        <div className={"space-y-3"}>
+          <div className={"flex items-center"}>
+            <Seat number={0} reserved={false} active={true} activeRow={false} />
+            <p className={"pl-2 pt-2.5"}> &nbsp; = Your Seat</p>
+          </div>
+          <div className={"flex items-center"}>
+            <Seat number={0} reserved={true} activeRow={false} />
+            <p className={"pl-2 pt-2.5"}>&nbsp; = Reserved / Faculty Seat</p>
+          </div>
+        </div>
+        <p>
+          If your seat is not visible in the Seat Map, Please scroll the
+          Highlighted row.
+        </p>
+      </div>
     </div>
   );
 }

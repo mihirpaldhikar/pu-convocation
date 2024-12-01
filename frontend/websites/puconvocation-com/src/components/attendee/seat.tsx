@@ -16,6 +16,7 @@ import { JSX } from "react";
 interface SeatProps {
   number: number;
   active?: boolean;
+  reserved: boolean;
   activeRow: boolean;
   hidden?: boolean;
 }
@@ -23,6 +24,7 @@ interface SeatProps {
 export default function Seat({
   number,
   active = false,
+  reserved,
   activeRow,
 }: SeatProps): JSX.Element {
   return (
@@ -42,18 +44,18 @@ export default function Seat({
           y="7.67126"
           width="24"
           height="20.3288"
-          className={`${active ? "fill-red-500" : activeRow ? "fill-gray-100" : ""}`}
+          className={`${reserved ? "fill-yellow-500" : active ? "fill-red-500" : activeRow ? "fill-gray-100" : ""}`}
         />
         <ellipse
           cx="12"
           cy="8.18265"
           rx="12"
           ry="8.18265"
-          className={`${active ? "fill-red-500" : activeRow ? "fill-gray-100" : ""}`}
+          className={`${reserved ? "fill-yellow-500" : active ? "fill-red-500" : activeRow ? "fill-gray-100" : ""}`}
         />
       </svg>
       <span
-        className={`absolute inset-0 z-10 flex items-center justify-center pl-1 pt-3 text-xs font-medium ${active ? "text-white" : "text-gray-500"}`}
+        className={`absolute inset-0 z-10 flex items-center justify-center pl-1 pt-3 text-xs font-medium ${reserved ? "text-black" : active ? "text-white" : "text-gray-500"}`}
       >
         {number}
       </span>

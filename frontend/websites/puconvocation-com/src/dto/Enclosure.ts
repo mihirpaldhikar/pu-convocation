@@ -18,6 +18,6 @@ export default interface Enclosure {
     letter: string;
     start: number;
     end: number;
-    reserved: Array<number>;
+    reserved: string;
   }>;
 }
