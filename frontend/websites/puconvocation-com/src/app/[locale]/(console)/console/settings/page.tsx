@@ -22,25 +22,28 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@components/ui";
 import {
   ArrowPathIcon,
+  CalendarDaysIcon,
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { isAuthorized } from "@lib/iam_utils";
 import IAMPolicies from "@configs/IAMPolicies";
 import { Switch } from "@components/ui/switch";
+import { format } from "date-fns";
 import { Calendar } from "@components/ui/calendar";
-import { RemoteConfigController } from "@controllers/index";
-
-const remoteConfigController = new RemoteConfigController();
 
 export default function GeneralSettingsPage(): JSX.Element {
   const { account } = useAuth();
   const { remoteConfig, dispatch } = useRemoteConfig();
   const [save, setSave] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedImageSection, setSelectedImageSection] = useState<
     "carousel" | "hero" | null
   >(null);
@@ -103,27 +106,53 @@ export default function GeneralSettingsPage(): JSX.Element {
                 }}
               />
             </div>
-            <div hidden={!remoteConfig.countdown.show} className={"space-y-3"}>
-              <h6 className={"font-medium"}>Select Convocation Date</h6>
-              <Calendar
-                mode={"single"}
-                className={"w-fit rounded-xl border"}
-                selected={new Date(remoteConfig.countdown.endTime)}
-                onSelect={(date) => {
-                  if (date !== undefined) {
-                    dispatch({
-                      type: "SET_COUNTDOWN_END_TIME",
-                      payload: {
-                        endTime: date.getTime(),
-                      },
-                    });
-                    setSave(!save);
-                  }
-                }}
-              />
+            <div
+              hidden={!remoteConfig.countdown.show}
+              className={
+                "flex flex-col space-y-3 lg:flex-row lg:items-center lg:space-x-3 lg:space-y-0"
+              }
+            >
+              <h6 className={"font-medium"}>Pick Convocation Date</h6>
+              <Popover
+                open={showDatePicker}
+                onOpenChange={(open) => setShowDatePicker(open)}
+              >
+                <PopoverTrigger>
+                  <div
+                    className={
+                      "flex items-center justify-between space-x-5 rounded-xl border px-3 py-2 transition-colors duration-300 hover:bg-gray-100"
+                    }
+                  >
+                    {format(
+                      new Date(remoteConfig.countdown.endTime),
+                      "dd MMM yyyy",
+                    )}
+                    <CalendarDaysIcon className={"ml-4 size-5"} />
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(remoteConfig.countdown.endTime)}
+                    onSelect={(date) => {
+                      console.log(date);
+                      if (date !== undefined) {
+                        dispatch({
+                          type: "SET_COUNTDOWN_END_TIME",
+                          payload: {
+                            endTime: date.getTime(),
+                          },
+                        });
+                      }
+                      setShowDatePicker(false);
+                    }}
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
-          <hr />
+
           <div className={"flex items-center justify-between"}>
             <div>
               <h6 className={"font-medium"}>Show Instructions Banner</h6>
@@ -202,7 +231,7 @@ export default function GeneralSettingsPage(): JSX.Element {
                   "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
                 }
               >
-                {remoteConfig.images.carousel.map((image, index) => {
+                {remoteConfig.images.carousel.map((image) => {
                   return (
                     <div
                       key={image.url.concat(Math.random().toString())}
