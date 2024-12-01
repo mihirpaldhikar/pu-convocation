@@ -1,3 +1,8 @@
+## 1.0.0-rc.2 (December 1, 2024)
+
+### New:
+- Add a route to fetch all the attendees in an enclosure.
+
 ## 1.0.0-rc.1 (December 1, 2024)
 
 #### This is Release Candidate 1
