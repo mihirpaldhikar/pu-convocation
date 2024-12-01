@@ -1,3 +1,9 @@
+## 1.0.0-rc.3 (December 2, 2024)
+
+### Fixes:
+- Fix an issue in which the URL for authorization checks with auth-service was having a typo.
+
+
 ## 1.0.0-rc.2 (December 1, 2024)
 
 ### New:
