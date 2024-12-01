@@ -1,3 +1,15 @@
+## 3.0.0-rc.1 (December 1, 2024)
+
+#### This is Release Candidate 1
+
+### Fixes:
+- Fix an issue in which router was missing as a dependency in the dependency array of CountDown layout.
+
+### Miscellaneous:
+- Refactor Date Picker UI in the general settings page, which is responsible for managing countdown.
+- Refactor RemoteConfig Provider to efficiently and automatically sync changes with the database, thus streamlining AutoSave of the settings.
+- Upgrade pnpm to v9.14.4
+
 ## 3.0.0-beta.15 (November 30, 2024)
 
 ### New:
