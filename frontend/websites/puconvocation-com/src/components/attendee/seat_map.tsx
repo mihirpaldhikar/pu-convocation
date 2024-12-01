@@ -13,7 +13,7 @@
 
 "use client";
 
-import { JSX, useState } from "react";
+import { JSX, ReactNode, useState } from "react";
 import { Enclosure } from "@dto/index";
 import Seat from "./seat";
 import { useInView } from "react-intersection-observer";
@@ -34,6 +34,8 @@ export default function SeatMap({
   enclosure,
   activeArrangement,
 }: SeatMapProps): JSX.Element {
+  const rows: ReactNode[] = [];
+  const seats: ReactNode[][] = [];
   const [activeRowScrolled, setActiveRowScrolled] = useState<boolean>(false);
 
   const { ref } = useInView({
@@ -50,57 +52,82 @@ export default function SeatMap({
         ) as HTMLElement;
         if (!isElementInViewport(activeSeat, rowContainer)) {
           const x = activeSeat.getBoundingClientRect().x;
-          smoothScrollLeftWithinDiv(rowContainer, x, 1000);
+          smoothScrollLeftWithinDiv(
+            rowContainer,
+            (rowContainer.scrollWidth - x) * 4,
+            1000,
+          );
         }
       }
     },
   });
 
+  const activeRowIndex = enclosure.rows.indexOf(
+    enclosure.rows.filter((r) => r.letter === activeArrangement.row)[0],
+  );
+
+  const rowStartIndex = activeRowIndex - 3 <= 0 ? 0 : activeRowIndex - 3;
+  const rowEndIndex =
+    activeRowIndex + 3 >= enclosure.rows.length
+      ? enclosure.rows.length
+      : activeRowIndex + 3;
+
+  let tempHolder: ReactNode[] = [];
+  for (let i = rowStartIndex; i < rowEndIndex; i++) {
+    const reserved = enclosure.rows[i].reserved
+      .split(",")
+      .filter((r) => !isNaN(parseInt(r)));
+    for (let j = 0; j <= enclosure.rows[i].end; j++) {
+      if (j >= enclosure.rows[i].start) {
+        tempHolder.push(
+          <Seat
+            key={j}
+            number={j}
+            reserved={reserved.includes(j.toString())}
+            activeRow={enclosure.rows[i].letter === activeArrangement.row}
+            active={
+              enclosure.rows[i].letter === activeArrangement.row &&
+              j === parseInt(activeArrangement.seat)
+            }
+          />,
+        );
+      }
+    }
+    seats[i] = [...tempHolder];
+    tempHolder = [];
+  }
+
+  for (let i = rowStartIndex; i < rowEndIndex; i++) {
+    rows.push(
+      <div key={enclosure.rows[i].letter} className={"flex"}>
+        <h5
+          className={`h-fit w-fit min-w-[2rem] rounded-md px-3 py-2 text-center text-xs font-bold ${
+            enclosure.rows[i].letter === activeArrangement.row
+              ? "border-red-700 bg-red-500 text-white"
+              : "border border-gray-300 text-gray-500"
+          }`}
+        >
+          {enclosure.rows[i].letter}
+        </h5>
+        <div
+          id={enclosure.rows[i].letter}
+          ref={
+            enclosure.rows[i].letter === activeArrangement.row ? ref : undefined
+          }
+          className={
+            "mx-3 mt-0.5 flex h-12 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
+          }
+        >
+          {seats[i]}
+        </div>
+      </div>,
+    );
+  }
+
   return (
     <div className={"flex flex-col space-y-5"}>
-      {enclosure.rows.map((row) => {
-        const reserved = row.reserved
-          .split(",")
-          .filter((r) => !isNaN(parseInt(r)));
-
-        return (
-          <div key={row.letter} className={"flex"}>
-            <h5
-              className={`h-fit w-[2rem] rounded-md px-3 py-2 text-center text-xs font-bold ${
-                row.letter === activeArrangement.row
-                  ? "border-red-700 bg-red-500 text-white"
-                  : "border border-gray-300 text-gray-500"
-              }`}
-            >
-              {row.letter}
-            </h5>
-            <div
-              id={row.letter}
-              ref={row.letter === activeArrangement.row ? ref : undefined}
-              className={
-                "mx-3 mt-0.5 flex h-12 max-w-[350px] justify-evenly space-x-4 overflow-x-auto px-2 md:max-w-[470px]"
-              }
-            >
-              {Array.from(
-                { length: row.end - row.start + 1 },
-                (_v, k) => k + row.start,
-              ).map((seat) => {
-                return (
-                  <Seat
-                    key={seat}
-                    number={seat}
-                    reserved={reserved.includes(seat.toString())}
-                    activeRow={row.letter === activeArrangement.row}
-                    active={
-                      row.letter === activeArrangement.row &&
-                      seat === parseInt(activeArrangement.seat)
-                    }
-                  />
-                );
-              })}
-            </div>
-          </div>
-        );
+      {rows.map((row) => {
+        return row;
       })}
       <div className={"space-y-5 text-xs font-medium text-gray-500"}>
         <div className={"space-y-3"}>
