@@ -184,8 +184,8 @@ export default async function Home() {
           <Image
             src="https://assets.puconvocation.com/images/341801f602444fc88d1c1b04e0727eea.avif"
             alt="Chief Guests Image"
-            width={800}
-            height={600}
+            width={950}
+            height={700}
             className={"rounded-xl"}
             style={{ objectFit: "cover" }}
           />
