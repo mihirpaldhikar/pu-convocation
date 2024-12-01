@@ -1,3 +1,8 @@
+## 1.0.0-rc.4 (December 2, 2024)
+
+### Fixes:
+- Fix an issue in which telemetry was not getting registered due to X-Forwarded-For header was disabled by CORS.
+
 ## 1.0.0-rc.3 (December 2, 2024)
 
 ### Fixes:
