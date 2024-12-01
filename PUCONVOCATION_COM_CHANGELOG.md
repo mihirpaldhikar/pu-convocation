@@ -1,3 +1,11 @@
+## 3.0.0-rc.3 (December 2, 2024)
+
+### Fixes:
+- Fix an issue in which the new row created in ground mapper form was not following the database entity structure.
+
+### Miscellaneous:
+- Refactor computation of the next row letter in ground mapper form.
+
 ## 3.0.0-rc.2 (December 1, 2024)
 
 ### New:
