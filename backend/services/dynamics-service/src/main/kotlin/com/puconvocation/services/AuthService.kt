@@ -77,7 +77,7 @@ class AuthService(
     }
 
     private suspend fun isOperationAllowed(uuid: String, rule: String): Boolean {
-        val response = client.get("${authServiceAddress.split("@")[1]}/iam/polices/authorized") {
+        val response = client.get("${authServiceAddress.split("@")[1]}/iam/policies/authorized") {
             header("X-IAM-CHECK", "$rule@$uuid")
             header("Service-Authorization-Token", jsonWebToken.generateServiceAuthorizationToken(currentServiceName))
         }
