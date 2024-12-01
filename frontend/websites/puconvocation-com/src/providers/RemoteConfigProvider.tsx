@@ -13,10 +13,14 @@
 "use client";
 import { createContext, Dispatch, ReactNode, useReducer } from "react";
 import { Enclosure, RemoteConfig } from "@dto/index";
+import cloneDeep from "clone-deep";
+import { RemoteConfigController } from "@controllers/index";
+
+const remoteConfigController = new RemoteConfigController();
 
 export type RemoteConfigAction =
   | {
-      type: "SET_CONFIG";
+      type: "SET_INITIAL_CONFIG";
       payload: {
         config: RemoteConfig;
       };
@@ -30,8 +34,40 @@ export type RemoteConfigAction =
   | {
       type: "SET_ENCLOSURE";
       payload: {
-        index: number;
         enclosure: Enclosure;
+      };
+    }
+  | {
+      type:
+        | "TOGGLE_INSTRUCTIONS_BANNER_VISIBILITY"
+        | "TOGGLE_COUNTDOWN_VISIBILITY";
+      payload: {
+        show: boolean;
+      };
+    }
+  | {
+      type: "SET_HERO_IMAGE";
+      payload: {
+        imageURL: string;
+      };
+    }
+  | {
+      type: "CAROUSEL_IMAGE";
+      payload: {
+        operation: "ADD" | "REMOVE";
+        imageURL: string;
+      };
+    }
+  | {
+      type: "SET_COUNTDOWN_END_TIME";
+      payload: {
+        endTime: number;
+      };
+    }
+  | {
+      type: "TOGGLE_ATTENDEE_LOCK";
+      payload: {
+        locked: boolean;
       };
     };
 
@@ -83,26 +119,109 @@ const configReducer = (
   remoteConfig: RemoteConfig = defaultRemoteConfig,
   action: RemoteConfigAction,
 ): RemoteConfig => {
+  const newConfig = cloneDeep(remoteConfig, true);
+
   switch (action.type) {
-    case "SET_CONFIG": {
-      return {
-        ...action.payload.config,
-      };
+    case "SET_INITIAL_CONFIG": {
+      return newConfig;
     }
     case "SET_ENCLOSURE": {
-      remoteConfig.groundMappings[action.payload.index] = {
-        ...action.payload.enclosure,
-      };
-      return {
-        ...remoteConfig,
-      };
+      const index = newConfig.groundMappings.indexOf(
+        newConfig.groundMappings.filter(
+          (e) => e.letter === action.payload.enclosure.letter,
+        )[0],
+      );
+      if (index !== -1) {
+        newConfig.groundMappings[index] = action.payload.enclosure;
+        remoteConfigController
+          .changeRemoteConfig({
+            type: "groundMappings",
+            groundMappings: newConfig.groundMappings,
+          })
+          .then();
+        return newConfig;
+      }
+      return remoteConfig;
+    }
+    case "TOGGLE_INSTRUCTIONS_BANNER_VISIBILITY": {
+      newConfig.instructions.show = action.payload.show;
+      remoteConfigController
+        .changeRemoteConfig({
+          type: "toggleInstructions",
+          showInstructions: newConfig.instructions.show,
+        })
+        .then();
+      return newConfig;
+    }
+    case "TOGGLE_COUNTDOWN_VISIBILITY": {
+      newConfig.countdown.show = action.payload.show;
+      remoteConfigController
+        .changeRemoteConfig({
+          type: "countdown",
+          countdown: newConfig.countdown,
+        })
+        .then();
+      return newConfig;
+    }
+    case "TOGGLE_ATTENDEE_LOCK": {
+      newConfig.attendees.locked = action.payload.locked;
+      return newConfig;
+    }
+    case "CAROUSEL_IMAGE": {
+      if (
+        newConfig.images.carousel.filter(
+          (i) => i.url === action.payload.imageURL,
+        ).length === 0 &&
+        action.payload.operation === "ADD"
+      ) {
+        newConfig.images.carousel.push({
+          url: action.payload.imageURL,
+          description: "Image",
+        });
+        remoteConfigController
+          .changeRemoteConfig({
+            type: "images",
+            images: newConfig.images,
+          })
+          .then();
+      } else if (action.payload.operation === "REMOVE") {
+        newConfig.images.carousel = newConfig.images.carousel.filter(
+          (i) => i.url !== action.payload.imageURL,
+        );
+        remoteConfigController
+          .changeRemoteConfig({
+            type: "images",
+            images: newConfig.images,
+          })
+          .then();
+      }
+      return newConfig;
+    }
+    case "SET_HERO_IMAGE": {
+      newConfig.images.hero.url = action.payload.imageURL;
+      remoteConfigController
+        .changeRemoteConfig({
+          type: "images",
+          images: newConfig.images,
+        })
+        .then();
+      return newConfig;
+    }
+    case "SET_COUNTDOWN_END_TIME": {
+      newConfig.countdown.endTime = action.payload.endTime;
+      remoteConfigController
+        .changeRemoteConfig({
+          type: "countdown",
+          countdown: newConfig.countdown,
+        })
+        .then();
+      return newConfig;
     }
     default: {
       return remoteConfig;
     }
   }
 };
-
 export const RemoteConfigContext = createContext<{
   remoteConfig: RemoteConfig;
   dispatch: Dispatch<RemoteConfigAction>;

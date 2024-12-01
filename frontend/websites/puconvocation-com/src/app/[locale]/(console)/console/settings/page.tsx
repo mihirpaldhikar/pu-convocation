@@ -11,7 +11,7 @@
  * is a violation of these laws and could result in severe penalties.
  */
 "use client";
-import { Fragment, JSX, useEffect, useState } from "react";
+import { Fragment, JSX, useState } from "react";
 import { useAuth, useRemoteConfig } from "@hooks/index";
 import Image from "next/image";
 import { convertToThumbnailUrl } from "@lib/image_utils";
@@ -45,10 +45,6 @@ export default function GeneralSettingsPage(): JSX.Element {
     "carousel" | "hero" | null
   >(null);
 
-  useEffect(() => {
-    remoteConfigController.changeRemoteConfig(remoteConfig).then();
-  }, [remoteConfig, save]);
-
   return (
     <Fragment>
       <ImagePicker
@@ -58,39 +54,19 @@ export default function GeneralSettingsPage(): JSX.Element {
           switch (selectedImageSection) {
             case "carousel": {
               dispatch({
-                type: "SET_CONFIG",
+                type: "CAROUSEL_IMAGE",
                 payload: {
-                  config: {
-                    ...remoteConfig,
-                    images: {
-                      ...remoteConfig.images,
-                      carousel: [
-                        ...remoteConfig.images.carousel,
-                        {
-                          url: imageURL,
-                          description: "Image from Library",
-                        },
-                      ],
-                    },
-                  },
+                  operation: "ADD",
+                  imageURL: imageURL,
                 },
               });
               break;
             }
             case "hero": {
               dispatch({
-                type: "SET_CONFIG",
+                type: "SET_HERO_IMAGE",
                 payload: {
-                  config: {
-                    ...remoteConfig,
-                    images: {
-                      ...remoteConfig.images,
-                      hero: {
-                        ...remoteConfig.images.hero,
-                        url: imageURL,
-                      },
-                    },
-                  },
+                  imageURL: imageURL,
                 },
               });
               break;
@@ -118,15 +94,9 @@ export default function GeneralSettingsPage(): JSX.Element {
                 checked={remoteConfig.countdown.show}
                 onCheckedChange={(checked: boolean) => {
                   dispatch({
-                    type: "SET_CONFIG",
+                    type: "TOGGLE_COUNTDOWN_VISIBILITY",
                     payload: {
-                      config: {
-                        ...remoteConfig,
-                        countdown: {
-                          ...remoteConfig.countdown,
-                          show: checked,
-                        },
-                      },
+                      show: checked,
                     },
                   });
                   setSave(!save);
@@ -142,15 +112,9 @@ export default function GeneralSettingsPage(): JSX.Element {
                 onSelect={(date) => {
                   if (date !== undefined) {
                     dispatch({
-                      type: "SET_CONFIG",
+                      type: "SET_COUNTDOWN_END_TIME",
                       payload: {
-                        config: {
-                          ...remoteConfig,
-                          countdown: {
-                            ...remoteConfig.countdown,
-                            endTime: date.getTime(),
-                          },
-                        },
+                        endTime: date.getTime(),
                       },
                     });
                     setSave(!save);
@@ -172,15 +136,9 @@ export default function GeneralSettingsPage(): JSX.Element {
               checked={remoteConfig.instructions.show}
               onCheckedChange={(checked: boolean) => {
                 dispatch({
-                  type: "SET_CONFIG",
+                  type: "TOGGLE_INSTRUCTIONS_BANNER_VISIBILITY",
                   payload: {
-                    config: {
-                      ...remoteConfig,
-                      instructions: {
-                        ...remoteConfig.instructions,
-                        show: checked,
-                      },
-                    },
+                    show: checked,
                   },
                 });
                 setSave(!save);
@@ -269,18 +227,11 @@ export default function GeneralSettingsPage(): JSX.Element {
                               "flex size-7 cursor-pointer items-center justify-center rounded-full bg-white/60 backdrop-blur"
                             }
                             onClick={() => {
-                              const x = remoteConfig.images.carousel;
-                              x.splice(index, 1);
                               dispatch({
-                                type: "SET_CONFIG",
+                                type: "CAROUSEL_IMAGE",
                                 payload: {
-                                  config: {
-                                    ...remoteConfig,
-                                    images: {
-                                      ...remoteConfig.images,
-                                      carousel: [...x],
-                                    },
-                                  },
+                                  operation: "REMOVE",
+                                  imageURL: image.url,
                                 },
                               });
                               setSave(!save);

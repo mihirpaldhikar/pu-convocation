@@ -12,8 +12,9 @@
  */
 
 import { Response } from "@dto/Response";
-import { RemoteConfig } from "@dto/index";
+import { Enclosure, RemoteConfig } from "@dto/index";
 import { HttpService } from "@services/index";
+import { RemoteConfigCountdown, RemoteConfigImages } from "@dto/RemoteConfig";
 
 export default class RemoteConfigController {
   private BASE_URL = process.env.NEXT_PUBLIC_DYNAMICS_SERVICE_URL as string;
@@ -31,13 +32,48 @@ export default class RemoteConfigController {
   }
 
   public async changeRemoteConfig(
-    remoteConfig: RemoteConfig,
+    payload:
+      | {
+          type: "images";
+          images: RemoteConfigImages;
+        }
+      | {
+          type: "toggleInstructions";
+          showInstructions: boolean;
+        }
+      | {
+          type: "groundMappings";
+          groundMappings: Array<Enclosure>;
+        }
+      | {
+          type: "countdown";
+          countdown: RemoteConfigCountdown;
+        },
   ): Promise<Response<RemoteConfig, string>> {
-    return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
-      images: remoteConfig.images,
-      countdown: remoteConfig.countdown,
-      groundMappings: remoteConfig.groundMappings,
-      showInstructions: remoteConfig.instructions.show,
-    });
+    switch (payload.type) {
+      case "images": {
+        return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
+          images: { ...payload.images },
+        });
+      }
+      case "toggleInstructions": {
+        return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
+          showInstructions: payload.showInstructions,
+        });
+      }
+      case "groundMappings": {
+        return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
+          groundMappings: payload.groundMappings,
+        });
+      }
+      case "countdown": {
+        return await this.httpService.patch(`${this.CONFIG_ROUTE}/change`, {
+          countdown: payload.countdown,
+        });
+      }
+      default: {
+        return await this.getRemoteConfig();
+      }
+    }
   }
 }

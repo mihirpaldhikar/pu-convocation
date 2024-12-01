@@ -13,9 +13,20 @@
 
 import { Enclosure } from "@dto/index";
 
-interface ImageMetadata {
+export interface ImageMetadata {
   url: string;
   description: string;
+}
+
+export interface RemoteConfigImages {
+  carousel: Array<ImageMetadata>;
+  aboutUs: ImageMetadata;
+  hero: ImageMetadata;
+}
+
+export interface RemoteConfigCountdown {
+  show: boolean;
+  endTime: number;
 }
 
 export default interface RemoteConfig {
@@ -26,15 +37,8 @@ export default interface RemoteConfig {
     updatedAt: string;
     csvFile: string;
   };
-  images: {
-    carousel: Array<ImageMetadata>;
-    aboutUs: ImageMetadata;
-    hero: ImageMetadata;
-  };
-  countdown: {
-    show: boolean;
-    endTime: number;
-  };
+  images: RemoteConfigImages;
+  countdown: RemoteConfigCountdown;
   instructions: {
     show: boolean;
     document: string;

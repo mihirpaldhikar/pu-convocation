@@ -77,15 +77,9 @@ export default function AttendeeControlPlane({
                   });
                 } else {
                   dispatchRemoteConfig({
-                    type: "SET_CONFIG",
+                    type: "TOGGLE_ATTENDEE_LOCK",
                     payload: {
-                      config: {
-                        ...remoteConfig,
-                        attendees: {
-                          ...remoteConfig.attendees,
-                          locked: !remoteConfig.attendees.locked,
-                        },
-                      },
+                      locked: !remoteConfig.attendees.locked,
                     },
                   });
                 }

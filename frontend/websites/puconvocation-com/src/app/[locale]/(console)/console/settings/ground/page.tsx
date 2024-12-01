@@ -95,15 +95,12 @@ export default function GroundSettingsPage(): JSX.Element {
         <Formik
           enableReinitialize={true}
           initialValues={enclosureData}
-          onSubmit={(values) => {
+          onSubmit={(enclosure) => {
             if (!remoteConfig.attendees.locked) {
               dispatch({
                 type: "SET_ENCLOSURE",
                 payload: {
-                  index: remoteConfig.groundMappings.findIndex(
-                    (e) => e.letter === values.letter,
-                  )!!,
-                  enclosure: values,
+                  enclosure: enclosure,
                 },
               });
             }
