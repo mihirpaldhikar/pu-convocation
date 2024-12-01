@@ -11,7 +11,6 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-
 val koinVersion: String by project
 val mongoDBVersion: String by project
 
@@ -56,6 +55,17 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "com.puconvocation.MainKt"
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(22)
 }
