@@ -24,4 +24,5 @@ export type { default as AccountInvitation } from "./AccountInvitation";
 export type { default as IAMPolicy } from "./IAMPolicy";
 export type { default as ProtectedRoute } from "./ProtectedRoute";
 export type { default as UpdateAccountIAMPoliciesRequest } from "./UpdateAccountIAMPoliciesRequest";
+export type { default as AttendeesInEnclosure } from "./AttendeesInEnclosure";
 export * from "./analytics/index";

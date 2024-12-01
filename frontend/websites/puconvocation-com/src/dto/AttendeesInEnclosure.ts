@@ -11,10 +11,14 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-export { default as SeatMap } from "./seat_map";
-export { default as Ticket } from "./ticket";
-export { default as GroundMap } from "./ground_map";
-export { default as AttendeeTable } from "./attendee_table";
-export { default as AttendeeControlPlane } from "./attendee_controlplane";
-export { default as GroundMapper } from "./ground_mapper";
-export { default as AttendeeAerialView } from "./attendee_aerial_view";
+export default interface AttendeesInEnclosure {
+  enclosure: string;
+  rows: Array<{
+    row: string;
+    attendees: Array<{
+      enrollmentNumber: string;
+      convocationId: string;
+      seat: string;
+    }>;
+  }>;
+}

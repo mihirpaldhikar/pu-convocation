@@ -13,6 +13,7 @@
 
 import {
   Attendee,
+  AttendeesInEnclosure,
   AttendeeWithEnclosureMetadata,
   AttendeeWithPagination,
   Response,
@@ -110,6 +111,14 @@ export default class AttendeeController {
   ): Promise<Response<any, string>> {
     return await this.httpService.post<any>(
       `${this.ATTENDEE_ROUTES}/mutateAttendeeLock?locked=${locked}`,
+    );
+  }
+
+  public async attendeesInEnclosure(
+    enclosure: string,
+  ): Promise<Response<AttendeesInEnclosure, string>> {
+    return await this.httpService.get<any>(
+      `${this.ATTENDEE_ROUTES}/enclosure/${enclosure}`,
     );
   }
 }

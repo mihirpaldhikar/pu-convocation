@@ -20,7 +20,11 @@ import {
   CardTitle,
 } from "@components/ui";
 import { AcademicCapIcon } from "@heroicons/react/24/solid";
-import { AttendeeControlPlane, AttendeeTable } from "@components/attendee";
+import {
+  AttendeeAerialView,
+  AttendeeControlPlane,
+  AttendeeTable,
+} from "@components/attendee";
 import { AttendeeController } from "@controllers/index";
 import { cookies } from "next/headers";
 import { StatusCode } from "@enums/StatusCode";
@@ -73,6 +77,18 @@ export default async function AttendeePage(): Promise<JSX.Element> {
                 initialAttendees={attendees}
                 totalAttendeeCount={totalAttendeeCount}
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Aerial View</CardTitle>
+              <CardDescription>
+                View attendee details from above.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AttendeeAerialView />
             </CardContent>
           </Card>
         </div>
