@@ -13,7 +13,7 @@
 
 "use client";
 
-import { Fragment, JSX, useState } from "react";
+import { Fragment, JSX, useEffect, useState } from "react";
 import { useAuth } from "@hooks/index";
 import { Link, usePathname, useRouter } from "@i18n/routing";
 import {
@@ -27,18 +27,30 @@ import {
 } from "@components/ui";
 import { QrCodeIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { AuthController } from "@controllers/index";
+import { AnalyticsController, AuthController } from "@controllers/index";
 import { isAuthorized } from "@lib/iam_utils";
 import IAMPolicies from "@configs/IAMPolicies";
+import { formatISO } from "date-fns";
+import { useLocale } from "next-intl";
 
 const authController = new AuthController();
+const analyticsController = new AnalyticsController();
 
 export default function NavbarMenu(): JSX.Element {
   const router = useRouter();
+  const currentLocale = useLocale();
   const path = usePathname();
   const { account, dispatch: dispatchAccountMutation } = useAuth();
 
   const [isPopupOpen, openPopup] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!path.includes("console")) {
+      analyticsController
+        .sendTelemetry(`${formatISO(new Date())};${currentLocale};${path}`)
+        .then();
+    }
+  }, [currentLocale, path]);
 
   return (
     <nav className={"flex items-center justify-center space-x-5"}>
