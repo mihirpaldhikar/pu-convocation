@@ -17,7 +17,6 @@ import com.puconvocation.commons.dto.ErrorResponse
 import com.puconvocation.controllers.AnalyticsController
 import com.puconvocation.enums.ResponseCode
 import com.puconvocation.services.KafkaService
-import com.puconvocation.utils.Result
 import com.puconvocation.utils.getSecurityTokens
 import com.puconvocation.utils.sendResponse
 import io.ktor.http.*
@@ -33,9 +32,8 @@ fun Route.analyticsRoute(
             val forwardedHeader = call.request.headers["X-Forwarded-For"]
 
             if (forwardedHeader != null && analyticsHeader != null) {
-                println("SUHANI")
                 val ipList = forwardedHeader.split(",").map { it.trim() }
-                val clientIP = ipList.lastOrNull()
+                val clientIP = ipList.firstOrNull()
                 if (clientIP != null) {
                     kafkaService.produce("$analyticsHeader;${clientIP}")
                 }
