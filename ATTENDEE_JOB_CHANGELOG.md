@@ -1,3 +1,8 @@
+## 2.4.0 (December 3, 2024)
+
+### New:
+- Verification Passcode emails are skipped for attendees whose primary key has "DUPLICATE" or "NO-ENR" strings in them.
+
 ## 2.3.0 (November 30, 2024)
 
 ### Miscellaneous:
