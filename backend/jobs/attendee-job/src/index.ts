@@ -138,6 +138,13 @@ export const handler: Handler = async (event, context) => {
       const attendeeBatch = attendees.splice(i, i + BATCH_SIZE);
       const messageBatch: Array<SendMessageBatchRequestEntry> = [];
       for (let attendee of attendeeBatch) {
+        if (
+          attendee._id.includes("DUPLICATE") ||
+          attendee._id.includes("NO-ENR")
+        ) {
+          continue;
+        }
+
         messageBatch.push({
           Id: attendee._id,
           MessageGroupId: "emails",
