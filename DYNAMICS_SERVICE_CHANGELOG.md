@@ -1,3 +1,9 @@
+## 1.0.0-rc.7 (December 3, 2024)
+
+### New:
+- Conflicts of Enrollment Number are automatically resolved by appending "DUPLICATE" at the beginning and a random string at the end.
+- A random string is generated for entries with no enrollment number provided, which is appended by "NO-ENR" at the beginning.
+
 ## 1.0.0-rc.6 (December 2, 2024)
 
 ### Fixes:
