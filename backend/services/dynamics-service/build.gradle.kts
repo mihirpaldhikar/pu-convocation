@@ -90,6 +90,9 @@ dependencies {
     // AWS S3
     implementation("aws.sdk.kotlin:s3:1.3.71")
 
+    // NanoID
+    implementation("io.viascom.nanoid:nanoid:1.0.1")
+
     // Test Dependencies
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
