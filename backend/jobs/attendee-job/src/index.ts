@@ -57,6 +57,10 @@ export const handler: Handler = async (event, context) => {
         break;
       }
 
+      if (enclosure.allocatedFor !== "STUDENTS") {
+        continue;
+      }
+
       for (let row of enclosure.rows) {
         if (totalAttendees === 0) {
           break;

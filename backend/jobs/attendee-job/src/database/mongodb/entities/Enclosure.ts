@@ -13,6 +13,7 @@
 
 export default interface Enclosure {
   letter: string;
+  allocatedFor: "STUDENTS" | "PARENTS";
   entryDirection: "LEFT" | "RIGHT" | "NONE";
   rows: Array<{
     letter: string;
