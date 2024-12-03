@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 import org.bson.Document
 import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 class AttendeeRepository(
     database: MongoDatabase,
@@ -143,7 +144,7 @@ class AttendeeRepository(
             return cachedTotalCount.toInt()
         }
         val count = attendeesCollection.withDocumentClass<Attendee>().find().toList().size
-        cache.set(CachedKeys.totalAttendeeCountKey(), count.toString())
+        cache.set(CachedKeys.totalAttendeeCountKey(), count.toString(), expiryDuration = Duration.of(1, ChronoUnit.HOURS))
         return count
     }
 
