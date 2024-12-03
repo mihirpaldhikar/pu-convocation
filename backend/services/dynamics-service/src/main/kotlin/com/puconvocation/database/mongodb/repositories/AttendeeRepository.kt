@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mongodb.client.model.Aggregates.*
 import com.mongodb.client.model.BsonField
-import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.*
 import com.mongodb.client.model.Projections.*
 import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Updates
@@ -60,15 +60,25 @@ class AttendeeRepository(
                 .firstOrNull()
         }
 
+
         if (fetchedAttendee != null) {
+            if (fetchedAttendee.enrollmentNumber.contains(
+                    "DUPLICATE",
+                    ignoreCase = true
+                ) || fetchedAttendee.enrollmentNumber.contains("NO-ENR", ignoreCase = true)
+            ) {
+                return null
+            }
+
             cache.set(
                 CachedKeys.attendeeKey(identifier),
                 mapper.writeValueAsString(fetchedAttendee),
                 expiryDuration = Duration.ofMinutes(10)
             )
+            return fetchedAttendee
         }
 
-        return fetchedAttendee
+        return null
     }
 
     override suspend fun getAttendeeWithEnclosureMetadata(identifier: String): AttendeeWithEnclosureMetadata? {
@@ -141,7 +151,9 @@ class AttendeeRepository(
         }
 
         val fetchedAttendees =
-            attendeesCollection.withDocumentClass<Attendee>().find().skip(page * limit)
+            attendeesCollection.withDocumentClass<Attendee>().find(
+                and(not(regex("_id", "DUPLICATE")), not(regex("_id", "NO-ENR")))
+            ).skip(page * limit)
                 .limit(limit)
                 .partial(true).toList()
 
