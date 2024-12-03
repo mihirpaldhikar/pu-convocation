@@ -152,7 +152,7 @@ export default function AttendeeTable({
                     Enrollment Number: {selectedAttendee.enrollmentNumber}
                   </h4>
                   <h4>Name: {selectedAttendee.studentName}</h4>
-                  <h4>Department: {selectedAttendee.department}</h4>
+                  <h4>Course: {selectedAttendee.department}</h4>
                   <h4>Institute: {selectedAttendee.institute}</h4>
                   <h4>
                     Enclosure:{" "}
@@ -191,7 +191,7 @@ export default function AttendeeTable({
                     Name
                   </th>
                   <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
-                    Department
+                    Course
                   </th>
                   <th className="hidden px-4 py-2 text-left font-semibold text-gray-700 lg:table-cell">
                     Institute
@@ -221,10 +221,10 @@ export default function AttendeeTable({
                     <td className="px-4 py-2">{a.enrollmentNumber}</td>
                     <td className="px-4 py-2">{a.studentName}</td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.department}
+                      {a.department === "NULL" ? "-" : a.department}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
-                      {a.institute}
+                      {a.institute === "NULL" ? "-" : a.institute}
                     </td>
                     <td className="hidden px-4 py-2 lg:table-cell">
                       {a.allocation.enclosure === "NULL"
