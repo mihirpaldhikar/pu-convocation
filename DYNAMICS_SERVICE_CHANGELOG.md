@@ -1,3 +1,8 @@
+## 1.0.0-rc.11 (December 3, 2024)
+
+### Miscellaneous:
+- Increase cache expiry time for total attendee count from 5 minutes to 1 hour.
+
 ## 1.0.0-rc.10 (December 3, 2024)
 
 ### New:
