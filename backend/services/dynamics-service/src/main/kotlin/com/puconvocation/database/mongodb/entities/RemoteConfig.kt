@@ -16,6 +16,7 @@ package com.puconvocation.database.mongodb.entities
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.puconvocation.enums.Direction
+import com.puconvocation.enums.EnclosureAllocatedFor
 import com.puconvocation.serializers.ObjectIdSerializer
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
@@ -64,6 +65,7 @@ data class RemoteConfig(
 
     data class Enclosure(
         @JsonProperty("letter") val letter: String,
+        @JsonProperty("allocatedFor") val allocatedFor: EnclosureAllocatedFor,
         @JsonProperty("entryDirection") val entryDirection: Direction,
         @JsonProperty("rows") val rows: MutableList<Row>,
     ) {
