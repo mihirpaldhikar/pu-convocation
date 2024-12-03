@@ -1,3 +1,8 @@
+## 1.0.0-rc.9 (December 3, 2024)
+
+### New:
+- Add allocatedFiled in RemoteConfig.Enclosure DTO inorder to distinguish between different enclosure types.
+
 ## 1.0.0-rc.8 (December 3, 2024)
 
 ### New:
