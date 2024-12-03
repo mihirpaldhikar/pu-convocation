@@ -30,6 +30,10 @@ import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { isAuthorized } from "@lib/iam_utils";
 import IAMPolicies from "@configs/IAMPolicies";
 
+const numberFormatter = Intl.NumberFormat("en", {
+  maximumFractionDigits: 2,
+  notation: "compact",
+});
 const attendeeController = new AttendeeController();
 
 interface AttendeeControllerProps {
@@ -48,7 +52,7 @@ export default function AttendeeControlPlane({
   const { toast } = useToast();
 
   return (
-    <Card className="w-full p-4">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Total Attendees</CardTitle>
         <CardDescription>
@@ -58,7 +62,7 @@ export default function AttendeeControlPlane({
       <CardContent className={"space-y-5"}>
         <div className="flex items-center justify-between">
           <span className="text-5xl font-bold text-red-600">
-            {totalAttendeeCount}
+            {numberFormatter.format(totalAttendeeCount)}
           </span>
           {isAuthorized(
             IAMPolicies.WRITE_ATTENDEES,
