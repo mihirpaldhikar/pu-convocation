@@ -43,7 +43,9 @@ class CSVSerializer {
         val csvParser = CSVParser(reader, csvFormat)
         for (attendee in csvParser.records) {
             val enrollmentNumber =
-                if (primaryKeys.contains(attendee.get("enrollmentNumber").toString())) {
+                if (attendee.get("enrollmentNumber").toString().equals("NO-ENR", ignoreCase = true)) {
+                    "NO-ENR-${NanoId.generate()}"
+                } else if (primaryKeys.contains(attendee.get("enrollmentNumber").toString())) {
                     "DUPLICATE-${attendee.get("enrollmentNumber")}-${NanoId.generate()}"
                 } else {
                     attendee.get("enrollmentNumber").toString()
