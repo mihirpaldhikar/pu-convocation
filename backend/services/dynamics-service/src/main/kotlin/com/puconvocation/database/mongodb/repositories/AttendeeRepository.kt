@@ -117,6 +117,7 @@ class AttendeeRepository(
         val acknowledge = attendeesCollection.withDocumentClass<Attendee>().insertMany(attendee).wasAcknowledged()
         if (acknowledge) {
             cache.invalidateWithPattern("attendeesWithPagination:*")
+            cache.invalidate(CachedKeys.totalAttendeeCountKey())
         }
         return acknowledge
     }
@@ -137,7 +138,13 @@ class AttendeeRepository(
     }
 
     override suspend fun getTotalAttendees(): Int {
-        return attendeesCollection.withDocumentClass<Attendee>().find().toList().size
+        val cachedTotalCount = cache.get(CachedKeys.totalAttendeeCountKey())
+        if (cachedTotalCount != null) {
+            return cachedTotalCount.toInt()
+        }
+        val count = attendeesCollection.withDocumentClass<Attendee>().find().toList().size
+        cache.set(CachedKeys.totalAttendeeCountKey(), count.toString())
+        return count
     }
 
     override suspend fun getAttendees(page: Int, limit: Int): HashMap<String, Any> {

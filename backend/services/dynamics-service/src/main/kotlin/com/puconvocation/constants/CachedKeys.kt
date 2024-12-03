@@ -69,4 +69,8 @@ object CachedKeys {
     fun attendeesInEnclosureKey(enclosure: String): String {
         return "attendeesInEnclosure:$enclosure"
     }
+
+    fun totalAttendeeCountKey(): String {
+        return "totalAttendeeCount"
+    }
 }
