@@ -1,3 +1,8 @@
+## 3.0.0-rc.7 (December 3, 2024)
+
+### Fixes:
+- Fix an issue in which the reserved seats in ground mapper were calculated incorrectly.
+
 ## 3.0.0-rc.6 (December 3, 2024)
 
 ### New:
