@@ -152,6 +152,7 @@ export default class HttpService {
   }
 
   private async errorHandler(error: unknown): Promise<ErrorResponse<string>> {
+    console.log(error);
     const axiosError = (await error) as AxiosError;
     if (axiosError.code === "ECONNREFUSED") {
       return {

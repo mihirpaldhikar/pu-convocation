@@ -44,6 +44,9 @@ export default class AttendeeController {
   > {
     return await this.httpService.get<{ count: number }>(
       `${this.ATTENDEE_ROUTES}/totalCount`,
+      {
+        requestTimeout: 100000,
+      },
     );
   }
 
@@ -119,6 +122,9 @@ export default class AttendeeController {
   ): Promise<Response<AttendeesInEnclosure, string>> {
     return await this.httpService.get<any>(
       `${this.ATTENDEE_ROUTES}/enclosure/${enclosure}`,
+      {
+        requestTimeout: 100000,
+      },
     );
   }
 }
