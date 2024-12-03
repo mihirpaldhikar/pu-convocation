@@ -20,8 +20,25 @@ import { AttendeeController } from "@controllers/index";
 import { StatusCode } from "@enums/StatusCode";
 import { Skeleton } from "@components/ui";
 import { SpaceShip } from "@components/graphics";
+import { AttendeesInEnclosure } from "@dto/index";
 
 const attendeeController = new AttendeeController();
+
+function sortRowsAndAttendeesInEnclosure(
+  enclosure: AttendeesInEnclosure,
+): AttendeesInEnclosure {
+  return {
+    ...enclosure,
+    rows: enclosure.rows
+      .sort((a, b) => parseInt(a.row) - parseInt(b.row))
+      .map((row) => ({
+        ...row,
+        attendees: row.attendees.sort(
+          (a, b) => parseInt(a.seat) - parseInt(b.seat),
+        ),
+      })),
+  };
+}
 
 export default function AttendeeAerialView() {
   const { remoteConfig } = useRemoteConfig();
@@ -34,7 +51,7 @@ export default function AttendeeAerialView() {
     queryFn: async () => {
       const result = await attendeeController.attendeesInEnclosure(enclosure);
       if (result.statusCode === StatusCode.SUCCESS) {
-        return result.payload;
+        return sortRowsAndAttendeesInEnclosure(result.payload);
       }
       return null;
     },
