@@ -1,3 +1,8 @@
+## 1.0.0-rc.8 (December 3, 2024)
+
+### New:
+- Attendees who have "DUPLICATE" or "NO-ENR" in their Enrollment Number will be ignored and will return the status of 404 Not-Found when fetching the attendee details.
+
 ## 1.0.0-rc.7 (December 3, 2024)
 
 ### New:
