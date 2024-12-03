@@ -130,7 +130,12 @@ export default function AttendeeAerialView() {
                               "flex flex-col rounded-xl border px-3 py-2 text-center text-xs"
                             }
                           >
-                            <h6>{enrollmentNumber}</h6>
+                            <h6>
+                              {enrollmentNumber.includes("DUPLICATE") ||
+                              enrollmentNumber.includes("NO-ENR")
+                                ? "REDACTED"
+                                : enrollmentNumber}
+                            </h6>
                             <h6>{convocationId}</h6>
                           </div>
                         );
