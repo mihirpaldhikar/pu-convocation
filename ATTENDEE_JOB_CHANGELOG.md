@@ -1,3 +1,8 @@
+## 2.5.0 (December 3, 2024)
+
+### New:
+- Seat allocation is skipped if the enclosure allocated is not for students.
+
 ## 2.4.0 (December 3, 2024)
 
 ### New:
