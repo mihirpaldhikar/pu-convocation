@@ -1,3 +1,8 @@
+## 3.0.0-rc.8 (December 3, 2024)
+
+### New:
+- Add allocatedFor field in Enclosure DTO and Ground Mapper.
+
 ## 3.0.0-rc.7 (December 3, 2024)
 
 ### Fixes:
