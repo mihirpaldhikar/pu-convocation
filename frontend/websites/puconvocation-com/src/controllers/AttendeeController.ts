@@ -92,6 +92,9 @@ export default class AttendeeController {
     return await this.httpService.post<string>(
       `${this.ATTENDEE_ROUTES}/upload`,
       form,
+      {
+        requestTimeout: 200000,
+      },
     );
   }
 
