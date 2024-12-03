@@ -145,6 +145,10 @@ class PasskeyController(
         cacheController.invalidate(CachedKeys.passkeyPKCKey(identifier))
         cacheController.invalidate(CachedKeys.passkeyAssertionKey(identifier))
         cacheController.invalidate(CachedKeys.accountKey(identifier))
+        val invitation = accountRepository.findInvitation(account.email)
+        if (invitation != null) {
+            accountRepository.deleteInvitation(invitation.id.toHexString())
+        }
 
         val securityTokens = SecurityToken(
             payload = hashMapOf(

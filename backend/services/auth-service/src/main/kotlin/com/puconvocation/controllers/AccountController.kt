@@ -101,6 +101,12 @@ class AccountController(
             )
         )
 
+        val existingAccount = accountRepository.getAccount(invitation.email)
+        if (existingAccount != null && existingAccount.fidoCredential.isEmpty()) {
+            val result = passkeyController.startPasskeyRegistration(existingAccount.username)
+            return result
+        }
+
         if (accountRepository.accountExists(invitation.email) || accountRepository.accountExists(
                 newAccountFromInvitation.username
             )
@@ -115,7 +121,7 @@ class AccountController(
         }
 
         val uuid = ObjectId()
-        val account = Account(
+        val newAccount = Account(
             uuid = uuid,
             email = invitation.email,
             username = newAccountFromInvitation.username,
@@ -125,7 +131,7 @@ class AccountController(
             suspended = false,
             fidoCredential = mutableSetOf()
         )
-        val response = accountRepository.createAccount(account)
+        val response = accountRepository.createAccount(newAccount)
         if (!response) {
             return Result.Error(
                 httpStatusCode = HttpStatusCode.InternalServerError,
@@ -148,8 +154,7 @@ class AccountController(
                 iamRepository.updatePolicy(rule)
             }
         }
-        val result = passkeyController.startPasskeyRegistration(account.username)
-        accountRepository.deleteInvitation(invitation.id.toHexString())
+        val result = passkeyController.startPasskeyRegistration(newAccount.username)
         return result
     }
 
