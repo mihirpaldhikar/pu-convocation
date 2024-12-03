@@ -74,7 +74,11 @@ export default function AttendeeAerialView() {
         </div>
         <div className={"h-full flex-1"}>
           {isLoading ? (
-            <div className={"flex h-fit w-full flex-col space-y-5"}>
+            <div
+              className={
+                "flex h-fit w-full max-w-full flex-col space-y-5 overflow-x-auto"
+              }
+            >
               <div className={"flex items-center space-x-5"}>
                 <Skeleton className={"h-14 w-20"} />
                 <div className={"flex items-center space-x-3"}>
@@ -139,24 +143,27 @@ export default function AttendeeAerialView() {
                         "flex max-w-[60vw] items-center space-x-5 overflow-x-auto pb-5"
                       }
                     >
-                      {attendees.map(({ enrollmentNumber, convocationId }) => {
-                        return (
-                          <div
-                            key={enrollmentNumber}
-                            className={
-                              "flex flex-col rounded-xl border px-3 py-2 text-center text-xs"
-                            }
-                          >
-                            <h6>
-                              {enrollmentNumber.includes("DUPLICATE") ||
-                              enrollmentNumber.includes("NO-ENR")
-                                ? "REDACTED"
-                                : enrollmentNumber}
-                            </h6>
-                            <h6>{convocationId}</h6>
-                          </div>
-                        );
-                      })}
+                      {attendees.map(
+                        ({ enrollmentNumber, convocationId, seat }) => {
+                          return (
+                            <div
+                              key={enrollmentNumber}
+                              className={
+                                "flex min-w-40 flex-col rounded-xl border px-3 py-2 text-center text-xs"
+                              }
+                            >
+                              <h5 className={"text-lg font-medium"}>{seat}</h5>
+                              <h6>
+                                {enrollmentNumber.includes("DUPLICATE") ||
+                                enrollmentNumber.includes("NO-ENR")
+                                  ? "REDACTED"
+                                  : enrollmentNumber}
+                              </h6>
+                              <h6>{convocationId}</h6>
+                            </div>
+                          );
+                        },
+                      )}
                     </div>
                   </div>
                 );
