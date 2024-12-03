@@ -108,6 +108,28 @@ export default async function Home() {
           </div>
         </div>
         <div>
+          {/* Chief guests Section */}
+          <div className={"mb-8 flex justify-between"}>
+            <GuestFlagleft />
+            <h2
+              className={
+                "mb-8 flex items-center space-x-2 p-2 text-center text-2xl font-bold text-red-900 md:p-10 md:text-5xl"
+              }
+            >
+              <span>Dignitaries</span>
+            </h2>
+            <GuestFlagRight />
+          </div>
+          <div className={"flex justify-center px-3 py-3"}>
+            <Image
+              src="https://assets.puconvocation.com/images/341801f602444fc88d1c1b04e0727eea.avif"
+              alt="Chief Guests Image"
+              width={950}
+              height={700}
+              className={"rounded-xl"}
+              style={{ objectFit: "cover" }}
+            />
+          </div>
           <div className={"flex justify-between"}>
             <LeftGalleryFlags />
             <h2
@@ -128,6 +150,11 @@ export default async function Home() {
               <Carousel width={1920} height={1080} images={images.carousel} />
             </div>
           </div>
+          <div
+            className={
+              "flex w-full items-center justify-center px-3 pb-10 lg:px-0 lg:pt-10"
+            }
+          ></div>
           <div className={"flex flex-col justify-between md:flex-row"}>
             <div className={"flex-1"}>
               <div className={"relative z-0"}>
@@ -167,28 +194,6 @@ export default async function Home() {
               />
             </div>
           </div>
-        </div>
-        {/* Chief guests Section */}
-        <div className={"mb-8 flex justify-between"}>
-          <GuestFlagleft />
-          <h2
-            className={
-              "flex items-center space-x-2 text-2xl font-bold text-red-900 md:pl-10 md:text-5xl"
-            }
-          >
-            <span>Chief Guests</span>
-          </h2>
-          <GuestFlagRight />
-        </div>
-        <div className={"flex justify-center px-3 py-3"}>
-          <Image
-            src="https://assets.puconvocation.com/images/341801f602444fc88d1c1b04e0727eea.avif"
-            alt="Chief Guests Image"
-            width={950}
-            height={700}
-            className={"rounded-xl"}
-            style={{ objectFit: "cover" }}
-          />
         </div>
       </section>
     );
