@@ -1,3 +1,13 @@
+## 3.0.0-rc.10 (December 3, 2024)
+
+### New:
+- The total attendee count is now formated by Internationalization Number Formatter for compact numeric values.
+
+### Fixes:
+- Fix an issue in which the loading skeleton of Attendee Aerial view was overflowing in mobile view.
+- Fix an issue in which the data displayed in the Aerial View was not sorted properly.
+- Fix an issue in which Axios was throwing timeout error while uploading the attendee data csv file.
+
 ## 3.0.0-rc.9 (December 3, 2024)
 
 ### Fixes:
