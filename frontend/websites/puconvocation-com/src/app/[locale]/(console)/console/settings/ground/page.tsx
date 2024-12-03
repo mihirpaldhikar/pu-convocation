@@ -113,6 +113,9 @@ export default function GroundSettingsPage(): JSX.Element {
                         <p className={"text-xs text-black"}>
                           Enter from: {values.entryDirection}
                         </p>
+                        <p className={"text-xs text-black"}>
+                          Allocated For: {values.allocatedFor}
+                        </p>
                       </div>
                       <div>
                         <p className={"font-medium text-black"}>
