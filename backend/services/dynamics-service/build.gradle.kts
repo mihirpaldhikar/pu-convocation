@@ -23,7 +23,7 @@ plugins {
 }
 
 group = "com.puconvocation"
-version = "1.0.0-rc.7"
+version = "1.0.0-rc.8"
 
 application {
     mainClass.set("com.puconvocation.ApplicationKt")
