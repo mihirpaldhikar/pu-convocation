@@ -1,3 +1,8 @@
+## 3.0.0-rc.6 (December 3, 2024)
+
+### New:
+- The enrollment numbers which have "DUPLICATE" or "NO-ENR" in them are replaced with "REDACTED" in Attendee Aerial View.
+
 ## 3.0.0-rc.5 (December 2, 2024)
 
 ### Fixes:
