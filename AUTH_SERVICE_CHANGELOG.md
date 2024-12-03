@@ -1,3 +1,8 @@
+## 3.0.0-rc.2 (December 3, 2024)
+
+### Fixes:
+- Fix an issue in which the invitation token was deleted even if the Passkey registration failed, resulting in account creation with no FIDO credentials.
+
 ## 3.0.0-rc.1 (December 1, 2024)
 
 This is Release Candidate 1
