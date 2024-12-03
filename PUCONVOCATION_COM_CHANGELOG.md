@@ -1,3 +1,8 @@
+## 3.0.0-rc.9 (December 3, 2024)
+
+### Fixes:
+- Fix an issue in which the Axios Timeout error was thrown due to a delay in fetching total attendee count.
+
 ## 3.0.0-rc.8 (December 3, 2024)
 
 ### New:
