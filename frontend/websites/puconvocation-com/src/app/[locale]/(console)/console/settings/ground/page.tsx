@@ -32,8 +32,9 @@ import IAMPolicies from "@configs/IAMPolicies";
 function totalEnclosureSeats(enclosure: Enclosure): number {
   let seats = 0;
   for (const row of enclosure.rows) {
+    const reserved = row.reserved.split(",").filter((r) => !isNaN(parseInt(r)));
     const diff = row.end - row.start;
-    seats += diff === 0 ? 0 : diff - row.reserved.length + 1;
+    seats += diff === 0 ? 0 : diff - reserved.length + 1;
   }
   return seats;
 }
