@@ -1,3 +1,8 @@
+## 1.0.0-rc.10 (December 3, 2024)
+
+### New:
+- Add caching to the total attendee count to reduce computation cost.
+
 ## 1.0.0-rc.9 (December 3, 2024)
 
 ### New:
