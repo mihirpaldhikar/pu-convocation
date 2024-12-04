@@ -1,3 +1,8 @@
+## 3.0.0-rc.12 (December 4, 2024)
+
+### Miscellaneous:
+- Temporarily removed restriction of email associated with university domain.
+
 ## 3.0.0-rc.11 (December 4, 2024)
 
 ### New:
