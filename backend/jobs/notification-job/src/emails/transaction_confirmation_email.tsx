@@ -59,14 +59,14 @@ export default function TransactionConfirmationEmail({
               </Heading>
             </Section>
             <Section>
-              <Text className={"text-xl font-bold"}>
-                Hello {recipientName}!
-              </Text>
+              <Text className={"text-xl font-bold"}>Dear {recipientName},</Text>
             </Section>
             <Section>
               <Text className={"font-normal"}>
-                You have successfully received your Degree! Please click on
-                "View Transaction" to view the transaction.
+                Congratulations! You have been successfully awarded the degree!
+              </Text>
+              <Text className={"font-normal"}>
+                To view the transaction, just click on the button below.
               </Text>
             </Section>
             <Section
@@ -82,7 +82,7 @@ export default function TransactionConfirmationEmail({
               </Button>
             </Section>
             <Section>
-              <Text>With warmest regards,</Text>
+              <Text>Kind regards,</Text>
               <Link
                 href={"https://paruluniversity.ac.in"}
                 className={"text-red-600 font-bold"}

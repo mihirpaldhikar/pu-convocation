@@ -48,10 +48,10 @@ export const handler: SQSHandler = async (event: SQSEvent) => {
           Charset: "UTF-8",
           Data:
             notificationRequest.type === "invitation"
-              ? "Invitation for Parul University Convocation Account"
+              ? "Parul University Convocation Account Invitation"
               : notificationRequest.type === "transaction"
                 ? `You have Received your Degree!`
-                : `Verification Passcode for ${notificationRequest.payload.convocationNumber}th Parul University Convocation`,
+                : `Congratulations on your Graduation!`,
         },
       },
     };

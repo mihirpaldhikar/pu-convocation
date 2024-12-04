@@ -63,12 +63,13 @@ export default function AccountCreationInvitationEmail({
             </Section>
             <Section>
               <Text className={"font-normal"}>
-                You have been invited by {senderName} to create an account for
-                Parul University Convocation Management System.
+                {senderName} has invited you to create your account for the
+                Parul University Convocation Management System!
               </Text>
               <Text>
-                Click on the "Create Account" to create an account. The link
-                will expire in 3 days.
+                To get started, simply click the "Create Account" button below.
+                Please note that the link will remain active for the next 3 days
+                only.
               </Text>
             </Section>
             <Section
@@ -84,7 +85,7 @@ export default function AccountCreationInvitationEmail({
               </Button>
             </Section>
             <Section>
-              <Text>With warmest regards,</Text>
+              <Text>Warm regards,</Text>
               <Link
                 href={"https://paruluniversity.ac.in"}
                 className={"text-red-600 font-bold"}

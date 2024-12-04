@@ -62,22 +62,21 @@ export default function VerificationPasscodeEmail({
               </Heading>
             </Section>
             <Section>
-              <Text className={"text-xl font-bold"}>
-                Hello {recipientName}!
-              </Text>
+              <Text className={"text-xl font-bold"}>Dear {recipientName},</Text>
             </Section>
             <Section>
               <Text className={"font-normal"}>
-                Congratulations on your remarkable achievement! Today marks the
-                culmination of years of hard work, dedication, and unwavering
-                perseverance. As you walk across the stage and receive your
-                degree, know that Parul University beams with pride.
+                Congratulations on reaching this incredible milestone! Today
+                signifies the result of your unwavering dedication,
+                perseverance, and countless hours of hard work. As you receive
+                your degree today, know that we are immensely proud of the
+                achievements you have accomplished throughout these years!
               </Text>
               <Text>
-                Below is the verification code that you will need to share with
-                your Faculty/Coordinator after scanning your Unique QR Code
-                displayed on your Profile after which you will receive your
-                Degree.
+                Please use the code below to complete the verification process
+                with your Faculty/Coordinator after scanning the Unique QR Code
+                displayed on your profile. Once verified, you will receive your
+                degree.
               </Text>
             </Section>
             <Section
@@ -107,21 +106,19 @@ export default function VerificationPasscodeEmail({
             </Section>
             <Section>
               <Text>
-                We've watched you grow, evolve, and blossom into the
-                extraordinary individual you are today. From late-night study
-                sessions in the library to lively debates in classrooms, your
-                journey has been filled with unforgettable memories. We'll
-                cherish the grand events that brought us all together - the
-                vibrant cultural festivals, the exhilarating sports
-                competitions, and the thought-provoking conferences.
+                Your time at Parul University has been nothing short of
+                extraordinary. We hope your journey with us has been filled with
+                invaluable learning and cherished memories. We will always
+                fondly remember the vibrant cultural festivals, thrilling sports
+                competitions, and all the other events that you were a part of.
+                These moments have not only shaped your academic journey but
+                have also enriched our university community.
               </Text>
               <Text>
-                Parul University will miss your infectious energy, your
-                inquisitive spirit, and your passion for learning. But as you
-                embark on this exciting new chapter, remember that you'll always
-                be a part of our family. Go forth and conquer the world, knowing
-                that you carry with you the knowledge, skills, and values
-                instilled in you during your time here.
+                As you step into this exciting new phase of life, know that you
+                will forever remain an important part of our family. We are
+                confident that the knowledge, skills, and values you’ve gained
+                here will empower you to make a lasting impact in the world!
               </Text>
               <Text>
                 Congratulations once again, graduate! The future is yours to
@@ -129,7 +126,7 @@ export default function VerificationPasscodeEmail({
               </Text>
             </Section>
             <Section>
-              <Text>With warmest regards,</Text>
+              <Text>Warm regards,</Text>
               <Link
                 href={"https://paruluniversity.ac.in"}
                 className={"text-red-600 font-bold"}
