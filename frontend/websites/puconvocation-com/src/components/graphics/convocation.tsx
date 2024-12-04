@@ -25,7 +25,7 @@ export default function Convocation({
       viewBox="0 0 648 87"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={"w-[300px] md:w-[400px] lg:w-[700px]"}
+      className={"w-full lg:w-[50vw]"}
     >
       <path
         fillRule="evenodd"

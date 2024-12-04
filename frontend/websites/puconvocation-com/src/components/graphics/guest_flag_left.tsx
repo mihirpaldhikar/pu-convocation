@@ -13,7 +13,7 @@
 
 import { JSX } from "react";
 
-export default function GuestFlagleft(): JSX.Element {
+export default function GuestFlagLeft(): JSX.Element {
   return (
     <svg
       viewBox="0 0 571 265"
