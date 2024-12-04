@@ -29,7 +29,9 @@ export default function Ticket({ attendee }: TicketProps): JSX.Element {
         <div className={"flex flex-col"}>
           <h6 className={"text-xs font-medium"}>{attendee.enrollmentNumber}</h6>
           <h3 className={"pt-4 text-xl font-bold"}>{attendee.studentName}</h3>
-          <h4>{attendee.department}</h4>
+          <h4 hidden={attendee.department.toUpperCase() === "NULL"}>
+            {attendee.department}
+          </h4>
         </div>
         <div>
           <div
