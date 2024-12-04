@@ -33,6 +33,8 @@ import {
 import { AttendeeTable } from "@components/attendee";
 import IAMPolicies from "@configs/IAMPolicies";
 import { isAuthorized } from "@lib/iam_utils";
+import { AcademicCapIcon, ChartBarIcon } from "@heroicons/react/24/solid";
+import { ArrowRight } from "lucide-react";
 
 const now = new Date();
 const year = Number(format(now, "yyyy"));
@@ -77,12 +79,19 @@ function AnalyticsSection() {
   return (
     <section>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Analytics</h2>
+        <div className={"flex items-center space-x-2"}>
+          <ChartBarIcon className={"size-6 text-red-600"} />
+          <h2 className="text-2xl font-bold">Analytics</h2>
+        </div>
         <Button
-          className="bg-red-600 font-semibold hover:bg-red-700"
+          size={"icon"}
+          variant={"outline"}
+          className="rounded-full"
           asChild={true}
         >
-          <Link href={`/console/analytics`}>View All</Link>
+          <Link href={`/console/analytics`}>
+            <ArrowRight />
+          </Link>
         </Button>
       </div>
 
@@ -109,7 +118,7 @@ function AnalyticsSection() {
         {/* Traffic Card */}
         <Card className="h-fit overflow-hidden p-2 shadow-none">
           <CardHeader className="pb-2">
-            <CardTitle className="text-red-600">Traffic</CardTitle>
+            <CardTitle className="text-red-600">Visitors Today</CardTitle>
           </CardHeader>
           <CardContent className="h-full pt-2">
             {dailyVisitorsLoading ? (
@@ -150,9 +159,19 @@ function AttendeesSection() {
   return (
     <section>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold">Attendees</h2>
-        <Button className="bg-red-600 font-semibold hover:bg-red-700" asChild>
-          <Link href={`/console/attendees`}>View All</Link>
+        <div className={"flex items-center space-x-2"}>
+          <AcademicCapIcon className={"size-6 text-red-600"} />
+          <h2 className="text-2xl font-bold">Attendees</h2>
+        </div>
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          className="rounded-full"
+          asChild={true}
+        >
+          <Link href={`/console/attendees`}>
+            <ArrowRight />
+          </Link>
         </Button>
       </div>
       <Card>
@@ -182,7 +201,15 @@ export default function ConsolePage(): JSX.Element {
   if (account === null) return <Fragment />;
 
   return (
-    <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-20">
+    <div className="bg-white-300 flex min-h-screen flex-col space-y-10 p-4 md:p-10 lg:p-16">
+      <div className={"pt-5 lg:pt-0"}>
+        <h4 className={"text-3xl font-bold leading-tight"}>
+          <span className={"text-red-600"}>Hello,</span>{" "}
+          {account.designation.length === 0
+            ? `${account.displayName.split(" ")[0]}`
+            : `${account.designation} ${account.displayName.split(" ")[0]}`}
+        </h4>
+      </div>
       {isAuthorized(IAMPolicies.READ_ANALYTICS, account.assignedIAMPolicies) ? (
         <AnalyticsSection />
       ) : (
