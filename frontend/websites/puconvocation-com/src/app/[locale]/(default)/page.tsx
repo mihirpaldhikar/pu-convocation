@@ -38,7 +38,7 @@ export default async function Home() {
 
   if (response.statusCode === StatusCode.SUCCESS) {
     const { countdown, images, instructions } = response.payload;
-    return !countdown.show && countdown.endTime > new Date().getTime() ? (
+    return countdown.show && countdown.endTime > new Date().getTime() ? (
       <section className={"flex min-h-[80dvh]"}>
         <div
           className={
