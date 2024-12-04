@@ -60,8 +60,6 @@ function validateEmail(value: string) {
     error = "Required";
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
     error = "Invalid email address";
-  } else if (!/^[a-zA-Z0-9._%+-]+@paruluniversity\.ac\.in$/.test(value)) {
-    error = "Email must be associated with paruluniversity.ac.in";
   }
   return error;
 }
