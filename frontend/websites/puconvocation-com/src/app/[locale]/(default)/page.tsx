@@ -101,7 +101,7 @@ export default async function Home() {
                   height="98"
                   viewBox="0 0 84 98"
                   fill="none"
-                  className={"size-14 lg:size-28"}
+                  className={"size-14 lg:size-24"}
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
