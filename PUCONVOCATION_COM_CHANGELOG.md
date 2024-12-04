@@ -1,3 +1,11 @@
+## 3.0.0-rc.11 (December 4, 2024)
+
+### New:
+- Add translation support to Instruction Banner.
+- Refactor Landing page to be more adaptive to different screen sizes.
+- Refactor Landing page to be more adaptive to different screen sizes.
+- Refactor Countdown UI to render "8th".
+
 ## 3.0.0-rc.10 (December 3, 2024)
 
 ### New:
