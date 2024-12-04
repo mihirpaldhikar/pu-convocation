@@ -16,6 +16,7 @@ import { JSX } from "react";
 import { Button } from "@components/ui";
 import { Link, usePathname } from "@i18n/routing";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 
 interface InstructionsBannerProps {
   show: boolean;
@@ -24,15 +25,20 @@ interface InstructionsBannerProps {
 export default function InstructionsBanner({
   show,
 }: InstructionsBannerProps): JSX.Element {
+  const instructionsBannerTranslations = useTranslations(
+    "components.banners.instructionsBanner",
+  );
+
   const currentPath = usePathname();
   return (
     <div
       className={`${show && !currentPath.includes("instructions") ? "flex" : "hidden"} h-12 w-full items-center justify-center space-x-4 bg-red-100 font-semibold text-red-800`}
     >
-      <h6>Important Instructions</h6>
+      <h6>{instructionsBannerTranslations("title")}</h6>
       <Button asChild={true} className={"rounded-full bg-red-800"}>
         <Link href={"/instructions"}>
-          View <ChevronRightIcon className={"size-5"} />
+          {instructionsBannerTranslations("view")}{" "}
+          <ChevronRightIcon className={"size-5"} />
         </Link>
       </Button>
     </div>

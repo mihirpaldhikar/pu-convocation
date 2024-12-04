@@ -18,3 +18,5 @@ export { default as RightGalleryFlags } from "./gallery_flags_right";
 export { default as GeographicalMap } from "./geographical_map";
 export { default as SpaceShip } from "./spaceship";
 export { default as PasskeyIcon } from "./passkey_icon";
+export { default as RightGuestGalleryFlag } from "./guest_flag_right";
+export { default as LeftGuestGalleryFlag } from "./guest_flag_left";
