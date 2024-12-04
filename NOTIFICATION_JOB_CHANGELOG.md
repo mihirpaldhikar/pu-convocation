@@ -1,3 +1,8 @@
+## 2.1.0 (November 30, 2024)
+
+### Miscellaneous:
+- Refactor Email content according to the requirements.
+
 ## 2.0.0 (November 30, 2024)
 
 > [!IMPORTANT]
