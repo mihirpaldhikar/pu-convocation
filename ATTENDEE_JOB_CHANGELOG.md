@@ -1,3 +1,8 @@
+## 2.6.0 (December 3, 2024)
+
+### Fixes:
+- Fix batch size from 10 to 5.
+
 ## 2.5.0 (December 3, 2024)
 
 ### New:
