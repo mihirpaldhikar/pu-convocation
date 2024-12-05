@@ -26,6 +26,7 @@ import {
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { UUID } from "mongodb";
 import { createZippedBufferWithPassword } from "./utils/ZIPUtils.js";
+import { splitArray } from "./utils/EnclosureUtils.js";
 
 export const handler: Handler = async (event, context) => {
   const attendeeRepository = new AttendeeRepository();
@@ -136,12 +137,12 @@ export const handler: Handler = async (event, context) => {
   } else {
     const sqsClient = new SQSClient();
     const NOTIFICATION_QUEUE_URL = process.env.NOTIFICATION_QUEUE_URL!!;
-    const BATCH_SIZE = 5;
+    const CHUNK_SIZE = 10;
+    const chunks = splitArray(attendees, CHUNK_SIZE);
 
-    for (let i = 0; i < attendees.length; i += BATCH_SIZE) {
-      const attendeeBatch = attendees.splice(i, i + BATCH_SIZE);
+    for (let chunk of chunks) {
       const messageBatch: Array<SendMessageBatchRequestEntry> = [];
-      for (let attendee of attendeeBatch) {
+      for (let attendee of chunk) {
         if (
           attendee._id.includes("DUPLICATE") ||
           attendee._id.includes("NO-ENR")

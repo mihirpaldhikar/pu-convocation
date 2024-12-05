@@ -11,13 +11,25 @@
  * is a violation of these laws and could result in severe penalties.
  */
 
-import {Enclosure} from "../database/index.js";
+import { Enclosure } from "../database/index.js";
 
 export function totalEnclosureSeats(enclosure: Enclosure): number {
-    let seats = 0;
-    for (let row of enclosure.rows) {
-        const reserved = row.reserved.split(",").filter((r) => !isNaN(parseInt(r))).length;
-        seats += row.end - row.start - reserved + 1;
-    }
-    return seats;
+  let seats = 0;
+  for (let row of enclosure.rows) {
+    const reserved = row.reserved
+      .split(",")
+      .filter((r) => !isNaN(parseInt(r))).length;
+    seats += row.end - row.start - reserved + 1;
+  }
+  return seats;
+}
+
+export function splitArray<T>(arr: T[], m: number): T[][] {
+  const result: T[][] = [];
+
+  for (let i = 0; i < arr.length; i += m) {
+    result.push(arr.slice(i, i + m));
+  }
+
+  return result;
 }
