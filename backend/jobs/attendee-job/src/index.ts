@@ -136,7 +136,7 @@ export const handler: Handler = async (event, context) => {
   } else {
     const sqsClient = new SQSClient();
     const NOTIFICATION_QUEUE_URL = process.env.NOTIFICATION_QUEUE_URL!!;
-    const BATCH_SIZE = 10;
+    const BATCH_SIZE = 5;
 
     for (let i = 0; i < attendees.length; i += BATCH_SIZE) {
       const attendeeBatch = attendees.splice(i, i + BATCH_SIZE);
