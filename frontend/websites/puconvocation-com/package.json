@@ -31,7 +31,7 @@
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.4",
-    "@tanstack/react-query": "^5.62.2",
+    "@tanstack/react-query": "^5.62.3",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clone-deep": "^4.0.1",
@@ -46,9 +46,9 @@
     "next-intl": "^3.26.0",
     "papaparse": "^5.4.1",
     "plaiceholder": "^3.0.0",
-    "react": "19.0.0-rc-66855b96-20241106",
+    "react": "19.0.0",
     "react-day-picker": "8.10.1",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0",
     "react-intersection-observer": "^9.13.1",
     "react-markdown": "^9.0.1",
     "react-qr-code": "^2.0.15",
@@ -84,7 +84,7 @@
   },
   "pnpm": {
     "overrides": {
-      "react-is": "19.0.0-rc-66855b96-20241106"
+      "react-is": "19.0.0"
     }
   },
   "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
