@@ -43,7 +43,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
     "next": "^15.1.2",
-    "next-intl": "^3.26.2",
+    "next-intl": "^3.26.3",
     "papaparse": "^5.4.1",
     "plaiceholder": "^3.0.0",
     "react": "19.0.0",
